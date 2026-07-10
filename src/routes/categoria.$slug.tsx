@@ -121,7 +121,7 @@ function CategoriaPage() {
             Serviços mais pedidos
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {category.services.map((s) => (
+            {category.services.map((s: string) => (
               <Badge key={s} className="rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold text-primary hover:bg-secondary">
                 {s}
               </Badge>
@@ -162,7 +162,7 @@ function CategoriaPage() {
               Perguntas frequentes
             </h2>
             <Accordion type="single" collapsible className="mt-4">
-              {category.faqs.map((faq, i) => (
+              {category.faqs.map((faq: { question: string; answer: string }, i: number) => (
                 <AccordionItem key={i} value={`faq-${i}`} className="border-border">
                   <AccordionTrigger className="text-left font-semibold hover:no-underline">
                     {faq.question}
