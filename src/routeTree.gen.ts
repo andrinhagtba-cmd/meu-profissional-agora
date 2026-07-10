@@ -10,14 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
+import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as BuscarRouteImport } from './routes/buscar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfissionalSlugRouteImport } from './routes/profissional.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 
 const ProfissionaisRoute = ProfissionaisRouteImport.update({
   id: '/profissionais',
   path: '/profissionais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
+  id: '/pedir-orcamento',
+  path: '/pedir-orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriasRoute = CategoriasRouteImport.update({
@@ -35,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfissionalSlugRoute = ProfissionalSlugRouteImport.update({
+  id: '/profissional/$slug',
+  path: '/profissional/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
   path: '/categoria/$slug',
@@ -45,23 +57,29 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/profissional/$slug': typeof ProfissionalSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/profissional/$slug': typeof ProfissionalSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/profissional/$slug': typeof ProfissionalSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -69,25 +87,38 @@ export interface FileRouteTypes {
     | '/'
     | '/buscar'
     | '/categorias'
+    | '/pedir-orcamento'
     | '/profissionais'
     | '/categoria/$slug'
+    | '/profissional/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/buscar' | '/categorias' | '/profissionais' | '/categoria/$slug'
+  to:
+    | '/'
+    | '/buscar'
+    | '/categorias'
+    | '/pedir-orcamento'
+    | '/profissionais'
+    | '/categoria/$slug'
+    | '/profissional/$slug'
   id:
     | '__root__'
     | '/'
     | '/buscar'
     | '/categorias'
+    | '/pedir-orcamento'
     | '/profissionais'
     | '/categoria/$slug'
+    | '/profissional/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuscarRoute: typeof BuscarRoute
   CategoriasRoute: typeof CategoriasRoute
+  PedirOrcamentoRoute: typeof PedirOrcamentoRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
+  ProfissionalSlugRoute: typeof ProfissionalSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -97,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/profissionais'
       fullPath: '/profissionais'
       preLoaderRoute: typeof ProfissionaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedir-orcamento': {
+      id: '/pedir-orcamento'
+      path: '/pedir-orcamento'
+      fullPath: '/pedir-orcamento'
+      preLoaderRoute: typeof PedirOrcamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categorias': {
@@ -120,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profissional/$slug': {
+      id: '/profissional/$slug'
+      path: '/profissional/$slug'
+      fullPath: '/profissional/$slug'
+      preLoaderRoute: typeof ProfissionalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categoria/$slug': {
       id: '/categoria/$slug'
       path: '/categoria/$slug'
@@ -134,8 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuscarRoute: BuscarRoute,
   CategoriasRoute: CategoriasRoute,
+  PedirOrcamentoRoute: PedirOrcamentoRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
+  ProfissionalSlugRoute: ProfissionalSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

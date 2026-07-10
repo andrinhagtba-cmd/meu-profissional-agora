@@ -202,7 +202,7 @@ function ProfilePage() {
             <p className="mt-3 leading-relaxed text-muted-foreground">{pro.description}</p>
             {pro.certifications.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {pro.certifications.map((c) => (
+                {pro.certifications.map((c: string) => (
                   <Badge key={c} variant="outline" className="rounded-full border-border px-3 py-1 text-xs font-medium text-muted-foreground">
                     <Award size={12} className="mr-1" aria-hidden="true" />
                     {c}
@@ -217,7 +217,7 @@ function ProfilePage() {
               Serviços e preços
             </h2>
             <ul className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-              {pro.services.map((s) => (
+              {pro.services.map((s: { name: string; priceFrom: number }) => (
                 <li key={s.name} className="flex items-center justify-between gap-4 px-5 py-4">
                   <span className="text-sm font-medium text-foreground">{s.name}</span>
                   <span className="shrink-0 text-sm font-bold text-primary">
@@ -258,7 +258,7 @@ function ProfilePage() {
               Trabalhos recentes
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {pro.portfolio.map((item) => (
+              {pro.portfolio.map((item: string) => (
                 <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
                   <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
                     <ImageIcon size={32} aria-hidden="true" />
@@ -325,7 +325,7 @@ function ProfilePage() {
                 Perguntas frequentes
               </h2>
               <Accordion type="single" collapsible className="mt-3">
-                {pro.faqs.map((faq, i) => (
+                {pro.faqs.map((faq: { question: string; answer: string }, i: number) => (
                   <AccordionItem key={i} value={`f-${i}`} className="border-border">
                     <AccordionTrigger className="text-left font-semibold hover:no-underline">
                       {faq.question}
