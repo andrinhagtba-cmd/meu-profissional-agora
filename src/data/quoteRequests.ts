@@ -1,0 +1,108 @@
+import type { QuoteRequest } from "@/types";
+
+export const quoteRequests: QuoteRequest[] = [
+  {
+    id: "q1",
+    category: "Eletricista",
+    categorySlug: "eletricista",
+    city: "Curitiba",
+    state: "PR",
+    date: "2026-07-09",
+    urgency: "hoje",
+    description:
+      "Preciso instalar um chuveiro novo (220v) e trocar uma tomada que está esquentando. Apartamento no Água Verde.",
+    proposals: 4,
+    status: "aberta",
+  },
+  {
+    id: "q2",
+    category: "Pintor",
+    categorySlug: "pintor",
+    city: "São Paulo",
+    state: "SP",
+    date: "2026-07-08",
+    urgency: "esta-semana",
+    description:
+      "Pintura completa de apartamento de 65m², 2 quartos, sala e cozinha. Paredes em bom estado, cor branca.",
+    proposals: 7,
+    status: "aberta",
+  },
+  {
+    id: "q3",
+    category: "Técnico de ar-condicionado",
+    categorySlug: "ar-condicionado",
+    city: "Rio de Janeiro",
+    state: "RJ",
+    date: "2026-07-08",
+    urgency: "esta-semana",
+    description:
+      "Manutenção e higienização de 2 aparelhos split de 12.000 BTUs. Um deles está pingando água.",
+    proposals: 5,
+    status: "aberta",
+  },
+  {
+    id: "q4",
+    category: "Montador de móveis",
+    categorySlug: "montador",
+    city: "Belo Horizonte",
+    state: "MG",
+    date: "2026-07-07",
+    urgency: "sem-urgencia",
+    description:
+      "Montagem de guarda-roupa 6 portas e duas mesas de cabeceira compradas em loja online.",
+    proposals: 3,
+    status: "aberta",
+  },
+  {
+    id: "q5",
+    category: "Encanador",
+    categorySlug: "encanador",
+    city: "Campinas",
+    state: "SP",
+    date: "2026-07-07",
+    urgency: "hoje",
+    description:
+      "Vazamento embaixo da pia da cozinha, precisa de reparo urgente. Água acumulando no armário.",
+    proposals: 6,
+    status: "aberta",
+  },
+  {
+    id: "q6",
+    category: "Diarista",
+    categorySlug: "diarista",
+    city: "Porto Alegre",
+    state: "RS",
+    date: "2026-07-06",
+    urgency: "esta-semana",
+    description:
+      "Limpeza residencial completa em casa de 3 quartos antes de receber visitas no fim de semana.",
+    proposals: 8,
+    status: "aberta",
+  },
+  {
+    id: "q7",
+    category: "Pedreiro",
+    categorySlug: "pedreiro",
+    city: "Salvador",
+    state: "BA",
+    date: "2026-07-05",
+    urgency: "sem-urgencia",
+    description:
+      "Assentamento de porcelanato 80x80 em sala de 30m². Piso atual será removido.",
+    proposals: 2,
+    status: "aberta",
+  },
+  {
+    id: "q8",
+    category: "Técnico de informática",
+    categorySlug: "informatica",
+    city: "Brasília",
+    state: "DF",
+    date: "2026-07-04",
+    urgency: "data",
+    description:
+      "Configurar rede Wi-Fi mesh em casa de dois andares e instalar impressora em 3 computadores.",
+    proposals: 3,
+    status: "aberta",
+  },
+];
