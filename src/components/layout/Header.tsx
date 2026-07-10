@@ -1,6 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Briefcase, Heart, Menu, Search, User, Wrench } from "lucide-react";
+import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-react";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -41,6 +52,13 @@ export function Logo({ className }: { className?: string }) {
 export function Header() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    toast.success("Você saiu da sua conta.");
+    navigate({ to: "/", replace: true });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
@@ -77,13 +95,41 @@ export function Header() {
           >
             <Heart size={19} />
           </Link>
-          <Link
-            to="/entrar"
-            aria-label="Minha conta"
-            className="hidden h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-primary sm:inline-flex"
-          >
-            <User size={19} />
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Minha conta"
+                  className="hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold transition-colors hover:bg-primary/90 sm:inline-flex"
+                >
+                  {(user.email ?? "?").slice(0, 1).toUpperCase()}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/painel"><User className="mr-2" size={16} /> Meu painel</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/favoritos"><Heart className="mr-2" size={16} /> Favoritos</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2" size={16} /> Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/entrar"
+              aria-label="Entrar"
+              className="hidden h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-primary sm:inline-flex"
+            >
+              <User size={19} />
+            </Link>
+          )}
           <Button asChild className="ml-1 h-11 rounded-xl px-3 text-sm font-semibold sm:px-5">
             <Link to="/cadastro/profissional">
               <Briefcase className="sm:hidden" size={16} aria-hidden="true" />
