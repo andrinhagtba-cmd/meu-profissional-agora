@@ -9,14 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as BuscarRouteImport } from './routes/buscar'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfissionalSlugRouteImport } from './routes/profissional.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
+import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfissionaisRoute = ProfissionaisRouteImport.update({
   id: '/profissionais',
   path: '/profissionais',
@@ -27,6 +45,11 @@ const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
   path: '/pedir-orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoriasRoute = CategoriasRouteImport.update({
   id: '/categorias',
   path: '/categorias',
@@ -35,6 +58,15 @@ const CategoriasRoute = CategoriasRouteImport.update({
 const BuscarRoute = BuscarRouteImport.update({
   id: '/buscar',
   path: '/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -52,32 +84,69 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroProfissionalRoute = CadastroProfissionalRouteImport.update({
+  id: '/cadastro/profissional',
+  path: '/cadastro/profissional',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/painel': typeof AuthenticatedPainelRoute
+  '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/painel': typeof AuthenticatedPainelRoute
+  '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/profissionais': typeof ProfissionaisRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
+  '/_authenticated/painel': typeof AuthenticatedPainelRoute
+  '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
 }
@@ -85,44 +154,86 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/buscar'
     | '/categorias'
+    | '/entrar'
     | '/pedir-orcamento'
     | '/profissionais'
+    | '/recuperar-senha'
+    | '/reset-password'
+    | '/favoritos'
+    | '/painel'
+    | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/buscar'
     | '/categorias'
+    | '/entrar'
     | '/pedir-orcamento'
     | '/profissionais'
+    | '/recuperar-senha'
+    | '/reset-password'
+    | '/favoritos'
+    | '/painel'
+    | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/buscar'
     | '/categorias'
+    | '/entrar'
     | '/pedir-orcamento'
     | '/profissionais'
+    | '/recuperar-senha'
+    | '/reset-password'
+    | '/_authenticated/favoritos'
+    | '/_authenticated/painel'
+    | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   BuscarRoute: typeof BuscarRoute
   CategoriasRoute: typeof CategoriasRoute
+  EntrarRoute: typeof EntrarRoute
   PedirOrcamentoRoute: typeof PedirOrcamentoRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  CadastroProfissionalRoute: typeof CadastroProfissionalRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProfissionalSlugRoute: typeof ProfissionalSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profissionais': {
       id: '/profissionais'
       path: '/profissionais'
@@ -137,6 +248,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedirOrcamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categorias': {
       id: '/categorias'
       path: '/categorias'
@@ -149,6 +267,20 @@ declare module '@tanstack/react-router' {
       path: '/buscar'
       fullPath: '/buscar'
       preLoaderRoute: typeof BuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -172,15 +304,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro/profissional': {
+      id: '/cadastro/profissional'
+      path: '/cadastro/profissional'
+      fullPath: '/cadastro/profissional'
+      preLoaderRoute: typeof CadastroProfissionalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/painel': {
+      id: '/_authenticated/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof AuthenticatedPainelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/favoritos': {
+      id: '/_authenticated/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
+  AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
+  AuthenticatedPainelRoute: AuthenticatedPainelRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   BuscarRoute: BuscarRoute,
   CategoriasRoute: CategoriasRoute,
+  EntrarRoute: EntrarRoute,
   PedirOrcamentoRoute: PedirOrcamentoRoute,
   ProfissionaisRoute: ProfissionaisRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  CadastroProfissionalRoute: CadastroProfissionalRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProfissionalSlugRoute: ProfissionalSlugRoute,
 }
