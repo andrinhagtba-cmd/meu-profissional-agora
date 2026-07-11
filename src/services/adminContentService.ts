@@ -183,23 +183,25 @@ export async function deleteSitePage(id: string) {
 // ---------- MEDIA (listagem) ----------
 export type AdminMediaAsset = {
   id: string;
-  bucket: string;
-  path: string;
-  category: string | null;
+  bucket_name: string;
+  object_path: string;
+  usage_type: string | null;
+  entity_type: string | null;
   alt_text: string | null;
-  file_size: number | null;
+  title: string | null;
+  file_size_bytes: number | null;
   mime_type: string | null;
   created_at: string;
 };
 
-export async function listMediaAssets(search?: string, category?: string) {
+export async function listMediaAssets(search?: string, usage?: string) {
   let q = supabase
     .from("media_assets")
-    .select("id, bucket, path, category, alt_text, file_size, mime_type, created_at")
+    .select("id, bucket_name, object_path, usage_type, entity_type, alt_text, title, file_size_bytes, mime_type, created_at")
     .order("created_at", { ascending: false })
     .limit(200);
-  if (category) q = q.eq("category", category);
-  if (search) q = q.or(`path.ilike.%${search}%,alt_text.ilike.%${search}%`);
+  if (usage) q = q.eq("usage_type", usage);
+  if (search) q = q.or(`object_path.ilike.%${search}%,alt_text.ilike.%${search}%,title.ilike.%${search}%`);
   const { data, error } = await q;
   if (error) throw error;
   return data as AdminMediaAsset[];
