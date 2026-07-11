@@ -30,6 +30,7 @@ import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.prof
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
@@ -190,6 +191,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPainelIndexRoute =
+  AuthenticatedPainelIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -587,6 +594,7 @@ export interface FileRoutesByFullPath {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/painel/': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
@@ -609,7 +617,6 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
-  '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
@@ -662,6 +669,7 @@ export interface FileRoutesByTo {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/painel': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
@@ -741,6 +749,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/_authenticated/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
@@ -820,6 +829,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/painel/trabalhos'
     | '/admin/'
+    | '/painel/'
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
@@ -842,7 +852,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sobre'
     | '/favoritos'
-    | '/painel'
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
@@ -895,6 +904,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/painel/trabalhos'
     | '/admin'
+    | '/painel'
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
@@ -973,6 +983,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/servicos'
     | '/_authenticated/painel/trabalhos'
     | '/_authenticated/admin/'
+    | '/_authenticated/painel/'
     | '/_authenticated/admin/profissionais/$id'
     | '/_authenticated/admin/profissionais/novo'
     | '/_authenticated/painel/mensagens/$id'
@@ -1149,6 +1160,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/painel/': {
+      id: '/_authenticated/painel/'
+      path: '/'
+      fullPath: '/painel/'
+      preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -1690,6 +1708,7 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
   AuthenticatedPainelServicosRoute: typeof AuthenticatedPainelServicosRoute
   AuthenticatedPainelTrabalhosRoute: typeof AuthenticatedPainelTrabalhosRoute
+  AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
@@ -1703,6 +1722,7 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
   AuthenticatedPainelServicosRoute: AuthenticatedPainelServicosRoute,
   AuthenticatedPainelTrabalhosRoute: AuthenticatedPainelTrabalhosRoute,
+  AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =
@@ -1746,13 +1766,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

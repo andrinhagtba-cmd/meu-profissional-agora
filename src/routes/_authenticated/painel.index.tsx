@@ -38,7 +38,7 @@ import {
 } from "@/services/professionalDashboardService";
 import { listMyConversations } from "@/services/chatService";
 
-export const Route = createFileRoute("/_authenticated/painel")({
+export const Route = createFileRoute("/_authenticated/painel/")({
   head: () => ({
     meta: [
       { title: "Meu painel — Guia DF na Mídia" },
