@@ -1648,3 +1648,198 @@ export async function deleteContactMessage(id: string) {
   const { error } = await (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>).delete().eq("id", id);
   if (error) throw error;
 }
+
+// ============= Etapa B: Governança & Segurança =============
+
+export type AppRole = "admin" | "profissional" | "cliente";
+
+export type AdminRoleUserRow = {
+  user_id: string;
+  full_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  city: string | null;
+  state: string | null;
+  account_status: string | null;
+  created_at: string;
+  roles: AppRole[];
+};
+
+export async function listRoleUsers(role: AppRole): Promise<AdminRoleUserRow[]> {
+  const { data: r, error: e1 } = await supabase
+    .from("user_roles")
+    .select("user_id")
+    .eq("role", role as never)
+    .limit(2000);
+  if (e1) throw e1;
+  const ids = ((r ?? []) as Array<{ user_id: string }>).map((x) => x.user_id);
+  if (!ids.length) return [];
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("user_id, full_name, email, avatar_url, city, state, account_status, created_at")
+    .in("user_id", ids)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const rows = (data ?? []) as Array<Omit<AdminRoleUserRow, "roles">>;
+  const rolesMap = await fetchRolesMap(rows.map((x) => x.user_id));
+  return rows.map((row) => ({ ...row, roles: (rolesMap.get(row.user_id) ?? []) as AppRole[] }));
+}
+
+export async function searchProfilesByEmail(query: string): Promise<Array<{ user_id: string; email: string | null; full_name: string | null; avatar_url: string | null }>> {
+  const q = query.trim();
+  if (!q) return [];
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("user_id, email, full_name, avatar_url")
+    .or(`email.ilike.%${q}%,full_name.ilike.%${q}%`)
+    .limit(15);
+  if (error) throw error;
+  return (data ?? []) as never;
+}
+
+// --- Admin logs ---
+export type AdminLogRow = {
+  id: string;
+  admin_user_id: string;
+  action: string;
+  entity_type: string | null;
+  entity_id: string | null;
+  metadata: unknown;
+  created_at: string;
+  admin_name?: string | null;
+  admin_email?: string | null;
+};
+
+export async function listAdminLogs(opts: { search?: string; action?: string; entity_type?: string; limit?: number } = {}): Promise<AdminLogRow[]> {
+  const { search = "", action, entity_type, limit = 200 } = opts;
+  let q = supabase
+    .from("admin_logs")
+    .select("id, admin_user_id, action, entity_type, entity_id, metadata, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (action) q = q.eq("action", action);
+  if (entity_type) q = q.eq("entity_type", entity_type);
+  if (search) q = q.ilike("action", `%${search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  const rows = (data ?? []) as AdminLogRow[];
+  const adminIds = Array.from(new Set(rows.map((r) => r.admin_user_id).filter(Boolean)));
+  if (adminIds.length) {
+    const { data: profs } = await supabase
+      .from("profiles")
+      .select("user_id, full_name, email")
+      .in("user_id", adminIds);
+    const map = new Map<string, { full_name: string | null; email: string | null }>();
+    for (const p of (profs ?? []) as Array<{ user_id: string; full_name: string | null; email: string | null }>) {
+      map.set(p.user_id, { full_name: p.full_name, email: p.email });
+    }
+    for (const r of rows) {
+      const info = map.get(r.admin_user_id);
+      r.admin_name = info?.full_name ?? null;
+      r.admin_email = info?.email ?? null;
+    }
+  }
+  return rows;
+}
+
+export async function listLogActions(): Promise<string[]> {
+  const { data, error } = await supabase.from("admin_logs").select("action").limit(500);
+  if (error) throw error;
+  const set = new Set<string>();
+  for (const r of (data ?? []) as Array<{ action: string }>) set.add(r.action);
+  return Array.from(set).sort();
+}
+
+// --- Segurança ---
+export type SecurityOverview = {
+  totalUsers: number;
+  activeUsers: number;
+  suspendedUsers: number;
+  pendingUsers: number;
+  adminCount: number;
+  proCount: number;
+  clientCount: number;
+  pendingReports: number;
+  pendingProVerification: number;
+  recentRoleChanges: AdminLogRow[];
+  suspendedList: Array<{ user_id: string; full_name: string | null; email: string | null; account_status: string | null; created_at: string }>;
+};
+
+export async function getSecurityOverview(): Promise<SecurityOverview> {
+  const [profilesRes, rolesRes, reportsRes, prosRes, logsRes, suspendedRes] = await Promise.all([
+    supabase.from("profiles").select("account_status", { count: "exact" }).limit(5000),
+    supabase.from("user_roles").select("role").limit(5000),
+    supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "pending" as never),
+    supabase.from("professional_profiles").select("id", { count: "exact", head: true }).eq("verification_status", "pending" as never),
+    supabase.from("admin_logs").select("id, admin_user_id, action, entity_type, entity_id, metadata, created_at").in("action", ["role_granted", "role_revoked", "account_suspended", "account_activated"]).order("created_at", { ascending: false }).limit(10),
+    supabase.from("profiles").select("user_id, full_name, email, account_status, created_at").eq("account_status", "suspended" as never).order("created_at", { ascending: false }).limit(20),
+  ]);
+  const profiles = (profilesRes.data ?? []) as Array<{ account_status: string | null }>;
+  const roles = (rolesRes.data ?? []) as Array<{ role: string }>;
+  const activeUsers = profiles.filter((p) => (p.account_status ?? "active") === "active").length;
+  const suspendedUsers = profiles.filter((p) => p.account_status === "suspended").length;
+  const pendingUsers = profiles.filter((p) => p.account_status === "pending").length;
+  return {
+    totalUsers: profilesRes.count ?? profiles.length,
+    activeUsers,
+    suspendedUsers,
+    pendingUsers,
+    adminCount: roles.filter((r) => r.role === "admin").length,
+    proCount: roles.filter((r) => r.role === "profissional").length,
+    clientCount: roles.filter((r) => r.role === "cliente").length,
+    pendingReports: reportsRes.count ?? 0,
+    pendingProVerification: prosRes.count ?? 0,
+    recentRoleChanges: (logsRes.data ?? []) as AdminLogRow[],
+    suspendedList: (suspendedRes.data ?? []) as never,
+  };
+}
+
+// --- Status (saúde do sistema) ---
+export type SystemStatus = {
+  tables: Array<{ name: string; label: string; count: number }>;
+  storage: Array<{ bucket: string; label: string }>;
+  realtimeActivity: { messagesLast24h: number; notificationsLast24h: number };
+  errorsLast24h: number;
+  updatedAt: string;
+};
+
+export async function getSystemStatus(): Promise<SystemStatus> {
+  const tablesSpec: Array<{ name: string; label: string }> = [
+    { name: "profiles", label: "Perfis" },
+    { name: "professional_profiles", label: "Profissionais" },
+    { name: "quote_requests", label: "Solicitações" },
+    { name: "quote_proposals", label: "Propostas" },
+    { name: "reviews", label: "Avaliações" },
+    { name: "conversations", label: "Conversas" },
+    { name: "messages", label: "Mensagens" },
+    { name: "notifications", label: "Notificações" },
+    { name: "media_assets", label: "Mídias" },
+    { name: "admin_logs", label: "Logs" },
+  ];
+  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const [counts, msgs, notifs] = await Promise.all([
+    Promise.all(
+      tablesSpec.map(async (t) => {
+        const { count } = await supabase.from(t.name as never).select("id", { count: "exact", head: true });
+        return { name: t.name, label: t.label, count: count ?? 0 };
+      }),
+    ),
+    supabase.from("messages").select("id", { count: "exact", head: true }).gte("created_at", since),
+    supabase.from("notifications").select("id", { count: "exact", head: true }).gte("created_at", since),
+  ]);
+  return {
+    tables: counts,
+    storage: [
+      { bucket: "public-media", label: "Mídia pública" },
+      { bucket: "professional-media", label: "Portfólios" },
+      { bucket: "private-documents", label: "Documentos" },
+      { bucket: "chat-attachments", label: "Chat" },
+    ],
+    realtimeActivity: {
+      messagesLast24h: msgs.count ?? 0,
+      notificationsLast24h: notifs.count ?? 0,
+    },
+    errorsLast24h: 0,
+    updatedAt: new Date().toISOString(),
+  };
+}
