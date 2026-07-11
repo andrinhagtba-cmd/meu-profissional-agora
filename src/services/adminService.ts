@@ -624,8 +624,9 @@ export async function listReportsAdmin(status?: string): Promise<AdminReportRow[
 }
 
 export async function setReportStatus(id: string, status: "open" | "reviewing" | "resolved" | "dismissed") {
-  const patch: Record<string, unknown> = { status };
+  const patch: { status: typeof status; resolved_at?: string } = { status };
   if (status === "resolved" || status === "dismissed") patch.resolved_at = new Date().toISOString();
   const { error } = await supabase.from("reports").update(patch).eq("id", id);
   if (error) throw error;
 }
+
