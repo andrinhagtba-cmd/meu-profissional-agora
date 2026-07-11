@@ -96,20 +96,20 @@ export function AdminTopbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur">
-      <SidebarTrigger />
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 shadow-[0_1px_0_0_var(--border)]">
+      <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
       <div className="hidden min-w-0 flex-1 md:block">
         <Breadcrumb>
-          <BreadcrumbList>
+          <BreadcrumbList className="text-[13px]">
             {crumbs.map((c, i) => (
               <span key={c.href} className="flex items-center gap-2">
                 {i > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
                   {i === crumbs.length - 1 ? (
-                    <BreadcrumbPage>{c.label}</BreadcrumbPage>
+                    <BreadcrumbPage className="font-semibold text-foreground">{c.label}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link to={c.href as never}>{c.label}</Link>
+                      <Link to={c.href as never} className="text-muted-foreground hover:text-foreground">{c.label}</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
@@ -118,16 +118,16 @@ export function AdminTopbar() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="ml-auto flex items-center gap-1">
-        <Button
-          variant="outline"
-          size="sm"
+      <div className="ml-auto flex items-center gap-1.5">
+        <button
+          type="button"
           onClick={() => setCmdOpen(true)}
-          className="hidden gap-2 rounded-xl sm:flex"
+          className="hidden h-9 items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 text-[13px] text-muted-foreground transition-colors hover:bg-muted sm:flex"
         >
-          <Search size={14} /> Buscar
-          <kbd className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono">⌘K</kbd>
-        </Button>
+          <Search size={14} />
+          <span>Buscar…</span>
+          <kbd className="ml-6 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
+        </button>
         <Button variant="ghost" size="icon" onClick={() => setCmdOpen(true)} className="sm:hidden">
           <Search size={16} />
         </Button>
