@@ -3,6 +3,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { professionals as mockProfessionals } from "@/data/professionals";
+import { getMediaUrl } from "@/services/mediaService";
 
 export type MyQuote = {
   id: string;
@@ -147,17 +148,40 @@ export type MyProfile = {
   phone: string | null;
   city: string | null;
   state: string | null;
+  avatar_media_id: string | null;
   avatar_url: string | null;
 };
+
+const AVATAR_BUCKET = "professional-media";
+
+function getFileExtension(name: string) {
+  const i = name.lastIndexOf(".");
+  return i >= 0 ? name.slice(i + 1).toLowerCase() : "jpg";
+}
 
 export async function getMyProfile(userId: string): Promise<MyProfile | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("user_id, full_name, email, phone, city, state, avatar_url")
+    .select("user_id, full_name, email, phone, city, state, avatar_media_id, avatar_url")
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return (data as MyProfile | null) ?? null;
+  if (!data) return null;
+
+  let resolvedAvatarUrl = data.avatar_url ?? null;
+  if (data.avatar_media_id) {
+    const { data: asset, error: assetError } = await supabase
+      .from("media_assets")
+      .select("bucket_name, object_path")
+      .eq("id", data.avatar_media_id)
+      .maybeSingle();
+    if (assetError) throw assetError;
+    if (asset?.bucket_name && asset?.object_path) {
+      resolvedAvatarUrl = await getMediaUrl({ bucket: asset.bucket_name, path: asset.object_path });
+    }
+  }
+
+  return { ...(data as MyProfile), avatar_url: resolvedAvatarUrl };
 }
 
 export async function updateMyProfile(
@@ -166,6 +190,57 @@ export async function updateMyProfile(
 ) {
   const { error } = await supabase.from("profiles").update(patch).eq("user_id", userId);
   if (error) throw error;
+}
+
+export async function uploadClientAvatar(userId: string, file: File) {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Envie uma imagem válida para a foto do perfil.");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("A imagem deve ter no máximo 5 MB.");
+  }
+
+  const extension = getFileExtension(file.name);
+  const path = `${userId}/avatar/${crypto.randomUUID()}.${extension}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(AVATAR_BUCKET)
+    .upload(path, file, {
+      cacheControl: "3600",
+      contentType: file.type || undefined,
+      upsert: false,
+    });
+  if (uploadError) throw uploadError;
+
+  const { data: asset, error: assetError } = await supabase
+    .from("media_assets")
+    .insert({
+      bucket_name: AVATAR_BUCKET,
+      object_path: path,
+      original_filename: file.name,
+      mime_type: file.type || null,
+      file_size_bytes: file.size,
+      usage_type: "avatar",
+      status: "active",
+      uploaded_by: userId,
+      source_type: "upload",
+    })
+    .select("id")
+    .single();
+
+  if (assetError || !asset) {
+    await supabase.storage.from(AVATAR_BUCKET).remove([path]);
+    throw assetError ?? new Error("Não foi possível registrar a foto do perfil.");
+  }
+
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .update({ avatar_media_id: asset.id })
+    .eq("user_id", userId);
+
+  if (profileError) throw profileError;
+  const url = await getMediaUrl({ bucket: AVATAR_BUCKET, path });
+  return { mediaId: asset.id, url };
 }
 
 // --------------------- Quote submission ---------------------
