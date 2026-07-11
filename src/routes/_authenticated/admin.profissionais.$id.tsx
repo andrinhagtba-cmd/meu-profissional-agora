@@ -20,6 +20,8 @@ import {
   getProDetail, setProVerification, setProFeatured, setProProfileStatus,
 } from "@/services/adminService";
 import { AdminProProfileEditor } from "@/components/admin/AdminProProfileEditor";
+import { AdminProServicesPanel } from "@/components/admin/AdminProServicesPanel";
+import { AdminProPortfolioPanel } from "@/components/admin/AdminProPortfolioPanel";
 
 const VERIF_LABEL: Record<string, string> = {
   pending: "Aguardando análise", approved: "Verificado", rejected: "Rejeitado",
