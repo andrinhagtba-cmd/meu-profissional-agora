@@ -31,6 +31,7 @@ import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authen
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 import { Route as AuthenticatedPainelLeadsRouteImport } from './routes/_authenticated/painel.leads'
+import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -148,6 +149,12 @@ const AuthenticatedPainelLeadsRoute =
     path: '/leads',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelPedidosIdRoute =
+  AuthenticatedPainelPedidosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,10 +174,11 @@ export interface FileRoutesByFullPath {
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
-  '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -190,10 +198,11 @@ export interface FileRoutesByTo {
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
-  '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -215,10 +224,11 @@ export interface FileRoutesById {
   '/_authenticated/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
-  '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/painel/pedidos/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/painel/pedidos/$id'
   id:
     | '__root__'
     | '/'
@@ -291,6 +303,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/perfil'
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
+    | '/_authenticated/painel/pedidos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -465,14 +478,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelLeadsRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/painel/pedidos/$id': {
+      id: '/_authenticated/painel/pedidos/$id'
+      path: '/$id'
+      fullPath: '/painel/pedidos/$id'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosIdRouteImport
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
+    }
   }
 }
+
+interface AuthenticatedPainelPedidosRouteChildren {
+  AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
+}
+
+const AuthenticatedPainelPedidosRouteChildren: AuthenticatedPainelPedidosRouteChildren =
+  {
+    AuthenticatedPainelPedidosIdRoute: AuthenticatedPainelPedidosIdRoute,
+  }
+
+const AuthenticatedPainelPedidosRouteWithChildren =
+  AuthenticatedPainelPedidosRoute._addFileChildren(
+    AuthenticatedPainelPedidosRouteChildren,
+  )
 
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelLeadsRoute: typeof AuthenticatedPainelLeadsRoute
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
   AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
-  AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRoute
+  AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRouteWithChildren
   AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
   AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
   AuthenticatedPainelServicosRoute: typeof AuthenticatedPainelServicosRoute
@@ -482,7 +516,7 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelLeadsRoute: AuthenticatedPainelLeadsRoute,
   AuthenticatedPainelMidiaRoute: AuthenticatedPainelMidiaRoute,
   AuthenticatedPainelNotificacoesRoute: AuthenticatedPainelNotificacoesRoute,
-  AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRoute,
+  AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRouteWithChildren,
   AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
   AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
   AuthenticatedPainelServicosRoute: AuthenticatedPainelServicosRoute,

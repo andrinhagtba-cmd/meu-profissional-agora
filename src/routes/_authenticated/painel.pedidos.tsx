@@ -96,8 +96,13 @@ function QuoteRow({ q }: { q: MyQuote }) {
     year: "numeric",
   });
   return (
-    <li className="rounded-3xl border border-border bg-card p-6 shadow-card">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <li className="rounded-3xl border border-border bg-card p-6 shadow-card transition hover:border-primary/50">
+      <Link
+        to="/painel/pedidos/$id"
+        params={{ id: q.id }}
+        className="block"
+      >
+
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             {q.category?.name && (
