@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminSegurancaRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminRegioesRouteImport } from './routes/_authenticated/admin.regioes'
 import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authenticated/admin.propostas'
+import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
 import { Route as AuthenticatedAdminPermissoesRouteImport } from './routes/_authenticated/admin.permissoes'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
@@ -270,6 +271,12 @@ const AuthenticatedAdminPropostasRoute =
     path: '/propostas',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminProfissionaisRoute =
+  AuthenticatedAdminProfissionaisRouteImport.update({
+    id: '/profissionais',
+    path: '/profissionais',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPlanosRoute =
   AuthenticatedAdminPlanosRouteImport.update({
     id: '/planos',
@@ -454,15 +461,15 @@ const AuthenticatedPainelMensagensIdRoute =
   } as any)
 const AuthenticatedAdminProfissionaisNovoRoute =
   AuthenticatedAdminProfissionaisNovoRouteImport.update({
-    id: '/profissionais/novo',
-    path: '/profissionais/novo',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
   } as any)
 const AuthenticatedAdminProfissionaisIdRoute =
   AuthenticatedAdminProfissionaisIdRouteImport.update({
-    id: '/profissionais/$id',
-    path: '/profissionais/$id',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -510,6 +517,7 @@ export interface FileRoutesByFullPath {
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -578,6 +586,7 @@ export interface FileRoutesByTo {
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -649,6 +658,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/_authenticated/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/_authenticated/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/_authenticated/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/_authenticated/admin/regioes': typeof AuthenticatedAdminRegioesRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -720,6 +730,7 @@ export interface FileRouteTypes {
     | '/admin/pedidos'
     | '/admin/permissoes'
     | '/admin/planos'
+    | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
     | '/admin/relatorios'
@@ -788,6 +799,7 @@ export interface FileRouteTypes {
     | '/admin/pedidos'
     | '/admin/permissoes'
     | '/admin/planos'
+    | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
     | '/admin/relatorios'
@@ -858,6 +870,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/permissoes'
     | '/_authenticated/admin/planos'
+    | '/_authenticated/admin/profissionais'
     | '/_authenticated/admin/propostas'
     | '/_authenticated/admin/regioes'
     | '/_authenticated/admin/relatorios'
@@ -1146,6 +1159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPropostasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/profissionais': {
+      id: '/_authenticated/admin/profissionais'
+      path: '/profissionais'
+      fullPath: '/admin/profissionais'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/planos': {
       id: '/_authenticated/admin/planos'
       path: '/planos'
@@ -1365,20 +1385,38 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/profissionais/novo': {
       id: '/_authenticated/admin/profissionais/novo'
-      path: '/profissionais/novo'
+      path: '/novo'
       fullPath: '/admin/profissionais/novo'
       preLoaderRoute: typeof AuthenticatedAdminProfissionaisNovoRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
     '/_authenticated/admin/profissionais/$id': {
       id: '/_authenticated/admin/profissionais/$id'
-      path: '/profissionais/$id'
+      path: '/$id'
       fullPath: '/admin/profissionais/$id'
       preLoaderRoute: typeof AuthenticatedAdminProfissionaisIdRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
+      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
   }
 }
+
+interface AuthenticatedAdminProfissionaisRouteChildren {
+  AuthenticatedAdminProfissionaisIdRoute: typeof AuthenticatedAdminProfissionaisIdRoute
+  AuthenticatedAdminProfissionaisNovoRoute: typeof AuthenticatedAdminProfissionaisNovoRoute
+}
+
+const AuthenticatedAdminProfissionaisRouteChildren: AuthenticatedAdminProfissionaisRouteChildren =
+  {
+    AuthenticatedAdminProfissionaisIdRoute:
+      AuthenticatedAdminProfissionaisIdRoute,
+    AuthenticatedAdminProfissionaisNovoRoute:
+      AuthenticatedAdminProfissionaisNovoRoute,
+  }
+
+const AuthenticatedAdminProfissionaisRouteWithChildren =
+  AuthenticatedAdminProfissionaisRoute._addFileChildren(
+    AuthenticatedAdminProfissionaisRouteChildren,
+  )
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAdministradoresRoute: typeof AuthenticatedAdminAdministradoresRoute
@@ -1410,6 +1448,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
   AuthenticatedAdminPermissoesRoute: typeof AuthenticatedAdminPermissoesRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
+  AuthenticatedAdminProfissionaisRoute: typeof AuthenticatedAdminProfissionaisRouteWithChildren
   AuthenticatedAdminPropostasRoute: typeof AuthenticatedAdminPropostasRoute
   AuthenticatedAdminRegioesRoute: typeof AuthenticatedAdminRegioesRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
@@ -1421,8 +1460,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminVerificacoesRoute: typeof AuthenticatedAdminVerificacoesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedAdminProfissionaisIdRoute: typeof AuthenticatedAdminProfissionaisIdRoute
-  AuthenticatedAdminProfissionaisNovoRoute: typeof AuthenticatedAdminProfissionaisNovoRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -1456,6 +1493,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
   AuthenticatedAdminPermissoesRoute: AuthenticatedAdminPermissoesRoute,
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
+  AuthenticatedAdminProfissionaisRoute:
+    AuthenticatedAdminProfissionaisRouteWithChildren,
   AuthenticatedAdminPropostasRoute: AuthenticatedAdminPropostasRoute,
   AuthenticatedAdminRegioesRoute: AuthenticatedAdminRegioesRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
@@ -1467,10 +1506,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminVerificacoesRoute: AuthenticatedAdminVerificacoesRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedAdminProfissionaisIdRoute:
-    AuthenticatedAdminProfissionaisIdRoute,
-  AuthenticatedAdminProfissionaisNovoRoute:
-    AuthenticatedAdminProfissionaisNovoRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
