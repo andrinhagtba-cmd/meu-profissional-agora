@@ -381,3 +381,39 @@ export async function rejectProposalRpc(proposalId: string) {
   const { error } = await supabase.rpc("reject_proposal", { _proposal_id: proposalId });
   if (error) throw error;
 }
+
+// --------------------- Status history & updates ---------------------
+
+export type QuoteHistoryEntry = {
+  id: string;
+  from_status: string | null;
+  to_status: string;
+  actor_role: string | null;
+  changed_by: string | null;
+  note: string | null;
+  created_at: string;
+};
+
+export async function getQuoteHistory(quoteId: string): Promise<QuoteHistoryEntry[]> {
+  const { data, error } = await supabase
+    .from("quote_status_history")
+    .select("id, from_status, to_status, actor_role, changed_by, note, created_at")
+    .eq("quote_request_id", quoteId)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as QuoteHistoryEntry[];
+}
+
+export async function updateQuoteStatus(
+  quoteId: string,
+  newStatus: "in_progress" | "completed" | "cancelled",
+  note?: string,
+) {
+  const { error } = await supabase.rpc("update_quote_status", {
+    _quote_id: quoteId,
+    _new_status: newStatus,
+    _note: note ?? null,
+  });
+  if (error) throw error;
+}
+
