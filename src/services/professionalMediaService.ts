@@ -141,7 +141,7 @@ export async function uploadCover(userId: string, professionalId: string, file: 
 
 export interface PortfolioItemVM {
   id: string;
-  title: string;
+  title: string | null;
   description: string | null;
   media_asset_id: string | null;
   sort_order: number;
@@ -192,7 +192,6 @@ export async function addPortfolioItem(
     title,
     description: description ?? null,
     media_asset_id: res.mediaId,
-    image_url: null,
     sort_order: 0,
     status: "active",
   });

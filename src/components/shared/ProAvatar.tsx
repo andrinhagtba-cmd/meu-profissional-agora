@@ -5,11 +5,15 @@ export function ProAvatar({
   color,
   size = "md",
   className,
+  imageUrl,
+  alt,
 }: {
   initials: string;
   color: string;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  imageUrl?: string;
+  alt?: string;
 }) {
   const sizes = {
     sm: "h-9 w-9 text-xs",
@@ -17,6 +21,20 @@ export function ProAvatar({
     lg: "h-16 w-16 text-lg",
     xl: "h-24 w-24 text-2xl",
   };
+  if (imageUrl) {
+    return (
+      <img
+        src={imageUrl}
+        alt={alt ?? ""}
+        className={cn(
+          "inline-block shrink-0 rounded-full object-cover",
+          sizes[size],
+          className,
+        )}
+        loading="lazy"
+      />
+    );
+  }
   return (
     <span
       aria-hidden="true"
