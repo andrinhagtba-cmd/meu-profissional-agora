@@ -327,7 +327,72 @@ function EmptyState({
   );
 }
 
-function ServiceCard({
+function CategoryGroup({
+  name,
+  items,
+  onEdit,
+  onDelete,
+  onToggle,
+}: {
+  name: string;
+  items: AdminService[];
+  onEdit: (s: AdminService) => void;
+  onDelete: (s: AdminService) => void;
+  onToggle: (s: AdminService, v: boolean) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  const active = items.filter((i) => i.active).length;
+  const withOwn = items.filter((i) => !!i.cover_media_id).length;
+
+  return (
+    <section className="overflow-hidden rounded-2xl border border-[oklch(0.93_0.014_258)] bg-card shadow-[0_1px_2px_oklch(0.51_0.245_262/4%)]">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-[oklch(0.98_0.008_258)]"
+      >
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+          <Tag size={16} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h2 className="truncate font-display text-sm font-bold text-foreground">
+              {name}
+            </h2>
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+              {items.length}
+            </span>
+          </div>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
+            {active} ativos · {withOwn} com imagem própria
+          </p>
+        </div>
+        <span
+          className={`grid h-7 w-7 place-items-center rounded-lg text-muted-foreground transition ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+        </span>
+      </button>
+
+      {open && (
+        <ul className="divide-y divide-[oklch(0.94_0.014_258)] border-t border-[oklch(0.94_0.014_258)]">
+          {items.map((svc) => (
+            <ServiceRow
+              key={svc.id}
+              service={svc}
+              onEdit={() => onEdit(svc)}
+              onDelete={() => onDelete(svc)}
+              onToggle={(v) => onToggle(svc, v)}
+            />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function ServiceRow({
   service,
   onEdit,
   onDelete,
@@ -339,87 +404,70 @@ function ServiceCard({
   onToggle: (v: boolean) => void;
 }) {
   const cover = service.cover_url;
+  const ownImage = !!service.cover_media_id;
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-[oklch(0.93_0.014_258)] bg-card shadow-[0_1px_2px_oklch(0.51_0.245_262/4%),0_18px_40px_-26px_oklch(0.51_0.245_262/18%)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_oklch(0.51_0.245_262/6%),0_28px_60px_-24px_oklch(0.51_0.245_262/28%)]">
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-orange/10">
+    <li className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 transition hover:bg-[oklch(0.985_0.006_258)] sm:gap-4 sm:px-4 sm:py-3">
+      <div className="relative h-11 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-primary/10 to-orange/10 ring-1 ring-black/5">
         {cover ? (
           <img
             src={cover}
             alt={service.image_alt ?? service.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`h-full w-full object-cover ${ownImage ? "" : "opacity-60"}`}
             loading="lazy"
           />
         ) : (
           <div className="grid h-full place-items-center text-primary/40">
-            <ImageIcon size={44} />
+            <ImageIcon size={16} />
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute right-3 top-3">
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 backdrop-blur ${
-              service.active
-                ? "bg-emerald-50/95 text-emerald-700 ring-emerald-200"
-                : "bg-white/90 text-muted-foreground ring-black/5"
-            }`}
-          >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${service.active ? "bg-emerald-500" : "bg-muted-foreground/40"}`}
-            />
-            {service.active ? "Ativo" : "Inativo"}
-          </span>
-        </div>
-        {service.category && (
-          <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-primary shadow ring-1 ring-primary/10 backdrop-blur">
-            <Tag size={11} /> {service.category.name}
-          </div>
-        )}
-        <div className="absolute inset-x-4 bottom-3">
-          <h3 className="line-clamp-1 font-display text-base font-extrabold text-white drop-shadow-sm">
-            {service.name}
-          </h3>
-          <p className="text-[11px] font-medium text-white/80">/{service.slug}</p>
-        </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <p className="line-clamp-2 min-h-[2.5rem] text-sm text-muted-foreground">
-          {service.description || "Sem descrição."}
-        </p>
-        <div className="mt-4 flex items-center justify-between border-t border-[oklch(0.94_0.014_258)] pt-3">
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={service.active}
-              onCheckedChange={onToggle}
-              aria-label="Ativar serviço"
-            />
-            <span className="text-xs text-muted-foreground">
-              #{service.display_order ?? 0}
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate text-sm font-semibold text-foreground">
+            {service.name}
+          </h3>
+          {!ownImage && cover && (
+            <span className="hidden shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
+              img herdada
             </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-9 w-9 rounded-xl p-0 hover:bg-primary/10"
-              onClick={onEdit}
-              aria-label="Editar"
-            >
-              <Pencil size={15} />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-9 w-9 rounded-xl p-0 text-destructive hover:bg-destructive/10"
-              onClick={onDelete}
-              aria-label="Excluir"
-            >
-              <Trash2 size={15} />
-            </Button>
-          </div>
+          )}
         </div>
+        <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+          /{service.slug}
+          {service.description ? ` · ${service.description}` : ""}
+        </p>
       </div>
-    </article>
+
+      <div className="flex items-center gap-1.5 sm:gap-3">
+        <span className="hidden text-[11px] font-medium text-muted-foreground sm:inline">
+          #{service.display_order ?? 0}
+        </span>
+        <Switch
+          checked={service.active}
+          onCheckedChange={onToggle}
+          aria-label="Ativar serviço"
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 w-8 rounded-lg p-0 hover:bg-primary/10"
+          onClick={onEdit}
+          aria-label="Editar"
+        >
+          <Pencil size={14} />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 w-8 rounded-lg p-0 text-destructive hover:bg-destructive/10"
+          onClick={onDelete}
+          aria-label="Excluir"
+        >
+          <Trash2 size={14} />
+        </Button>
+      </div>
+    </li>
   );
 }
 
