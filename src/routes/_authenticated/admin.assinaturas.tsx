@@ -21,9 +21,9 @@ export const Route = createFileRoute("/_authenticated/admin/assinaturas")({
 
 const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const fmt = (d: string | null) => d ? new Date(d).toLocaleDateString("pt-BR") : "—";
-const toneFor: Record<string, "success" | "warning" | "danger" | "info" | "muted"> = {
+const toneFor: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
   active: "success", trialing: "info", past_due: "warning",
-  cancelled: "danger", expired: "muted",
+  cancelled: "danger", expired: "neutral",
 };
 
 function Page() {
@@ -77,7 +77,7 @@ function Page() {
     },
     {
       key: "status", header: "Status",
-      cell: (r) => <StatusPill tone={toneFor[r.status] ?? "muted"}>{r.status}</StatusPill>,
+      cell: (r) => <StatusPill tone={toneFor[r.status] ?? "neutral"}>{r.status}</StatusPill>,
       className: "w-32",
     },
     {
