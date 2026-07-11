@@ -101,18 +101,28 @@ export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isActive = (to: string) =>
     to === "/admin" ? pathname === "/admin" : pathname === to || pathname.startsWith(to + "/");
+  const { data: brand } = useBrand();
+  const brandName = brand?.brand_name ?? "ProConecta";
+  const logoUrl = brand?.logo_light_url ?? null;
+  const initial = brandName.trim().charAt(0).toUpperCase() || "P";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border/70 bg-sidebar">
         <Link to="/admin" className="flex items-center gap-3 px-1.5 py-2">
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_6px_18px_-6px_oklch(0.51_0.245_262/55%)]">
-            P
-          </div>
+          {logoUrl ? (
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white ring-1 ring-black/5 overflow-hidden">
+              <img src={logoUrl} alt={brandName} className="h-full w-full object-contain" />
+            </div>
+          ) : (
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_6px_18px_-6px_oklch(0.51_0.245_262/55%)]">
+              {initial}
+            </div>
+          )}
           {!collapsed && (
             <div className="min-w-0">
               <div className="truncate font-display text-[15px] font-extrabold tracking-tight text-sidebar-foreground">
-                ProConecta
+                {brandName}
               </div>
               <div className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-primary/70">
                 Console admin
@@ -121,6 +131,7 @@ export function AdminSidebar() {
           )}
         </Link>
       </SidebarHeader>
+
       <SidebarContent>
         {GROUPS.map((g) => (
           <SidebarGroup key={g.label}>
