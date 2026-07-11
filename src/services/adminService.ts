@@ -341,6 +341,139 @@ export async function updatePortfolioItem(
   if (error) throw error;
 }
 
+// ============= Documentos / Verificação (Bloco D) =============
+
+export type VerificationStatus = "pending" | "approved" | "rejected";
+
+export type AdminProDocument = {
+  id: string;
+  title: string;
+  institution: string | null;
+  issued_at: string | null;
+  document_url: string | null;
+  verification_status: VerificationStatus;
+  created_at: string;
+  signed_url: string | null;
+  file_name: string | null;
+};
+
+const DOC_BUCKET = "private-documents";
+
+function parseStoragePath(raw: string | null): { bucket: string; path: string } | null {
+  if (!raw) return null;
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return null;
+  // Accept "bucket/path" or "path" (assumed private-documents)
+  const idx = raw.indexOf("/");
+  if (idx > 0 && !raw.startsWith("/")) {
+    const maybeBucket = raw.slice(0, idx);
+    if (maybeBucket === DOC_BUCKET || maybeBucket === "public-media") {
+      return { bucket: maybeBucket, path: raw.slice(idx + 1) };
+    }
+  }
+  return { bucket: DOC_BUCKET, path: raw };
+}
+
+async function signDocumentUrl(raw: string | null): Promise<string | null> {
+  if (!raw) return null;
+  if (raw.startsWith("http")) return raw;
+  const parsed = parseStoragePath(raw);
+  if (!parsed) return null;
+  const { data, error } = await supabase.storage
+    .from(parsed.bucket)
+    .createSignedUrl(parsed.path, 60 * 30);
+  if (error) return null;
+  return data?.signedUrl ?? null;
+}
+
+export async function listProDocuments(professionalId: string): Promise<AdminProDocument[]> {
+  const { data, error } = await supabase
+    .from("certifications")
+    .select("id, title, institution, issued_at, document_url, verification_status, created_at")
+    .eq("professional_id", professionalId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const rows = (data ?? []) as Array<{
+    id: string; title: string; institution: string | null; issued_at: string | null;
+    document_url: string | null; verification_status: VerificationStatus; created_at: string;
+  }>;
+  const signed = await Promise.all(rows.map((r) => signDocumentUrl(r.document_url)));
+  return rows.map((r, i) => {
+    const parsed = parseStoragePath(r.document_url);
+    const file_name = parsed ? parsed.path.split("/").pop() ?? null : null;
+    return { ...r, signed_url: signed[i], file_name };
+  });
+}
+
+export async function uploadProDocument(params: {
+  professionalId: string;
+  professionalUserId: string | null;
+  file: File;
+  title: string;
+  institution?: string | null;
+  issued_at?: string | null;
+}): Promise<AdminProDocument> {
+  const { professionalId, professionalUserId, file, title, institution, issued_at } = params;
+  if (!professionalUserId) throw new Error("Este profissional não tem usuário vinculado.");
+  const safe = file.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+  const path = `${professionalUserId}/documents/${Date.now()}_${safe}`;
+  const up = await supabase.storage.from(DOC_BUCKET).upload(path, file, {
+    upsert: false,
+    contentType: file.type || undefined,
+  });
+  if (up.error) throw up.error;
+
+  const { data, error } = await supabase
+    .from("certifications")
+    .insert({
+      professional_id: professionalId,
+      title,
+      institution: institution ?? null,
+      issued_at: issued_at ?? null,
+      document_url: path,
+      verification_status: "pending",
+    })
+    .select("id, title, institution, issued_at, document_url, verification_status, created_at")
+    .single();
+  if (error) {
+    // rollback storage upload
+    await supabase.storage.from(DOC_BUCKET).remove([path]);
+    throw error;
+  }
+  const signed = await signDocumentUrl(data.document_url);
+  return {
+    ...(data as never as AdminProDocument),
+    signed_url: signed,
+    file_name: safe,
+  };
+}
+
+export async function setDocumentStatus(id: string, status: VerificationStatus) {
+  const { error } = await supabase
+    .from("certifications")
+    .update({ verification_status: status })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function updateDocumentMeta(
+  id: string,
+  patch: Partial<{ title: string; institution: string | null; issued_at: string | null }>,
+) {
+  const { error } = await supabase.from("certifications").update(patch as never).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteProDocument(id: string, storagePath: string | null) {
+  const { error } = await supabase.from("certifications").delete().eq("id", id);
+  if (error) throw error;
+  const parsed = parseStoragePath(storagePath);
+  if (parsed) {
+    await supabase.storage.from(parsed.bucket).remove([parsed.path]);
+  }
+}
+
+
+
 
 export type AdminReviewRow = {
   id: string;
