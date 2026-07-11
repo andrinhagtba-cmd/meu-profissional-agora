@@ -23,6 +23,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { categories, cities } from "@/data/categories";
 import { submitQuoteRequest } from "@/services/mockApi";
+import { submitQuoteToDb } from "@/services/clientService";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/pedir-orcamento")({
   validateSearch: (search: Record<string, unknown>) => ({

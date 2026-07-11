@@ -24,6 +24,9 @@ import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
+import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
+import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -100,6 +103,24 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPainelPerfilRoute =
+  AuthenticatedPainelPerfilRouteImport.update({
+    id: '/perfil',
+    path: '/perfil',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPedidosRoute =
+  AuthenticatedPainelPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelNotificacoesRoute =
+  AuthenticatedPainelNotificacoesRouteImport.update({
+    id: '/notificacoes',
+    path: '/notificacoes',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedPainelMidiaRoute =
   AuthenticatedPainelMidiaRouteImport.update({
     id: '/midia',
@@ -123,6 +144,9 @@ export interface FileRoutesByFullPath {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
+  '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,6 +164,9 @@ export interface FileRoutesByTo {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
+  '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,6 +186,9 @@ export interface FileRoutesById {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
+  '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
+  '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -178,6 +208,9 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/profissional/$slug'
     | '/painel/midia'
+    | '/painel/notificacoes'
+    | '/painel/pedidos'
+    | '/painel/perfil'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -195,6 +228,9 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/profissional/$slug'
     | '/painel/midia'
+    | '/painel/notificacoes'
+    | '/painel/pedidos'
+    | '/painel/perfil'
   id:
     | '__root__'
     | '/'
@@ -213,6 +249,9 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/profissional/$slug'
     | '/_authenticated/painel/midia'
+    | '/_authenticated/painel/notificacoes'
+    | '/_authenticated/painel/pedidos'
+    | '/_authenticated/painel/perfil'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -338,6 +377,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/painel/perfil': {
+      id: '/_authenticated/painel/perfil'
+      path: '/perfil'
+      fullPath: '/painel/perfil'
+      preLoaderRoute: typeof AuthenticatedPainelPerfilRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/pedidos': {
+      id: '/_authenticated/painel/pedidos'
+      path: '/pedidos'
+      fullPath: '/painel/pedidos'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/notificacoes': {
+      id: '/_authenticated/painel/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/painel/notificacoes'
+      preLoaderRoute: typeof AuthenticatedPainelNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/_authenticated/painel/midia': {
       id: '/_authenticated/painel/midia'
       path: '/midia'
@@ -350,10 +410,16 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
+  AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
+  AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRoute
+  AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelMidiaRoute: AuthenticatedPainelMidiaRoute,
+  AuthenticatedPainelNotificacoesRoute: AuthenticatedPainelNotificacoesRoute,
+  AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRoute,
+  AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =
