@@ -31,6 +31,7 @@ import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
 import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
 import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
@@ -194,6 +195,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedPainelTrabalhosRoute =
+  AuthenticatedPainelTrabalhosRouteImport.update({
+    id: '/trabalhos',
+    path: '/trabalhos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedPainelServicosRoute =
   AuthenticatedPainelServicosRouteImport.update({
     id: '/servicos',
@@ -578,6 +585,7 @@ export interface FileRoutesByFullPath {
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
@@ -652,6 +660,7 @@ export interface FileRoutesByTo {
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
@@ -730,6 +739,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/_authenticated/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
@@ -808,6 +818,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/painel/trabalhos'
     | '/admin/'
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
@@ -882,6 +893,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/painel/trabalhos'
     | '/admin'
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
@@ -959,6 +971,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/perfil'
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
+    | '/_authenticated/painel/trabalhos'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/profissionais/$id'
     | '/_authenticated/admin/profissionais/novo'
@@ -1143,6 +1156,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/painel/trabalhos': {
+      id: '/_authenticated/painel/trabalhos'
+      path: '/trabalhos'
+      fullPath: '/painel/trabalhos'
+      preLoaderRoute: typeof AuthenticatedPainelTrabalhosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
     }
     '/_authenticated/painel/servicos': {
       id: '/_authenticated/painel/servicos'
@@ -1669,6 +1689,7 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
   AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
   AuthenticatedPainelServicosRoute: typeof AuthenticatedPainelServicosRoute
+  AuthenticatedPainelTrabalhosRoute: typeof AuthenticatedPainelTrabalhosRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
@@ -1681,6 +1702,7 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
   AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
   AuthenticatedPainelServicosRoute: AuthenticatedPainelServicosRoute,
+  AuthenticatedPainelTrabalhosRoute: AuthenticatedPainelTrabalhosRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =
@@ -1724,3 +1746,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
