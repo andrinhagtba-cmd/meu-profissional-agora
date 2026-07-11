@@ -70,7 +70,7 @@ export const Route = createFileRoute("/profissional/$slug")({
   component: ProfilePage,
 });
 
-function ratingDistribution(reviews: Review[]) {
+function ratingDistribution(reviews: PublicReview[]) {
   const dist = [0, 0, 0, 0, 0];
   reviews.forEach((r) => {
     dist[Math.round(r.rating) - 1] += 1;
