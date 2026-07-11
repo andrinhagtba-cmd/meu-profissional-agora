@@ -191,3 +191,90 @@
   --sidebar-border: oklch(0.26 0.03 265);
   --sidebar-ring: oklch(0.65 0.20 262);
 }
+
+/* =========================================================
+   Admin shell — navy sidebar always, refined tokens.
+   Scope: only inside `.admin-shell` (never affects public site).
+   ========================================================= */
+.admin-shell {
+  --sidebar: oklch(0.22 0.055 265);
+  --sidebar-foreground: oklch(0.94 0.01 258);
+  --sidebar-primary: oklch(0.62 0.22 262);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.28 0.06 265);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.30 0.05 265);
+  --sidebar-ring: oklch(0.62 0.22 262);
+}
+.dark .admin-shell {
+  --sidebar: oklch(0.15 0.03 265);
+  --sidebar-accent: oklch(0.24 0.05 265);
+  --sidebar-border: oklch(0.24 0.04 265);
+}
+
+/* Group label — small, uppercase, subdued on navy */
+.admin-shell [data-sidebar="group-label"] {
+  color: color-mix(in oklab, var(--sidebar-foreground) 55%, transparent);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding-top: 0.75rem;
+}
+
+/* Menu button: quiet default, hover lift, active = blue fill + soft glow */
+.admin-shell [data-sidebar="menu-button"] {
+  color: color-mix(in oklab, var(--sidebar-foreground) 78%, transparent);
+  border-radius: 0.6rem;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+.admin-shell [data-sidebar="menu-button"]:hover {
+  background: color-mix(in oklab, var(--sidebar-foreground) 8%, transparent);
+  color: var(--sidebar-foreground);
+}
+.admin-shell [data-sidebar="menu-button"][data-active="true"] {
+  background: linear-gradient(180deg,
+    oklch(0.58 0.22 262) 0%,
+    oklch(0.50 0.24 262) 100%);
+  color: #fff;
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, #fff 18%, transparent) inset,
+    0 6px 18px -6px oklch(0.55 0.24 262 / 55%);
+}
+.admin-shell [data-sidebar="menu-button"][data-active="true"] svg {
+  color: #fff;
+}
+
+/* Group separator */
+.admin-shell [data-sidebar="group"] + [data-sidebar="group"] {
+  border-top: 1px solid color-mix(in oklab, var(--sidebar-border) 60%, transparent);
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+/* Softer card shadow + hairline border inside admin */
+.admin-shell .admin-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  box-shadow: 0 1px 2px oklch(0.2 0.05 265 / 4%), 0 8px 24px -18px oklch(0.2 0.05 265 / 18%);
+}
+
+/* Sticky table header helper */
+.admin-shell .table-sticky thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Admin entrance animation */
+@keyframes admin-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.admin-shell main > * {
+  animation: admin-fade-in 200ms ease-out both;
+}
+
