@@ -143,8 +143,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <BrandDocumentSync />
       <Outlet />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
+
