@@ -73,6 +73,7 @@ const initialForm: FormState = {
 
 function PedirOrcamentoPage() {
   const { categoria: categoriaParam } = Route.useSearch();
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
     ...initialForm,
@@ -82,8 +83,20 @@ function PedirOrcamentoPage() {
   const [protocol, setProtocol] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: () => submitQuoteRequest(form as unknown as Record<string, unknown>),
-    onSuccess: (res) => setProtocol(res.protocol),
+    mutationFn: async () => {
+      if (user) {
+        return submitQuoteToDb(user.id, {
+          categoriaSlug: form.categoria,
+          servico: form.servico,
+          descricao: form.descricao,
+          cidade: form.cidade,
+          bairro: form.bairro,
+          urgencia: form.urgencia,
+        });
+      }
+      return submitQuoteRequest(form as unknown as Record<string, unknown>);
+    },
+    onSuccess: (res) => setProtocol(res.protocol ?? null),
   });
 
   const set = (key: keyof FormState, value: string) => {
