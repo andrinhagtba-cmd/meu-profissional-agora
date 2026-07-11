@@ -6,6 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProfessionalCard } from "@/components/shared/ProfessionalCard";
 import { images } from "@/data/images";
 import { getFeaturedProfessionals } from "@/services/mockApi";
+import bgImage from "@/assets/featured-pros-bg.jpg";
+
 
 export function FeaturedPros() {
   const { data: pros, isLoading } = useQuery({
