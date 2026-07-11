@@ -409,11 +409,12 @@ export async function updateQuoteStatus(
   newStatus: "in_progress" | "completed" | "cancelled",
   note?: string,
 ) {
-  const { error } = await supabase.rpc("update_quote_status", {
+  const payload: { _quote_id: string; _new_status: string; _note?: string } = {
     _quote_id: quoteId,
     _new_status: newStatus,
-    _note: note ?? null,
-  });
+  };
+  if (note) payload._note = note;
+  const { error } = await supabase.rpc("update_quote_status", payload);
   if (error) throw error;
 }
 
