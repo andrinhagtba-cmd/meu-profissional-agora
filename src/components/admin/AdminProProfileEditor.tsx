@@ -22,6 +22,7 @@ type ProfileStatus = "draft" | "published" | "archived";
 type FormState = {
   professional_name: string;
   business_name: string;
+  slug: string;
   description: string;
   city: string;
   state: string;
@@ -45,6 +46,7 @@ function toForm(pro: AdminProDetail): FormState {
   return {
     professional_name: pro.professional_name ?? "",
     business_name: pro.business_name ?? "",
+    slug: pro.slug ?? "",
     description: pro.description ?? "",
     city: pro.city ?? "",
     state: pro.state ?? "",
@@ -67,6 +69,8 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   };
   setIf("professional_name", norm(f.professional_name), pro.professional_name);
   setIf("business_name", norm(f.business_name), pro.business_name);
+  const slugNorm = f.slug.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+  setIf("slug", slugNorm === "" ? null : slugNorm, pro.slug);
   setIf("description", norm(f.description), pro.description);
   setIf("city", norm(f.city), pro.city);
   setIf("state", norm(f.state), pro.state);
@@ -160,6 +164,17 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
           <Field label="Descrição / apresentação">
             <Textarea rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Bio pública, especialidades, diferenciais…" />
+          </Field>
+
+          <Field label="Slug público (URL)">
+            <Input
+              value={form.slug}
+              onChange={(e) => set("slug", e.target.value)}
+              placeholder="ex: heitor-frannini"
+            />
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Usado em /profissional/&lt;slug&gt;. Apenas letras, números e hífen.
+            </p>
           </Field>
 
           <div className="grid gap-3 sm:grid-cols-3">

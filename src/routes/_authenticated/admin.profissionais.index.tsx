@@ -302,10 +302,10 @@ function ProfessionalCard({
   return (
     <article className="group relative overflow-hidden rounded-[1.75rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
       <div
-        className="relative h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
+        className="relative z-0 h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
         style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
       />
-      <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
         <Checkbox
           checked={selected}
           onCheckedChange={onToggle}
@@ -341,8 +341,8 @@ function ProfessionalCard({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <button type="button" onClick={() => onOpen("overview")} className="block w-full p-5 pt-0 text-left">
-        <div className="-mt-9 flex items-end justify-between gap-3">
+      <button type="button" onClick={() => onOpen("overview")} className="relative z-10 block w-full p-5 pt-0 text-left">
+        <div className="-mt-12 flex items-end justify-between gap-3">
           {pro.avatar_url ? (
             <img
               src={pro.avatar_url}

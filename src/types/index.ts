@@ -31,6 +31,8 @@ export interface Professional {
   company?: string;
   initials: string;
   avatarColor: string;
+  avatarUrl?: string | null;
+  coverUrl?: string | null;
   specialty: string;
   categorySlug: string;
   verified: boolean;
