@@ -21,6 +21,9 @@ import {
   rejectProposalRpc,
   type ReceivedProposal,
 } from "@/services/clientService";
+import { getReviewForQuote, submitReview } from "@/services/adminService";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
