@@ -300,3 +300,108 @@ export async function getAdminFunnel(): Promise<AdminFunnel> {
     reviewed: reviewsRes.count ?? 0,
   };
 }
+
+// ============ Etapa 3 — People Management ============
+
+export type AdminUserFull = {
+  user_id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  city: string | null;
+  state: string | null;
+  account_status: string | null;
+  created_at: string;
+  roles: string[];
+};
+
+async function fetchRolesMap(userIds: string[]): Promise<Map<string, string[]>> {
+  const map = new Map<string, string[]>();
+  if (userIds.length === 0) return map;
+  const { data, error } = await supabase.from("user_roles").select("user_id, role").in("user_id", userIds);
+  if (error) throw error;
+  for (const r of (data ?? []) as Array<{ user_id: string; role: string }>) {
+    const arr = map.get(r.user_id) ?? [];
+    arr.push(r.role);
+    map.set(r.user_id, arr);
+  }
+  return map;
+}
+
+export async function listUsersFull(opts: { search?: string; role?: string; status?: string; limit?: number } = {}): Promise<AdminUserFull[]> {
+  const { search = "", role, status, limit = 200 } = opts;
+  let userIdsFilter: string[] | null = null;
+  if (role) {
+    const { data, error } = await supabase.from("user_roles").select("user_id").eq("role", role as never).limit(2000);
+    if (error) throw error;
+    userIdsFilter = ((data ?? []) as Array<{ user_id: string }>).map((r) => r.user_id);
+    if (userIdsFilter.length === 0) return [];
+  }
+  let q = supabase
+    .from("profiles")
+    .select("user_id, full_name, email, phone, city, state, account_status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (search) q = q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+  if (status) q = q.eq("account_status", status as never);
+  if (userIdsFilter) q = q.in("user_id", userIdsFilter);
+  const { data, error } = await q;
+  if (error) throw error;
+  const rows = (data ?? []) as Array<Omit<AdminUserFull, "roles">>;
+  const roles = await fetchRolesMap(rows.map((r) => r.user_id));
+  return rows.map((r) => ({ ...r, roles: roles.get(r.user_id) ?? [] }));
+}
+
+export type AccountStatus = "active" | "suspended" | "pending";
+
+export async function updateAccountStatus(userId: string, status: AccountStatus) {
+  const { error } = await supabase.from("profiles").update({ account_status: status }).eq("user_id", userId);
+  if (error) throw error;
+}
+
+export async function bulkUpdateAccountStatus(userIds: string[], status: AccountStatus) {
+  if (userIds.length === 0) return;
+  const { error } = await supabase.from("profiles").update({ account_status: status }).in("user_id", userIds);
+  if (error) throw error;
+}
+
+
+export async function grantRole(userId: string, role: "admin" | "profissional" | "cliente") {
+  const { error } = await supabase.from("user_roles").insert({ user_id: userId, role } as never);
+  if (error && !String(error.message).includes("duplicate")) throw error;
+}
+
+export async function revokeRole(userId: string, role: "admin" | "profissional" | "cliente") {
+  const { error } = await supabase.from("user_roles").delete().eq("user_id", userId).eq("role", role as never);
+  if (error) throw error;
+}
+
+export type AdminVerificationRow = {
+  id: string;
+  slug: string | null;
+  professional_name: string | null;
+  business_name: string | null;
+  whatsapp: string | null;
+  city: string | null;
+  state: string | null;
+  verification_status: string;
+  created_at: string;
+  description: string | null;
+};
+
+export async function listVerificationQueue(status: string = "pending"): Promise<AdminVerificationRow[]> {
+  const { data, error } = await supabase
+    .from("professional_profiles")
+    .select("id, slug, professional_name, business_name, whatsapp, city, state, verification_status, created_at, description")
+    .eq("verification_status", status as never)
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return (data ?? []) as AdminVerificationRow[];
+}
+
+export async function bulkVerifyPros(ids: string[], status: "approved" | "rejected") {
+  if (ids.length === 0) return;
+  const { error } = await supabase.from("professional_profiles").update({ verification_status: status }).in("id", ids);
+  if (error) throw error;
+}
