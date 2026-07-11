@@ -20,6 +20,8 @@ import {
   getProDetail, setProVerification, setProFeatured, setProProfileStatus,
 } from "@/services/adminService";
 import { AdminProProfileEditor } from "@/components/admin/AdminProProfileEditor";
+import { AdminProServicesPanel } from "@/components/admin/AdminProServicesPanel";
+import { AdminProPortfolioPanel } from "@/components/admin/AdminProPortfolioPanel";
 
 const VERIF_LABEL: Record<string, string> = {
   pending: "Aguardando análise", approved: "Verificado", rejected: "Rejeitado",
@@ -245,13 +247,22 @@ function AdminProDetailPage() {
               <AdminProProfileEditor pro={pro} />
             </TabsContent>
 
-            {["services","portfolio","documents","reviews","activity"].map((k) => (
+            <TabsContent value="services" className="mt-4">
+              <AdminProServicesPanel professionalId={pro.id} />
+            </TabsContent>
+
+            <TabsContent value="portfolio" className="mt-4">
+              <AdminProPortfolioPanel professionalId={pro.id} professionalUserId={pro.user_id} />
+            </TabsContent>
+
+            {["documents","reviews","activity"].map((k) => (
               <TabsContent key={k} value={k} className="mt-4">
                 <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">
-                  Este bloco será liberado nos próximos entregáveis (Bloco C em diante).
+                  Este bloco será liberado nos próximos entregáveis (Bloco D em diante).
                 </CardContent></Card>
               </TabsContent>
             ))}
+
           </Tabs>
         </div>
 
