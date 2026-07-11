@@ -1,60 +1,71 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { listQuotes } from "@/services/adminService";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminToolbar } from "@/components/admin/AdminToolbar";
+import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTable";
+import { listQuotesFull, type AdminQuoteFull } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/pedidos")({
-  component: AdminQuotes,
+  head: () => ({ meta: [{ title: "Pedidos — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  component: Page,
 });
 
-const STATUS = ["", "open", "receiving_proposals", "professional_selected", "in_progress", "completed", "cancelled"];
+const STATUS_FILTERS = [
+  { value: "", label: "Todos" },
+  { value: "open", label: "Abertos" },
+  { value: "receiving_proposals", label: "Recebendo propostas" },
+  { value: "professional_selected", label: "Profissional selecionado" },
+  { value: "in_progress", label: "Em andamento" },
+  { value: "completed", label: "Concluídos" },
+  { value: "cancelled", label: "Cancelados" },
+];
 
-function AdminQuotes() {
-  const [filter, setFilter] = useState("");
+function statusTone(s: string): "success" | "warning" | "info" | "neutral" | "danger" {
+  if (s === "completed") return "success";
+  if (s === "cancelled" || s === "expired") return "danger";
+  if (s === "in_progress" || s === "professional_selected") return "info";
+  if (s === "open" || s === "receiving_proposals") return "warning";
+  return "neutral";
+}
+
+function Page() {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-quotes", filter],
-    queryFn: () => listQuotes(filter || undefined),
+    queryKey: ["admin-quotes-full", search, status],
+    queryFn: () => listQuotesFull({ search, status: status || undefined }),
   });
 
+  const columns: Column<AdminQuoteFull>[] = [
+    {
+      key: "title", header: "Pedido", cell: (r) => (
+        <div>
+          <div className="font-semibold text-foreground">{r.title}</div>
+          <div className="text-xs text-muted-foreground">{r.category?.name ?? "—"}</div>
+        </div>
+      ),
+    },
+    { key: "client", header: "Cliente", cell: (r) => r.client?.full_name ?? r.client?.email ?? "—" },
+    { key: "loc", header: "Local", cell: (r) => <span className="text-muted-foreground">{r.city}/{r.state}</span> },
+    { key: "urg", header: "Urgência", cell: (r) => <span className="text-xs">{r.urgency ?? "—"}</span> },
+    { key: "props", header: "Propostas", cell: (r) => <span className="font-semibold text-primary">{r.proposals_count ?? 0}</span>, className: "w-24 text-center" },
+    { key: "status", header: "Status", cell: (r) => <StatusPill tone={statusTone(r.status)}>{r.status}</StatusPill> },
+    { key: "at", header: "Criado", cell: (r) => <span className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString("pt-BR")}</span>, className: "w-28" },
+  ];
+
   return (
-    <div>
-      <div className="mb-4 flex flex-wrap gap-2">
-        {STATUS.map((s) => (
-          <button key={s} onClick={() => setFilter(s)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-              filter === s ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:text-foreground"
-            }`}>{s || "Todos"}</button>
-        ))}
-      </div>
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead className="bg-secondary/50 text-xs uppercase text-muted-foreground">
-            <tr>
-              <th className="px-4 py-3 text-left">Título</th>
-              <th className="px-4 py-3 text-left">Local</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">Criado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}><td colSpan={4} className="p-3"><Skeleton className="h-6 w-full" /></td></tr>
-              ))
-            ) : !data || data.length === 0 ? (
-              <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Nenhum pedido.</td></tr>
-            ) : data.map((q) => (
-              <tr key={q.id} className="border-t border-border">
-                <td className="px-4 py-3 font-medium">{q.title}</td>
-                <td className="px-4 py-3 text-muted-foreground">{q.city}/{q.state}</td>
-                <td className="px-4 py-3"><span className="rounded-full bg-secondary px-2 py-0.5 text-xs">{q.status}</span></td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">{new Date(q.created_at).toLocaleDateString("pt-BR")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <>
+      <AdminPageHeader title="Pedidos de orçamento" description="Todos os pedidos criados por clientes." />
+      <AdminToolbar
+        search={search} onSearch={setSearch} placeholder="Buscar pedido…"
+        filters={STATUS_FILTERS} activeFilter={status} onFilterChange={setStatus}
+      />
+      <AdminTable
+        columns={columns} rows={data} isLoading={isLoading}
+        rowKey={(r) => r.id} emptyText="Nenhum pedido encontrado."
+      />
+    </>
   );
 }
