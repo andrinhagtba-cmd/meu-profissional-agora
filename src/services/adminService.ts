@@ -1539,8 +1539,6 @@ export type AdminSolicitacaoRow = {
   urgency: string | null;
   service_type?: string | null;
   preferred_date?: string | null;
-  budget_min?: number | null;
-  budget_max?: number | null;
   created_at: string;
   client?: { full_name: string | null; email: string | null; phone: string | null } | null;
   category?: { name: string | null; slug: string | null } | null;
