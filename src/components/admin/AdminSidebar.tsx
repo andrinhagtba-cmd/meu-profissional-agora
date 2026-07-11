@@ -4,7 +4,7 @@ import {
   ClipboardList, MessageSquare, Zap, Star, Flag, CreditCard, Sparkles,
   Ticket, Receipt, Image as ImageIcon, LayoutTemplate, Home, FileText,
   BookOpen, HelpCircle, Quote, Bell, Mail, Send, Settings, Plug, KeyRound,
-  ScrollText, Lock, Activity, Building2, Award,
+  ScrollText, Lock, Activity, Building2, Award, BarChart3,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
