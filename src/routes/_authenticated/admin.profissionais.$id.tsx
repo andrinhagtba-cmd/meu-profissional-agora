@@ -241,10 +241,14 @@ function AdminProDetailPage() {
               </Card>
             </TabsContent>
 
-            {["profile","services","portfolio","documents","reviews","activity"].map((k) => (
+            <TabsContent value="profile" className="mt-4">
+              <AdminProProfileEditor pro={pro} />
+            </TabsContent>
+
+            {["services","portfolio","documents","reviews","activity"].map((k) => (
               <TabsContent key={k} value={k} className="mt-4">
                 <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">
-                  Este bloco será liberado nos próximos entregáveis (Bloco B em diante).
+                  Este bloco será liberado nos próximos entregáveis (Bloco C em diante).
                 </CardContent></Card>
               </TabsContent>
             ))}
