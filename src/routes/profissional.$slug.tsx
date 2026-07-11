@@ -33,15 +33,19 @@ import {
   getRelatedProfessionals,
   registerWhatsAppLead,
 } from "@/services/mockApi";
-import { listApprovedReviewsBySlug, type PublicReview } from "@/services/professionalService";
+import { listApprovedReviewsBySlug, getProfessionalBySlug, type PublicReview } from "@/services/professionalService";
+
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
 export const Route = createFileRoute("/profissional/$slug")({
-  loader: ({ params }) => {
-    const pro = professionals.find((p) => p.slug === params.slug);
-    if (!pro) throw notFound();
-    return { pro };
+  loader: async ({ params }) => {
+    const mock = professionals.find((p) => p.slug === params.slug);
+    if (mock) return { pro: mock };
+    const db = await getProfessionalBySlug(params.slug).catch(() => undefined);
+    if (!db) throw notFound();
+    return { pro: db };
   },
+
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
