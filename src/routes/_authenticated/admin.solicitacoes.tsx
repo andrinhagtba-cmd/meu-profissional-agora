@@ -84,11 +84,6 @@ const FILTERS: { value: string; label: string }[] = [
   { value: "cancelled", label: "Cancelados" },
 ];
 
-function fmtCurrency(v: number | null | undefined) {
-  if (v == null) return "—";
-  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
-}
-
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
@@ -321,7 +316,7 @@ function ListCard({ row, onOpen }: { row: AdminSolicitacaoRow; onOpen: () => voi
           <span>{row.client?.full_name ?? "Cliente anônimo"}</span>
           <span className="inline-flex items-center gap-1"><MapPin size={11} />{row.city ?? "—"}/{row.state ?? ""}</span>
           <span className="inline-flex items-center gap-1"><Users size={11} />{row.proposals_count ?? 0} propostas</span>
-          <span>{fmtCurrency(row.budget_max ?? row.budget_min)}</span>
+          <span>{row.service_type ?? "Orçamento a combinar"}</span>
           <span>{timeAgo(row.created_at)}</span>
         </div>
       </div>
@@ -355,7 +350,8 @@ function DetailSheet({ row, onClose, onStatus, saving }: { row: AdminSolicitacao
 
               <div className="grid grid-cols-2 gap-3">
                 <Info label="Categoria" value={row.category?.name ?? "—"} />
-                <Info label="Orçamento" value={`${fmtCurrency(row.budget_min)} — ${fmtCurrency(row.budget_max)}`} />
+                <Info label="Tipo" value={row.service_type ?? "Orçamento a combinar"} />
+                <Info label="Data preferida" value={row.preferred_date ? fmtDate(row.preferred_date) : "—"} />
                 <Info label="Cliente" value={row.client?.full_name ?? "—"} />
                 <Info label="Email" value={row.client?.email ?? "—"} />
                 <Info label="Telefone" value={row.client?.phone ?? "—"} />
