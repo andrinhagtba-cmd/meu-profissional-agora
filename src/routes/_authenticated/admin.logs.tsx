@@ -149,7 +149,7 @@ function LogsPage() {
                               {l.entity_type && <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{l.entity_type}</span>}
                             </div>
                             <div className="mt-2 flex items-center gap-2">
-                              <InitialsAvatar name={l.admin_name} className="h-7 w-7" />
+                              <InitialsAvatar name={l.admin_name ?? null} className="h-7 w-7" />
                               <div className="min-w-0">
                                 <p className="truncate text-sm font-semibold text-foreground">{l.admin_name || "Admin"}</p>
                                 <p className="truncate text-xs text-muted-foreground">{l.admin_email || l.admin_user_id.slice(0, 8)}</p>
