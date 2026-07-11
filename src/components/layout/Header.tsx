@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBrand } from "@/hooks/use-brand";
+import { getMyProfile } from "@/services/clientService";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,6 +86,13 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: myProfile } = useQuery({
+    queryKey: ["my-profile-header", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
+  const avatarUrl = myProfile?.avatar_url ?? null;
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -132,9 +141,13 @@ export function Header() {
                 <button
                   type="button"
                   aria-label="Minha conta"
-                  className="hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold transition-colors hover:bg-primary/90 sm:inline-flex"
+                  className="hidden h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground text-sm font-semibold transition-colors hover:bg-primary/90 sm:inline-flex"
                 >
-                  {(user.email ?? "?").slice(0, 1).toUpperCase()}
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    (user.email ?? "?").slice(0, 1).toUpperCase()
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
