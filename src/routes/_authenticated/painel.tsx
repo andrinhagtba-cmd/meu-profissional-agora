@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -433,10 +433,6 @@ function KpiCard({
   to?: string;
   tone?: "blue" | "orange" | "amber" | "emerald";
 }) {
-  const navigate = useNavigate();
-  const open = () => {
-    if (to) navigate({ to: to as never });
-  };
   const inner = (
     <div className="group relative h-full overflow-hidden rounded-2xl border border-border bg-card p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
       <div className="flex items-start justify-between">
@@ -458,14 +454,13 @@ function KpiCard({
     </div>
   );
   return to ? (
-    <button
-      type="button"
-      onClick={open}
+    <Link
+      to={to as never}
       className="block h-full w-full cursor-pointer rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label={`Abrir ${label}`}
     >
       {inner}
-    </button>
+    </Link>
   ) : inner;
 }
 
@@ -482,13 +477,10 @@ function ActionCard({
   icon: React.ReactNode;
   search?: never;
 }) {
-  const navigate = useNavigate();
-  const open = () => navigate({ to: to as never, search });
-
   return (
-    <button
-      type="button"
-      onClick={open}
+    <Link
+      to={to as never}
+      search={search}
       className="group flex h-full w-full cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label={`Abrir ${title}`}
     >
@@ -499,7 +491,7 @@ function ActionCard({
         <p className="font-display text-sm font-bold text-foreground">{title}</p>
         <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{desc}</p>
       </div>
-    </button>
+    </Link>
   );
 }
 
