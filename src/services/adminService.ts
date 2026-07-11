@@ -229,6 +229,119 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
   };
 }
 
+// ============= Serviços do profissional (Bloco C) =============
+
+export type ProPriceType = "fixed" | "hourly" | "daily" | "per_visit" | "to_quote";
+
+export type AdminProServiceRow = {
+  id: string;
+  service_id: string;
+  description: string | null;
+  starting_price: number | null;
+  price_type: ProPriceType;
+  active: boolean;
+  created_at: string;
+  service: {
+    id: string;
+    name: string;
+    slug: string | null;
+    category: { id: string; name: string } | null;
+  } | null;
+};
+
+export async function listProServices(professionalId: string): Promise<AdminProServiceRow[]> {
+  const { data, error } = await supabase
+    .from("professional_services")
+    .select(`
+      id, service_id, description, starting_price, price_type, active, created_at,
+      service:service_id (
+        id, name, slug,
+        category:category_id ( id, name )
+      )
+    `)
+    .eq("professional_id", professionalId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as AdminProServiceRow[];
+}
+
+export type ServiceCatalogRow = {
+  id: string;
+  name: string;
+  slug: string | null;
+  active: boolean;
+  category: { id: string; name: string } | null;
+};
+
+export async function listServiceCatalog(): Promise<ServiceCatalogRow[]> {
+  const { data, error } = await supabase
+    .from("services")
+    .select("id, name, slug, active, category:category_id(id, name)")
+    .eq("active", true)
+    .order("name");
+  if (error) throw error;
+  return (data ?? []) as unknown as ServiceCatalogRow[];
+}
+
+export type ProServicePatch = Partial<{
+  description: string | null;
+  starting_price: number | null;
+  price_type: ProPriceType;
+  active: boolean;
+}>;
+
+export async function createProService(
+  professionalId: string,
+  serviceId: string,
+  patch: ProServicePatch,
+) {
+  const { error } = await supabase.from("professional_services").insert({
+    professional_id: professionalId,
+    service_id: serviceId,
+    description: patch.description ?? null,
+    starting_price: patch.starting_price ?? null,
+    price_type: (patch.price_type ?? "to_quote") as never,
+    active: patch.active ?? true,
+  });
+  if (error) throw error;
+}
+
+export async function updateProService(id: string, patch: ProServicePatch) {
+  const { error } = await supabase
+    .from("professional_services")
+    .update(patch as never)
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteProService(id: string) {
+  const { error } = await supabase.from("professional_services").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// ============= Portfólio (Bloco C) =============
+
+export type AdminPortfolioItem = {
+  id: string;
+  title: string | null;
+  description: string | null;
+  media_asset_id: string | null;
+  image_url: string | null;
+  sort_order: number;
+  status: string;
+  created_at: string;
+  url: string; // resolved (signed) URL for display
+};
+
+export async function updatePortfolioItem(
+  id: string,
+  patch: Partial<{ title: string | null; description: string | null; sort_order: number; status: string }>,
+) {
+  const { error } = await supabase.from("portfolio_items").update(patch as never).eq("id", id);
+  if (error) throw error;
+}
+
+
 export type AdminReviewRow = {
   id: string;
   rating: number;
