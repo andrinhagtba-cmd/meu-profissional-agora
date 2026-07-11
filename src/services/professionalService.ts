@@ -258,12 +258,6 @@ export async function listApprovedReviewsBySlug(
   if (pErr) throw pErr;
   if (!pro?.id) return [];
   return listApprovedReviewsByPro(pro.id as string, limit);
-}
-  rating: number;
-  comment: string | null;
-  reply: string | null;
-  createdAt: string;
-};
 
 export async function listApprovedReviewsByPro(
   proId: string,
