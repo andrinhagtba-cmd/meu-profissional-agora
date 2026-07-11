@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { listMyQuotes, type MyQuote } from "@/services/clientService";
 
-export const Route = createFileRoute("/_authenticated/painel/pedidos/")({
+export const Route = createFileRoute("/_authenticated/painel/pedidos")({
   head: () => ({
     meta: [
       { title: "Meus pedidos — ProConecta" },

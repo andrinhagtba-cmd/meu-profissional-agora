@@ -63,7 +63,7 @@ const FILTERS = [
   { value: "featured", label: "Destaques", icon: Sparkles },
 ];
 
-export const Route = createFileRoute("/_authenticated/admin/profissionais/")({
+export const Route = createFileRoute("/_authenticated/admin/profissionais")({
   head: () => ({ meta: [{ title: "Profissionais · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: AdminPros,
 });
