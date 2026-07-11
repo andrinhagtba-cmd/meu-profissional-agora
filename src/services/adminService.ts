@@ -84,15 +84,22 @@ export type AdminProRow = {
   average_rating: number | null;
   reviews_count: number | null;
   created_at: string;
+  whatsapp: string | null;
+  description: string | null;
 };
 
-export async function listPros(status?: string): Promise<AdminProRow[]> {
+export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at")
+    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description")
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(200);
   if (status) q = q.eq("verification_status", status as never);
+  if (typeof featured === "boolean") q = q.eq("is_featured", featured);
+  if (search && search.trim()) {
+    const s = search.trim().replace(/[%,]/g, "");
+    q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%,slug.ilike.%${s}%`);
+  }
   const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as AdminProRow[];
@@ -107,6 +114,13 @@ export async function setProVerification(id: string, status: "approved" | "rejec
 export async function setProFeatured(id: string, featured: boolean) {
   const { error } = await supabase
     .from("professional_profiles").update({ is_featured: featured }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function bulkFeaturePros(ids: string[], featured: boolean) {
+  if (ids.length === 0) return;
+  const { error } = await supabase
+    .from("professional_profiles").update({ is_featured: featured }).in("id", ids);
   if (error) throw error;
 }
 
