@@ -538,10 +538,11 @@ export type Database = {
           reviews_count: number
           service_types: Database["public"]["Enums"]["service_type"][]
           slug: string | null
+          source: string
           starting_price: number | null
           state: string | null
           updated_at: string
-          user_id: string
+          user_id: string | null
           verification_status: Database["public"]["Enums"]["verification_status"]
           whatsapp: string | null
           years_experience: number | null
@@ -564,10 +565,11 @@ export type Database = {
           reviews_count?: number
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
+          source?: string
           starting_price?: number | null
           state?: string | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
           whatsapp?: string | null
           years_experience?: number | null
@@ -590,10 +592,11 @@ export type Database = {
           reviews_count?: number
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
+          source?: string
           starting_price?: number | null
           state?: string | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
           whatsapp?: string | null
           years_experience?: number | null
