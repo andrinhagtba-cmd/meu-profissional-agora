@@ -26,35 +26,35 @@ export const Route = createFileRoute("/_authenticated/admin/empresas")({
   component: EmpresasPage,
 });
 
-const STAGE_LABEL: Record<B2BCompanyRow["stage"], string> = {
-  lead: "Lead", contacted: "Contactado", negotiating: "Negociando", customer: "Cliente", churned: "Perdido",
+const STATUS_LABEL: Record<B2BCompanyRow["status"], string> = {
+  prospect: "Prospect", negotiating: "Negociando", active: "Ativo", paused: "Pausado", lost: "Perdido",
 };
-const STAGE_TONE: Record<B2BCompanyRow["stage"], "info" | "warning" | "success" | "neutral" | "danger"> = {
-  lead: "info", contacted: "warning", negotiating: "warning", customer: "success", churned: "danger",
+const STATUS_TONE: Record<B2BCompanyRow["status"], "info" | "warning" | "success" | "neutral" | "danger"> = {
+  prospect: "info", negotiating: "warning", active: "success", paused: "neutral", lost: "danger",
 };
 
 function EmpresasPage() {
   const qc = useQueryClient();
-  const [stage, setStage] = useState("");
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<B2BCompanyRow> | null>(null);
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["admin-b2b", stage, search],
-    queryFn: () => listB2BCompanies({ stage: stage || undefined, search: search || undefined }),
+    queryKey: ["admin-b2b", status, search],
+    queryFn: () => listB2BCompanies({ status: status || undefined, search: search || undefined }),
   });
 
   const stats = useMemo(() => ({
     total: data.length,
-    active: data.filter((c) => c.stage === "customer").length,
-    pipeline: data.filter((c) => c.stage === "lead" || c.stage === "contacted" || c.stage === "negotiating").length,
-    mrr: data.reduce((s, c) => s + (c.stage === "customer" ? Number(c.contract_value || 0) : 0), 0),
+    active: data.filter((c) => c.status === "active").length,
+    pipeline: data.filter((c) => c.status === "prospect" || c.status === "negotiating").length,
+    mrr: data.reduce((s, c) => s + (c.status === "active" ? Number(c.monthly_volume || 0) : 0), 0),
   }), [data]);
 
-  const stageCount = (s: B2BCompanyRow["stage"]) => data.filter((c) => c.stage === s).length;
+  const statusCount = (s: B2BCompanyRow["status"]) => data.filter((c) => c.status === s).length;
 
   const save = useMutation({
-    mutationFn: (v: Partial<B2BCompanyRow> & { company_name: string }) => upsertB2BCompany(v),
+    mutationFn: (v: Partial<B2BCompanyRow> & { name: string }) => upsertB2BCompany(v),
     onSuccess: () => { toast.success("Empresa salva"); qc.invalidateQueries({ queryKey: ["admin-b2b"] }); setEditing(null); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -81,10 +81,10 @@ function EmpresasPage() {
               <Metric icon={<Building2 size={18} />} label="Empresas" value={stats.total} />
               <Metric icon={<CheckCircle2 size={18} />} label="Clientes ativos" value={stats.active} />
               <Metric icon={<TrendingUp size={18} />} label="Em pipeline" value={stats.pipeline} />
-              <Metric icon={<DollarSign size={18} />} label="MRR" value={stats.mrr.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })} />
+              <Metric icon={<DollarSign size={18} />} label="Volume/mês" value={stats.mrr.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })} />
             </div>
           </div>
-          <Button size="lg" className="rounded-full" onClick={() => setEditing({ company_name: "", stage: "lead" })}>
+          <Button size="lg" className="rounded-full" onClick={() => setEditing({ name: "", status: "prospect" })}>
             <Plus size={16} className="mr-1" /> Nova empresa
           </Button>
         </div>
@@ -93,9 +93,9 @@ function EmpresasPage() {
       <section className="rounded-[2rem] border border-border/70 bg-card p-4 shadow-card sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap gap-2">
-            <FilterPill active={stage === ""} onClick={() => setStage("")} count={data.length}>Todos</FilterPill>
-            {(Object.keys(STAGE_LABEL) as B2BCompanyRow["stage"][]).map((s) => (
-              <FilterPill key={s} active={stage === s} onClick={() => setStage(s)} count={stageCount(s)}>{STAGE_LABEL[s]}</FilterPill>
+            <FilterPill active={status === ""} onClick={() => setStatus("")} count={data.length}>Todos</FilterPill>
+            {(Object.keys(STATUS_LABEL) as B2BCompanyRow["status"][]).map((s) => (
+              <FilterPill key={s} active={status === s} onClick={() => setStatus(s)} count={statusCount(s)}>{STATUS_LABEL[s]}</FilterPill>
             ))}
           </div>
           <div className="relative min-w-0 sm:w-[280px]">
@@ -116,28 +116,29 @@ function EmpresasPage() {
           <ul className="space-y-2">
             {data.map((c) => (
               <li key={c.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background p-4 transition hover:border-primary/30 hover:shadow-card">
-                <InitialsAvatar name={c.company_name} className="h-12 w-12" />
+                <InitialsAvatar name={c.name} className="h-12 w-12" />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="truncate font-display text-base font-extrabold text-foreground">{c.company_name}</h3>
-                    <StatusPill tone={STAGE_TONE[c.stage]}>{STAGE_LABEL[c.stage]}</StatusPill>
-                    {c.industry && <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">{c.industry}</span>}
-                    {c.employees && <span className="text-xs text-muted-foreground">{c.employees} colab.</span>}
+                    <h3 className="truncate font-display text-base font-extrabold text-foreground">{c.name}</h3>
+                    <StatusPill tone={STATUS_TONE[c.status]}>{STATUS_LABEL[c.status]}</StatusPill>
+                    {c.segment && <span className="rounded-full border px-2 py-0.5 text-xs text-muted-foreground">{c.segment}</span>}
+                    {c.employees_count && <span className="text-xs text-muted-foreground">{c.employees_count} colab.</span>}
+                    {c.plan && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">{c.plan}</span>}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-x-4 text-xs text-muted-foreground">
                     {c.contact_name && <span className="inline-flex items-center gap-1"><Users2 size={12} /> {c.contact_name}</span>}
                     {c.contact_email && <span className="inline-flex items-center gap-1"><Mail size={12} /> {c.contact_email}</span>}
                     {c.contact_phone && <span className="inline-flex items-center gap-1"><Phone size={12} /> {c.contact_phone}</span>}
-                    {c.contract_value != null && Number(c.contract_value) > 0 && (
+                    {c.monthly_volume != null && Number(c.monthly_volume) > 0 && (
                       <span className="inline-flex items-center gap-1 font-semibold text-primary">
-                        <DollarSign size={12} /> {Number(c.contract_value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}
+                        <DollarSign size={12} /> {Number(c.monthly_volume).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })}/mês
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" className="rounded-full" onClick={() => setEditing(c)}>Editar</Button>
-                  <Button variant="ghost" size="sm" className="rounded-full text-destructive hover:text-destructive" onClick={() => { if (confirm(`Remover ${c.company_name}?`)) del.mutate(c.id); }}><Trash2 size={14} /></Button>
+                  <Button variant="ghost" size="sm" className="rounded-full text-destructive hover:text-destructive" onClick={() => { if (confirm(`Remover ${c.name}?`)) del.mutate(c.id); }}><Trash2 size={14} /></Button>
                 </div>
               </li>
             ))}
@@ -174,7 +175,7 @@ function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; 
 
 function B2BDialog({ value, onClose, onSave, saving }: {
   value: Partial<B2BCompanyRow> | null; onClose: () => void;
-  onSave: (v: Partial<B2BCompanyRow> & { company_name: string }) => void; saving: boolean;
+  onSave: (v: Partial<B2BCompanyRow> & { name: string }) => void; saving: boolean;
 }) {
   const [form, setForm] = useState<Partial<B2BCompanyRow>>({});
   useEffect(() => { if (value) setForm(value); }, [value]);
@@ -191,25 +192,25 @@ function B2BDialog({ value, onClose, onSave, saving }: {
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
               <Label>Empresa</Label>
-              <Input value={form.company_name ?? ""} onChange={(e) => setForm({ ...form, company_name: e.target.value })} placeholder="Razão social ou nome fantasia" />
+              <Input value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Razão social ou nome fantasia" />
             </div>
             <div>
               <Label>CNPJ</Label>
               <Input value={form.cnpj ?? ""} onChange={(e) => setForm({ ...form, cnpj: e.target.value })} />
             </div>
             <div>
-              <Label>Setor</Label>
-              <Input value={form.industry ?? ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} />
+              <Label>Segmento</Label>
+              <Input value={form.segment ?? ""} onChange={(e) => setForm({ ...form, segment: e.target.value })} />
             </div>
             <div>
               <Label>Colaboradores</Label>
-              <Input type="number" min={0} value={form.employees ?? 0} onChange={(e) => setForm({ ...form, employees: Number(e.target.value) })} />
+              <Input type="number" min={0} value={form.employees_count ?? 0} onChange={(e) => setForm({ ...form, employees_count: Number(e.target.value) })} />
             </div>
             <div>
-              <Label>Estágio</Label>
-              <Select value={form.stage ?? "lead"} onValueChange={(v) => setForm({ ...form, stage: v as B2BCompanyRow["stage"] })}>
+              <Label>Status</Label>
+              <Select value={form.status ?? "prospect"} onValueChange={(v) => setForm({ ...form, status: v as B2BCompanyRow["status"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{(Object.keys(STAGE_LABEL) as B2BCompanyRow["stage"][]).map((s) => <SelectItem key={s} value={s}>{STAGE_LABEL[s]}</SelectItem>)}</SelectContent>
+                <SelectContent>{(Object.keys(STATUS_LABEL) as B2BCompanyRow["status"][]).map((s) => <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="col-span-2 grid grid-cols-3 gap-3">
@@ -234,8 +235,16 @@ function B2BDialog({ value, onClose, onSave, saving }: {
               </div>
             </div>
             <div>
-              <Label>Valor do contrato (BRL/mês)</Label>
-              <Input type="number" min={0} step="0.01" value={form.contract_value ?? 0} onChange={(e) => setForm({ ...form, contract_value: Number(e.target.value) })} />
+              <Label>Volume mensal (BRL)</Label>
+              <Input type="number" min={0} step="0.01" value={form.monthly_volume ?? 0} onChange={(e) => setForm({ ...form, monthly_volume: Number(e.target.value) })} />
+            </div>
+            <div>
+              <Label>Plano</Label>
+              <Input value={form.plan ?? ""} onChange={(e) => setForm({ ...form, plan: e.target.value })} placeholder="Ex.: Enterprise" />
+            </div>
+            <div>
+              <Label>Website</Label>
+              <Input value={form.website ?? ""} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://…" />
             </div>
             <div className="col-span-2">
               <Label>Observações</Label>
@@ -245,7 +254,7 @@ function B2BDialog({ value, onClose, onSave, saving }: {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} className="rounded-full">Cancelar</Button>
-          <Button className="rounded-full" disabled={saving || !form.company_name} onClick={() => onSave(form as Parameters<typeof onSave>[0])}>Salvar</Button>
+          <Button className="rounded-full" disabled={saving || !form.name} onClick={() => onSave(form as Parameters<typeof onSave>[0])}>Salvar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
