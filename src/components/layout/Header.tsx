@@ -86,6 +86,13 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: myProfile } = useQuery({
+    queryKey: ["my-profile-header", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
+  const avatarUrl = myProfile?.avatar_url ?? null;
 
   async function handleSignOut() {
     await supabase.auth.signOut();
