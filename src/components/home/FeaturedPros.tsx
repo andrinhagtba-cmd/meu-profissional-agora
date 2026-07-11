@@ -77,7 +77,7 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float">
       {/* Cover */}
-      <div className="relative h-32 overflow-hidden">
+      <div className="relative h-28 overflow-hidden">
         <div
           className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
           style={pro.coverUrl ? { backgroundImage: `url(${pro.coverUrl})` } : undefined}
@@ -91,19 +91,11 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           </span>
           <FavoriteButton slug={pro.slug} name={pro.name} />
         </div>
-
-        {/* Bottom row: emergency chip */}
-        {pro.emergency && (
-          <span className="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1 rounded-full bg-orange px-2.5 py-1 text-[11px] font-semibold text-orange-foreground shadow-sm">
-            <Zap size={11} aria-hidden="true" />
-            Emergência 24h
-          </span>
-        )}
       </div>
 
       {/* Body */}
       <div className="relative flex flex-1 flex-col px-5 pb-5 pt-0">
-        <div className="-mt-10 flex items-end justify-between">
+        <div className="-mt-9 flex items-end justify-between gap-3">
           <ProAvatar
             initials={pro.initials}
             color={pro.avatarColor}
@@ -141,9 +133,15 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           </p>
         </div>
 
-        {/* Services chips */}
-        {topServices.length > 0 && (
+        {/* Chips: emergency + services */}
+        {(pro.emergency || topServices.length > 0) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
+            {pro.emergency && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-orange/10 px-2.5 py-1 text-[11px] font-semibold text-orange">
+                <Zap size={11} aria-hidden="true" />
+                Emergência 24h
+              </span>
+            )}
             {topServices.map((s) => (
               <Badge
                 key={s.name}
@@ -155,6 +153,7 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
             ))}
           </div>
         )}
+
 
         {/* Footer */}
         <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
