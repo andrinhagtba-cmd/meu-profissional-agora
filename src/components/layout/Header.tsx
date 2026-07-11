@@ -3,6 +3,7 @@ import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-rea
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useBrand } from "@/hooks/use-brand";
 import {
   DropdownMenu,
   DropdownMenuContent,
