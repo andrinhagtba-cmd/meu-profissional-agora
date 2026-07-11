@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, Users } from "lucide-react";
+import { Star, Users, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { images } from "@/data/images";
 import type { Category } from "@/types";
@@ -7,6 +7,9 @@ import type { Category } from "@/types";
 type CategoryLike = Category & { imageUrl?: string; imageAlt?: string };
 
 export function CategoryCard({ category }: { category: CategoryLike }) {
+  const hasImage =
+    (category.imageUrl && category.imageUrl.length > 0) ||
+    !!images[category.imageKey];
   const src =
     category.imageUrl && category.imageUrl.length > 0
       ? category.imageUrl
@@ -21,14 +24,23 @@ export function CategoryCard({ category }: { category: CategoryLike }) {
       params={{ slug: category.slug }}
       className="group relative block h-72 overflow-hidden rounded-3xl shadow-card transition-shadow duration-200 hover:shadow-float focus-visible:outline-2 focus-visible:outline-ring"
     >
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        width={800}
-        height={1000}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      />
+      {hasImage ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          width={800}
+          height={1000}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : (
+        <div
+          aria-label={alt}
+          className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary via-primary/80 to-navy transition-transform duration-300 group-hover:scale-105"
+        >
+          <Sparkles className="h-14 w-14 text-white/40" aria-hidden="true" />
+        </div>
+      )}
       <div className="absolute inset-0 bg-linear-to-t from-navy/90 via-navy/25 to-transparent" aria-hidden="true" />
       {category.badge && (
         <Badge className="absolute left-4 top-4 rounded-full bg-orange px-3 py-1 text-[11px] font-bold text-orange-foreground hover:bg-orange">
