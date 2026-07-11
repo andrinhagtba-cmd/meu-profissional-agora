@@ -630,3 +630,166 @@ export async function setReportStatus(id: string, status: "open" | "reviewing" |
   if (error) throw error;
 }
 
+// ============ Etapa 5 — Monetização ============
+
+export type AdminPlan = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  billing_period: string;
+  lead_limit: number | null;
+  featured_profile: boolean;
+  active: boolean;
+  features: string[] | null;
+  created_at: string;
+};
+
+export async function listPlansAdmin(): Promise<AdminPlan[]> {
+  const { data, error } = await supabase
+    .from("plans")
+    .select("id, name, description, price, billing_period, lead_limit, featured_profile, active, features, created_at")
+    .order("price", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    ...r,
+    features: Array.isArray((r as { features: unknown }).features)
+      ? ((r as { features: string[] }).features)
+      : null,
+  })) as AdminPlan[];
+}
+
+export type UpsertPlanInput = {
+  id?: string;
+  name: string;
+  description?: string | null;
+  price: number;
+  billing_period: string;
+  lead_limit?: number | null;
+  featured_profile?: boolean;
+  active?: boolean;
+  features?: string[];
+};
+
+export async function upsertPlan(input: UpsertPlanInput) {
+  const payload = {
+    name: input.name,
+    description: input.description ?? null,
+    price: input.price,
+    billing_period: input.billing_period,
+    lead_limit: input.lead_limit ?? null,
+    featured_profile: input.featured_profile ?? false,
+    active: input.active ?? true,
+    features: input.features ?? [],
+  };
+  if (input.id) {
+    const { error } = await supabase.from("plans").update(payload).eq("id", input.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("plans").insert(payload);
+    if (error) throw error;
+  }
+}
+
+export async function deletePlan(id: string) {
+  const { error } = await supabase.from("plans").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function togglePlanActive(id: string, active: boolean) {
+  const { error } = await supabase.from("plans").update({ active }).eq("id", id);
+  if (error) throw error;
+}
+
+export type AdminSubscriptionRow = {
+  id: string;
+  status: string;
+  started_at: string;
+  expires_at: string | null;
+  external_reference: string | null;
+  created_at: string;
+  plan?: { id: string; name: string; price: number; billing_period: string } | null;
+  professional?: { id: string; professional_name: string | null; slug: string | null } | null;
+};
+
+export async function listSubscriptionsAdmin(opts: { search?: string; status?: string } = {}): Promise<AdminSubscriptionRow[]> {
+  let q = supabase
+    .from("subscriptions")
+    .select("id, status, started_at, expires_at, external_reference, created_at, plan:plan_id(id, name, price, billing_period), professional:professional_id(id, professional_name, slug)")
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (opts.status) q = q.eq("status", opts.status as never);
+  const { data, error } = await q;
+  if (error) throw error;
+  let rows = (data ?? []) as unknown as AdminSubscriptionRow[];
+  if (opts.search) {
+    const s = opts.search.toLowerCase();
+    rows = rows.filter((r) =>
+      r.professional?.professional_name?.toLowerCase().includes(s) ||
+      r.plan?.name.toLowerCase().includes(s),
+    );
+  }
+  return rows;
+}
+
+export async function updateSubscriptionStatus(id: string, status: "active" | "cancelled" | "past_due" | "trialing") {
+  const { error } = await supabase.from("subscriptions").update({ status } as never).eq("id", id);
+  if (error) throw error;
+}
+
+export type AdminBillingSummary = {
+  activeSubs: number;
+  trialingSubs: number;
+  cancelledSubs: number;
+  mrr: number;
+  arpu: number;
+  planBreakdown: { plan: string; count: number; revenue: number }[];
+  monthly: { date: string; revenue: number }[];
+};
+
+export async function getBillingSummary(): Promise<AdminBillingSummary> {
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("id, status, started_at, plan:plan_id(name, price, billing_period)")
+    .limit(2000);
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as Array<{
+    id: string; status: string; started_at: string;
+    plan: { name: string; price: number; billing_period: string } | null;
+  }>;
+  const monthly = new Map<string, number>();
+  const now = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    monthly.set(d.toISOString().slice(0, 7), 0);
+  }
+  const breakdown = new Map<string, { count: number; revenue: number }>();
+  let active = 0, trialing = 0, cancelled = 0, mrr = 0;
+  for (const r of rows) {
+    if (r.status === "active") active++;
+    if (r.status === "trialing") trialing++;
+    if (r.status === "cancelled") cancelled++;
+    const price = Number(r.plan?.price ?? 0);
+    const period = r.plan?.billing_period ?? "monthly";
+    const monthly_value = period === "yearly" ? price / 12 : price;
+    if (r.status === "active") {
+      mrr += monthly_value;
+      const name = r.plan?.name ?? "—";
+      const cur = breakdown.get(name) ?? { count: 0, revenue: 0 };
+      cur.count++; cur.revenue += monthly_value;
+      breakdown.set(name, cur);
+    }
+    const key = r.started_at?.slice(0, 7);
+    if (key && monthly.has(key)) monthly.set(key, (monthly.get(key) ?? 0) + monthly_value);
+  }
+  return {
+    activeSubs: active, trialingSubs: trialing, cancelledSubs: cancelled,
+    mrr, arpu: active > 0 ? mrr / active : 0,
+    planBreakdown: Array.from(breakdown.entries())
+      .map(([plan, v]) => ({ plan, count: v.count, revenue: v.revenue }))
+      .sort((a, b) => b.revenue - a.revenue),
+    monthly: Array.from(monthly.entries()).map(([date, revenue]) => ({ date, revenue })),
+  };
+}
+
+
