@@ -1881,8 +1881,8 @@ export async function upsertCoupon(patch: Partial<CouponRow> & { code: string; d
   const { id, ...rest } = patch;
   const payload = { ...rest, code: rest.code.toUpperCase().trim() };
   const query = id
-    ? supabase.from("coupons" as never).update(payload).eq("id", id).select("*").single()
-    : supabase.from("coupons" as never).insert(payload).select("*").single();
+    ? supabase.from("coupons" as never).update(payload as never).eq("id", id).select("*").single()
+    : supabase.from("coupons" as never).insert(payload as never).select("*").single();
   const { data, error } = await query;
   if (error) throw error;
   return data as unknown as CouponRow;
