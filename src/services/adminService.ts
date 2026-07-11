@@ -2034,8 +2034,8 @@ export async function listB2BCompanies(params: { status?: string; search?: strin
 export async function upsertB2BCompany(patch: Partial<B2BCompanyRow> & { name: string }): Promise<B2BCompanyRow> {
   const { id, ...rest } = patch;
   const query = id
-    ? supabase.from("b2b_companies" as never).update(rest).eq("id", id).select("*").single()
-    : supabase.from("b2b_companies" as never).insert(rest).select("*").single();
+    ? supabase.from("b2b_companies" as never).update(rest as never).eq("id", id).select("*").single()
+    : supabase.from("b2b_companies" as never).insert(rest as never).select("*").single();
   const { data, error } = await query;
   if (error) throw error;
   return data as unknown as B2BCompanyRow;
