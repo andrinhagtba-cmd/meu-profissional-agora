@@ -182,12 +182,11 @@ function Painel() {
                   <p className="text-[11px] uppercase tracking-wide text-white/70">Conta</p>
                   <p className="mt-0.5 truncate text-sm font-semibold">{user?.email}</p>
                 </div>
-                {isProfissional && data?.pro?.status && (
+                {isProfissional && data?.pro && (
                   <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur">
-                    <p className="text-[11px] uppercase tracking-wide text-white/70">Status do perfil</p>
+                    <p className="text-[11px] uppercase tracking-wide text-white/70">Perfil profissional</p>
                     <p className="mt-0.5 inline-flex items-center gap-1 text-sm font-semibold">
-                      <ShieldCheck size={14} />
-                      {data.pro.status}
+                      <ShieldCheck size={14} /> Ativo
                     </p>
                   </div>
                 )}
