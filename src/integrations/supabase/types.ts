@@ -1398,6 +1398,47 @@ export type Database = {
           },
         ]
       }
+      quote_status_history: {
+        Row: {
+          actor_role: string | null
+          changed_by: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          note: string | null
+          quote_request_id: string
+          to_status: string
+        }
+        Insert: {
+          actor_role?: string | null
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          quote_request_id: string
+          to_status: string
+        }
+        Update: {
+          actor_role?: string | null
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          quote_request_id?: string
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_status_history_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           created_at: string
@@ -1890,6 +1931,10 @@ export type Database = {
       submit_review: {
         Args: { _comment: string; _quote_id: string; _rating: number }
         Returns: string
+      }
+      update_quote_status: {
+        Args: { _new_status: string; _note?: string; _quote_id: string }
+        Returns: undefined
       }
     }
     Enums: {
