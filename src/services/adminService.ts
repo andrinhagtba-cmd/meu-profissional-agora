@@ -130,6 +130,31 @@ export async function setProProfileStatus(id: string, status: "draft" | "publish
   if (error) throw error;
 }
 
+export type AdminProProfilePatch = Partial<{
+  professional_name: string | null;
+  business_name: string | null;
+  description: string | null;
+  city: string | null;
+  state: string | null;
+  whatsapp: string | null;
+  years_experience: number | null;
+  starting_price: number | null;
+  response_time: string | null;
+  availability_status: "available" | "busy" | "unavailable";
+  emergency: boolean;
+  is_featured: boolean;
+  service_types: string[];
+  profile_status: "draft" | "published" | "archived";
+}>;
+
+export async function updateProProfile(id: string, patch: AdminProProfilePatch) {
+  const { error } = await supabase
+    .from("professional_profiles")
+    .update(patch as never)
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export type AdminProDetail = AdminProRow & {
   user_id: string;
   years_experience: number | null;
