@@ -1970,8 +1970,8 @@ export async function upsertHighlight(patch: Partial<HighlightRow> & { section: 
   const { id, professional, ...rest } = patch as Partial<HighlightRow> & { professional?: unknown };
   void professional;
   const query = id
-    ? supabase.from("highlights" as never).update(rest).eq("id", id).select("*").single()
-    : supabase.from("highlights" as never).insert(rest).select("*").single();
+    ? supabase.from("highlights" as never).update(rest as never).eq("id", id).select("*").single()
+    : supabase.from("highlights" as never).insert(rest as never).select("*").single();
   const { data, error } = await query;
   if (error) throw error;
   return data as unknown as HighlightRow;
