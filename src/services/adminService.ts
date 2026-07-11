@@ -179,21 +179,6 @@ export type AdminProDetail = AdminProRow & {
   emergency: boolean;
   service_types: string[] | null;
   updated_at: string;
-  avatar_media_id: string | null;
-  cover_media_id: string | null;
-  source: string | null;
-  profile_email: string | null;
-  profile_full_name: string | null;
-export type AdminProDetail = AdminProRow & {
-  user_id: string;
-  years_experience: number | null;
-  starting_price: number | null;
-  response_time: string | null;
-  profile_status: string;
-  availability_status: string;
-  emergency: boolean;
-  service_types: string[] | null;
-  updated_at: string;
   source: string | null;
   profile_email: string | null;
   profile_full_name: string | null;
