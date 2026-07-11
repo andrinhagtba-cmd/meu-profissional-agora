@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, Heart, MessageSquare, Star, User as UserIcon } from "lucide-react";
+import { Briefcase, Heart, ImagePlus, MessageSquare, Star, User as UserIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -67,6 +67,30 @@ function Painel() {
             </>
           )}
         </div>
+
+        {isProfissional && (
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card p-6">
+            <div className="flex items-start gap-4">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
+                <ImagePlus size={20} />
+              </span>
+              <div>
+                <p className="font-display text-base font-bold text-foreground">
+                  Foto, capa e portfólio
+                </p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Envie sua foto de perfil, capa e trabalhos recentes.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/painel/midia"
+              className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              Gerenciar mídia
+            </Link>
+          </div>
+        )}
 
         <div className="mt-10 rounded-3xl border border-border bg-card p-8 text-center">
           <p className="text-sm text-muted-foreground">
