@@ -13,12 +13,18 @@ import {
   MessageSquare,
   Star,
   User as UserIcon,
+  Wrench,
 } from "lucide-react";
 import {
   countMyQuotes,
   countUnreadNotifications,
   listFavoriteProfessionalIds,
 } from "@/services/clientService";
+import {
+  countLeadsAvailable,
+  countMyProposals,
+  getMyProProfile,
+} from "@/services/professionalDashboardService";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -37,22 +43,32 @@ function Painel() {
     queryKey: ["painel", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const [profile, roles, quotes, favs, unread] = await Promise.all([
+      const [profile, roles, quotes, favs, unread, pro] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user!.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user!.id),
         countMyQuotes(user!.id),
         listFavoriteProfessionalIds(user!.id),
         countUnreadNotifications(user!.id),
+        getMyProProfile(user!.id),
       ]);
+      const rolesList = (roles.data ?? []).map((r) => r.role as string);
+      const isPro = rolesList.includes("profissional");
+      const [leadsCount, proposalsCount] = isPro && pro
+        ? await Promise.all([countLeadsAvailable(), countMyProposals(pro.id)])
+        : [0, 0];
       return {
         profile: profile.data,
-        roles: (roles.data ?? []).map((r) => r.role as string),
+        roles: rolesList,
         quotes,
         favorites: favs.length,
         unread,
+        pro,
+        leadsCount,
+        proposalsCount,
       };
     },
   });
+
 
   const isProfissional = data?.roles.includes("profissional");
   const isAdmin = data?.roles.includes("admin");
@@ -88,9 +104,29 @@ function Painel() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isProfissional ? (
             <>
-              <StatCard icon={<Briefcase />} label="Pedidos recebidos" value="—" />
-              <StatCard icon={<MessageSquare />} label="Propostas enviadas" value="—" />
-              <StatCard icon={<Star />} label="Avaliação média" value="—" />
+              <StatCard
+                icon={<Briefcase />}
+                label="Leads disponíveis"
+                value={isLoading ? "…" : String(data?.leadsCount ?? 0)}
+                to="/painel/leads"
+              />
+              <StatCard
+                icon={<MessageSquare />}
+                label="Propostas enviadas"
+                value={isLoading ? "…" : String(data?.proposalsCount ?? 0)}
+                to="/painel/propostas"
+              />
+              <StatCard
+                icon={<Star />}
+                label="Avaliação média"
+                value={
+                  isLoading
+                    ? "…"
+                    : data?.pro?.average_rating != null
+                      ? Number(data.pro.average_rating).toFixed(1)
+                      : "—"
+                }
+              />
               <StatCard
                 icon={<UserIcon />}
                 label="Perfil"
@@ -129,27 +165,50 @@ function Painel() {
         </div>
 
         {isProfissional && (
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card p-6">
-            <div className="flex items-start gap-4">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
-                <ImagePlus size={20} />
-              </span>
-              <div>
-                <p className="font-display text-base font-bold text-foreground">
-                  Foto, capa e portfólio
-                </p>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Envie sua foto de perfil, capa e trabalhos recentes.
-                </p>
-              </div>
+          <>
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              <PanelLink
+                to="/painel/leads"
+                title="Leads disponíveis"
+                desc="Pedidos abertos onde você pode enviar propostas."
+                icon={<Briefcase />}
+              />
+              <PanelLink
+                to="/painel/propostas"
+                title="Minhas propostas"
+                desc="Status das propostas enviadas e mensagens dos clientes."
+                icon={<MessageSquare />}
+              />
+              <PanelLink
+                to="/painel/servicos"
+                title="Meus serviços"
+                desc="Cadastre serviços que você oferece e defina preços."
+                icon={<Wrench />}
+              />
             </div>
-            <Link
-              to="/painel/midia"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Gerenciar mídia
-            </Link>
-          </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card p-6">
+              <div className="flex items-start gap-4">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
+                  <ImagePlus size={20} />
+                </span>
+                <div>
+                  <p className="font-display text-base font-bold text-foreground">
+                    Foto, capa e portfólio
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">
+                    Envie sua foto de perfil, capa e trabalhos recentes.
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/painel/midia"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              >
+                Gerenciar mídia
+              </Link>
+            </div>
+          </>
         )}
 
         {!isProfissional && (
@@ -178,6 +237,7 @@ function Painel() {
     </SiteLayout>
   );
 }
+
 
 function StatCard({
   icon,
