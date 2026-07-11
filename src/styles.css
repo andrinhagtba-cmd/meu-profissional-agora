@@ -193,83 +193,104 @@
 }
 
 /* =========================================================
-   Admin shell — navy sidebar always, refined tokens.
-   Scope: only inside `.admin-shell` (never affects public site).
+   Admin shell — LIGHT / AIRY (inspired by Travelora home).
+   Scope: only inside `.admin-shell` (never touches public site).
    ========================================================= */
 .admin-shell {
-  --sidebar: oklch(0.22 0.055 265);
-  --sidebar-foreground: oklch(0.94 0.01 258);
-  --sidebar-primary: oklch(0.62 0.22 262);
+  /* Sky-white background w/ subtle blue tint (matches hero panel) */
+  --background: oklch(0.985 0.008 258);
+
+  /* Sidebar = pure white, blue tokens for accent */
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.28 0.04 262);
+  --sidebar-primary: oklch(0.51 0.245 262);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.28 0.06 265);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.30 0.05 265);
-  --sidebar-ring: oklch(0.62 0.22 262);
-}
-.dark .admin-shell {
-  --sidebar: oklch(0.15 0.03 265);
-  --sidebar-accent: oklch(0.24 0.05 265);
-  --sidebar-border: oklch(0.24 0.04 265);
+  --sidebar-accent: oklch(0.955 0.032 258);
+  --sidebar-accent-foreground: oklch(0.42 0.24 262);
+  --sidebar-border: oklch(0.93 0.014 258);
+  --sidebar-ring: oklch(0.51 0.245 262);
 }
 
-/* Group label — small, uppercase, subdued on navy */
+/* Sidebar header block */
+.admin-shell [data-sidebar="sidebar"] {
+  background: var(--sidebar);
+}
+
+/* Group label */
 .admin-shell [data-sidebar="group-label"] {
-  color: color-mix(in oklab, var(--sidebar-foreground) 55%, transparent);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  color: oklch(0.55 0.05 262);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 600;
-  padding-top: 0.75rem;
+  font-weight: 700;
+  padding: 0.9rem 0.6rem 0.35rem;
 }
 
-/* Menu button: quiet default, hover lift, active = blue fill + soft glow */
+/* Menu button — quiet default, hover = soft sky, active = blue pill w/ glow */
 .admin-shell [data-sidebar="menu-button"] {
-  color: color-mix(in oklab, var(--sidebar-foreground) 78%, transparent);
-  border-radius: 0.6rem;
-  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+  color: oklch(0.36 0.04 262);
+  border-radius: 0.75rem;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 200ms ease;
+  font-weight: 500;
+}
+.admin-shell [data-sidebar="menu-button"] svg {
+  color: oklch(0.55 0.06 262);
+  transition: color 180ms ease;
 }
 .admin-shell [data-sidebar="menu-button"]:hover {
-  background: color-mix(in oklab, var(--sidebar-foreground) 8%, transparent);
-  color: var(--sidebar-foreground);
+  background: oklch(0.955 0.032 258);
+  color: oklch(0.42 0.24 262);
+}
+.admin-shell [data-sidebar="menu-button"]:hover svg {
+  color: oklch(0.51 0.245 262);
 }
 .admin-shell [data-sidebar="menu-button"][data-active="true"] {
-  background: linear-gradient(180deg,
-    oklch(0.58 0.22 262) 0%,
-    oklch(0.50 0.24 262) 100%);
+  background: linear-gradient(135deg,
+    oklch(0.55 0.24 262) 0%,
+    oklch(0.48 0.25 262) 100%);
   color: #fff;
   box-shadow:
-    0 1px 0 0 color-mix(in oklab, #fff 18%, transparent) inset,
-    0 6px 18px -6px oklch(0.55 0.24 262 / 55%);
+    0 1px 0 0 rgba(255, 255, 255, 0.20) inset,
+    0 8px 20px -8px oklch(0.51 0.245 262 / 55%),
+    0 2px 4px -2px oklch(0.51 0.245 262 / 30%);
 }
-.admin-shell [data-sidebar="menu-button"][data-active="true"] svg {
+.admin-shell [data-sidebar="menu-button"][data-active="true"] svg,
+.admin-shell [data-sidebar="menu-button"][data-active="true"] * {
   color: #fff;
 }
 
-/* Group separator */
+/* Group separator — subtle hairline */
 .admin-shell [data-sidebar="group"] + [data-sidebar="group"] {
-  border-top: 1px solid color-mix(in oklab, var(--sidebar-border) 60%, transparent);
-  margin-top: 0.25rem;
-  padding-top: 0.25rem;
+  border-top: 1px solid oklch(0.94 0.012 258);
+  margin-top: 0.15rem;
+  padding-top: 0.15rem;
 }
 
-/* Softer card shadow + hairline border inside admin */
+/* Soft, blue-tinted card shadow — mirrors hero search-panel */
 .admin-shell .admin-card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.9rem;
-  box-shadow: 0 1px 2px oklch(0.2 0.05 265 / 4%), 0 8px 24px -18px oklch(0.2 0.05 265 / 18%);
+  border: 1px solid oklch(0.93 0.014 258);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 1px 2px oklch(0.51 0.245 262 / 4%),
+    0 12px 32px -18px oklch(0.51 0.245 262 / 18%);
 }
 
-/* Sticky table header helper */
+/* Sticky table header */
 .admin-shell .table-sticky thead th {
   position: sticky;
   top: 0;
-  background: var(--card);
+  background: oklch(0.98 0.01 258);
   z-index: 1;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid oklch(0.93 0.014 258);
+  color: oklch(0.45 0.05 262);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-/* Admin entrance animation */
+/* Entrance */
 @keyframes admin-fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -277,4 +298,5 @@
 .admin-shell main > * {
   animation: admin-fade-in 200ms ease-out both;
 }
+
 
