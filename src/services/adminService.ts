@@ -1205,10 +1205,6 @@ export async function listProReviews(professionalId: string): Promise<AdminProRe
   }));
 }
 
-export async function setReviewStatus(id: string, status: ReviewStatus) {
-  const { error } = await supabase.from("reviews").update({ status } as never).eq("id", id);
-  if (error) throw error;
-}
 
 export async function deleteReview(id: string) {
   const { error } = await supabase.from("reviews").delete().eq("id", id);
