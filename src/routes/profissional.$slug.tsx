@@ -28,13 +28,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import type { Review } from "@/types";
 import { professionals } from "@/data/professionals";
 import {
   getRelatedProfessionals,
-  getReviewsForProfessional,
   registerWhatsAppLead,
 } from "@/services/mockApi";
+import { listApprovedReviewsByPro, type PublicReview } from "@/services/professionalService";
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
 export const Route = createFileRoute("/profissional/$slug")({
