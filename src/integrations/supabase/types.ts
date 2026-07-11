@@ -1171,12 +1171,7 @@ export type Database = {
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
       submit_review: {
-        Args: {
-          _comment: string
-          _quote_id: string
-          _rating: number
-          _title?: string
-        }
+        Args: { _comment: string; _quote_id: string; _rating: number }
         Returns: string
       }
     }
