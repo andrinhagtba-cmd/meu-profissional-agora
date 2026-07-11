@@ -98,6 +98,7 @@ function PainelMidia() {
 
   const avatarRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
+  const portfolioFileRef = useRef<HTMLInputElement>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newFile, setNewFile] = useState<File | null>(null);
@@ -279,21 +280,47 @@ function PainelMidia() {
                 </div>
                 <div className="flex flex-col justify-end gap-2">
                   <input
+                    ref={portfolioFileRef}
                     type="file"
                     accept="image/*"
-                    className="text-xs"
-                    onChange={(e) => setNewFile(e.target.files?.[0] ?? null)}
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0] ?? null;
+                      e.target.value = "";
+                      if (f) {
+                        const err = validateImage(f);
+                        if (err) return toast.error(err);
+                      }
+                      setNewFile(f);
+                    }}
                   />
                   <Button
+                    type="button"
+                    variant="outline"
                     className="rounded-xl"
-                    disabled={busy || !proId || !newFile || !newTitle.trim()}
+                    onClick={() => portfolioFileRef.current?.click()}
+                    disabled={busy || !proId}
+                  >
+                    <Upload size={16} />
+                    {newFile ? "Trocar imagem" : "Escolher imagem"}
+                  </Button>
+                  {newFile ? (
+                    <p className="max-w-[220px] truncate text-xs text-muted-foreground" title={newFile.name}>
+                      {newFile.name}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">JPG/PNG, até {MAX_MB}MB.</p>
+                  )}
+                  <Button
+                    className="rounded-xl"
+                    disabled={busy || !proId || !newFile}
                     onClick={() => {
                       if (!newFile) return;
                       const err = validateImage(newFile);
                       if (err) return toast.error(err);
                       addMut.mutate(
                         {
-                          title: newTitle.trim(),
+                          title: newTitle.trim() || "Trabalho",
                           file: newFile,
                           description: newDesc.trim() || undefined,
                         },
@@ -316,6 +343,7 @@ function PainelMidia() {
                   </Button>
                 </div>
               </div>
+
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {portfolioQ.isLoading ? (
