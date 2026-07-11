@@ -228,3 +228,81 @@ const mockBySlug = new Map(mockProfessionals.map((p) => [p.slug, p]));
 export function findMockProfessionalBySlug(slug: string) {
   return mockBySlug.get(slug);
 }
+
+// --------------------- Propostas recebidas ---------------------
+
+export type QuoteDetail = {
+  id: string;
+  title: string;
+  description: string | null;
+  city: string;
+  state: string;
+  neighborhood: string | null;
+  urgency: string;
+  service_type: string;
+  status: string;
+  created_at: string;
+  selected_professional_id: string | null;
+  category?: { slug: string; name: string } | null;
+};
+
+export async function getMyQuote(id: string): Promise<QuoteDetail | null> {
+  const { data, error } = await supabase
+    .from("quote_requests")
+    .select(
+      `id, title, description, city, state, neighborhood, urgency, service_type,
+       status, created_at, selected_professional_id,
+       category:category_id(slug, name)`,
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as unknown as QuoteDetail | null) ?? null;
+}
+
+export type ReceivedProposal = {
+  id: string;
+  message: string | null;
+  estimated_price: number | null;
+  price_type: string | null;
+  estimated_deadline: string | null;
+  status: string;
+  created_at: string;
+  professional?: {
+    id: string;
+    slug: string | null;
+    professional_name: string | null;
+    business_name: string | null;
+    city: string | null;
+    state: string | null;
+    average_rating: number | null;
+    reviews_count: number | null;
+    verification_status: string | null;
+  } | null;
+};
+
+export async function listProposalsForQuote(
+  quoteId: string,
+): Promise<ReceivedProposal[]> {
+  const { data, error } = await supabase
+    .from("quote_proposals")
+    .select(
+      `id, message, estimated_price, price_type, estimated_deadline, status, created_at,
+       professional:professional_id(id, slug, professional_name, business_name,
+         city, state, average_rating, reviews_count, verification_status)`,
+    )
+    .eq("quote_request_id", quoteId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as ReceivedProposal[];
+}
+
+export async function acceptProposalRpc(proposalId: string) {
+  const { error } = await supabase.rpc("accept_proposal", { _proposal_id: proposalId });
+  if (error) throw error;
+}
+
+export async function rejectProposalRpc(proposalId: string) {
+  const { error } = await supabase.rpc("reject_proposal", { _proposal_id: proposalId });
+  if (error) throw error;
+}
