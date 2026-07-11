@@ -21,7 +21,7 @@ function AdminPros() {
   });
 
   const verify = useMutation({
-    mutationFn: (v: { id: string; s: "verified" | "rejected" | "pending" }) => setProVerification(v.id, v.s),
+    mutationFn: (v: { id: string; s: "approved" | "rejected" | "pending" }) => setProVerification(v.id, v.s),
     onSuccess: () => { toast.success("Status atualizado"); qc.invalidateQueries({ queryKey: ["admin-pros"] }); qc.invalidateQueries({ queryKey: ["admin-stats"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -38,7 +38,7 @@ function AdminPros() {
         {[
           { v: "", l: "Todos" },
           { v: "pending", l: "Pendentes" },
-          { v: "verified", l: "Verificados" },
+          { v: "approved", l: "Verificados" },
           { v: "rejected", l: "Rejeitados" },
         ].map((f) => (
           <button
@@ -62,10 +62,10 @@ function AdminPros() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold">{p.professional_name || p.business_name || "Sem nome"}</h3>
-                  {p.verification_status === "verified" && <BadgeCheck size={16} className="text-primary" />}
+                  {p.verification_status === "approved" && <BadgeCheck size={16} className="text-primary" />}
                   {p.is_featured && <Star size={14} className="fill-orange text-orange" />}
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                    p.verification_status === "verified" ? "bg-green-100 text-green-800" :
+                    p.verification_status === "approved" ? "bg-green-100 text-green-800" :
                     p.verification_status === "rejected" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"
                   }`}>{p.verification_status}</span>
                 </div>
@@ -74,8 +74,8 @@ function AdminPros() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {p.verification_status !== "verified" && (
-                  <Button size="sm" onClick={() => verify.mutate({ id: p.id, s: "verified" })} disabled={verify.isPending}>
+                {p.verification_status !== "approved" && (
+                  <Button size="sm" onClick={() => verify.mutate({ id: p.id, s: "approved" })} disabled={verify.isPending}>
                     <BadgeCheck size={14} className="mr-1" />Verificar
                   </Button>
                 )}
