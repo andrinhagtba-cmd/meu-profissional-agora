@@ -157,6 +157,7 @@ function PedidoDetalhe() {
               <ProposalCard
                 key={p.id}
                 p={p}
+                quoteId={id}
                 isSelected={selectedId === p.professional?.id}
                 canAct={
                   !selectedId &&
