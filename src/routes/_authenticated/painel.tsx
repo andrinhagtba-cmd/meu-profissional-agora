@@ -173,7 +173,7 @@ function Painel() {
 
         {isProfissional && (
           <>
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+            <div className="mt-10 grid gap-4 lg:grid-cols-4">
               <PanelLink
                 to="/painel/leads"
                 title="Leads disponíveis"
@@ -184,6 +184,12 @@ function Painel() {
                 to="/painel/propostas"
                 title="Minhas propostas"
                 desc="Status das propostas enviadas e mensagens dos clientes."
+                icon={<MessageSquare />}
+              />
+              <PanelLink
+                to="/painel/mensagens"
+                title="Mensagens"
+                desc="Converse com clientes após aceitar propostas."
                 icon={<MessageSquare />}
               />
               <PanelLink
