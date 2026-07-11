@@ -27,15 +27,16 @@ const PROFILE_LABEL: Record<string, string> = {
   draft: "Rascunho", published: "Publicado", archived: "Suspenso",
 };
 
-const searchSchema = z.object({
-  tab: fallback(z.string(), "overview").default("overview"),
-});
+type AdminProSearch = { tab: string };
 
 export const Route = createFileRoute("/_authenticated/admin/profissionais/$id")({
   head: () => ({ meta: [{ title: "Profissional · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (raw: Record<string, unknown>): AdminProSearch => ({
+    tab: typeof raw.tab === "string" ? raw.tab : "overview",
+  }),
   component: AdminProDetailPage,
 });
+
 
 function AdminProDetailPage() {
   const { id } = Route.useParams();
