@@ -197,6 +197,11 @@ function AdminPros() {
       <AdminPageHeader
         title="Profissionais"
         description="Aprovações, destaques e curadoria da rede de profissionais."
+        actions={
+          <Button onClick={() => navigate({ to: "/_authenticated/admin/profissionais/novo" })}>
+            <UserPlus size={16} className="mr-2" />Novo profissional
+          </Button>
+        }
       />
       <AdminToolbar
         search={search}
