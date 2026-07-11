@@ -1273,3 +1273,166 @@ export async function listProActivity(professionalId: string): Promise<AdminProA
   items.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
   return items;
 }
+
+// ============= Bloco F: criação de profissional (wizard) =============
+
+export type CreateProInput = {
+  professional_name: string;
+  business_name?: string | null;
+  description?: string | null;
+  whatsapp?: string | null;
+  city?: string | null;
+  state?: string | null;
+  years_experience?: number | null;
+  starting_price?: number | null;
+  response_time?: string | null;
+  availability_status?: "available" | "busy" | "unavailable";
+  emergency?: boolean;
+  service_types?: ("residencial" | "empresarial" | "online")[];
+  is_featured?: boolean;
+  verification_status?: "pending" | "approved" | "rejected";
+  profile_status?: "draft" | "published" | "archived";
+};
+
+function slugify(input: string): string {
+  return input
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "profissional";
+}
+
+export async function createProProfile(input: CreateProInput): Promise<{ id: string; slug: string }> {
+  const baseSlug = slugify(input.business_name || input.professional_name);
+  // Garante unicidade tentando até 5 sufixos
+  for (let i = 0; i < 5; i++) {
+    const slug = i === 0 ? baseSlug : `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`;
+    const payload = {
+      professional_name: input.professional_name,
+      business_name: input.business_name ?? null,
+      description: input.description ?? null,
+      whatsapp: input.whatsapp ?? null,
+      city: input.city ?? null,
+      state: input.state ?? null,
+      years_experience: input.years_experience ?? null,
+      starting_price: input.starting_price ?? null,
+      response_time: input.response_time ?? null,
+      availability_status: input.availability_status ?? "available",
+      emergency: input.emergency ?? false,
+      service_types: input.service_types ?? [],
+      is_featured: input.is_featured ?? false,
+      verification_status: input.verification_status ?? "pending",
+      profile_status: input.profile_status ?? "draft",
+      slug,
+      source: "admin_created",
+    };
+    const { data, error } = await supabase
+      .from("professional_profiles")
+      .insert(payload as never)
+      .select("id, slug")
+      .maybeSingle();
+    if (!error && data) return { id: (data as { id: string; slug: string }).id, slug: (data as { slug: string }).slug };
+    if (error && !/duplicate|unique/i.test(error.message)) throw error;
+  }
+  throw new Error("Não foi possível gerar um slug único.");
+}
+
+// ============= Bloco F: relatórios & exports =============
+
+export type ReportEntity = "pros" | "quotes" | "proposals" | "reviews" | "users" | "subscriptions";
+
+export type ReportSummary = {
+  pros: { total: number; approved: number; pending: number; featured: number };
+  quotes: { total: number; open: number };
+  proposals: { total: number; accepted: number };
+  reviews: { total: number; pending: number };
+  users: { total: number };
+  subscriptions: { total: number; active: number };
+};
+
+export async function getReportSummary(): Promise<ReportSummary> {
+  const q = (table: string, col?: string, val?: string) => {
+    let b = supabase.from(table as never).select("id", { count: "exact", head: true });
+    if (col && val) b = b.eq(col, val);
+    return b.then((r) => (r.error ? 0 : r.count ?? 0));
+  };
+  const [
+    prosTotal, prosApproved, prosPending, prosFeatured,
+    quotesTotal, quotesOpen,
+    proposalsTotal, proposalsAccepted,
+    reviewsTotal, reviewsPending,
+    usersTotal,
+    subsTotal, subsActive,
+  ] = await Promise.all([
+    q("professional_profiles"),
+    q("professional_profiles", "verification_status", "approved"),
+    q("professional_profiles", "verification_status", "pending"),
+    (async () => {
+      const { count } = await supabase.from("professional_profiles")
+        .select("id", { count: "exact", head: true }).eq("is_featured", true);
+      return count ?? 0;
+    })(),
+    q("quote_requests"),
+    q("quote_requests", "status", "open"),
+    q("quote_proposals"),
+    q("quote_proposals", "status", "accepted"),
+    q("reviews"),
+    q("reviews", "status", "pending"),
+    q("profiles"),
+    q("subscriptions"),
+    q("subscriptions", "status", "active"),
+  ]);
+  return {
+    pros: { total: prosTotal, approved: prosApproved, pending: prosPending, featured: prosFeatured },
+    quotes: { total: quotesTotal, open: quotesOpen },
+    proposals: { total: proposalsTotal, accepted: proposalsAccepted },
+    reviews: { total: reviewsTotal, pending: reviewsPending },
+    users: { total: usersTotal },
+    subscriptions: { total: subsTotal, active: subsActive },
+  };
+}
+
+const EXPORT_CONFIG: Record<ReportEntity, { table: string; columns: string; orderBy: string }> = {
+  pros: {
+    table: "professional_profiles",
+    columns: "id,slug,professional_name,business_name,city,state,verification_status,is_featured,average_rating,reviews_count,starting_price,availability_status,profile_status,created_at",
+    orderBy: "created_at",
+  },
+  quotes: {
+    table: "quote_requests",
+    columns: "id,title,status,city,state,budget_min,budget_max,created_at",
+    orderBy: "created_at",
+  },
+  proposals: {
+    table: "quote_proposals",
+    columns: "id,quote_request_id,professional_id,price,status,created_at",
+    orderBy: "created_at",
+  },
+  reviews: {
+    table: "reviews",
+    columns: "id,professional_id,rating,status,created_at",
+    orderBy: "created_at",
+  },
+  users: {
+    table: "profiles",
+    columns: "user_id,full_name,email,city,state,account_status,created_at",
+    orderBy: "created_at",
+  },
+  subscriptions: {
+    table: "subscriptions",
+    columns: "id,user_id,plan_id,status,current_period_end,created_at",
+    orderBy: "created_at",
+  },
+};
+
+export async function fetchExportRows(entity: ReportEntity, limit = 2000): Promise<Record<string, unknown>[]> {
+  const cfg = EXPORT_CONFIG[entity];
+  const { data, error } = await supabase
+    .from(cfg.table as never)
+    .select(cfg.columns)
+    .order(cfg.orderBy, { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as Record<string, unknown>[];
+}
