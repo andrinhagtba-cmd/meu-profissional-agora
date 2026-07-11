@@ -1180,6 +1180,7 @@ export type Database = {
       profiles: {
         Row: {
           account_status: Database["public"]["Enums"]["account_status"]
+          avatar_media_id: string | null
           avatar_url: string | null
           city: string | null
           created_at: string
@@ -1193,6 +1194,7 @@ export type Database = {
         }
         Insert: {
           account_status?: Database["public"]["Enums"]["account_status"]
+          avatar_media_id?: string | null
           avatar_url?: string | null
           city?: string | null
           created_at?: string
@@ -1206,6 +1208,7 @@ export type Database = {
         }
         Update: {
           account_status?: Database["public"]["Enums"]["account_status"]
+          avatar_media_id?: string | null
           avatar_url?: string | null
           city?: string | null
           created_at?: string
@@ -1217,7 +1220,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_avatar_media_id_fkey"
+            columns: ["avatar_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quote_proposals: {
         Row: {
