@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, Users } from "lucide-react";
+import { Star, Users, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { images } from "@/data/images";
 import type { Category } from "@/types";
@@ -7,6 +7,9 @@ import type { Category } from "@/types";
 type CategoryLike = Category & { imageUrl?: string; imageAlt?: string };
 
 export function CategoryCard({ category }: { category: CategoryLike }) {
+  const hasImage =
+    (category.imageUrl && category.imageUrl.length > 0) ||
+    !!images[category.imageKey];
   const src =
     category.imageUrl && category.imageUrl.length > 0
       ? category.imageUrl
