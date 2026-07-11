@@ -47,11 +47,20 @@ export type Database = {
       categories: {
         Row: {
           active: boolean
+          badge_active: boolean
+          badge_end_at: string | null
+          badge_start_at: string | null
+          badge_text: string | null
+          badge_variant: string | null
+          card_media_id: string | null
+          cover_media_id: string | null
           created_at: string
           description: string | null
           display_order: number
           icon: string | null
+          icon_media_id: string | null
           id: string
+          image_alt: string | null
           image_url: string | null
           name: string
           slug: string
@@ -59,11 +68,20 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          badge_active?: boolean
+          badge_end_at?: string | null
+          badge_start_at?: string | null
+          badge_text?: string | null
+          badge_variant?: string | null
+          card_media_id?: string | null
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
           icon?: string | null
+          icon_media_id?: string | null
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           name: string
           slug: string
@@ -71,17 +89,48 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          badge_active?: boolean
+          badge_end_at?: string | null
+          badge_start_at?: string | null
+          badge_text?: string | null
+          badge_variant?: string | null
+          card_media_id?: string | null
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
           icon?: string | null
+          icon_media_id?: string | null
           id?: string
+          image_alt?: string | null
           image_url?: string | null
           name?: string
           slug?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_card_media_id_fkey"
+            columns: ["card_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_cover_media_id_fkey"
+            columns: ["cover_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_icon_media_id_fkey"
+            columns: ["icon_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       certifications: {
         Row: {
@@ -228,6 +277,122 @@ export type Database = {
           },
         ]
       }
+      media_assets: {
+        Row: {
+          alt_text: string | null
+          bucket_name: string
+          checksum: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          file_size_bytes: number | null
+          height: number | null
+          id: string
+          is_primary: boolean
+          legacy_path: string | null
+          mime_type: string | null
+          object_path: string
+          original_filename: string | null
+          sort_order: number
+          source_type: string | null
+          status: string
+          title: string | null
+          updated_at: string
+          uploaded_by: string | null
+          usage_type: string | null
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          bucket_name: string
+          checksum?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          file_size_bytes?: number | null
+          height?: number | null
+          id?: string
+          is_primary?: boolean
+          legacy_path?: string | null
+          mime_type?: string | null
+          object_path: string
+          original_filename?: string | null
+          sort_order?: number
+          source_type?: string | null
+          status?: string
+          title?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+          usage_type?: string | null
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          bucket_name?: string
+          checksum?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          file_size_bytes?: number | null
+          height?: number | null
+          id?: string
+          is_primary?: boolean
+          legacy_path?: string | null
+          mime_type?: string | null
+          object_path?: string
+          original_filename?: string | null
+          sort_order?: number
+          source_type?: string | null
+          status?: string
+          title?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+          usage_type?: string | null
+          width?: number | null
+        }
+        Relationships: []
+      }
+      media_migration_logs: {
+        Row: {
+          created_at: string
+          destination_path: string | null
+          error_message: string | null
+          id: string
+          legacy_path: string
+          media_asset_id: string | null
+          migrated_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          destination_path?: string | null
+          error_message?: string | null
+          id?: string
+          legacy_path: string
+          media_asset_id?: string | null
+          migrated_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          destination_path?: string | null
+          error_message?: string | null
+          id?: string
+          legacy_path?: string
+          media_asset_id?: string | null
+          migrated_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_migration_logs_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -309,7 +474,10 @@ export type Database = {
           description: string | null
           id: string
           image_url: string
+          media_asset_id: string | null
           professional_id: string
+          sort_order: number
+          status: string
           title: string | null
         }
         Insert: {
@@ -317,7 +485,10 @@ export type Database = {
           description?: string | null
           id?: string
           image_url: string
+          media_asset_id?: string | null
           professional_id: string
+          sort_order?: number
+          status?: string
           title?: string | null
         }
         Update: {
@@ -325,10 +496,20 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string
+          media_asset_id?: string | null
           professional_id?: string
+          sort_order?: number
+          status?: string
           title?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "portfolio_items_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "portfolio_items_professional_id_fkey"
             columns: ["professional_id"]
@@ -341,9 +522,11 @@ export type Database = {
       professional_profiles: {
         Row: {
           availability_status: Database["public"]["Enums"]["availability_status"]
+          avatar_media_id: string | null
           average_rating: number
           business_name: string | null
           city: string | null
+          cover_media_id: string | null
           created_at: string
           description: string | null
           emergency: boolean
@@ -365,9 +548,11 @@ export type Database = {
         }
         Insert: {
           availability_status?: Database["public"]["Enums"]["availability_status"]
+          avatar_media_id?: string | null
           average_rating?: number
           business_name?: string | null
           city?: string | null
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
           emergency?: boolean
@@ -389,9 +574,11 @@ export type Database = {
         }
         Update: {
           availability_status?: Database["public"]["Enums"]["availability_status"]
+          avatar_media_id?: string | null
           average_rating?: number
           business_name?: string | null
           city?: string | null
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
           emergency?: boolean
@@ -411,7 +598,22 @@ export type Database = {
           whatsapp?: string | null
           years_experience?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "professional_profiles_avatar_media_id_fkey"
+            columns: ["avatar_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_profiles_cover_media_id_fkey"
+            columns: ["cover_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professional_services: {
         Row: {
@@ -813,40 +1015,66 @@ export type Database = {
       services: {
         Row: {
           active: boolean
+          card_media_id: string | null
           category_id: string
+          cover_media_id: string | null
           created_at: string
           description: string | null
+          display_order: number
           id: string
+          image_alt: string | null
           name: string
           slug: string
           updated_at: string
         }
         Insert: {
           active?: boolean
+          card_media_id?: string | null
           category_id: string
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
+          display_order?: number
           id?: string
+          image_alt?: string | null
           name: string
           slug: string
           updated_at?: string
         }
         Update: {
           active?: boolean
+          card_media_id?: string | null
           category_id?: string
+          cover_media_id?: string | null
           created_at?: string
           description?: string | null
+          display_order?: number
           id?: string
+          image_alt?: string | null
           name?: string
           slug?: string
           updated_at?: string
         }
         Relationships: [
           {
+            foreignKeyName: "services_card_media_id_fkey"
+            columns: ["card_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "services_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_cover_media_id_fkey"
+            columns: ["cover_media_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
             referencedColumns: ["id"]
           },
         ]
