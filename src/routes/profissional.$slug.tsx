@@ -82,8 +82,8 @@ function ProfilePage() {
   const { pro } = Route.useLoaderData();
 
   const { data: reviews, isLoading: loadingReviews } = useQuery({
-    queryKey: ["reviews-db", pro.id],
-    queryFn: () => listApprovedReviewsByPro(pro.id),
+    queryKey: ["reviews-db", pro.slug],
+    queryFn: () => listApprovedReviewsBySlug(pro.slug),
   });
   const { data: related } = useQuery({
     queryKey: ["related", pro.slug],
