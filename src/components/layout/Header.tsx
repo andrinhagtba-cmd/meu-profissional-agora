@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBrand } from "@/hooks/use-brand";
+import { getMyProfile } from "@/services/clientService";
 import {
   DropdownMenu,
   DropdownMenuContent,
