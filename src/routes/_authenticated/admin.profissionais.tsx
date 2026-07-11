@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   MoreHorizontal, BadgeCheck, Star, X, ExternalLink, Eye, Pencil,
-  PauseCircle, PlayCircle, RefreshCw,
+  PauseCircle, PlayCircle, RefreshCw, UserPlus,
 } from "lucide-react";
 import {
   listPros, setProFeatured, setProVerification, bulkVerifyPros, bulkFeaturePros,

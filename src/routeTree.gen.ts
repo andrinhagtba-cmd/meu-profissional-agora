@@ -41,6 +41,7 @@ import { Route as AuthenticatedAdminStatusRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin.solicitacoes'
 import { Route as AuthenticatedAdminServicosRouteImport } from './routes/_authenticated/admin.servicos'
 import { Route as AuthenticatedAdminSegurancaRouteImport } from './routes/_authenticated/admin.seguranca'
+import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminRegioesRouteImport } from './routes/_authenticated/admin.regioes'
 import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authenticated/admin.propostas'
 import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
@@ -250,6 +251,12 @@ const AuthenticatedAdminSegurancaRoute =
   AuthenticatedAdminSegurancaRouteImport.update({
     id: '/seguranca',
     path: '/seguranca',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRelatoriosRoute =
+  AuthenticatedAdminRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminRegioesRoute =
@@ -513,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -581,6 +589,7 @@ export interface FileRoutesByTo {
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -652,6 +661,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/_authenticated/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/_authenticated/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/_authenticated/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -723,6 +733,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
+    | '/admin/relatorios'
     | '/admin/seguranca'
     | '/admin/servicos'
     | '/admin/solicitacoes'
@@ -791,6 +802,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
+    | '/admin/relatorios'
     | '/admin/seguranca'
     | '/admin/servicos'
     | '/admin/solicitacoes'
@@ -861,6 +873,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/profissionais'
     | '/_authenticated/admin/propostas'
     | '/_authenticated/admin/regioes'
+    | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/seguranca'
     | '/_authenticated/admin/servicos'
     | '/_authenticated/admin/solicitacoes'
@@ -1123,6 +1136,13 @@ declare module '@tanstack/react-router' {
       path: '/seguranca'
       fullPath: '/admin/seguranca'
       preLoaderRoute: typeof AuthenticatedAdminSegurancaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/relatorios': {
+      id: '/_authenticated/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/regioes': {
@@ -1431,6 +1451,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminProfissionaisRoute: typeof AuthenticatedAdminProfissionaisRouteWithChildren
   AuthenticatedAdminPropostasRoute: typeof AuthenticatedAdminPropostasRoute
   AuthenticatedAdminRegioesRoute: typeof AuthenticatedAdminRegioesRoute
+  AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminSegurancaRoute: typeof AuthenticatedAdminSegurancaRoute
   AuthenticatedAdminServicosRoute: typeof AuthenticatedAdminServicosRoute
   AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
@@ -1476,6 +1497,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminProfissionaisRouteWithChildren,
   AuthenticatedAdminPropostasRoute: AuthenticatedAdminPropostasRoute,
   AuthenticatedAdminRegioesRoute: AuthenticatedAdminRegioesRoute,
+  AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminSegurancaRoute: AuthenticatedAdminSegurancaRoute,
   AuthenticatedAdminServicosRoute: AuthenticatedAdminServicosRoute,
   AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,
