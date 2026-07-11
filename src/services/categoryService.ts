@@ -42,10 +42,88 @@ async function fetchServiceNames(
   return out;
 }
 
+interface CategoryStats {
+  count: number;
+  priceFrom: number;
+  rating: number;
+}
+
+async function fetchCategoryStats(
+  categoryIds: string[],
+): Promise<Map<string, CategoryStats>> {
+  const out = new Map<string, CategoryStats>();
+  if (!categoryIds.length) return out;
+  const { data: services } = await supabase
+    .from("services")
+    .select("id, category_id")
+    .in("category_id", categoryIds);
+  const serviceToCategory = new Map<string, string>();
+  for (const s of (services ?? []) as { id: string; category_id: string }[]) {
+    serviceToCategory.set(s.id, s.category_id);
+  }
+  const serviceIds = Array.from(serviceToCategory.keys());
+  if (!serviceIds.length) return out;
+  const { data: links } = await supabase
+    .from("professional_services")
+    .select("service_id, professional_id")
+    .in("service_id", serviceIds);
+  const proIds = new Set<string>();
+  const catToPros = new Map<string, Set<string>>();
+  for (const link of (links ?? []) as {
+    service_id: string;
+    professional_id: string;
+  }[]) {
+    const catId = serviceToCategory.get(link.service_id);
+    if (!catId) continue;
+    proIds.add(link.professional_id);
+    const set = catToPros.get(catId) ?? new Set<string>();
+    set.add(link.professional_id);
+    catToPros.set(catId, set);
+  }
+  if (!proIds.size) return out;
+  const { data: pros } = await supabase
+    .from("professional_profiles")
+    .select("id, starting_price, average_rating")
+    .in("id", Array.from(proIds));
+  const proMap = new Map<
+    string,
+    { starting_price: number | null; average_rating: number | null }
+  >();
+  for (const p of (pros ?? []) as {
+    id: string;
+    starting_price: number | null;
+    average_rating: number | null;
+  }[]) {
+    proMap.set(p.id, p);
+  }
+  for (const [catId, set] of catToPros) {
+    let minPrice = Infinity;
+    let ratingSum = 0;
+    let ratingCount = 0;
+    for (const pid of set) {
+      const p = proMap.get(pid);
+      if (!p) continue;
+      if (p.starting_price && p.starting_price > 0)
+        minPrice = Math.min(minPrice, Number(p.starting_price));
+      if (p.average_rating && p.average_rating > 0) {
+        ratingSum += Number(p.average_rating);
+        ratingCount += 1;
+      }
+    }
+    out.set(catId, {
+      count: set.size,
+      priceFrom: Number.isFinite(minPrice) ? minPrice : 0,
+      rating: ratingCount > 0 ? ratingSum / ratingCount : 5,
+    });
+  }
+  return out;
+}
+
 function toVM(
   row: CategoryRow,
   imageUrl: string,
   services: string[],
+  stats: CategoryStats | undefined,
 ): CategoryVM {
   const staticMatch = staticCategories.find((c) => c.slug === row.slug);
   const badgeActive = row.badge_active !== false;
@@ -62,9 +140,9 @@ function toVM(
         : row.name,
     description: row.description ?? staticMatch?.description ?? "",
     badge: badgeActive && row.badge_text ? row.badge_text : staticMatch?.badge,
-    professionalsCount: staticMatch?.professionalsCount ?? 0,
-    rating: staticMatch?.rating ?? 5,
-    priceFrom: staticMatch?.priceFrom ?? 0,
+    professionalsCount: stats?.count ?? staticMatch?.professionalsCount ?? 0,
+    rating: stats?.rating ?? staticMatch?.rating ?? 5,
+    priceFrom: stats?.priceFrom ?? staticMatch?.priceFrom ?? 0,
     services: services.length > 0 ? services : staticMatch?.services ?? [],
     faqs: (staticMatch?.faqs ?? []) as CategoryFaq[],
   };
