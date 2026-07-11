@@ -1964,6 +1964,10 @@ export type Database = {
         | "system"
         | "moderation"
         | "opportunity"
+        | "proposal_accepted"
+        | "proposal_rejected"
+        | "quote_status"
+        | "message"
       price_type: "fixed" | "hourly" | "daily" | "per_visit" | "to_quote"
       profile_status: "draft" | "published" | "archived"
       proposal_status: "sent" | "viewed" | "accepted" | "rejected" | "withdrawn"
@@ -2119,6 +2123,10 @@ export const Constants = {
         "system",
         "moderation",
         "opportunity",
+        "proposal_accepted",
+        "proposal_rejected",
+        "quote_status",
+        "message",
       ],
       price_type: ["fixed", "hourly", "daily", "per_visit", "to_quote"],
       profile_status: ["draft", "published", "archived"],
