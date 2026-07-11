@@ -98,6 +98,7 @@ function PainelMidia() {
 
   const avatarRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
+  const portfolioFileRef = useRef<HTMLInputElement>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newFile, setNewFile] = useState<File | null>(null);
