@@ -94,11 +94,18 @@ function Painel() {
                   : "Painel do cliente"}
             </p>
           </div>
-          {!isProfissional && (
-            <Button asChild className="h-11 rounded-xl bg-orange px-5 font-semibold text-orange-foreground hover:bg-orange/90">
-              <Link to="/pedir-orcamento" search={{} as never}>Pedir novo orçamento</Link>
-            </Button>
-          )}
+          <div className="flex flex-wrap gap-2">
+            {isAdmin && (
+              <Button asChild variant="outline" className="h-11 rounded-xl">
+                <Link to="/admin">Painel administrativo</Link>
+              </Button>
+            )}
+            {!isProfissional && (
+              <Button asChild className="h-11 rounded-xl bg-orange px-5 font-semibold text-orange-foreground hover:bg-orange/90">
+                <Link to="/pedir-orcamento" search={{} as never}>Pedir novo orçamento</Link>
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
