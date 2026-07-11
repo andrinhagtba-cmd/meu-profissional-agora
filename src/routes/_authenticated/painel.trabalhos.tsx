@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProProfile } from "@/services/professionalDashboardService";
 import { getOrCreateConversation } from "@/services/chatService";
-import { TrackingSection } from "./painel.pedidos.$id";
+import { TrackingSection } from "@/components/painel/TrackingSection";
 
 export const Route = createFileRoute("/_authenticated/painel/trabalhos")({
   head: () => ({
