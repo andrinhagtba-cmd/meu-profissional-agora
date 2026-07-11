@@ -18,7 +18,7 @@ import {
   Flag, ArrowRight, TrendingUp,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
       { title: "Dashboard — Admin ProConecta" },
