@@ -24,6 +24,7 @@ import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
 import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
 import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
@@ -104,6 +105,12 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPainelPropostasRoute =
+  AuthenticatedPainelPropostasRouteImport.update({
+    id: '/propostas',
+    path: '/propostas',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
 const AuthenticatedPainelPerfilRoute =
   AuthenticatedPainelPerfilRouteImport.update({
     id: '/perfil',
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
   '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
+  '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,6 +184,7 @@ export interface FileRoutesByTo {
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
   '/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
+  '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
   '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRoute
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
+  '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/painel/notificacoes'
     | '/painel/pedidos'
     | '/painel/perfil'
+    | '/painel/propostas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/painel/notificacoes'
     | '/painel/pedidos'
     | '/painel/perfil'
+    | '/painel/propostas'
   id:
     | '__root__'
     | '/'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/notificacoes'
     | '/_authenticated/painel/pedidos'
     | '/_authenticated/painel/perfil'
+    | '/_authenticated/painel/propostas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -390,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/painel/propostas': {
+      id: '/_authenticated/painel/propostas'
+      path: '/propostas'
+      fullPath: '/painel/propostas'
+      preLoaderRoute: typeof AuthenticatedPainelPropostasRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
     '/_authenticated/painel/perfil': {
       id: '/_authenticated/painel/perfil'
       path: '/perfil'
@@ -434,6 +454,7 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
   AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRoute
   AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
+  AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
@@ -442,6 +463,7 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelNotificacoesRoute: AuthenticatedPainelNotificacoesRoute,
   AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRoute,
   AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
+  AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =
