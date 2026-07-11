@@ -92,10 +92,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "Compare profissionais, veja avaliações reais e solicite orçamentos perto de você.",
+          "Compare profissionais, veja avaliações reais e solicite orçamentos de eletricistas, encanadores, pintores e mais, perto de você.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ProConecta — Encontre profissionais perto de você" },
+      { name: "twitter:description", content: "Compare profissionais, veja avaliações reais e solicite orçamentos de eletricistas, encanadores, pintores e mais, perto de você." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
