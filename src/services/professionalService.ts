@@ -258,6 +258,8 @@ export async function listApprovedReviewsBySlug(
   if (pErr) throw pErr;
   if (!pro?.id) return [];
   return listApprovedReviewsByPro(pro.id as string, limit);
+}
+
 
 export async function listApprovedReviewsByPro(
   proId: string,
