@@ -81,6 +81,7 @@ import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminAtividadeRouteImport } from './routes/_authenticated/admin.atividade'
 import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_authenticated/admin.assinaturas'
 import { Route as AuthenticatedAdminAdministradoresRouteImport } from './routes/_authenticated/admin.administradores'
+import { Route as AuthenticatedPainelPedidosIndexRouteImport } from './routes/_authenticated/painel.pedidos.index'
 import { Route as AuthenticatedAdminProfissionaisIndexRouteImport } from './routes/_authenticated/admin.profissionais.index'
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
@@ -492,6 +493,12 @@ const AuthenticatedAdminAdministradoresRoute =
     path: '/administradores',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedPainelPedidosIndexRoute =
+  AuthenticatedPainelPedidosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
+  } as any)
 const AuthenticatedAdminProfissionaisIndexRoute =
   AuthenticatedAdminProfissionaisIndexRouteImport.update({
     id: '/',
@@ -600,6 +607,7 @@ export interface FileRoutesByFullPath {
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
+  '/painel/pedidos/': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -663,7 +671,6 @@ export interface FileRoutesByTo {
   '/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
-  '/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
@@ -675,6 +682,7 @@ export interface FileRoutesByTo {
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisIndexRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -755,6 +763,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/_authenticated/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
+  '/_authenticated/painel/pedidos/': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -835,6 +844,7 @@ export interface FileRouteTypes {
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
     | '/admin/profissionais/'
+    | '/painel/pedidos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -898,7 +908,6 @@ export interface FileRouteTypes {
     | '/painel/mensagens'
     | '/painel/midia'
     | '/painel/notificacoes'
-    | '/painel/pedidos'
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
@@ -910,6 +919,7 @@ export interface FileRouteTypes {
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
     | '/admin/profissionais'
+    | '/painel/pedidos'
   id:
     | '__root__'
     | '/'
@@ -989,6 +999,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/mensagens/$id'
     | '/_authenticated/painel/pedidos/$id'
     | '/_authenticated/admin/profissionais/'
+    | '/_authenticated/painel/pedidos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1518,6 +1529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAdministradoresRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/painel/pedidos/': {
+      id: '/_authenticated/painel/pedidos/'
+      path: '/'
+      fullPath: '/painel/pedidos/'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
+    }
     '/_authenticated/admin/profissionais/': {
       id: '/_authenticated/admin/profissionais/'
       path: '/'
@@ -1686,11 +1704,13 @@ const AuthenticatedPainelMensagensRouteWithChildren =
 
 interface AuthenticatedPainelPedidosRouteChildren {
   AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
+  AuthenticatedPainelPedidosIndexRoute: typeof AuthenticatedPainelPedidosIndexRoute
 }
 
 const AuthenticatedPainelPedidosRouteChildren: AuthenticatedPainelPedidosRouteChildren =
   {
     AuthenticatedPainelPedidosIdRoute: AuthenticatedPainelPedidosIdRoute,
+    AuthenticatedPainelPedidosIndexRoute: AuthenticatedPainelPedidosIndexRoute,
   }
 
 const AuthenticatedPainelPedidosRouteWithChildren =
@@ -1766,13 +1786,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
