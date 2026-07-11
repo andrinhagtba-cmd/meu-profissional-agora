@@ -17,6 +17,7 @@ import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
 import { Route as OrcamentosRouteImport } from './routes/orcamentos'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as BuscarRouteImport } from './routes/buscar'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -122,6 +123,11 @@ const OrcamentosRoute = OrcamentosRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriasRoute = CategoriasRouteImport.update({
@@ -509,6 +515,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
   '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
@@ -584,6 +591,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
   '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
@@ -659,6 +667,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
+  '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
   '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
@@ -736,6 +745,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/buscar'
     | '/categorias'
+    | '/contato'
     | '/entrar'
     | '/orcamentos'
     | '/pedir-orcamento'
@@ -811,6 +821,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/buscar'
     | '/categorias'
+    | '/contato'
     | '/entrar'
     | '/orcamentos'
     | '/pedir-orcamento'
@@ -885,6 +896,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/buscar'
     | '/categorias'
+    | '/contato'
     | '/entrar'
     | '/orcamentos'
     | '/pedir-orcamento'
@@ -962,6 +974,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   BuscarRoute: typeof BuscarRoute
   CategoriasRoute: typeof CategoriasRoute
+  ContatoRoute: typeof ContatoRoute
   EntrarRoute: typeof EntrarRoute
   OrcamentosRoute: typeof OrcamentosRoute
   PedirOrcamentoRoute: typeof PedirOrcamentoRoute
@@ -1031,6 +1044,13 @@ declare module '@tanstack/react-router' {
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categorias': {
@@ -1688,6 +1708,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   BuscarRoute: BuscarRoute,
   CategoriasRoute: CategoriasRoute,
+  ContatoRoute: ContatoRoute,
   EntrarRoute: EntrarRoute,
   OrcamentosRoute: OrcamentosRoute,
   PedirOrcamentoRoute: PedirOrcamentoRoute,
