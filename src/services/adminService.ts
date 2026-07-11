@@ -98,7 +98,7 @@ export async function listPros(status?: string): Promise<AdminProRow[]> {
   return (data ?? []) as AdminProRow[];
 }
 
-export async function setProVerification(id: string, status: "verified" | "rejected" | "pending") {
+export async function setProVerification(id: string, status: "approved" | "rejected" | "pending") {
   const { error } = await supabase
     .from("professional_profiles").update({ verification_status: status }).eq("id", id);
   if (error) throw error;
@@ -161,7 +161,7 @@ export async function listQuotes(status?: string): Promise<AdminQuoteRow[]> {
 // --- Reviews (cliente) ---
 export async function submitReview(quoteId: string, rating: number, comment: string, title?: string) {
   const { data, error } = await supabase.rpc("submit_review", {
-    _quote_id: quoteId, _rating: rating, _comment: comment, _title: title ?? null,
+    _quote_id: quoteId, _rating: rating, _comment: comment, _title: title ?? undefined,
   });
   if (error) throw error;
   return data as string;
