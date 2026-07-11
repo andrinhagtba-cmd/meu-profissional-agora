@@ -5,7 +5,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { listMediaAssets, type AdminMediaAsset } from "@/services/adminContentService";
-import { getSignedMediaUrl } from "@/services/mediaService";
+import { getMediaUrl } from "@/services/mediaService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/admin/midias")({
