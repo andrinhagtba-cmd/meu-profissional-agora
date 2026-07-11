@@ -77,6 +77,75 @@ export type Database = {
         }
         Relationships: []
       }
+      b2b_companies: {
+        Row: {
+          address: string | null
+          city: string | null
+          cnpj: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          employees_count: number | null
+          id: string
+          logo_url: string | null
+          monthly_volume: number | null
+          name: string
+          notes: string | null
+          owner_user_id: string | null
+          plan: string | null
+          segment: string | null
+          state: string | null
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          employees_count?: number | null
+          id?: string
+          logo_url?: string | null
+          monthly_volume?: number | null
+          name: string
+          notes?: string | null
+          owner_user_id?: string | null
+          plan?: string | null
+          segment?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          employees_count?: number | null
+          id?: string
+          logo_url?: string | null
+          monthly_volume?: number | null
+          name?: string
+          notes?: string | null
+          owner_user_id?: string | null
+          plan?: string | null
+          segment?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           created_at: string
@@ -117,6 +186,51 @@ export type Database = {
           position?: string
           starts_at?: string | null
           subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      benefits: {
+        Row: {
+          audience: string
+          badge_color: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          link_url: string | null
+          priority: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          badge_color?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          priority?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          badge_color?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          priority?: number
           title?: string
           updated_at?: string
         }
@@ -440,6 +554,66 @@ export type Database = {
           },
         ]
       }
+      coupons: {
+        Row: {
+          applies_to: string
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          max_uses: number | null
+          min_amount: number | null
+          per_user_limit: number | null
+          status: string
+          target_ids: string[] | null
+          updated_at: string
+          uses_count: number
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          applies_to?: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          max_uses?: number | null
+          min_amount?: number | null
+          per_user_limit?: number | null
+          status?: string
+          target_ids?: string[] | null
+          updated_at?: string
+          uses_count?: number
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          applies_to?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          max_uses?: number | null
+          min_amount?: number | null
+          per_user_limit?: number | null
+          status?: string
+          target_ids?: string[] | null
+          updated_at?: string
+          uses_count?: number
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           client_id: string
@@ -462,6 +636,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "favorites_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      highlights: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          position: number
+          professional_id: string | null
+          reference: string | null
+          section: string
+          starts_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          position?: number
+          professional_id?: string | null
+          reference?: string | null
+          section?: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          position?: number
+          professional_id?: string | null
+          reference?: string | null
+          section?: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "highlights_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
