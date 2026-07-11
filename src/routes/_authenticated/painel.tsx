@@ -225,11 +225,17 @@ function Painel() {
         )}
 
         {!isProfissional && (
-          <div className="mt-10 grid gap-4 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 lg:grid-cols-4">
             <PanelLink
               to="/painel/pedidos"
               title="Meus pedidos"
               desc="Acompanhe o status dos orçamentos que você solicitou."
+              icon={<MessageSquare />}
+            />
+            <PanelLink
+              to="/painel/mensagens"
+              title="Mensagens"
+              desc="Converse com o profissional escolhido."
               icon={<MessageSquare />}
             />
             <PanelLink
