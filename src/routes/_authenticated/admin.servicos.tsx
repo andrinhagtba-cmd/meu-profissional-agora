@@ -226,48 +226,34 @@ function Page() {
       </section>
 
       {isLoading ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-64 rounded-3xl" />
+        <div className="space-y-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 rounded-2xl" />
           ))}
         </div>
       ) : rows.length === 0 ? (
         <EmptyState onCreate={() => setCreating(true)} hasCategories={!!cats.length} />
       ) : (
-        <div className="space-y-10">
+        <div className="space-y-4">
           {grouped.map(([catId, group]) => (
-            <section key={catId}>
-              <div className="mb-4 flex items-center gap-3">
-                <h2 className="font-display text-lg font-bold text-foreground">
-                  {group.name}
-                </h2>
-                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                  {group.items.length}
-                </span>
-                <div className="ml-2 h-px flex-1 bg-[oklch(0.93_0.014_258)]" />
-              </div>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {group.items.map((svc) => (
-                  <ServiceCard
-                    key={svc.id}
-                    service={svc}
-                    onEdit={() => setEditing(svc)}
-                    onDelete={() => setToDelete(svc)}
-                    onToggle={(v) =>
-                      upsertM.mutate({
-                        id: svc.id,
-                        category_id: svc.category_id,
-                        name: svc.name,
-                        slug: svc.slug,
-                        description: svc.description,
-                        display_order: svc.display_order,
-                        active: v,
-                      })
-                    }
-                  />
-                ))}
-              </div>
-            </section>
+            <CategoryGroup
+              key={catId}
+              name={group.name}
+              items={group.items}
+              onEdit={(svc) => setEditing(svc)}
+              onDelete={(svc) => setToDelete(svc)}
+              onToggle={(svc, v) =>
+                upsertM.mutate({
+                  id: svc.id,
+                  category_id: svc.category_id,
+                  name: svc.name,
+                  slug: svc.slug,
+                  description: svc.description,
+                  display_order: svc.display_order,
+                  active: v,
+                })
+              }
+            />
           ))}
         </div>
       )}
