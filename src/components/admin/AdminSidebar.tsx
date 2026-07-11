@@ -111,25 +111,30 @@ export function AdminSidebar() {
       <SidebarHeader className="border-b border-sidebar-border/70 bg-sidebar">
         <Link to="/admin" className="flex items-center gap-3 px-1.5 py-2">
           {logoUrl ? (
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white ring-1 ring-black/5 overflow-hidden">
-              <img src={logoUrl} alt={brandName} className="h-full w-full object-contain" />
-            </div>
+            <img
+              src={logoUrl}
+              alt={brandName}
+              className={collapsed ? "h-9 w-9 object-contain" : "h-10 w-auto max-w-[180px] object-contain"}
+            />
           ) : (
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_6px_18px_-6px_oklch(0.51_0.245_262/55%)]">
-              {initial}
-            </div>
-          )}
-          {!collapsed && (
-            <div className="min-w-0">
-              <div className="truncate font-display text-[15px] font-extrabold tracking-tight text-sidebar-foreground">
-                {brandName}
+            <>
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_6px_18px_-6px_oklch(0.51_0.245_262/55%)]">
+                {initial}
               </div>
-              <div className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-primary/70">
-                Console admin
-              </div>
-            </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <div className="truncate font-display text-[15px] font-extrabold tracking-tight text-sidebar-foreground">
+                    {brandName}
+                  </div>
+                  <div className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-primary/70">
+                    Console admin
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </Link>
+
       </SidebarHeader>
 
       <SidebarContent>
