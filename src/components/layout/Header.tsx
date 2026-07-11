@@ -49,33 +49,34 @@ export function Logo({ className }: { className?: string }) {
   return (
     <Link
       to="/"
-      className={`flex items-center gap-2 ${className ?? ""}`}
+      className={`flex items-center ${className ?? ""}`}
       aria-label={`${name} — página inicial`}
     >
       {logoUrl ? (
-        <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-primary/5 ring-1 ring-primary/10">
-          <img
-            src={logoUrl}
-            alt={name}
-            className="h-10 w-10 object-contain"
-          />
-        </span>
+        <img
+          src={logoUrl}
+          alt={name}
+          className="h-10 w-auto max-w-[220px] object-contain"
+        />
       ) : (
-        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
-          <Wrench size={20} aria-hidden="true" />
+        <span className="flex items-center gap-2">
+          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
+            <Wrench size={20} aria-hidden="true" />
+          </span>
+          <span className="min-w-0 leading-tight">
+            <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
+              {rendered}
+            </span>
+            <span className="block text-[10px] font-medium text-muted-foreground">
+              {tagline}
+            </span>
+          </span>
         </span>
       )}
-      <span className="min-w-0 leading-tight">
-        <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
-          {rendered}
-        </span>
-        <span className="block text-[10px] font-medium text-muted-foreground">
-          {tagline}
-        </span>
-      </span>
     </Link>
   );
 }
+
 
 export function Header() {
   const [open, setOpen] = useState(false);
