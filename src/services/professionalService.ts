@@ -58,7 +58,7 @@ function initialsOf(name: string): string {
     .join("");
 }
 
-function mapRow(row: DbRow): Professional {
+function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
   const mock = mockBySlug.get(row.slug);
   const name = row.professional_name || mock?.name || row.slug;
   const services =
@@ -82,6 +82,9 @@ function mapRow(row: DbRow): Professional {
       ?.categories?.name ||
     "Prestador de serviços";
 
+  const avatarUrl = row.avatar_media_id ? urlMap?.get(row.avatar_media_id) ?? null : null;
+  const coverUrl = row.cover_media_id ? urlMap?.get(row.cover_media_id) ?? null : null;
+
   return {
     id: row.id,
     slug: row.slug,
@@ -89,6 +92,8 @@ function mapRow(row: DbRow): Professional {
     company: row.business_name ?? mock?.company,
     initials: mock?.initials || initialsOf(name),
     avatarColor: mock?.avatarColor || "bg-primary",
+    avatarUrl,
+    coverUrl,
     specialty,
     categorySlug,
     verified: row.verification_status === "approved",
@@ -116,6 +121,14 @@ function mapRow(row: DbRow): Professional {
   };
 }
 
+async function resolveRowMedia(rows: DbRow[]): Promise<Map<string, string>> {
+  const ids: (string | null)[] = [];
+  rows.forEach((r) => {
+    ids.push(r.avatar_media_id, r.cover_media_id);
+  });
+  return resolveMediaUrlsByIds(ids);
+}
+
 async function fetchAll(): Promise<Professional[]> {
   const { data, error } = await supabase
     .from("professional_profiles")
@@ -125,7 +138,9 @@ async function fetchAll(): Promise<Professional[]> {
     .order("average_rating", { ascending: false });
 
   if (error) throw error;
-  return ((data ?? []) as unknown as DbRow[]).map(mapRow);
+  const rows = (data ?? []) as unknown as DbRow[];
+  const urlMap = await resolveRowMedia(rows);
+  return rows.map((r) => mapRow(r, urlMap));
 }
 
 export async function listProfessionals(): Promise<Professional[]> {
@@ -147,7 +162,9 @@ export async function getProfessionalBySlug(
     .maybeSingle();
   if (error) throw error;
   if (!data) return undefined;
-  return mapRow(data as unknown as DbRow);
+  const row = data as unknown as DbRow;
+  const urlMap = await resolveRowMedia([row]);
+  return mapRow(row, urlMap);
 }
 
 export async function listProfessionalsByCategory(
