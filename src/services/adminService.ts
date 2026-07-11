@@ -173,3 +173,130 @@ export async function getReviewForQuote(quoteId: string) {
   if (error) throw error;
   return data;
 }
+
+// ============ Etapa 2 — Dashboard Overview ============
+
+function dayKey(d: Date | string) {
+  const dt = typeof d === "string" ? new Date(d) : d;
+  return dt.toISOString().slice(0, 10);
+}
+
+async function fetchDaily(table: string, days = 30, dateCol = "created_at"): Promise<{ date: string; count: number }[]> {
+  const since = new Date(Date.now() - (days - 1) * 86400000);
+  since.setUTCHours(0, 0, 0, 0);
+  const { data, error } = await supabase
+    .from(table as never)
+    .select(dateCol)
+    .gte(dateCol, since.toISOString())
+    .limit(5000);
+  if (error) throw error;
+  const buckets = new Map<string, number>();
+  for (let i = 0; i < days; i++) {
+    const d = new Date(since.getTime() + i * 86400000);
+    buckets.set(dayKey(d), 0);
+  }
+  for (const row of (data ?? []) as Array<Record<string, string>>) {
+    const k = dayKey(row[dateCol]);
+    if (buckets.has(k)) buckets.set(k, (buckets.get(k) ?? 0) + 1);
+  }
+  return Array.from(buckets.entries()).map(([date, count]) => ({ date, count }));
+}
+
+export type AdminTimeseries = {
+  signups: { date: string; count: number }[];
+  quotes: { date: string; count: number }[];
+  proposals: { date: string; count: number }[];
+};
+
+export async function getAdminTimeseries(days = 30): Promise<AdminTimeseries> {
+  const [signups, quotes, proposals] = await Promise.all([
+    fetchDaily("profiles", days),
+    fetchDaily("quote_requests", days),
+    fetchDaily("quote_proposals", days),
+  ]);
+  return { signups, quotes, proposals };
+}
+
+export type AdminActivity = {
+  id: string;
+  type: "signup" | "quote" | "proposal" | "review" | "report";
+  title: string;
+  subtitle: string;
+  at: string;
+};
+
+export async function getAdminActivity(limit = 20): Promise<AdminActivity[]> {
+  const [profiles, quotes, proposals, reviews, reports] = await Promise.all([
+    supabase.from("profiles").select("user_id, full_name, email, created_at").order("created_at", { ascending: false }).limit(limit),
+    supabase.from("quote_requests").select("id, title, city, state, created_at").order("created_at", { ascending: false }).limit(limit),
+    supabase.from("quote_proposals").select("id, price, created_at, quote_request:quote_request_id(title)").order("created_at", { ascending: false }).limit(limit),
+    supabase.from("reviews").select("id, rating, status, created_at").order("created_at", { ascending: false }).limit(limit),
+    supabase.from("reports").select("id, reason, status, created_at").order("created_at", { ascending: false }).limit(limit),
+  ]);
+  const out: AdminActivity[] = [];
+  for (const p of (profiles.data ?? []) as Array<{ user_id: string; full_name: string | null; email: string | null; created_at: string }>) {
+    out.push({ id: `s:${p.user_id}`, type: "signup", title: "Novo cadastro", subtitle: p.full_name ?? p.email ?? "Usuário", at: p.created_at });
+  }
+  for (const q of (quotes.data ?? []) as Array<{ id: string; title: string; city: string; state: string; created_at: string }>) {
+    out.push({ id: `q:${q.id}`, type: "quote", title: "Novo pedido de orçamento", subtitle: `${q.title} · ${q.city}/${q.state}`, at: q.created_at });
+  }
+  for (const pr of (proposals.data ?? []) as Array<{ id: string; price: number | null; created_at: string; quote_request?: { title: string } | null }>) {
+    const price = pr.price ? ` · R$ ${Number(pr.price).toLocaleString("pt-BR")}` : "";
+    out.push({ id: `p:${pr.id}`, type: "proposal", title: "Nova proposta enviada", subtitle: `${pr.quote_request?.title ?? "Pedido"}${price}`, at: pr.created_at });
+  }
+  for (const r of (reviews.data ?? []) as Array<{ id: string; rating: number; status: string; created_at: string }>) {
+    out.push({ id: `r:${r.id}`, type: "review", title: `Nova avaliação ${r.rating}★`, subtitle: `Status: ${r.status}`, at: r.created_at });
+  }
+  for (const rp of (reports.data ?? []) as Array<{ id: string; reason: string; status: string; created_at: string }>) {
+    out.push({ id: `rp:${rp.id}`, type: "report", title: "Denúncia registrada", subtitle: `${rp.reason} · ${rp.status}`, at: rp.created_at });
+  }
+  return out.sort((a, b) => (a.at < b.at ? 1 : -1)).slice(0, limit);
+}
+
+export type AdminTopCategory = {
+  category_id: string;
+  name: string;
+  slug: string;
+  quotes: number;
+};
+
+export async function getAdminTopCategories(limit = 6): Promise<AdminTopCategory[]> {
+  const { data: cats, error: catErr } = await supabase
+    .from("categories").select("id, name, slug").limit(200);
+  if (catErr) throw catErr;
+  const { data: quotes, error: qErr } = await supabase
+    .from("quote_requests").select("category_id").limit(5000);
+  if (qErr) throw qErr;
+  const counts = new Map<string, number>();
+  for (const q of (quotes ?? []) as Array<{ category_id: string | null }>) {
+    if (!q.category_id) continue;
+    counts.set(q.category_id, (counts.get(q.category_id) ?? 0) + 1);
+  }
+  return ((cats ?? []) as Array<{ id: string; name: string; slug: string }>)
+    .map((c) => ({ category_id: c.id, name: c.name, slug: c.slug, quotes: counts.get(c.id) ?? 0 }))
+    .sort((a, b) => b.quotes - a.quotes)
+    .slice(0, limit);
+}
+
+export type AdminFunnel = {
+  quotes: number;
+  withProposal: number;
+  accepted: number;
+  reviewed: number;
+};
+
+export async function getAdminFunnel(): Promise<AdminFunnel> {
+  const [quotesRes, proposalsRes, acceptedRes, reviewsRes] = await Promise.all([
+    supabase.from("quote_requests").select("id", { count: "exact", head: true }),
+    supabase.from("quote_proposals").select("quote_request_id"),
+    supabase.from("quote_requests").select("id", { count: "exact", head: true }).not("selected_professional_id", "is", null),
+    supabase.from("reviews").select("id", { count: "exact", head: true }),
+  ]);
+  const withProposal = new Set(((proposalsRes.data ?? []) as Array<{ quote_request_id: string }>).map((p) => p.quote_request_id)).size;
+  return {
+    quotes: quotesRes.count ?? 0,
+    withProposal,
+    accepted: acceptedRes.count ?? 0,
+    reviewed: reviewsRes.count ?? 0,
+  };
+}
