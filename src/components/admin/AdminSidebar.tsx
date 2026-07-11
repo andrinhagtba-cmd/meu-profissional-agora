@@ -130,9 +130,9 @@ export function AdminSidebar() {
                   return (
                     <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-                        <Link to={item.to} className="flex items-center gap-2">
-                          <Icon size={16} />
-                          {!collapsed && <span className="truncate">{item.label}</span>}
+                        <Link to={item.to} className="flex items-center gap-2.5">
+                          <Icon size={17} />
+                          {!collapsed && <span className="truncate text-[13px] font-medium">{item.label}</span>}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
