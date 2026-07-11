@@ -438,9 +438,9 @@ function KpiCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-          <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-foreground">
+          <div className="mt-2 font-display text-3xl font-extrabold tracking-tight text-foreground">
             {loading ? <Skeleton className="h-8 w-14" /> : (value ?? 0)}
-          </p>
+          </div>
         </div>
         <span className={`grid h-11 w-11 place-items-center rounded-xl ${TONES[tone]}`}>
           {icon}

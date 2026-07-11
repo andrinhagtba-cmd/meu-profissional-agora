@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BrandDocumentSync } from "@/components/BrandDocumentSync";
+import { SystemNotificationBridge } from "@/components/layout/SystemNotificationBridge";
 
 
 function NotFoundComponent() {
@@ -146,6 +147,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrandDocumentSync />
+      <SystemNotificationBridge />
       <Outlet />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>

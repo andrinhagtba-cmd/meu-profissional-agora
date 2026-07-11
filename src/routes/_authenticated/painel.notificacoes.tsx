@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, CheckCheck } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/painel/notificacoes")({
 function Notificacoes() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | "unsupported">("unsupported");
   const { data, isLoading } = useQuery({
     queryKey: ["notifications", user?.id],
     enabled: !!user?.id,
@@ -48,6 +50,17 @@ function Notificacoes() {
     },
   });
 
+  useEffect(() => {
+    setBrowserPermission(typeof window !== "undefined" && "Notification" in window ? Notification.permission : "unsupported");
+  }, []);
+
+  const requestBrowserAlerts = async () => {
+    if (!("Notification" in window)) return;
+    const permission = await Notification.requestPermission();
+    setBrowserPermission(permission);
+    if (permission === "granted") toast.success("Alertas do navegador ativados.");
+  };
+
   return (
     <SiteLayout>
       <div className="container-page py-10 lg:py-14">
@@ -68,6 +81,14 @@ function Notificacoes() {
           >
             <CheckCheck size={16} /> Marcar todas como lidas
           </Button>
+          {browserPermission === "default" && (
+            <Button
+              className="h-11 rounded-xl px-5 font-semibold"
+              onClick={requestBrowserAlerts}
+            >
+              <Bell size={16} /> Ativar alertas
+            </Button>
+          )}
         </div>
 
         {isLoading ? (
