@@ -84,6 +84,8 @@ export type AdminProRow = {
   average_rating: number | null;
   reviews_count: number | null;
   created_at: string;
+  whatsapp: string | null;
+  description: string | null;
 };
 
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
