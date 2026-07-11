@@ -124,6 +124,82 @@ export async function bulkFeaturePros(ids: string[], featured: boolean) {
   if (error) throw error;
 }
 
+export async function setProProfileStatus(id: string, status: "draft" | "published" | "archived") {
+  const { error } = await supabase
+    .from("professional_profiles").update({ profile_status: status as never }).eq("id", id);
+  if (error) throw error;
+}
+
+export type AdminProDetail = AdminProRow & {
+  user_id: string;
+  years_experience: number | null;
+  starting_price: number | null;
+  response_time: string | null;
+  profile_status: string;
+  availability_status: string;
+  emergency: boolean;
+  service_types: string[] | null;
+  updated_at: string;
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
+  source: string | null;
+  profile_email: string | null;
+  profile_full_name: string | null;
+  profile_avatar_url: string | null;
+  counts: { services: number; portfolio: number; leads: number; reviews: number };
+};
+
+export async function getProDetail(id: string): Promise<AdminProDetail> {
+  const { data, error } = await supabase
+    .from("professional_profiles")
+    .select(`
+      id, user_id, slug, professional_name, business_name, city, state,
+      verification_status, is_featured, average_rating, reviews_count,
+      created_at, whatsapp, description, years_experience, starting_price,
+      response_time, profile_status, availability_status, emergency,
+      service_types, updated_at, avatar_media_id, cover_media_id, source,
+      profile:profiles!professional_profiles_user_id_fkey(email, full_name, avatar_url)
+    `)
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error("Profissional não encontrado.");
+
+  const [svc, port, lead, rev] = await Promise.all([
+    supabase.from("professional_services").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    supabase.from("portfolio_items").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    supabase.from("leads").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    supabase.from("reviews").select("id", { count: "exact", head: true }).eq("professional_id", id),
+  ]);
+
+  const p = data as Record<string, unknown>;
+  const prof = (p.profile ?? null) as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
+  return {
+    ...(p as unknown as AdminProRow),
+    user_id: p.user_id as string,
+    years_experience: (p.years_experience as number | null) ?? null,
+    starting_price: (p.starting_price as number | null) ?? null,
+    response_time: (p.response_time as string | null) ?? null,
+    profile_status: p.profile_status as string,
+    availability_status: p.availability_status as string,
+    emergency: Boolean(p.emergency),
+    service_types: (p.service_types as string[] | null) ?? null,
+    updated_at: p.updated_at as string,
+    avatar_media_id: (p.avatar_media_id as string | null) ?? null,
+    cover_media_id: (p.cover_media_id as string | null) ?? null,
+    source: (p.source as string | null) ?? null,
+    profile_email: prof?.email ?? null,
+    profile_full_name: prof?.full_name ?? null,
+    profile_avatar_url: prof?.avatar_url ?? null,
+    counts: {
+      services: svc.count ?? 0,
+      portfolio: port.count ?? 0,
+      leads: lead.count ?? 0,
+      reviews: rev.count ?? 0,
+    },
+  };
+}
+
 export type AdminReviewRow = {
   id: string;
   rating: number;
