@@ -262,13 +262,13 @@ function AdminProDetailPage() {
               <AdminProDocumentsPanel professionalId={pro.id} professionalUserId={pro.user_id} />
             </TabsContent>
 
-            {["reviews","activity"].map((k) => (
-              <TabsContent key={k} value={k} className="mt-4">
-                <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">
-                  Este bloco será liberado nos próximos entregáveis (Bloco E em diante).
-                </CardContent></Card>
-              </TabsContent>
-            ))}
+            <TabsContent value="reviews" className="mt-4">
+              <AdminProReviewsPanel professionalId={pro.id} />
+            </TabsContent>
+
+            <TabsContent value="activity" className="mt-4">
+              <AdminProActivityPanel professionalId={pro.id} />
+            </TabsContent>
 
           </Tabs>
         </div>
