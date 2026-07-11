@@ -496,8 +496,8 @@ export async function listReviews(status?: string): Promise<AdminReviewRow[]> {
   return (data ?? []) as unknown as AdminReviewRow[];
 }
 
-export async function setReviewStatus(id: string, status: "approved" | "rejected" | "pending") {
-  const { error } = await supabase.from("reviews").update({ status }).eq("id", id);
+export async function setReviewStatus(id: string, status: "approved" | "rejected" | "pending" | "flagged") {
+  const { error } = await supabase.from("reviews").update({ status } as never).eq("id", id);
   if (error) throw error;
 }
 
