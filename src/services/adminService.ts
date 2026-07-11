@@ -405,3 +405,228 @@ export async function bulkVerifyPros(ids: string[], status: "approved" | "reject
   const { error } = await supabase.from("professional_profiles").update({ verification_status: status }).in("id", ids);
   if (error) throw error;
 }
+
+// ============ Etapa 4 — Marketplace ============
+
+export type AdminCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  active: boolean;
+  display_order: number | null;
+  created_at: string;
+};
+
+export async function listCategoriesAdmin(search = ""): Promise<AdminCategory[]> {
+  let q = supabase
+    .from("categories")
+    .select("id, name, slug, description, icon, active, display_order, created_at")
+    .order("display_order", { ascending: true })
+    .order("name", { ascending: true })
+    .limit(500);
+  if (search) q = q.or(`name.ilike.%${search}%,slug.ilike.%${search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as AdminCategory[];
+}
+
+export type UpsertCategoryInput = {
+  id?: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  icon?: string | null;
+  active?: boolean;
+  display_order?: number | null;
+};
+
+export async function upsertCategory(input: UpsertCategoryInput) {
+  const payload = {
+    name: input.name,
+    slug: input.slug,
+    description: input.description ?? null,
+    icon: input.icon ?? null,
+    active: input.active ?? true,
+    display_order: input.display_order ?? 0,
+  };
+  if (input.id) {
+    const { error } = await supabase.from("categories").update(payload).eq("id", input.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("categories").insert(payload);
+    if (error) throw error;
+  }
+}
+
+export async function deleteCategory(id: string) {
+  const { error } = await supabase.from("categories").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function toggleCategoryActive(id: string, active: boolean) {
+  const { error } = await supabase.from("categories").update({ active }).eq("id", id);
+  if (error) throw error;
+}
+
+// Services
+export type AdminService = {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  active: boolean;
+  display_order: number | null;
+  category?: { name: string; slug: string } | null;
+};
+
+export async function listServicesAdmin(opts: { search?: string; categoryId?: string } = {}): Promise<AdminService[]> {
+  let q = supabase
+    .from("services")
+    .select("id, category_id, name, slug, description, active, display_order, category:category_id(name, slug)")
+    .order("display_order", { ascending: true })
+    .order("name", { ascending: true })
+    .limit(500);
+  if (opts.categoryId) q = q.eq("category_id", opts.categoryId);
+  if (opts.search) q = q.or(`name.ilike.%${opts.search}%,slug.ilike.%${opts.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as AdminService[];
+}
+
+export type UpsertServiceInput = {
+  id?: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  active?: boolean;
+  display_order?: number | null;
+};
+
+export async function upsertService(input: UpsertServiceInput) {
+  const payload = {
+    category_id: input.category_id,
+    name: input.name,
+    slug: input.slug,
+    description: input.description ?? null,
+    active: input.active ?? true,
+    display_order: input.display_order ?? 0,
+  };
+  if (input.id) {
+    const { error } = await supabase.from("services").update(payload).eq("id", input.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("services").insert(payload);
+    if (error) throw error;
+  }
+}
+
+export async function deleteService(id: string) {
+  const { error } = await supabase.from("services").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// Quotes com detalhes
+export type AdminQuoteFull = {
+  id: string;
+  title: string;
+  city: string;
+  state: string;
+  status: string;
+  urgency: string | null;
+  created_at: string;
+  client?: { full_name: string | null; email: string | null } | null;
+  category?: { name: string | null } | null;
+  proposals_count?: number;
+};
+
+export async function listQuotesFull(opts: { search?: string; status?: string } = {}): Promise<AdminQuoteFull[]> {
+  let q = supabase
+    .from("quote_requests")
+    .select("id, title, city, state, status, urgency, created_at, client:client_id(full_name, email), category:category_id(name)")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (opts.status) q = q.eq("status", opts.status as never);
+  if (opts.search) q = q.ilike("title", `%${opts.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  const quotes = (data ?? []) as unknown as AdminQuoteFull[];
+  if (quotes.length > 0) {
+    const ids = quotes.map((q) => q.id);
+    const { data: props } = await supabase.from("quote_proposals").select("quote_request_id").in("quote_request_id", ids);
+    const counts = new Map<string, number>();
+    for (const p of (props ?? []) as Array<{ quote_request_id: string }>) {
+      counts.set(p.quote_request_id, (counts.get(p.quote_request_id) ?? 0) + 1);
+    }
+    for (const q of quotes) q.proposals_count = counts.get(q.id) ?? 0;
+  }
+  return quotes;
+}
+
+// Proposals
+export type AdminProposalRow = {
+  id: string;
+  message: string | null;
+  estimated_price: number | null;
+  estimated_deadline: string | null;
+  status: string;
+  created_at: string;
+  professional?: { professional_name: string | null; slug: string | null } | null;
+  quote_request?: { id: string; title: string; city: string | null; state: string | null } | null;
+};
+
+export async function listProposalsAdmin(opts: { search?: string; status?: string } = {}): Promise<AdminProposalRow[]> {
+  let q = supabase
+    .from("quote_proposals")
+    .select("id, message, estimated_price, estimated_deadline, status, created_at, professional:professional_id(professional_name, slug), quote_request:quote_request_id(id, title, city, state)")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (opts.status) q = q.eq("status", opts.status as never);
+  const { data, error } = await q;
+  if (error) throw error;
+  let rows = (data ?? []) as unknown as AdminProposalRow[];
+  if (opts.search) {
+    const s = opts.search.toLowerCase();
+    rows = rows.filter((r) =>
+      r.quote_request?.title?.toLowerCase().includes(s) ||
+      r.professional?.professional_name?.toLowerCase().includes(s),
+    );
+  }
+  return rows;
+}
+
+// Reports
+export type AdminReportRow = {
+  id: string;
+  reason: string;
+  description: string | null;
+  status: string;
+  created_at: string;
+  resolved_at: string | null;
+  reporter_user_id: string | null;
+  reported_user_id: string | null;
+  review_id: string | null;
+};
+
+export async function listReportsAdmin(status?: string): Promise<AdminReportRow[]> {
+  let q = supabase
+    .from("reports")
+    .select("id, reason, description, status, created_at, resolved_at, reporter_user_id, reported_user_id, review_id")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (status) q = q.eq("status", status as never);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as AdminReportRow[];
+}
+
+export async function setReportStatus(id: string, status: "open" | "reviewing" | "resolved" | "dismissed") {
+  const patch: { status: typeof status; resolved_at?: string } = { status };
+  if (status === "resolved" || status === "dismissed") patch.resolved_at = new Date().toISOString();
+  const { error } = await supabase.from("reports").update(patch).eq("id", id);
+  if (error) throw error;
+}
+
