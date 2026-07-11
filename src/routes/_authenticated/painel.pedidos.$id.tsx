@@ -17,8 +17,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   acceptProposalRpc,
   getMyQuote,
+  getQuoteHistory,
   listProposalsForQuote,
   rejectProposalRpc,
+  updateQuoteStatus,
+  type QuoteHistoryEntry,
   type ReceivedProposal,
 } from "@/services/clientService";
 import { getReviewForQuote, submitReview } from "@/services/adminService";
