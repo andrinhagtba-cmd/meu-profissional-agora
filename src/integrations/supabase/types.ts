@@ -1168,7 +1168,17 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      submit_review: {
+        Args: {
+          _comment: string
+          _quote_id: string
+          _rating: number
+          _title?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       account_status: "active" | "suspended" | "pending"

@@ -24,6 +24,8 @@ import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
 import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
 import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
@@ -31,6 +33,10 @@ import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authen
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 import { Route as AuthenticatedPainelLeadsRouteImport } from './routes/_authenticated/painel.leads'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
+import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
+import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
+import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -107,6 +113,16 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedPainelServicosRoute =
   AuthenticatedPainelServicosRouteImport.update({
     id: '/servicos',
@@ -149,6 +165,30 @@ const AuthenticatedPainelLeadsRoute =
     path: '/leads',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProfissionaisRoute =
+  AuthenticatedAdminProfissionaisRouteImport.update({
+    id: '/profissionais',
+    path: '/profissionais',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPedidosRoute =
+  AuthenticatedAdminPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAvaliacoesRoute =
+  AuthenticatedAdminAvaliacoesRouteImport.update({
+    id: '/avaliacoes',
+    path: '/avaliacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedPainelPedidosIdRoute =
   AuthenticatedPainelPedidosIdRouteImport.update({
     id: '/$id',
@@ -166,11 +206,16 @@ export interface FileRoutesByFullPath {
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
+  '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
@@ -178,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRoutesByTo {
@@ -195,6 +241,10 @@ export interface FileRoutesByTo {
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
+  '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
@@ -202,6 +252,7 @@ export interface FileRoutesByTo {
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRoutesById {
@@ -216,11 +267,16 @@ export interface FileRoutesById {
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
+  '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
+  '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/_authenticated/admin/profissionais': typeof AuthenticatedAdminProfissionaisRoute
+  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/painel/leads': typeof AuthenticatedPainelLeadsRoute
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
@@ -228,6 +284,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
 export interface FileRouteTypes {
@@ -242,11 +299,16 @@ export interface FileRouteTypes {
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
+    | '/admin'
     | '/favoritos'
     | '/painel'
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
+    | '/admin/avaliacoes'
+    | '/admin/pedidos'
+    | '/admin/profissionais'
+    | '/admin/usuarios'
     | '/painel/leads'
     | '/painel/midia'
     | '/painel/notificacoes'
@@ -254,6 +316,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/admin/'
     | '/painel/pedidos/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -271,6 +334,10 @@ export interface FileRouteTypes {
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
+    | '/admin/avaliacoes'
+    | '/admin/pedidos'
+    | '/admin/profissionais'
+    | '/admin/usuarios'
     | '/painel/leads'
     | '/painel/midia'
     | '/painel/notificacoes'
@@ -278,6 +345,7 @@ export interface FileRouteTypes {
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
+    | '/admin'
     | '/painel/pedidos/$id'
   id:
     | '__root__'
@@ -291,11 +359,16 @@ export interface FileRouteTypes {
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
+    | '/_authenticated/admin'
     | '/_authenticated/favoritos'
     | '/_authenticated/painel'
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
+    | '/_authenticated/admin/avaliacoes'
+    | '/_authenticated/admin/pedidos'
+    | '/_authenticated/admin/profissionais'
+    | '/_authenticated/admin/usuarios'
     | '/_authenticated/painel/leads'
     | '/_authenticated/painel/midia'
     | '/_authenticated/painel/notificacoes'
@@ -303,6 +376,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/perfil'
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
+    | '/_authenticated/admin/'
     | '/_authenticated/painel/pedidos/$id'
   fileRoutesById: FileRoutesById
 }
@@ -429,6 +503,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/painel/servicos': {
       id: '/_authenticated/painel/servicos'
       path: '/servicos'
@@ -478,6 +566,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelLeadsRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/profissionais': {
+      id: '/_authenticated/admin/profissionais'
+      path: '/profissionais'
+      fullPath: '/admin/profissionais'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pedidos': {
+      id: '/_authenticated/admin/pedidos'
+      path: '/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/avaliacoes': {
+      id: '/_authenticated/admin/avaliacoes'
+      path: '/avaliacoes'
+      fullPath: '/admin/avaliacoes'
+      preLoaderRoute: typeof AuthenticatedAdminAvaliacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/painel/pedidos/$id': {
       id: '/_authenticated/painel/pedidos/$id'
       path: '/$id'
@@ -487,6 +603,25 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAvaliacoesRoute: typeof AuthenticatedAdminAvaliacoesRoute
+  AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
+  AuthenticatedAdminProfissionaisRoute: typeof AuthenticatedAdminProfissionaisRoute
+  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAvaliacoesRoute: AuthenticatedAdminAvaliacoesRoute,
+  AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
+  AuthenticatedAdminProfissionaisRoute: AuthenticatedAdminProfissionaisRoute,
+  AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedPainelPedidosRouteChildren {
   AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
@@ -526,11 +661,13 @@ const AuthenticatedPainelRouteWithChildren =
   AuthenticatedPainelRoute._addFileChildren(AuthenticatedPainelRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRouteWithChildren,
 }

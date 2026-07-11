@@ -21,6 +21,9 @@ import {
   rejectProposalRpc,
   type ReceivedProposal,
 } from "@/services/clientService";
+import { getReviewForQuote, submitReview } from "@/services/adminService";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
@@ -165,8 +168,74 @@ function PedidoDetalhe() {
             ))}
           </ul>
         )}
+
+        {q && (q.status === "professional_selected" || q.status === "completed" || q.status === "in_progress") && (
+          <ReviewSection quoteId={q.id} />
+        )}
       </div>
     </SiteLayout>
+  );
+}
+
+function ReviewSection({ quoteId }: { quoteId: string }) {
+  const qc = useQueryClient();
+  const existing = useQuery({
+    queryKey: ["review", quoteId],
+    queryFn: () => getReviewForQuote(quoteId),
+  });
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+
+  const send = useMutation({
+    mutationFn: () => submitReview(quoteId, rating, comment),
+    onSuccess: () => {
+      toast.success("Avaliação enviada! Obrigado.");
+      qc.invalidateQueries({ queryKey: ["review", quoteId] });
+    },
+    onError: (e: Error) => toast.error(e.message ?? "Erro ao enviar"),
+  });
+
+  if (existing.isLoading) return null;
+
+  if (existing.data) {
+    return (
+      <div className="mt-10 rounded-3xl border border-border bg-card p-6">
+        <h2 className="font-display text-xl font-bold">Sua avaliação</h2>
+        <div className="mt-2 flex items-center gap-1 text-orange">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star key={i} size={18} className={i < existing.data!.rating ? "fill-orange" : ""} />
+          ))}
+        </div>
+        {existing.data.comment && <p className="mt-2 text-sm text-muted-foreground">{existing.data.comment}</p>}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10 rounded-3xl border border-border bg-card p-6">
+      <h2 className="font-display text-xl font-bold">Deixe sua avaliação</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Como foi o atendimento do profissional?</p>
+      <div className="mt-4 flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button key={n} onClick={() => setRating(n)} type="button" className="p-1">
+            <Star size={28} className={n <= rating ? "fill-orange text-orange" : "text-muted-foreground"} />
+          </button>
+        ))}
+      </div>
+      <Textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Conte sobre a experiência (opcional)"
+        className="mt-4 min-h-24 rounded-2xl"
+      />
+      <Button
+        onClick={() => send.mutate()}
+        disabled={send.isPending}
+        className="mt-4 rounded-xl bg-orange font-semibold text-orange-foreground hover:bg-orange/90"
+      >
+        Enviar avaliação
+      </Button>
+    </div>
   );
 }
 
