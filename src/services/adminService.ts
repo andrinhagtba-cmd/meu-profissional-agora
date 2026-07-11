@@ -184,6 +184,19 @@ export type AdminProDetail = AdminProRow & {
   source: string | null;
   profile_email: string | null;
   profile_full_name: string | null;
+export type AdminProDetail = AdminProRow & {
+  user_id: string;
+  years_experience: number | null;
+  starting_price: number | null;
+  response_time: string | null;
+  profile_status: string;
+  availability_status: string;
+  emergency: boolean;
+  service_types: string[] | null;
+  updated_at: string;
+  source: string | null;
+  profile_email: string | null;
+  profile_full_name: string | null;
   profile_avatar_url: string | null;
   counts: { services: number; portfolio: number; leads: number; reviews: number };
 };
@@ -205,20 +218,28 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
 
   const p = data as Record<string, unknown>;
   const userId = p.user_id as string;
+  const avatarMediaId = (p.avatar_media_id as string | null) ?? null;
+  const coverMediaId = (p.cover_media_id as string | null) ?? null;
 
-  const [profileRes, svc, port, lead, rev] = await Promise.all([
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+
+  const [profileRes, svc, port, lead, rev, urlMap] = await Promise.all([
     supabase.from("profiles").select("email, full_name, avatar_url").eq("id", userId).maybeSingle(),
     supabase.from("professional_services").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("portfolio_items").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    resolveMediaUrlsByIds([avatarMediaId, coverMediaId]),
   ]);
 
   const prof = profileRes.data as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
 
-  
   return {
     ...(p as unknown as AdminProRow),
+    avatar_media_id: avatarMediaId,
+    cover_media_id: coverMediaId,
+    avatar_url: avatarMediaId ? urlMap.get(avatarMediaId) ?? null : null,
+    cover_url: coverMediaId ? urlMap.get(coverMediaId) ?? null : null,
     user_id: p.user_id as string,
     years_experience: (p.years_experience as number | null) ?? null,
     starting_price: (p.starting_price as number | null) ?? null,
@@ -228,8 +249,6 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     emergency: Boolean(p.emergency),
     service_types: (p.service_types as string[] | null) ?? null,
     updated_at: p.updated_at as string,
-    avatar_media_id: (p.avatar_media_id as string | null) ?? null,
-    cover_media_id: (p.cover_media_id as string | null) ?? null,
     source: (p.source as string | null) ?? null,
     profile_email: prof?.email ?? null,
     profile_full_name: prof?.full_name ?? null,
