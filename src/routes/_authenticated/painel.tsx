@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -433,8 +433,12 @@ function KpiCard({
   to?: string;
   tone?: "blue" | "orange" | "amber" | "emerald";
 }) {
+  const navigate = useNavigate();
+  const open = () => {
+    if (to) navigate({ to: to as never });
+  };
   const inner = (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
+    <div className="group relative h-full overflow-hidden rounded-2xl border border-border bg-card p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -453,7 +457,16 @@ function KpiCard({
       )}
     </div>
   );
-  return to ? <Link to={to} className="block">{inner}</Link> : inner;
+  return to ? (
+    <button
+      type="button"
+      onClick={open}
+      className="block h-full w-full cursor-pointer rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      aria-label={`Abrir ${label}`}
+    >
+      {inner}
+    </button>
+  ) : inner;
 }
 
 function ActionCard({
@@ -469,11 +482,15 @@ function ActionCard({
   icon: React.ReactNode;
   search?: never;
 }) {
+  const navigate = useNavigate();
+  const open = () => navigate({ to: to as never, search });
+
   return (
-    <Link
-      to={to}
-      search={search}
+    <button
+      type="button"
+      onClick={open}
       className="group flex items-start gap-3 rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card"
+      aria-label={`Abrir ${title}`}
     >
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-secondary text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
         {icon}
@@ -482,7 +499,7 @@ function ActionCard({
         <p className="font-display text-sm font-bold text-foreground">{title}</p>
         <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{desc}</p>
       </div>
-    </Link>
+    </button>
   );
 }
 
