@@ -159,7 +159,7 @@ function UserRoleCard({ u, role, onRevoke }: { u: AdminRoleUserRow; role: AppRol
   return (
     <li className="rounded-2xl border border-border/60 bg-background p-4 transition hover:border-primary/30 hover:shadow-card">
       <div className="flex items-start gap-3">
-        <InitialsAvatar name={u.full_name} src={u.avatar_url ?? undefined} className="h-11 w-11" />
+        <InitialsAvatar name={u.full_name} className="h-11 w-11" />
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-display text-sm font-extrabold text-foreground">{u.full_name || "Sem nome"}</h3>
           <p className="truncate text-xs text-muted-foreground">{u.email || "—"}</p>
@@ -262,7 +262,7 @@ function GrantRoleDialog({ defaultRole, onGranted }: { defaultRole: AppRole; onG
                       onClick={() => setSelected(r)}
                       className={`flex w-full items-center gap-3 p-3 text-left transition hover:bg-muted ${selected?.user_id === r.user_id ? "bg-primary/10" : ""}`}
                     >
-                      <InitialsAvatar name={r.full_name} src={r.avatar_url ?? undefined} className="h-9 w-9" />
+                      <InitialsAvatar name={r.full_name} className="h-9 w-9" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-semibold text-foreground">{r.full_name || "Sem nome"}</div>
                         <div className="truncate text-xs text-muted-foreground">{r.email}</div>
