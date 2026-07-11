@@ -84,7 +84,7 @@ const FILTERS: { value: string; label: string }[] = [
   { value: "cancelled", label: "Cancelados" },
 ];
 
-function fmtCurrency(v: number | null) {
+function fmtCurrency(v: number | null | undefined) {
   if (v == null) return "—";
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
