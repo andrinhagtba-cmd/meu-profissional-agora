@@ -101,7 +101,7 @@ export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isActive = (to: string) =>
     to === "/admin" ? pathname === "/admin" : pathname === to || pathname.startsWith(to + "/");
-  const { data: brand } = useBrand();
+  const { data: brand, isLoading } = useBrand();
   const brandName = brand?.brand_name ?? "ProConecta";
   const logoUrl = brand?.logo_light_url ?? null;
   const initial = brandName.trim().charAt(0).toUpperCase() || "P";
@@ -110,11 +110,15 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border/70 bg-sidebar">
         <Link to="/admin" className="flex items-center gap-3 px-1.5 py-2">
-          {logoUrl ? (
+          {isLoading ? (
+            <div className={collapsed ? "h-9 w-9" : "h-12 w-[140px]"}>
+              <div className="h-full w-full animate-pulse rounded-xl bg-sidebar-accent" />
+            </div>
+          ) : logoUrl ? (
             <img
               src={logoUrl}
               alt={brandName}
-              className={collapsed ? "h-9 w-9 object-contain" : "h-10 w-auto max-w-[180px] object-contain"}
+              className={collapsed ? "h-9 w-9 object-contain" : "h-12 w-auto max-w-[220px] object-contain"}
             />
           ) : (
             <>
