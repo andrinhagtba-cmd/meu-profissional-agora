@@ -19,6 +19,16 @@ export function FeaturedPros() {
     <section className="container-page pb-16 sm:pb-20" aria-labelledby="profissionais-destaque">
       <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
         <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl bg-navy p-8 text-navy-foreground shadow-card">
+          <img
+            src={bgImage}
+            alt=""
+            loading="lazy"
+            width={1024}
+            height={1536}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-navy/80 via-navy/40 to-navy/85" aria-hidden="true" />
+
           <div className="relative z-10">
             <h2 id="profissionais-destaque" className="font-display text-3xl font-extrabold leading-tight">
               Encontre profissionais bem avaliados
