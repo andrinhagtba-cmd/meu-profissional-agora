@@ -35,6 +35,7 @@ import {
   getReviewsForProfessional,
   registerWhatsAppLead,
 } from "@/services/mockApi";
+import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
 export const Route = createFileRoute("/profissional/$slug")({
   loader: ({ params }) => {
@@ -88,6 +89,11 @@ function ProfilePage() {
   const { data: related } = useQuery({
     queryKey: ["related", pro.slug],
     queryFn: () => getRelatedProfessionals(pro.slug),
+  });
+  const { data: dbMedia } = useQuery({
+    queryKey: ["pro-media", pro.slug],
+    queryFn: () => getProfessionalPublicMediaBySlug(pro.slug),
+    staleTime: 5 * 60 * 1000,
   });
 
   const dist = reviews ? ratingDistribution(reviews) : [0, 0, 0, 0, 0];
@@ -155,7 +161,7 @@ function ProfilePage() {
 
           <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
             <div className="flex min-w-0 items-start gap-4">
-              <ProAvatar initials={pro.initials} color={pro.avatarColor} size="xl" className="shrink-0" />
+              <ProAvatar initials={pro.initials} color={pro.avatarColor} size="xl" className="shrink-0" imageUrl={dbMedia?.avatarUrl || undefined} alt={pro.name} />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
