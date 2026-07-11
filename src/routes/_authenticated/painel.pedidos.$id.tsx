@@ -29,6 +29,7 @@ import { getOrCreateConversation } from "@/services/chatService";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare } from "lucide-react";
+import { TrackingSection } from "@/components/painel/TrackingSection";
 
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
