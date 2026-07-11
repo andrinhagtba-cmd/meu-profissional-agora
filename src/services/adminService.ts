@@ -1952,7 +1952,7 @@ export type HighlightRow = {
 export async function listHighlights(params: { section?: string; search?: string } = {}): Promise<HighlightRow[]> {
   let q = supabase
     .from("highlights" as never)
-    .select("*, professional:professional_profiles(id, professional_name, business_name, avatar_url, city, state)")
+    .select("*, professional:professional_profiles(id, professional_name, business_name, city, state)")
     .order("position", { ascending: true })
     .order("created_at", { ascending: false });
   if (params.section) q = q.eq("section", params.section);
