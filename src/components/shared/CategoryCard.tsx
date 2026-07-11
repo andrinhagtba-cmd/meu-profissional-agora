@@ -4,7 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { images } from "@/data/images";
 import type { Category } from "@/types";
 
-export function CategoryCard({ category }: { category: Category }) {
+type CategoryLike = Category & { imageUrl?: string; imageAlt?: string };
+
+export function CategoryCard({ category }: { category: CategoryLike }) {
+  const src =
+    category.imageUrl && category.imageUrl.length > 0
+      ? category.imageUrl
+      : images[category.imageKey];
+  const alt =
+    category.imageAlt && category.imageAlt.length > 0
+      ? category.imageAlt
+      : `Profissional de ${category.name} trabalhando`;
   return (
     <Link
       to="/categoria/$slug"
@@ -12,8 +22,8 @@ export function CategoryCard({ category }: { category: Category }) {
       className="group relative block h-72 overflow-hidden rounded-3xl shadow-card transition-shadow duration-200 hover:shadow-float focus-visible:outline-2 focus-visible:outline-ring"
     >
       <img
-        src={images[category.imageKey]}
-        alt={`Profissional de ${category.name} trabalhando`}
+        src={src}
+        alt={alt}
         loading="lazy"
         width={800}
         height={1000}
