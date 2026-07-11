@@ -41,6 +41,7 @@ import { Route as AuthenticatedAdminStatusRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin.solicitacoes'
 import { Route as AuthenticatedAdminServicosRouteImport } from './routes/_authenticated/admin.servicos'
 import { Route as AuthenticatedAdminSegurancaRouteImport } from './routes/_authenticated/admin.seguranca'
+import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminRegioesRouteImport } from './routes/_authenticated/admin.regioes'
 import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authenticated/admin.propostas'
 import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
@@ -75,6 +76,7 @@ import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminAdministradoresRouteImport } from './routes/_authenticated/admin.administradores'
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
+import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
 import { Route as AuthenticatedAdminProfissionaisIdRouteImport } from './routes/_authenticated/admin.profissionais.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -249,6 +251,12 @@ const AuthenticatedAdminSegurancaRoute =
   AuthenticatedAdminSegurancaRouteImport.update({
     id: '/seguranca',
     path: '/seguranca',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRelatoriosRoute =
+  AuthenticatedAdminRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminRegioesRoute =
@@ -451,6 +459,12 @@ const AuthenticatedPainelMensagensIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedPainelMensagensRoute,
   } as any)
+const AuthenticatedAdminProfissionaisNovoRoute =
+  AuthenticatedAdminProfissionaisNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
+  } as any)
 const AuthenticatedAdminProfissionaisIdRoute =
   AuthenticatedAdminProfissionaisIdRouteImport.update({
     id: '/$id',
@@ -506,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -523,6 +538,7 @@ export interface FileRoutesByFullPath {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
+  '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
@@ -573,6 +589,7 @@ export interface FileRoutesByTo {
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -590,6 +607,7 @@ export interface FileRoutesByTo {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
+  '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
@@ -643,6 +661,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/_authenticated/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/_authenticated/admin/regioes': typeof AuthenticatedAdminRegioesRoute
+  '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/seguranca': typeof AuthenticatedAdminSegurancaRoute
   '/_authenticated/admin/servicos': typeof AuthenticatedAdminServicosRoute
   '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -660,6 +679,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
+  '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
 }
@@ -713,6 +733,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
+    | '/admin/relatorios'
     | '/admin/seguranca'
     | '/admin/servicos'
     | '/admin/solicitacoes'
@@ -730,6 +751,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/admin/'
     | '/admin/profissionais/$id'
+    | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -780,6 +802,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
+    | '/admin/relatorios'
     | '/admin/seguranca'
     | '/admin/servicos'
     | '/admin/solicitacoes'
@@ -797,6 +820,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/admin'
     | '/admin/profissionais/$id'
+    | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
   id:
@@ -849,6 +873,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/profissionais'
     | '/_authenticated/admin/propostas'
     | '/_authenticated/admin/regioes'
+    | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/seguranca'
     | '/_authenticated/admin/servicos'
     | '/_authenticated/admin/solicitacoes'
@@ -866,6 +891,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/servicos'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/profissionais/$id'
+    | '/_authenticated/admin/profissionais/novo'
     | '/_authenticated/painel/mensagens/$id'
     | '/_authenticated/painel/pedidos/$id'
   fileRoutesById: FileRoutesById
@@ -1112,6 +1138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSegurancaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/relatorios': {
+      id: '/_authenticated/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/regioes': {
       id: '/_authenticated/admin/regioes'
       path: '/regioes'
@@ -1350,6 +1383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelMensagensIdRouteImport
       parentRoute: typeof AuthenticatedPainelMensagensRoute
     }
+    '/_authenticated/admin/profissionais/novo': {
+      id: '/_authenticated/admin/profissionais/novo'
+      path: '/novo'
+      fullPath: '/admin/profissionais/novo'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisNovoRouteImport
+      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
+    }
     '/_authenticated/admin/profissionais/$id': {
       id: '/_authenticated/admin/profissionais/$id'
       path: '/$id'
@@ -1362,12 +1402,15 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminProfissionaisRouteChildren {
   AuthenticatedAdminProfissionaisIdRoute: typeof AuthenticatedAdminProfissionaisIdRoute
+  AuthenticatedAdminProfissionaisNovoRoute: typeof AuthenticatedAdminProfissionaisNovoRoute
 }
 
 const AuthenticatedAdminProfissionaisRouteChildren: AuthenticatedAdminProfissionaisRouteChildren =
   {
     AuthenticatedAdminProfissionaisIdRoute:
       AuthenticatedAdminProfissionaisIdRoute,
+    AuthenticatedAdminProfissionaisNovoRoute:
+      AuthenticatedAdminProfissionaisNovoRoute,
   }
 
 const AuthenticatedAdminProfissionaisRouteWithChildren =
@@ -1408,6 +1451,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminProfissionaisRoute: typeof AuthenticatedAdminProfissionaisRouteWithChildren
   AuthenticatedAdminPropostasRoute: typeof AuthenticatedAdminPropostasRoute
   AuthenticatedAdminRegioesRoute: typeof AuthenticatedAdminRegioesRoute
+  AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminSegurancaRoute: typeof AuthenticatedAdminSegurancaRoute
   AuthenticatedAdminServicosRoute: typeof AuthenticatedAdminServicosRoute
   AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
@@ -1453,6 +1497,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminProfissionaisRouteWithChildren,
   AuthenticatedAdminPropostasRoute: AuthenticatedAdminPropostasRoute,
   AuthenticatedAdminRegioesRoute: AuthenticatedAdminRegioesRoute,
+  AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminSegurancaRoute: AuthenticatedAdminSegurancaRoute,
   AuthenticatedAdminServicosRoute: AuthenticatedAdminServicosRoute,
   AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,

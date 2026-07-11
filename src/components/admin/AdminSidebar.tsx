@@ -4,7 +4,7 @@ import {
   ClipboardList, MessageSquare, Zap, Star, Flag, CreditCard, Sparkles,
   Ticket, Receipt, Image as ImageIcon, LayoutTemplate, Home, FileText,
   BookOpen, HelpCircle, Quote, Bell, Mail, Send, Settings, Plug, KeyRound,
-  ScrollText, Lock, Activity, Building2, Award,
+  ScrollText, Lock, Activity, Building2, Award, BarChart3,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -21,6 +21,7 @@ const GROUPS: Group[] = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
       { to: "/admin/metricas", label: "Métricas", icon: Activity },
+      { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
       { to: "/admin/atividade", label: "Atividade recente", icon: Bell },
     ],
   },
