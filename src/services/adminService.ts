@@ -782,19 +782,52 @@ export type AdminCategory = {
   active: boolean;
   display_order: number | null;
   created_at: string;
+  cover_media_id: string | null;
+  image_url: string | null;
+  image_alt: string | null;
+  cover_url: string; // resolved
+  services_count?: number;
 };
 
 export async function listCategoriesAdmin(search = ""): Promise<AdminCategory[]> {
   let q = supabase
     .from("categories")
-    .select("id, name, slug, description, icon, active, display_order, created_at")
+    .select(
+      "id, name, slug, description, icon, active, display_order, created_at, cover_media_id, image_url, image_alt",
+    )
     .order("display_order", { ascending: true })
     .order("name", { ascending: true })
     .limit(500);
   if (search) q = q.or(`name.ilike.%${search}%,slug.ilike.%${search}%`);
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as AdminCategory[];
+  const rows = (data ?? []) as any[];
+
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+  const urlMap = await resolveMediaUrlsByIds(rows.map((r) => r.cover_media_id));
+
+  // Optional counts (best-effort)
+  let counts = new Map<string, number>();
+  if (rows.length) {
+    const { data: svcRows } = await supabase
+      .from("services")
+      .select("category_id")
+      .in(
+        "category_id",
+        rows.map((r) => r.id),
+      );
+    (svcRows ?? []).forEach((s: any) => {
+      counts.set(s.category_id, (counts.get(s.category_id) ?? 0) + 1);
+    });
+  }
+
+  return rows.map((r) => ({
+    ...r,
+    cover_url: r.cover_media_id
+      ? urlMap.get(r.cover_media_id) ?? r.image_url ?? ""
+      : r.image_url ?? "",
+    services_count: counts.get(r.id) ?? 0,
+  })) as AdminCategory[];
 }
 
 export type UpsertCategoryInput = {
@@ -805,10 +838,13 @@ export type UpsertCategoryInput = {
   icon?: string | null;
   active?: boolean;
   display_order?: number | null;
+  cover_media_id?: string | null;
+  image_url?: string | null;
+  image_alt?: string | null;
 };
 
 export async function upsertCategory(input: UpsertCategoryInput) {
-  const payload = {
+  const payload: any = {
     name: input.name,
     slug: input.slug,
     description: input.description ?? null,
@@ -816,6 +852,10 @@ export async function upsertCategory(input: UpsertCategoryInput) {
     active: input.active ?? true,
     display_order: input.display_order ?? 0,
   };
+  if (input.cover_media_id !== undefined) payload.cover_media_id = input.cover_media_id;
+  if (input.image_url !== undefined) payload.image_url = input.image_url;
+  if (input.image_alt !== undefined) payload.image_alt = input.image_alt;
+
   if (input.id) {
     const { error } = await supabase.from("categories").update(payload).eq("id", input.id);
     if (error) throw error;
@@ -844,13 +884,20 @@ export type AdminService = {
   description: string | null;
   active: boolean;
   display_order: number | null;
-  category?: { name: string; slug: string } | null;
+  cover_media_id: string | null;
+  image_alt: string | null;
+  cover_url: string; // resolved
+  category?: { name: string; slug: string; cover_url?: string } | null;
 };
 
-export async function listServicesAdmin(opts: { search?: string; categoryId?: string } = {}): Promise<AdminService[]> {
+export async function listServicesAdmin(
+  opts: { search?: string; categoryId?: string } = {},
+): Promise<AdminService[]> {
   let q = supabase
     .from("services")
-    .select("id, category_id, name, slug, description, active, display_order, category:category_id(name, slug)")
+    .select(
+      "id, category_id, name, slug, description, active, display_order, cover_media_id, image_alt, category:category_id(name, slug, cover_media_id, image_url)",
+    )
     .order("display_order", { ascending: true })
     .order("name", { ascending: true })
     .limit(500);
@@ -858,7 +905,39 @@ export async function listServicesAdmin(opts: { search?: string; categoryId?: st
   if (opts.search) q = q.or(`name.ilike.%${opts.search}%,slug.ilike.%${opts.search}%`);
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as unknown as AdminService[];
+  const rows = (data ?? []) as any[];
+
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+  const ids: (string | null)[] = [];
+  rows.forEach((r) => {
+    ids.push(r.cover_media_id);
+    ids.push(r.category?.cover_media_id ?? null);
+  });
+  const urlMap = await resolveMediaUrlsByIds(ids);
+
+  return rows.map((r) => {
+    const catCoverId = r.category?.cover_media_id ?? null;
+    const catFallback = catCoverId
+      ? urlMap.get(catCoverId) ?? r.category?.image_url ?? ""
+      : r.category?.image_url ?? "";
+    return {
+      id: r.id,
+      category_id: r.category_id,
+      name: r.name,
+      slug: r.slug,
+      description: r.description,
+      active: r.active,
+      display_order: r.display_order,
+      cover_media_id: r.cover_media_id,
+      image_alt: r.image_alt,
+      cover_url: r.cover_media_id
+        ? urlMap.get(r.cover_media_id) ?? ""
+        : catFallback,
+      category: r.category
+        ? { name: r.category.name, slug: r.category.slug, cover_url: catFallback }
+        : null,
+    } as AdminService;
+  });
 }
 
 export type UpsertServiceInput = {
@@ -869,10 +948,12 @@ export type UpsertServiceInput = {
   description?: string | null;
   active?: boolean;
   display_order?: number | null;
+  cover_media_id?: string | null;
+  image_alt?: string | null;
 };
 
 export async function upsertService(input: UpsertServiceInput) {
-  const payload = {
+  const payload: any = {
     category_id: input.category_id,
     name: input.name,
     slug: input.slug,
@@ -880,6 +961,9 @@ export async function upsertService(input: UpsertServiceInput) {
     active: input.active ?? true,
     display_order: input.display_order ?? 0,
   };
+  if (input.cover_media_id !== undefined) payload.cover_media_id = input.cover_media_id;
+  if (input.image_alt !== undefined) payload.image_alt = input.image_alt;
+
   if (input.id) {
     const { error } = await supabase.from("services").update(payload).eq("id", input.id);
     if (error) throw error;
@@ -893,6 +977,8 @@ export async function deleteService(id: string) {
   const { error } = await supabase.from("services").delete().eq("id", id);
   if (error) throw error;
 }
+
+
 
 // Quotes com detalhes
 export type AdminQuoteFull = {
