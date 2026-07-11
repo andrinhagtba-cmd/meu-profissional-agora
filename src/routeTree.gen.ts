@@ -9,14 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
+import { Route as OrcamentosRouteImport } from './routes/orcamentos'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as BuscarRouteImport } from './routes/buscar'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -81,6 +84,11 @@ import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
 import { Route as AuthenticatedAdminProfissionaisIdRouteImport } from './routes/_authenticated/admin.profissionais.$id'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -106,6 +114,11 @@ const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
   path: '/pedir-orcamento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrcamentosRoute = OrcamentosRouteImport.update({
+  id: '/orcamentos',
+  path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
@@ -119,6 +132,11 @@ const CategoriasRoute = CategoriasRouteImport.update({
 const BuscarRoute = BuscarRouteImport.update({
   id: '/buscar',
   path: '/buscar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -488,14 +506,17 @@ const AuthenticatedAdminProfissionaisIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
+  '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
@@ -560,14 +581,17 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
+  '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
@@ -632,14 +656,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/buscar': typeof BuscarRoute
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
+  '/orcamentos': typeof OrcamentosRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
   '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
@@ -706,14 +733,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/blog'
     | '/buscar'
     | '/categorias'
     | '/entrar'
+    | '/orcamentos'
     | '/pedir-orcamento'
     | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
+    | '/sobre'
     | '/admin'
     | '/favoritos'
     | '/painel'
@@ -778,14 +808,17 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/blog'
     | '/buscar'
     | '/categorias'
     | '/entrar'
+    | '/orcamentos'
     | '/pedir-orcamento'
     | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
+    | '/sobre'
     | '/favoritos'
     | '/painel'
     | '/cadastro/profissional'
@@ -849,14 +882,17 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/blog'
     | '/buscar'
     | '/categorias'
     | '/entrar'
+    | '/orcamentos'
     | '/pedir-orcamento'
     | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
+    | '/sobre'
     | '/_authenticated/admin'
     | '/_authenticated/favoritos'
     | '/_authenticated/painel'
@@ -923,14 +959,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BlogRoute: typeof BlogRoute
   BuscarRoute: typeof BuscarRoute
   CategoriasRoute: typeof CategoriasRoute
   EntrarRoute: typeof EntrarRoute
+  OrcamentosRoute: typeof OrcamentosRoute
   PedirOrcamentoRoute: typeof PedirOrcamentoRoute
   PlanosRoute: typeof PlanosRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SobreRoute: typeof SobreRoute
   CadastroProfissionalRoute: typeof CadastroProfissionalRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProfissionalSlugRoute: typeof ProfissionalSlugRoute
@@ -938,6 +977,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -973,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedirOrcamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orcamentos': {
+      id: '/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/orcamentos'
+      preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrar': {
       id: '/entrar'
       path: '/entrar'
@@ -992,6 +1045,13 @@ declare module '@tanstack/react-router' {
       path: '/buscar'
       fullPath: '/buscar'
       preLoaderRoute: typeof BuscarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1625,14 +1685,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  BlogRoute: BlogRoute,
   BuscarRoute: BuscarRoute,
   CategoriasRoute: CategoriasRoute,
   EntrarRoute: EntrarRoute,
+  OrcamentosRoute: OrcamentosRoute,
   PedirOrcamentoRoute: PedirOrcamentoRoute,
   PlanosRoute: PlanosRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   RecuperarSenhaRoute: RecuperarSenhaRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SobreRoute: SobreRoute,
   CadastroProfissionalRoute: CadastroProfissionalRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProfissionalSlugRoute: ProfissionalSlugRoute,
