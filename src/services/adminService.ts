@@ -1547,20 +1547,33 @@ export type AdminSolicitacaoRow = {
 export async function listSolicitacoesAdmin(opts: { search?: string; status?: string } = {}): Promise<AdminSolicitacaoRow[]> {
   let q = supabase
     .from("quote_requests")
-    .select("id, title, description, city, state, status, urgency, budget_min, budget_max, created_at, client:client_id(full_name, email, phone), category:category_id(name, slug)")
+    .select("id, title, description, city, state, status, urgency, budget_min, budget_max, created_at, client_id, category:category_id(name, slug)")
     .order("created_at", { ascending: false })
     .limit(300);
   if (opts.status) q = q.eq("status", opts.status as never);
   if (opts.search) q = q.ilike("title", `%${opts.search}%`);
   const { data, error } = await q;
   if (error) throw error;
-  const rows = (data ?? []) as unknown as AdminSolicitacaoRow[];
+  const rows = (data ?? []) as unknown as (AdminSolicitacaoRow & { client_id: string })[];
   if (rows.length) {
     const ids = rows.map((r) => r.id);
-    const { data: props } = await supabase.from("quote_proposals").select("quote_request_id").in("quote_request_id", ids);
+    const clientIds = Array.from(new Set(rows.map((r) => r.client_id).filter(Boolean)));
+    const [propsRes, profsRes] = await Promise.all([
+      supabase.from("quote_proposals").select("quote_request_id").in("quote_request_id", ids),
+      clientIds.length
+        ? supabase.from("profiles").select("user_id, full_name, email, phone").in("user_id", clientIds)
+        : Promise.resolve({ data: [] as Array<{ user_id: string; full_name: string | null; email: string | null; phone: string | null }> } as never),
+    ]);
     const counts = new Map<string, number>();
-    for (const p of (props ?? []) as Array<{ quote_request_id: string }>) counts.set(p.quote_request_id, (counts.get(p.quote_request_id) ?? 0) + 1);
-    for (const r of rows) r.proposals_count = counts.get(r.id) ?? 0;
+    for (const p of ((propsRes.data ?? []) as Array<{ quote_request_id: string }>)) counts.set(p.quote_request_id, (counts.get(p.quote_request_id) ?? 0) + 1);
+    const profMap = new Map<string, { full_name: string | null; email: string | null; phone: string | null }>();
+    for (const p of ((profsRes.data ?? []) as Array<{ user_id: string; full_name: string | null; email: string | null; phone: string | null }>)) {
+      profMap.set(p.user_id, { full_name: p.full_name, email: p.email, phone: p.phone });
+    }
+    for (const r of rows) {
+      r.proposals_count = counts.get(r.id) ?? 0;
+      r.client = profMap.get(r.client_id) ?? null;
+    }
   }
   return rows;
 }
