@@ -164,13 +164,19 @@ export async function listCategories(): Promise<CategoryVM[]> {
     const m = r.card_media ?? r.cover_media;
     return m ? { bucket: m.bucket_name, path: m.object_path } : null;
   });
-  const [urls, servicesByCategory] = await Promise.all([
+  const [urls, servicesByCategory, statsByCategory] = await Promise.all([
     getMediaUrls(refs),
     fetchServiceNames(rows.map((r) => r.id)),
+    fetchCategoryStats(rows.map((r) => r.id)),
   ]);
 
   return rows.map((row, idx) =>
-    toVM(row, urls[idx] || row.image_url || "", servicesByCategory.get(row.id) ?? []),
+    toVM(
+      row,
+      urls[idx] || row.image_url || "",
+      servicesByCategory.get(row.id) ?? [],
+      statsByCategory.get(row.id),
+    ),
   );
 }
 
