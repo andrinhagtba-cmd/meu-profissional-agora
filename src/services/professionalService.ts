@@ -237,3 +237,47 @@ export async function searchProfessionals(
   }
   return result;
 }
+
+export type PublicReview = {
+  id: string;
+  rating: number;
+  comment: string | null;
+  reply: string | null;
+  createdAt: string;
+};
+
+export async function listApprovedReviewsBySlug(
+  slug: string,
+  limit = 30,
+): Promise<PublicReview[]> {
+  const { data: pro, error: pErr } = await supabase
+    .from("professional_profiles")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (pErr) throw pErr;
+  if (!pro?.id) return [];
+  return listApprovedReviewsByPro(pro.id as string, limit);
+}
+
+
+export async function listApprovedReviewsByPro(
+  proId: string,
+  limit = 30,
+): Promise<PublicReview[]> {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("id, rating, comment, professional_reply, created_at")
+    .eq("professional_id", proId)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []).map((r) => ({
+    id: r.id as string,
+    rating: r.rating as number,
+    comment: (r.comment as string | null) ?? null,
+    reply: (r.professional_reply as string | null) ?? null,
+    createdAt: r.created_at as string,
+  }));
+}
