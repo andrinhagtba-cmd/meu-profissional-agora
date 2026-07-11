@@ -36,21 +36,16 @@ type PublicQuoteRequest = {
   service_type: string | null;
   status: string;
   created_at: string;
-  category?: { name: string | null; slug: string | null } | null;
+  category_name: string | null;
+  category_slug: string | null;
 };
 
 async function listVisibleQuoteRequests(): Promise<PublicQuoteRequest[]> {
-  const { data, error } = await supabase
-    .from("quote_requests")
-    .select(
-      `id, title, description, city, state, urgency, service_type, status, created_at,
-       category:category_id(name, slug)`,
-    )
-    .in("status", ["open", "receiving_proposals"])
-    .order("created_at", { ascending: false })
-    .limit(60);
+  const { data, error } = await (supabase as unknown as {
+    rpc: (name: string, args: { _limit: number }) => Promise<{ data: PublicQuoteRequest[] | null; error: Error | null }>;
+  }).rpc("list_public_quote_requests", { _limit: 60 });
   if (error) throw error;
-  return (data ?? []) as unknown as PublicQuoteRequest[];
+  return data ?? [];
 }
 
 function formatDate(date: string) {
@@ -92,7 +87,7 @@ function OrcamentosPage() {
           {!isLoading && data.map((req) => (
             <article key={req.id} className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-float">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="rounded-full bg-secondary text-[11px] font-semibold text-primary hover:bg-secondary">{req.category?.name ?? req.service_type ?? "Serviço"}</Badge>
+                <Badge className="rounded-full bg-secondary text-[11px] font-semibold text-primary hover:bg-secondary">{req.category_name ?? req.service_type ?? "Serviço"}</Badge>
                 <Badge className="rounded-full bg-orange/10 text-[11px] font-semibold text-orange hover:bg-orange/10">{urgencyLabel[req.urgency ?? ""] ?? "Pedido aberto"}</Badge>
               </div>
               <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-foreground">{req.description || req.title}</p>

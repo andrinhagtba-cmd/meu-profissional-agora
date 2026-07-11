@@ -1922,6 +1922,22 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      list_public_quote_requests: {
+        Args: { _limit?: number }
+        Returns: {
+          category_name: string
+          category_slug: string
+          city: string
+          created_at: string
+          description: string
+          id: string
+          service_type: Database["public"]["Enums"]["service_type"]
+          state: string
+          status: Database["public"]["Enums"]["quote_status"]
+          title: string
+          urgency: Database["public"]["Enums"]["urgency_level"]
+        }[]
+      }
       mark_conversation_read: {
         Args: { _conversation_id: string }
         Returns: undefined
