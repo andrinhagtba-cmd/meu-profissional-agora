@@ -210,7 +210,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
   const { resolveMediaUrlsByIds } = await import("./adminMediaService");
 
   const [profileRes, svc, port, lead, rev, urlMap] = await Promise.all([
-    supabase.from("profiles").select("email, full_name, avatar_url").eq("id", userId).maybeSingle(),
+    supabase.from("profiles").select("email, full_name, avatar_url").eq("user_id", userId).maybeSingle(),
     supabase.from("professional_services").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("portfolio_items").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("professional_id", id),
