@@ -1436,3 +1436,215 @@ export async function fetchExportRows(entity: ReportEntity, limit = 2000): Promi
   if (error) throw error;
   return (data ?? []) as Record<string, unknown>[];
 }
+
+// ============================================================================
+// Etapa A — Operação diária
+// ============================================================================
+
+// --- Solicitações (quote_requests) ---
+export type AdminSolicitacaoRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  city: string | null;
+  state: string | null;
+  status: string;
+  urgency: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  created_at: string;
+  client?: { full_name: string | null; email: string | null; phone: string | null } | null;
+  category?: { name: string | null; slug: string | null } | null;
+  proposals_count?: number;
+};
+
+export async function listSolicitacoesAdmin(opts: { search?: string; status?: string } = {}): Promise<AdminSolicitacaoRow[]> {
+  let q = supabase
+    .from("quote_requests")
+    .select("id, title, description, city, state, status, urgency, budget_min, budget_max, created_at, client:client_id(full_name, email, phone), category:category_id(name, slug)")
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (opts.status) q = q.eq("status", opts.status as never);
+  if (opts.search) q = q.ilike("title", `%${opts.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as AdminSolicitacaoRow[];
+  if (rows.length) {
+    const ids = rows.map((r) => r.id);
+    const { data: props } = await supabase.from("quote_proposals").select("quote_request_id").in("quote_request_id", ids);
+    const counts = new Map<string, number>();
+    for (const p of (props ?? []) as Array<{ quote_request_id: string }>) counts.set(p.quote_request_id, (counts.get(p.quote_request_id) ?? 0) + 1);
+    for (const r of rows) r.proposals_count = counts.get(r.id) ?? 0;
+  }
+  return rows;
+}
+
+export async function updateSolicitacaoStatus(id: string, status: string) {
+  const { error } = await supabase.from("quote_requests").update({ status: status as never }).eq("id", id);
+  if (error) throw error;
+}
+
+// --- Leads ---
+export type AdminLeadRow = {
+  id: string;
+  action_type: string;
+  source: string | null;
+  created_at: string;
+  professional_id: string;
+  client_id: string | null;
+  quote_request_id: string | null;
+  professional?: { professional_name: string | null; business_name: string | null; slug: string | null; city: string | null; state: string | null } | null;
+  client?: { full_name: string | null; email: string | null } | null;
+  quote?: { title: string | null } | null;
+};
+
+export async function listLeadsAdmin(opts: { search?: string; action?: string; source?: string; days?: number } = {}): Promise<AdminLeadRow[]> {
+  let q = supabase
+    .from("leads")
+    .select("id, action_type, source, created_at, professional_id, client_id, quote_request_id, professional:professional_id(professional_name, business_name, slug, city, state), client:client_id(full_name, email), quote:quote_request_id(title)")
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (opts.action) q = q.eq("action_type", opts.action);
+  if (opts.source) q = q.eq("source", opts.source);
+  if (opts.days) {
+    const since = new Date(Date.now() - opts.days * 86400_000).toISOString();
+    q = q.gte("created_at", since);
+  }
+  const { data, error } = await q;
+  if (error) throw error;
+  let rows = (data ?? []) as unknown as AdminLeadRow[];
+  if (opts.search) {
+    const s = opts.search.toLowerCase();
+    rows = rows.filter((r) =>
+      (r.professional?.professional_name ?? "").toLowerCase().includes(s) ||
+      (r.professional?.business_name ?? "").toLowerCase().includes(s) ||
+      (r.client?.full_name ?? "").toLowerCase().includes(s) ||
+      (r.quote?.title ?? "").toLowerCase().includes(s),
+    );
+  }
+  return rows;
+}
+
+// --- Notificações (broadcast + histórico) ---
+export type AdminNotificationRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string | null;
+  type: string;
+  link: string | null;
+  read: boolean;
+  created_at: string;
+  user?: { full_name: string | null; email: string | null } | null;
+};
+
+export async function listNotificationsAdmin(opts: { search?: string; type?: string; read?: "read" | "unread" } = {}): Promise<AdminNotificationRow[]> {
+  let q = supabase
+    .from("notifications")
+    .select("id, user_id, title, message, type, link, read, created_at, user:user_id(full_name, email)")
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (opts.type) q = q.eq("type", opts.type as never);
+  if (opts.read === "read") q = q.eq("read", true);
+  if (opts.read === "unread") q = q.eq("read", false);
+  if (opts.search) q = q.ilike("title", `%${opts.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as AdminNotificationRow[];
+}
+
+export type BroadcastAudience = "all" | "clientes" | "profissionais" | "admins";
+
+export async function broadcastNotification(input: {
+  audience: BroadcastAudience;
+  title: string;
+  message: string;
+  link?: string;
+  type?: string;
+}): Promise<{ inserted: number }> {
+  let userIds: string[] = [];
+  if (input.audience === "all") {
+    const { data, error } = await supabase.from("profiles").select("user_id").limit(5000);
+    if (error) throw error;
+    userIds = (data ?? []).map((r: { user_id: string }) => r.user_id);
+  } else {
+    const roleMap: Record<Exclude<BroadcastAudience, "all">, string> = {
+      clientes: "cliente",
+      profissionais: "profissional",
+      admins: "admin",
+    };
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", roleMap[input.audience] as never)
+      .limit(5000);
+    if (error) throw error;
+    userIds = (data ?? []).map((r: { user_id: string }) => r.user_id);
+  }
+  if (!userIds.length) return { inserted: 0 };
+  const rows = userIds.map((uid) => ({
+    user_id: uid,
+    title: input.title,
+    message: input.message,
+    link: input.link ?? null,
+    type: (input.type ?? "system") as never,
+  }));
+  // Insert in chunks of 500 to avoid payload limits
+  let inserted = 0;
+  for (let i = 0; i < rows.length; i += 500) {
+    const chunk = rows.slice(i, i + 500);
+    const { error } = await supabase.from("notifications").insert(chunk as never);
+    if (error) throw error;
+    inserted += chunk.length;
+  }
+  return { inserted };
+}
+
+export async function deleteNotification(id: string) {
+  const { error } = await supabase.from("notifications").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// --- Contatos / suporte ---
+export type ContactStatus = "new" | "in_progress" | "waiting" | "resolved" | "archived";
+export type ContactPriority = "low" | "normal" | "high" | "urgent";
+
+export type AdminContactRow = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string | null;
+  message: string;
+  channel: string;
+  status: ContactStatus;
+  priority: ContactPriority;
+  internal_note: string | null;
+  created_at: string;
+  handled_at: string | null;
+};
+
+export async function listContactsAdmin(opts: { search?: string; status?: string; priority?: string } = {}): Promise<AdminContactRow[]> {
+  let q = (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>)
+    .select("id, name, email, phone, subject, message, channel, status, priority, internal_note, created_at, handled_at")
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (opts.status) q = q.eq("status", opts.status);
+  if (opts.priority) q = q.eq("priority", opts.priority);
+  if (opts.search) q = q.ilike("name", `%${opts.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as AdminContactRow[];
+}
+
+export async function updateContactMessage(id: string, patch: Partial<Pick<AdminContactRow, "status" | "priority" | "internal_note">>) {
+  const payload: Record<string, unknown> = { ...patch };
+  if (patch.status === "resolved") payload.handled_at = new Date().toISOString();
+  const { error } = await (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>).update(payload).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteContactMessage(id: string) {
+  const { error } = await (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>).delete().eq("id", id);
+  if (error) throw error;
+}

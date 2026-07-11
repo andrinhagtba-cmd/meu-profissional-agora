@@ -326,6 +326,63 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          assigned_to: string | null
+          channel: string
+          created_at: string
+          email: string
+          handled_at: string | null
+          handled_by: string | null
+          id: string
+          internal_note: string | null
+          message: string
+          metadata: Json
+          name: string
+          phone: string | null
+          priority: string
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          channel?: string
+          created_at?: string
+          email: string
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          internal_note?: string | null
+          message: string
+          metadata?: Json
+          name: string
+          phone?: string | null
+          priority?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          channel?: string
+          created_at?: string
+          email?: string
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          internal_note?: string | null
+          message?: string
+          metadata?: Json
+          name?: string
+          phone?: string | null
+          priority?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           client_id: string
