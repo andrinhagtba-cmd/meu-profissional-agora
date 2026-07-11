@@ -22,8 +22,10 @@ import {
   type ReceivedProposal,
 } from "@/services/clientService";
 import { getReviewForQuote, submitReview } from "@/services/adminService";
+import { getOrCreateConversation } from "@/services/chatService";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
