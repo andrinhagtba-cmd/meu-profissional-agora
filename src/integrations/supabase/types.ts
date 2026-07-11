@@ -203,6 +203,63 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          client_id: string
+          client_unread_count: number
+          created_at: string
+          id: string
+          last_message_at: string | null
+          last_message_preview: string | null
+          pro_unread_count: number
+          professional_id: string
+          professional_user_id: string | null
+          quote_request_id: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          client_unread_count?: number
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          pro_unread_count?: number
+          professional_id: string
+          professional_user_id?: string | null
+          quote_request_id: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          client_unread_count?: number
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          pro_unread_count?: number
+          professional_id?: string
+          professional_user_id?: string | null
+          quote_request_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           client_id: string
@@ -389,6 +446,53 @@ export type Database = {
             columns: ["media_asset_id"]
             isOneToOne: false
             referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
+          attachment_type: string | null
+          body: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
+          body?: string | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
+          attachment_type?: string | null
+          body?: string | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
         ]
@@ -1160,6 +1264,10 @@ export type Database = {
     }
     Functions: {
       accept_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      get_or_create_conversation: {
+        Args: { _pro_id: string; _quote_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1168,6 +1276,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      mark_conversation_read: {
+        Args: { _conversation_id: string }
+        Returns: undefined
+      }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
       submit_review: {
