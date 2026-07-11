@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -11,6 +11,9 @@ import {
   listMyProposals,
   withdrawProposal,
 } from "@/services/professionalDashboardService";
+import { getOrCreateConversation } from "@/services/chatService";
+import { MessageSquare } from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/painel/propostas")({
   head: () => ({
