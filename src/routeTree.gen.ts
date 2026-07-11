@@ -78,7 +78,6 @@ import { Route as AuthenticatedAdminProfissionaisIndexRouteImport } from './rout
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
 import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
-import { Route as AuthenticatedAdminProfissionaisIdRouteImport } from './routes/_authenticated/admin.profissionais.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -472,12 +471,6 @@ const AuthenticatedAdminProfissionaisNovoRoute =
     path: '/novo',
     getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
   } as any)
-const AuthenticatedAdminProfissionaisIdRoute =
-  AuthenticatedAdminProfissionaisIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -544,7 +537,6 @@ export interface FileRoutesByFullPath {
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
@@ -613,7 +605,6 @@ export interface FileRoutesByTo {
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
@@ -686,7 +677,6 @@ export interface FileRoutesById {
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
@@ -759,7 +749,6 @@ export interface FileRouteTypes {
     | '/painel/propostas'
     | '/painel/servicos'
     | '/admin/'
-    | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
@@ -828,7 +817,6 @@ export interface FileRouteTypes {
     | '/painel/propostas'
     | '/painel/servicos'
     | '/admin'
-    | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
@@ -900,7 +888,6 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
     | '/_authenticated/admin/'
-    | '/_authenticated/admin/profissionais/$id'
     | '/_authenticated/admin/profissionais/novo'
     | '/_authenticated/painel/mensagens/$id'
     | '/_authenticated/painel/pedidos/$id'
@@ -1408,26 +1395,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProfissionaisNovoRouteImport
       parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
-    '/_authenticated/admin/profissionais/$id': {
-      id: '/_authenticated/admin/profissionais/$id'
-      path: '/$id'
-      fullPath: '/admin/profissionais/$id'
-      preLoaderRoute: typeof AuthenticatedAdminProfissionaisIdRouteImport
-      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
-    }
   }
 }
 
 interface AuthenticatedAdminProfissionaisRouteChildren {
-  AuthenticatedAdminProfissionaisIdRoute: typeof AuthenticatedAdminProfissionaisIdRoute
   AuthenticatedAdminProfissionaisNovoRoute: typeof AuthenticatedAdminProfissionaisNovoRoute
   AuthenticatedAdminProfissionaisIndexRoute: typeof AuthenticatedAdminProfissionaisIndexRoute
 }
 
 const AuthenticatedAdminProfissionaisRouteChildren: AuthenticatedAdminProfissionaisRouteChildren =
   {
-    AuthenticatedAdminProfissionaisIdRoute:
-      AuthenticatedAdminProfissionaisIdRoute,
     AuthenticatedAdminProfissionaisNovoRoute:
       AuthenticatedAdminProfissionaisNovoRoute,
     AuthenticatedAdminProfissionaisIndexRoute:
