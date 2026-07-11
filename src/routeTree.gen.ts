@@ -36,6 +36,7 @@ import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_auth
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
 import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
 import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
+import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 import { Route as AuthenticatedPainelMensagensRouteImport } from './routes/_authenticated/painel.mensagens'
@@ -224,6 +225,12 @@ const AuthenticatedPainelPerfilRoute =
   AuthenticatedPainelPerfilRouteImport.update({
     id: '/perfil',
     path: '/perfil',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPedidosRoute =
+  AuthenticatedPainelPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
 const AuthenticatedPainelNotificacoesRoute =
@@ -488,9 +495,9 @@ const AuthenticatedAdminAdministradoresRoute =
   } as any)
 const AuthenticatedPainelPedidosIndexRoute =
   AuthenticatedPainelPedidosIndexRouteImport.update({
-    id: '/pedidos/',
-    path: '/pedidos/',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
   } as any)
 const AuthenticatedAdminProfissionaisIndexRoute =
   AuthenticatedAdminProfissionaisIndexRouteImport.update({
@@ -500,9 +507,9 @@ const AuthenticatedAdminProfissionaisIndexRoute =
   } as any)
 const AuthenticatedPainelPedidosIdRoute =
   AuthenticatedPainelPedidosIdRouteImport.update({
-    id: '/pedidos/$id',
-    path: '/pedidos/$id',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
   } as any)
 const AuthenticatedPainelMensagensIdRoute =
   AuthenticatedPainelMensagensIdRouteImport.update({
@@ -588,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
@@ -743,6 +751,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
@@ -823,6 +832,7 @@ export interface FileRouteTypes {
     | '/painel/mensagens'
     | '/painel/midia'
     | '/painel/notificacoes'
+    | '/painel/pedidos'
     | '/painel/perfil'
     | '/painel/propostas'
     | '/painel/servicos'
@@ -977,6 +987,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/mensagens'
     | '/_authenticated/painel/midia'
     | '/_authenticated/painel/notificacoes'
+    | '/_authenticated/painel/pedidos'
     | '/_authenticated/painel/perfil'
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
@@ -1201,6 +1212,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/painel/perfil'
       preLoaderRoute: typeof AuthenticatedPainelPerfilRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/pedidos': {
+      id: '/_authenticated/painel/pedidos'
+      path: '/pedidos'
+      fullPath: '/painel/pedidos'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
     '/_authenticated/painel/notificacoes': {
@@ -1513,10 +1531,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/painel/pedidos/': {
       id: '/_authenticated/painel/pedidos/'
-      path: '/pedidos'
+      path: '/'
       fullPath: '/painel/pedidos/'
       preLoaderRoute: typeof AuthenticatedPainelPedidosIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
     }
     '/_authenticated/admin/profissionais/': {
       id: '/_authenticated/admin/profissionais/'
@@ -1527,10 +1545,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/painel/pedidos/$id': {
       id: '/_authenticated/painel/pedidos/$id'
-      path: '/pedidos/$id'
+      path: '/$id'
       fullPath: '/painel/pedidos/$id'
       preLoaderRoute: typeof AuthenticatedPainelPedidosIdRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
     }
     '/_authenticated/painel/mensagens/$id': {
       id: '/_authenticated/painel/mensagens/$id'
@@ -1684,18 +1702,33 @@ const AuthenticatedPainelMensagensRouteWithChildren =
     AuthenticatedPainelMensagensRouteChildren,
   )
 
+interface AuthenticatedPainelPedidosRouteChildren {
+  AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
+  AuthenticatedPainelPedidosIndexRoute: typeof AuthenticatedPainelPedidosIndexRoute
+}
+
+const AuthenticatedPainelPedidosRouteChildren: AuthenticatedPainelPedidosRouteChildren =
+  {
+    AuthenticatedPainelPedidosIdRoute: AuthenticatedPainelPedidosIdRoute,
+    AuthenticatedPainelPedidosIndexRoute: AuthenticatedPainelPedidosIndexRoute,
+  }
+
+const AuthenticatedPainelPedidosRouteWithChildren =
+  AuthenticatedPainelPedidosRoute._addFileChildren(
+    AuthenticatedPainelPedidosRouteChildren,
+  )
+
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelLeadsRoute: typeof AuthenticatedPainelLeadsRoute
   AuthenticatedPainelMensagensRoute: typeof AuthenticatedPainelMensagensRouteWithChildren
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
   AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
+  AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRouteWithChildren
   AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
   AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
   AuthenticatedPainelServicosRoute: typeof AuthenticatedPainelServicosRoute
   AuthenticatedPainelTrabalhosRoute: typeof AuthenticatedPainelTrabalhosRoute
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
-  AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
-  AuthenticatedPainelPedidosIndexRoute: typeof AuthenticatedPainelPedidosIndexRoute
 }
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
@@ -1704,13 +1737,12 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
     AuthenticatedPainelMensagensRouteWithChildren,
   AuthenticatedPainelMidiaRoute: AuthenticatedPainelMidiaRoute,
   AuthenticatedPainelNotificacoesRoute: AuthenticatedPainelNotificacoesRoute,
+  AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRouteWithChildren,
   AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
   AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
   AuthenticatedPainelServicosRoute: AuthenticatedPainelServicosRoute,
   AuthenticatedPainelTrabalhosRoute: AuthenticatedPainelTrabalhosRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
-  AuthenticatedPainelPedidosIdRoute: AuthenticatedPainelPedidosIdRoute,
-  AuthenticatedPainelPedidosIndexRoute: AuthenticatedPainelPedidosIndexRoute,
 }
 
 const AuthenticatedPainelRouteWithChildren =
@@ -1754,3 +1786,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
