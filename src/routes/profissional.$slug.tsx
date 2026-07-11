@@ -33,7 +33,7 @@ import {
   getRelatedProfessionals,
   registerWhatsAppLead,
 } from "@/services/mockApi";
-import { listApprovedReviewsByPro, type PublicReview } from "@/services/professionalService";
+import { listApprovedReviewsBySlug, type PublicReview } from "@/services/professionalService";
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
 export const Route = createFileRoute("/profissional/$slug")({
