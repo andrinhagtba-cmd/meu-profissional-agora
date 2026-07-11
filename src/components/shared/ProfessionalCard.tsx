@@ -83,6 +83,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
           </Link>
         </Button>
       </div>
+      </div>
     </article>
   );
 }
