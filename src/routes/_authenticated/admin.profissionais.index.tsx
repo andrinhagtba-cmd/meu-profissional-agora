@@ -340,7 +340,7 @@ function ProfessionalCard({
       </div>
       <button type="button" onClick={() => onOpen("overview")} className="block w-full p-5 pt-0 text-left">
         <div className="-mt-9 flex items-end justify-between gap-3">
-          <InitialsAvatar name={name} className="h-18 w-18 border-4 border-card text-xl shadow-card" />
+          <InitialsAvatar name={name} className="h-[4.5rem] w-[4.5rem] border-4 border-card text-xl shadow-card" />
           <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
             {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
           </StatusPill>
