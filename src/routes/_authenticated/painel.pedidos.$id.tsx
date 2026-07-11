@@ -141,6 +141,8 @@ function PedidoDetalhe() {
           </div>
         )}
 
+        {q && <TrackingSection quote={q} viewerRole="client" />}
+
         <h2 className="mt-8 font-display text-xl font-bold text-foreground">
           Propostas recebidas
         </h2>
