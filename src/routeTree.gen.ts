@@ -27,7 +27,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfissionalSlugRouteImport } from './routes/profissional.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
-import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
@@ -176,11 +175,6 @@ const CadastroProfissionalRoute = CadastroProfissionalRouteImport.update({
   path: '/cadastro/profissional',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
-  id: '/painel',
-  path: '/painel',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -193,9 +187,9 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 } as any)
 const AuthenticatedPainelIndexRoute =
   AuthenticatedPainelIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/',
+    path: '/painel/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -204,57 +198,57 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 } as any)
 const AuthenticatedPainelTrabalhosRoute =
   AuthenticatedPainelTrabalhosRouteImport.update({
-    id: '/trabalhos',
-    path: '/trabalhos',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/trabalhos',
+    path: '/painel/trabalhos',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelServicosRoute =
   AuthenticatedPainelServicosRouteImport.update({
-    id: '/servicos',
-    path: '/servicos',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/servicos',
+    path: '/painel/servicos',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelPropostasRoute =
   AuthenticatedPainelPropostasRouteImport.update({
-    id: '/propostas',
-    path: '/propostas',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/propostas',
+    path: '/painel/propostas',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelPerfilRoute =
   AuthenticatedPainelPerfilRouteImport.update({
-    id: '/perfil',
-    path: '/perfil',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/perfil',
+    path: '/painel/perfil',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelPedidosRoute =
   AuthenticatedPainelPedidosRouteImport.update({
-    id: '/pedidos',
-    path: '/pedidos',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/pedidos',
+    path: '/painel/pedidos',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelNotificacoesRoute =
   AuthenticatedPainelNotificacoesRouteImport.update({
-    id: '/notificacoes',
-    path: '/notificacoes',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/notificacoes',
+    path: '/painel/notificacoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelMidiaRoute =
   AuthenticatedPainelMidiaRouteImport.update({
-    id: '/midia',
-    path: '/midia',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/midia',
+    path: '/painel/midia',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelMensagensRoute =
   AuthenticatedPainelMensagensRouteImport.update({
-    id: '/mensagens',
-    path: '/mensagens',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/mensagens',
+    path: '/painel/mensagens',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPainelLeadsRoute =
   AuthenticatedPainelLeadsRouteImport.update({
-    id: '/leads',
-    path: '/leads',
-    getParentRoute: () => AuthenticatedPainelRoute,
+    id: '/painel/leads',
+    path: '/painel/leads',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminVerificacoesRoute =
   AuthenticatedAdminVerificacoesRouteImport.update({
@@ -540,7 +534,6 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/favoritos': typeof AuthenticatedFavoritosRoute
-  '/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
@@ -695,7 +688,6 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
-  '/_authenticated/painel': typeof AuthenticatedPainelRouteWithChildren
   '/cadastro/profissional': typeof CadastroProfissionalRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/profissional/$slug': typeof ProfissionalSlugRoute
@@ -775,7 +767,6 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin'
     | '/favoritos'
-    | '/painel'
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
@@ -929,7 +920,6 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/_authenticated/admin'
     | '/_authenticated/favoritos'
-    | '/_authenticated/painel'
     | '/cadastro/profissional'
     | '/categoria/$slug'
     | '/profissional/$slug'
@@ -1140,13 +1130,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CadastroProfissionalRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/painel': {
-      id: '/_authenticated/painel'
-      path: '/painel'
-      fullPath: '/painel'
-      preLoaderRoute: typeof AuthenticatedPainelRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/favoritos': {
       id: '/_authenticated/favoritos'
       path: '/favoritos'
@@ -1163,10 +1146,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/painel/': {
       id: '/_authenticated/painel/'
-      path: '/'
+      path: '/painel'
       fullPath: '/painel/'
       preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -1177,66 +1160,66 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/painel/trabalhos': {
       id: '/_authenticated/painel/trabalhos'
-      path: '/trabalhos'
+      path: '/painel/trabalhos'
       fullPath: '/painel/trabalhos'
       preLoaderRoute: typeof AuthenticatedPainelTrabalhosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/servicos': {
       id: '/_authenticated/painel/servicos'
-      path: '/servicos'
+      path: '/painel/servicos'
       fullPath: '/painel/servicos'
       preLoaderRoute: typeof AuthenticatedPainelServicosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/propostas': {
       id: '/_authenticated/painel/propostas'
-      path: '/propostas'
+      path: '/painel/propostas'
       fullPath: '/painel/propostas'
       preLoaderRoute: typeof AuthenticatedPainelPropostasRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/perfil': {
       id: '/_authenticated/painel/perfil'
-      path: '/perfil'
+      path: '/painel/perfil'
       fullPath: '/painel/perfil'
       preLoaderRoute: typeof AuthenticatedPainelPerfilRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/pedidos': {
       id: '/_authenticated/painel/pedidos'
-      path: '/pedidos'
+      path: '/painel/pedidos'
       fullPath: '/painel/pedidos'
       preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/notificacoes': {
       id: '/_authenticated/painel/notificacoes'
-      path: '/notificacoes'
+      path: '/painel/notificacoes'
       fullPath: '/painel/notificacoes'
       preLoaderRoute: typeof AuthenticatedPainelNotificacoesRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/midia': {
       id: '/_authenticated/painel/midia'
-      path: '/midia'
+      path: '/painel/midia'
       fullPath: '/painel/midia'
       preLoaderRoute: typeof AuthenticatedPainelMidiaRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/mensagens': {
       id: '/_authenticated/painel/mensagens'
-      path: '/mensagens'
+      path: '/painel/mensagens'
       fullPath: '/painel/mensagens'
       preLoaderRoute: typeof AuthenticatedPainelMensagensRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel/leads': {
       id: '/_authenticated/painel/leads'
-      path: '/leads'
+      path: '/painel/leads'
       fullPath: '/painel/leads'
       preLoaderRoute: typeof AuthenticatedPainelLeadsRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/verificacoes': {
       id: '/_authenticated/admin/verificacoes'
@@ -1698,7 +1681,9 @@ const AuthenticatedPainelPedidosRouteWithChildren =
     AuthenticatedPainelPedidosRouteChildren,
   )
 
-interface AuthenticatedPainelRouteChildren {
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedPainelLeadsRoute: typeof AuthenticatedPainelLeadsRoute
   AuthenticatedPainelMensagensRoute: typeof AuthenticatedPainelMensagensRouteWithChildren
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
@@ -1711,7 +1696,9 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelIndexRoute: typeof AuthenticatedPainelIndexRoute
 }
 
-const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedPainelLeadsRoute: AuthenticatedPainelLeadsRoute,
   AuthenticatedPainelMensagensRoute:
     AuthenticatedPainelMensagensRouteWithChildren,
@@ -1723,21 +1710,6 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelServicosRoute: AuthenticatedPainelServicosRoute,
   AuthenticatedPainelTrabalhosRoute: AuthenticatedPainelTrabalhosRoute,
   AuthenticatedPainelIndexRoute: AuthenticatedPainelIndexRoute,
-}
-
-const AuthenticatedPainelRouteWithChildren =
-  AuthenticatedPainelRoute._addFileChildren(AuthenticatedPainelRouteChildren)
-
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
-  AuthenticatedPainelRoute: typeof AuthenticatedPainelRouteWithChildren
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
-  AuthenticatedPainelRoute: AuthenticatedPainelRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
