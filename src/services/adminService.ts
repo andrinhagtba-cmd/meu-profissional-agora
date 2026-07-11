@@ -1487,7 +1487,7 @@ const EXPORT_CONFIG: Record<ReportEntity, { table: string; columns: string; orde
   },
   quotes: {
     table: "quote_requests",
-    columns: "id,title,status,city,state,budget_min,budget_max,created_at",
+    columns: "id,title,status,city,state,urgency,service_type,preferred_date,created_at",
     orderBy: "created_at",
   },
   proposals: {
@@ -1534,10 +1534,13 @@ export type AdminSolicitacaoRow = {
   description: string | null;
   city: string | null;
   state: string | null;
+  neighborhood?: string | null;
   status: string;
   urgency: string | null;
-  budget_min: number | null;
-  budget_max: number | null;
+  service_type?: string | null;
+  preferred_date?: string | null;
+  budget_min?: number | null;
+  budget_max?: number | null;
   created_at: string;
   client?: { full_name: string | null; email: string | null; phone: string | null } | null;
   category?: { name: string | null; slug: string | null } | null;
@@ -1547,7 +1550,7 @@ export type AdminSolicitacaoRow = {
 export async function listSolicitacoesAdmin(opts: { search?: string; status?: string } = {}): Promise<AdminSolicitacaoRow[]> {
   let q = supabase
     .from("quote_requests")
-    .select("id, title, description, city, state, status, urgency, budget_min, budget_max, created_at, client_id, category:category_id(name, slug)")
+    .select("id, title, description, city, state, neighborhood, status, urgency, service_type, preferred_date, created_at, client_id, category:category_id(name, slug)")
     .order("created_at", { ascending: false })
     .limit(300);
   if (opts.status) q = q.eq("status", opts.status as never);
