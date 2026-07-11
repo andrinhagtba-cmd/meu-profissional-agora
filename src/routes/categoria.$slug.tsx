@@ -1,4 +1,4 @@
-import { Link, createFileRoute, notFound } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Star, Users } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -12,23 +12,24 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { categories, cities } from "@/data/categories";
-import { images } from "@/data/images";
+import { cities } from "@/data/categories";
 import { getProfessionalsByCategory } from "@/services/mockApi";
+import {
+  getCategoryBySlug,
+  listCategories,
+  type CategoryVM,
+} from "@/services/categoryService";
 
 export const Route = createFileRoute("/categoria/$slug")({
-  loader: ({ params }) => {
-    const category = categories.find((c) => c.slug === params.slug);
-    if (!category) throw notFound();
-    return { category };
-  },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.category.name} perto de você | ProConecta` },
-          { name: "description", content: loaderData.category.description },
-        ]
-      : [],
+  head: () => ({
+    meta: [
+      { title: "Categoria | ProConecta" },
+      {
+        name: "description",
+        content:
+          "Compare profissionais avaliados perto de você e peça orçamentos sem compromisso.",
+      },
+    ],
   }),
   errorComponent: () => (
     <SiteLayout>
@@ -51,19 +52,55 @@ export const Route = createFileRoute("/categoria/$slug")({
 });
 
 function CategoriaPage() {
-  const { category } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { data: category, isLoading: catLoading } = useQuery({
+    queryKey: ["category", slug],
+    queryFn: () => getCategoryBySlug(slug),
+    staleTime: 5 * 60_000,
+  });
+  const { data: allCategories } = useQuery({
+    queryKey: ["categories", "list"],
+    queryFn: listCategories,
+    staleTime: 5 * 60_000,
+  });
   const { data: pros, isLoading } = useQuery({
-    queryKey: ["category-pros", category.slug],
-    queryFn: () => getProfessionalsByCategory(category.slug),
+    queryKey: ["category-pros", slug],
+    queryFn: () => getProfessionalsByCategory(slug),
+    enabled: !!category,
   });
 
-  const related = categories.filter((c) => c.slug !== category.slug).slice(0, 4);
+  if (catLoading && !category) {
+    return (
+      <SiteLayout>
+        <div className="container-page py-24">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="mt-4 h-24 w-full max-w-2xl" />
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  if (!category) {
+    return (
+      <SiteLayout>
+        <div className="container-page py-24 text-center">
+          <h1 className="font-display text-2xl font-bold">Categoria não encontrada</h1>
+          <Button asChild className="mt-6 h-11 rounded-xl">
+            <Link to="/categorias">Ver todas as categorias</Link>
+          </Button>
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  const cat: CategoryVM = category;
+  const related = (allCategories ?? []).filter((c) => c.slug !== cat.slug).slice(0, 4);
 
   return (
     <SiteLayout>
       <div className="relative overflow-hidden bg-navy">
         <img
-          src={images[category.imageKey]}
+          src={cat.imageUrl}
           alt=""
           loading="lazy"
           width={800}
@@ -71,31 +108,32 @@ function CategoriaPage() {
           className="absolute inset-0 h-full w-full object-cover opacity-25"
           aria-hidden="true"
         />
+
         <div className="container-page relative py-14 text-navy-foreground">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-navy-foreground/70">
             <Link to="/" className="hover:text-navy-foreground">Início</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <Link to="/categorias" className="hover:text-navy-foreground">Categorias</Link>
             <ChevronRight size={12} aria-hidden="true" />
-            <span className="text-navy-foreground">{category.name}</span>
+            <span className="text-navy-foreground">{cat.name}</span>
           </nav>
           <h1 className="mt-4 font-display text-3xl font-extrabold sm:text-4xl">
-            {category.name} perto de você
+            {cat.name} perto de você
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-navy-foreground/85">
-            {category.description}
+            {cat.description}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-4 text-sm font-medium">
             <span className="inline-flex items-center gap-1.5">
               <Users size={15} aria-hidden="true" />
-              {category.professionalsCount} profissionais
+              {cat.professionalsCount} profissionais
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Star size={15} className="fill-rating text-rating" aria-hidden="true" />
-              Nota média {category.rating.toFixed(1).replace(".", ",")}
+              Nota média {cat.rating.toFixed(1).replace(".", ",")}
             </span>
             <span>
-              a partir de <strong>R$ {category.priceFrom}</strong>
+              a partir de <strong>R$ {cat.priceFrom}</strong>
             </span>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -107,7 +145,7 @@ function CategoriaPage() {
               variant="outline"
               className="h-12 rounded-xl border-navy-foreground/25 bg-transparent px-6 font-semibold text-navy-foreground hover:bg-navy-foreground/10 hover:text-navy-foreground"
             >
-              <Link to="/buscar" search={{ categoria: category.slug } as never}>
+              <Link to="/buscar" search={{ categoria: cat.slug } as never}>
                 Buscar com filtros
               </Link>
             </Button>
@@ -121,7 +159,7 @@ function CategoriaPage() {
             Serviços mais pedidos
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {category.services.map((s: string) => (
+            {cat.services.map((s: string) => (
               <Badge key={s} className="rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold text-primary hover:bg-secondary">
                 {s}
               </Badge>
@@ -162,7 +200,7 @@ function CategoriaPage() {
               Perguntas frequentes
             </h2>
             <Accordion type="single" collapsible className="mt-4">
-              {category.faqs.map((faq: { question: string; answer: string }, i: number) => (
+              {cat.faqs.map((faq: { question: string; answer: string }, i: number) => (
                 <AccordionItem key={i} value={`faq-${i}`} className="border-border">
                   <AccordionTrigger className="text-left font-semibold hover:no-underline">
                     {faq.question}
@@ -181,10 +219,10 @@ function CategoriaPage() {
                 <li key={city}>
                   <Link
                     to="/buscar"
-                    search={{ categoria: category.slug, cidade: city } as never}
+                    search={{ categoria: cat.slug, cidade: city } as never}
                     className="text-sm text-primary hover:underline"
                   >
-                    {category.name} em {city}
+                    {cat.name} em {city}
                   </Link>
                 </li>
               ))}

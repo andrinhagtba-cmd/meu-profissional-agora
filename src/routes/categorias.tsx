@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { CategoryCard } from "@/components/shared/CategoryCard";
-import { categories } from "@/data/categories";
+import { Skeleton } from "@/components/ui/skeleton";
+import { listCategories } from "@/services/categoryService";
 
 export const Route = createFileRoute("/categorias")({
   head: () => ({
@@ -17,6 +19,13 @@ export const Route = createFileRoute("/categorias")({
 });
 
 function CategoriasPage() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["categories", "list"],
+    queryFn: listCategories,
+    staleTime: 5 * 60_000,
+  });
+  const categories = data ?? [];
+
   return (
     <SiteLayout>
       <div className="container-page py-12">
@@ -27,9 +36,13 @@ function CategoriasPage() {
           Encontre o serviço que você precisa e compare profissionais avaliados por clientes reais.
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {categories.map((category) => (
-            <CategoryCard key={category.slug} category={category} />
-          ))}
+          {isLoading && categories.length === 0
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-72 rounded-3xl" />
+              ))
+            : categories.map((category) => (
+                <CategoryCard key={category.slug} category={category} />
+              ))}
         </div>
       </div>
     </SiteLayout>
