@@ -113,15 +113,20 @@ function PropostasPage() {
                         {p.estimated_deadline && <span>Prazo: {p.estimated_deadline}</span>}
                       </div>
                     </div>
-                    {p.status === "sent" && (
-                      <Button
-                        variant="outline"
-                        onClick={() => withdraw.mutate(p.id)}
-                        disabled={withdraw.isPending}
-                      >
-                        Retirar
-                      </Button>
-                    )}
+                    <div className="flex flex-col gap-2">
+                      {p.status === "accepted" && pro?.id && (
+                        <OpenChat quoteId={p.quote_request_id} proId={pro.id} />
+                      )}
+                      {p.status === "sent" && (
+                        <Button
+                          variant="outline"
+                          onClick={() => withdraw.mutate(p.id)}
+                          disabled={withdraw.isPending}
+                        >
+                          Retirar
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </article>
               );
