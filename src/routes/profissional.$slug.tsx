@@ -321,23 +321,65 @@ function ProfilePage() {
                   <Skeleton key={i} className="h-28 rounded-2xl" />
                 ))}
               </div>
+            ) : !reviews || reviews.length === 0 ? (
+              <p className="mt-6 rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                Este profissional ainda não recebeu avaliações.
+              </p>
             ) : (
               <ul className="mt-5 space-y-4">
-                {reviews?.map((review) => (
+                {reviews.map((review: PublicReview) => (
                   <li key={review.id} className="rounded-2xl border border-border bg-card p-5">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-semibold text-foreground">{review.author}</p>
+                      <p className="font-semibold text-foreground">Cliente verificado</p>
                       <RatingStars rating={review.rating} showValue={false} />
                     </div>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {review.service} · {review.city} · {review.date}
+                      {new Date(review.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
                     </p>
-                    <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{review.text}</p>
+                    {review.comment && (
+                      <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{review.comment}</p>
+                    )}
+                    {review.reply && (
+                      <div className="mt-3 rounded-xl bg-secondary/60 p-3 text-sm">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">Resposta do profissional</p>
+                        <p className="mt-1 text-muted-foreground">{review.reply}</p>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
           </section>
+
+          {reviews && reviews.length > 0 && (
+            <section aria-labelledby="historico">
+              <h2 id="historico" className="font-display text-xl font-bold text-foreground">
+                Histórico recente
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Últimas atividades e avaliações registradas na plataforma.
+              </p>
+              <ol className="mt-5 space-y-4 border-l-2 border-border pl-5">
+                {reviews.slice(0, 8).map((r: PublicReview) => (
+                  <li key={`t-${r.id}`} className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-primary bg-card"
+                    />
+                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                      {new Date(r.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                      Nova avaliação {r.rating}★ recebida
+                    </p>
+                    {r.comment && (
+                      <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">"{r.comment}"</p>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
 
           {pro.faqs.length > 0 && (
             <section aria-labelledby="faq-pro">
