@@ -22,8 +22,10 @@ import {
   type ReceivedProposal,
 } from "@/services/clientService";
 import { getReviewForQuote, submitReview } from "@/services/adminService";
+import { getOrCreateConversation } from "@/services/chatService";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
@@ -155,6 +157,7 @@ function PedidoDetalhe() {
               <ProposalCard
                 key={p.id}
                 p={p}
+                quoteId={id}
                 isSelected={selectedId === p.professional?.id}
                 canAct={
                   !selectedId &&
@@ -241,6 +244,7 @@ function ReviewSection({ quoteId }: { quoteId: string }) {
 
 function ProposalCard({
   p,
+  quoteId,
   isSelected,
   canAct,
   onAccept,
@@ -248,6 +252,7 @@ function ProposalCard({
   pending,
 }: {
   p: ReceivedProposal;
+  quoteId: string;
   isSelected: boolean;
   canAct: boolean;
   onAccept: () => void;
@@ -332,28 +337,58 @@ function ProposalCard({
         ) : (
           <span />
         )}
-        {canAct && (
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onReject}
-              disabled={pending}
-              className="h-9 rounded-xl"
-            >
-              <X size={14} className="mr-1" /> Recusar
-            </Button>
-            <Button
-              size="sm"
-              onClick={onAccept}
-              disabled={pending}
-              className="h-9 rounded-xl bg-orange px-4 font-semibold text-orange-foreground hover:bg-orange/90"
-            >
-              <Check size={14} className="mr-1" /> Aceitar
-            </Button>
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {isSelected && pro?.id && <OpenChatButton quoteId={quoteId} proId={pro.id} />}
+          {canAct && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onReject}
+                disabled={pending}
+                className="h-9 rounded-xl"
+              >
+                <X size={14} className="mr-1" /> Recusar
+              </Button>
+              <Button
+                size="sm"
+                onClick={onAccept}
+                disabled={pending}
+                className="h-9 rounded-xl bg-orange px-4 font-semibold text-orange-foreground hover:bg-orange/90"
+              >
+                <Check size={14} className="mr-1" /> Aceitar
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </li>
+  );
+}
+
+function OpenChatButton({ quoteId, proId }: { quoteId: string; proId: string }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const openChat = async () => {
+    if (!quoteId || !proId) return;
+    setLoading(true);
+    try {
+      const convId = await getOrCreateConversation(quoteId, proId);
+      navigate({ to: "/painel/mensagens/$id", params: { id: convId } });
+    } catch (e) {
+      toast.error((e as Error).message ?? "Erro ao abrir chat");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <Button
+      size="sm"
+      onClick={openChat}
+      disabled={loading}
+      className="h-9 rounded-xl bg-primary px-4 font-semibold text-primary-foreground hover:bg-primary/90"
+    >
+      <MessageSquare size={14} className="mr-1" /> Abrir chat
+    </Button>
   );
 }

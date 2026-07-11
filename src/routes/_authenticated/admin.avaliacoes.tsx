@@ -56,7 +56,7 @@ function AdminReviews() {
                     r.status === "rejected" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"
                   }`}>{r.status}</span>
                 </div>
-                {r.title && <p className="mt-1 text-sm font-bold">{r.title}</p>}
+                
                 {r.comment && <p className="mt-1 text-sm text-muted-foreground">{r.comment}</p>}
                 <p className="mt-1 text-[11px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString("pt-BR")}</p>
               </div>

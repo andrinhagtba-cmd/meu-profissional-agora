@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -11,6 +11,9 @@ import {
   listMyProposals,
   withdrawProposal,
 } from "@/services/professionalDashboardService";
+import { getOrCreateConversation } from "@/services/chatService";
+import { MessageSquare } from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/painel/propostas")({
   head: () => ({
@@ -110,15 +113,20 @@ function PropostasPage() {
                         {p.estimated_deadline && <span>Prazo: {p.estimated_deadline}</span>}
                       </div>
                     </div>
-                    {p.status === "sent" && (
-                      <Button
-                        variant="outline"
-                        onClick={() => withdraw.mutate(p.id)}
-                        disabled={withdraw.isPending}
-                      >
-                        Retirar
-                      </Button>
-                    )}
+                    <div className="flex flex-col gap-2">
+                      {p.status === "accepted" && pro?.id && (
+                        <OpenChat quoteId={p.quote_request_id} proId={pro.id} />
+                      )}
+                      {p.status === "sent" && (
+                        <Button
+                          variant="outline"
+                          onClick={() => withdraw.mutate(p.id)}
+                          disabled={withdraw.isPending}
+                        >
+                          Retirar
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </article>
               );
@@ -139,5 +147,27 @@ function PropostasPage() {
         )}
       </div>
     </SiteLayout>
+  );
+}
+
+function OpenChat({ quoteId, proId }: { quoteId: string; proId: string }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  return (
+    <Button
+      onClick={async () => {
+        setLoading(true);
+        try {
+          const id = await getOrCreateConversation(quoteId, proId);
+          navigate({ to: "/painel/mensagens/$id", params: { id } });
+        } catch (e) {
+          toast.error((e as Error).message ?? "Erro ao abrir chat");
+        } finally { setLoading(false); }
+      }}
+      disabled={loading}
+      className="bg-primary text-primary-foreground hover:bg-primary/90"
+    >
+      <MessageSquare size={14} className="mr-1" /> Abrir chat
+    </Button>
   );
 }

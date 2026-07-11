@@ -113,7 +113,6 @@ export async function setProFeatured(id: string, featured: boolean) {
 export type AdminReviewRow = {
   id: string;
   rating: number;
-  title: string | null;
   comment: string | null;
   status: string;
   created_at: string;
@@ -123,7 +122,7 @@ export type AdminReviewRow = {
 export async function listReviews(status?: string): Promise<AdminReviewRow[]> {
   let q = supabase
     .from("reviews")
-    .select("id, rating, title, comment, status, created_at, professional:professional_id(professional_name, slug)")
+    .select("id, rating, comment, status, created_at, professional:professional_id(professional_name, slug)")
     .order("created_at", { ascending: false })
     .limit(100);
   if (status) q = q.eq("status", status as never);
@@ -159,9 +158,9 @@ export async function listQuotes(status?: string): Promise<AdminQuoteRow[]> {
 }
 
 // --- Reviews (cliente) ---
-export async function submitReview(quoteId: string, rating: number, comment: string, title?: string) {
+export async function submitReview(quoteId: string, rating: number, comment: string) {
   const { data, error } = await supabase.rpc("submit_review", {
-    _quote_id: quoteId, _rating: rating, _comment: comment, _title: title ?? undefined,
+    _quote_id: quoteId, _rating: rating, _comment: comment,
   });
   if (error) throw error;
   return data as string;
@@ -169,7 +168,7 @@ export async function submitReview(quoteId: string, rating: number, comment: str
 
 export async function getReviewForQuote(quoteId: string) {
   const { data, error } = await supabase
-    .from("reviews").select("id, rating, title, comment, status")
+    .from("reviews").select("id, rating, comment, status")
     .eq("quote_request_id", quoteId).maybeSingle();
   if (error) throw error;
   return data;
