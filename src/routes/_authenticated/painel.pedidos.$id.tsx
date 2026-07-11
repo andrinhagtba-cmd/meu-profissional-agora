@@ -338,7 +338,7 @@ function ProposalCard({
           <span />
         )}
         <div className="flex flex-wrap gap-2">
-          {isSelected && pro?.id && <OpenChatButton quoteId={p.quote_request_id ?? ""} proId={pro.id} />}
+          {isSelected && pro?.id && <OpenChatButton quoteId={quoteId} proId={pro.id} />}
           {canAct && (
             <>
               <Button
