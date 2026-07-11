@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import {
   ArrowRight,
@@ -384,7 +384,7 @@ function ProfessionalCard({
   );
 }
 
-function Metric({ icon, label, value, hint }: { icon: React.ReactNode; label: string; value: string; hint: string }) {
+function Metric({ icon, label, value, hint }: { icon: ReactNode; label: string; value: string; hint: string }) {
   return (
     <div className="rounded-3xl border border-border/70 bg-background/85 p-4 shadow-card backdrop-blur">
       <div className="flex items-center justify-between gap-3">

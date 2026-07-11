@@ -95,7 +95,7 @@ function AdminProDetailPage() {
       <div className="rounded-2xl border bg-card p-8 text-center">
         <p className="text-sm text-muted-foreground">{(error as Error)?.message ?? "Profissional não encontrado."}</p>
         <Button asChild variant="outline" className="mt-4">
-          <Link to="/_authenticated/admin/profissionais">Voltar para a lista</Link>
+          <Link to="/admin/profissionais">Voltar para a lista</Link>
         </Button>
       </div>
     );
@@ -108,7 +108,7 @@ function AdminProDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/_authenticated/admin/profissionais" className="inline-flex items-center gap-1.5 hover:text-foreground">
+        <Link to="/admin/profissionais" className="inline-flex items-center gap-1.5 hover:text-foreground">
           <ArrowLeft size={14} /> Profissionais
         </Link>
         <span>/</span>

@@ -102,7 +102,7 @@ function AdminProNew() {
     mutationFn: (input: CreateProInput) => createProProfile(input),
     onSuccess: ({ id }) => {
       toast.success("Profissional criado com sucesso");
-      navigate({ to: "/_authenticated/admin/profissionais/$id", params: { id }, search: { tab: "overview" } });
+      navigate({ to: "/admin/profissionais/$id", params: { id }, search: { tab: "overview" } });
     },
     onError: (e: Error) => toast.error(e.message || "Erro ao criar profissional"),
   });
@@ -145,7 +145,7 @@ function AdminProNew() {
         title="Novo profissional"
         description="Cadastro assistido para curadoria administrativa. O usuário poderá ser vinculado depois."
         actions={
-          <Button variant="outline" onClick={() => navigate({ to: "/_authenticated/admin/profissionais" })}>
+          <Button variant="outline" onClick={() => navigate({ to: "/admin/profissionais" })}>
             <ArrowLeft size={16} className="mr-2" />Voltar
           </Button>
         }
