@@ -13,12 +13,18 @@ import {
   MessageSquare,
   Star,
   User as UserIcon,
+  Wrench,
 } from "lucide-react";
 import {
   countMyQuotes,
   countUnreadNotifications,
   listFavoriteProfessionalIds,
 } from "@/services/clientService";
+import {
+  countLeadsAvailable,
+  countMyProposals,
+  getMyProProfile,
+} from "@/services/professionalDashboardService";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -37,22 +43,32 @@ function Painel() {
     queryKey: ["painel", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const [profile, roles, quotes, favs, unread] = await Promise.all([
+      const [profile, roles, quotes, favs, unread, pro] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user!.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user!.id),
         countMyQuotes(user!.id),
         listFavoriteProfessionalIds(user!.id),
         countUnreadNotifications(user!.id),
+        getMyProProfile(user!.id),
       ]);
+      const rolesList = (roles.data ?? []).map((r) => r.role as string);
+      const isPro = rolesList.includes("profissional");
+      const [leadsCount, proposalsCount] = isPro && pro
+        ? await Promise.all([countLeadsAvailable(), countMyProposals(pro.id)])
+        : [0, 0];
       return {
         profile: profile.data,
-        roles: (roles.data ?? []).map((r) => r.role as string),
+        roles: rolesList,
         quotes,
         favorites: favs.length,
         unread,
+        pro,
+        leadsCount,
+        proposalsCount,
       };
     },
   });
+
 
   const isProfissional = data?.roles.includes("profissional");
   const isAdmin = data?.roles.includes("admin");
