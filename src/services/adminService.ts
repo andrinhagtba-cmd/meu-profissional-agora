@@ -1946,7 +1946,7 @@ export type HighlightRow = {
   notes: string | null;
   created_at: string;
   updated_at: string;
-  professional?: { id: string; professional_name: string | null; business_name: string | null; avatar_url: string | null; city: string | null; state: string | null } | null;
+  professional?: { id: string; professional_name: string | null; business_name: string | null; city: string | null; state: string | null } | null;
 };
 
 export async function listHighlights(params: { section?: string; search?: string } = {}): Promise<HighlightRow[]> {
