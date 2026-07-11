@@ -74,6 +74,7 @@ import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminAtividadeRouteImport } from './routes/_authenticated/admin.atividade'
 import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_authenticated/admin.assinaturas'
 import { Route as AuthenticatedAdminAdministradoresRouteImport } from './routes/_authenticated/admin.administradores'
+import { Route as AuthenticatedAdminProfissionaisIndexRouteImport } from './routes/_authenticated/admin.profissionais.index'
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
 import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
@@ -447,6 +448,12 @@ const AuthenticatedAdminAdministradoresRoute =
     path: '/administradores',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminProfissionaisIndexRoute =
+  AuthenticatedAdminProfissionaisIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
+  } as any)
 const AuthenticatedPainelPedidosIdRoute =
   AuthenticatedPainelPedidosIdRouteImport.update({
     id: '/$id',
@@ -541,6 +548,7 @@ export interface FileRoutesByFullPath {
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
+  '/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -586,7 +594,6 @@ export interface FileRoutesByTo {
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
-  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
   '/admin/regioes': typeof AuthenticatedAdminRegioesRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -610,6 +617,7 @@ export interface FileRoutesByTo {
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
+  '/admin/profissionais': typeof AuthenticatedAdminProfissionaisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -682,6 +690,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
+  '/_authenticated/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -754,6 +763,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
+    | '/admin/profissionais/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -799,7 +809,6 @@ export interface FileRouteTypes {
     | '/admin/pedidos'
     | '/admin/permissoes'
     | '/admin/planos'
-    | '/admin/profissionais'
     | '/admin/propostas'
     | '/admin/regioes'
     | '/admin/relatorios'
@@ -823,6 +832,7 @@ export interface FileRouteTypes {
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
     | '/painel/pedidos/$id'
+    | '/admin/profissionais'
   id:
     | '__root__'
     | '/'
@@ -894,6 +904,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/profissionais/novo'
     | '/_authenticated/painel/mensagens/$id'
     | '/_authenticated/painel/pedidos/$id'
+    | '/_authenticated/admin/profissionais/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1369,6 +1380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAdministradoresRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/profissionais/': {
+      id: '/_authenticated/admin/profissionais/'
+      path: '/'
+      fullPath: '/admin/profissionais/'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
+    }
     '/_authenticated/painel/pedidos/$id': {
       id: '/_authenticated/painel/pedidos/$id'
       path: '/$id'
@@ -1403,6 +1421,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminProfissionaisRouteChildren {
   AuthenticatedAdminProfissionaisIdRoute: typeof AuthenticatedAdminProfissionaisIdRoute
   AuthenticatedAdminProfissionaisNovoRoute: typeof AuthenticatedAdminProfissionaisNovoRoute
+  AuthenticatedAdminProfissionaisIndexRoute: typeof AuthenticatedAdminProfissionaisIndexRoute
 }
 
 const AuthenticatedAdminProfissionaisRouteChildren: AuthenticatedAdminProfissionaisRouteChildren =
@@ -1411,6 +1430,8 @@ const AuthenticatedAdminProfissionaisRouteChildren: AuthenticatedAdminProfission
       AuthenticatedAdminProfissionaisIdRoute,
     AuthenticatedAdminProfissionaisNovoRoute:
       AuthenticatedAdminProfissionaisNovoRoute,
+    AuthenticatedAdminProfissionaisIndexRoute:
+      AuthenticatedAdminProfissionaisIndexRoute,
   }
 
 const AuthenticatedAdminProfissionaisRouteWithChildren =
@@ -1598,3 +1619,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
