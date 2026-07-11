@@ -104,9 +104,29 @@ function Painel() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isProfissional ? (
             <>
-              <StatCard icon={<Briefcase />} label="Pedidos recebidos" value="—" />
-              <StatCard icon={<MessageSquare />} label="Propostas enviadas" value="—" />
-              <StatCard icon={<Star />} label="Avaliação média" value="—" />
+              <StatCard
+                icon={<Briefcase />}
+                label="Leads disponíveis"
+                value={isLoading ? "…" : String(data?.leadsCount ?? 0)}
+                to="/painel/leads"
+              />
+              <StatCard
+                icon={<MessageSquare />}
+                label="Propostas enviadas"
+                value={isLoading ? "…" : String(data?.proposalsCount ?? 0)}
+                to="/painel/propostas"
+              />
+              <StatCard
+                icon={<Star />}
+                label="Avaliação média"
+                value={
+                  isLoading
+                    ? "…"
+                    : data?.pro?.average_rating != null
+                      ? Number(data.pro.average_rating).toFixed(1)
+                      : "—"
+                }
+              />
               <StatCard
                 icon={<UserIcon />}
                 label="Perfil"
@@ -145,27 +165,50 @@ function Painel() {
         </div>
 
         {isProfissional && (
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card p-6">
-            <div className="flex items-start gap-4">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
-                <ImagePlus size={20} />
-              </span>
-              <div>
-                <p className="font-display text-base font-bold text-foreground">
-                  Foto, capa e portfólio
-                </p>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Envie sua foto de perfil, capa e trabalhos recentes.
-                </p>
-              </div>
+          <>
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              <PanelLink
+                to="/painel/leads"
+                title="Leads disponíveis"
+                desc="Pedidos abertos onde você pode enviar propostas."
+                icon={<Briefcase />}
+              />
+              <PanelLink
+                to="/painel/propostas"
+                title="Minhas propostas"
+                desc="Status das propostas enviadas e mensagens dos clientes."
+                icon={<MessageSquare />}
+              />
+              <PanelLink
+                to="/painel/servicos"
+                title="Meus serviços"
+                desc="Cadastre serviços que você oferece e defina preços."
+                icon={<Wrench />}
+              />
             </div>
-            <Link
-              to="/painel/midia"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Gerenciar mídia
-            </Link>
-          </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card p-6">
+              <div className="flex items-start gap-4">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
+                  <ImagePlus size={20} />
+                </span>
+                <div>
+                  <p className="font-display text-base font-bold text-foreground">
+                    Foto, capa e portfólio
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">
+                    Envie sua foto de perfil, capa e trabalhos recentes.
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/painel/midia"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              >
+                Gerenciar mídia
+              </Link>
+            </div>
+          </>
         )}
 
         {!isProfissional && (
@@ -194,6 +237,7 @@ function Painel() {
     </SiteLayout>
   );
 }
+
 
 function StatCard({
   icon,
