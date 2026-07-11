@@ -16,8 +16,10 @@ interface CategoryRow {
   badge_text: string | null;
   badge_active: boolean | null;
   image_alt: string | null;
+  image_url: string | null;
   display_order: number | null;
   card_media: { bucket_name: string; object_path: string } | null;
+  cover_media: { bucket_name: string; object_path: string } | null;
 }
 
 async function fetchServiceNames(
@@ -72,7 +74,7 @@ export async function listCategories(): Promise<CategoryVM[]> {
   const { data, error } = await supabase
     .from("categories")
     .select(
-      "id, slug, name, description, badge_text, badge_active, image_alt, display_order, card_media:card_media_id(bucket_name, object_path)",
+      "id, slug, name, description, badge_text, badge_active, image_alt, image_url, display_order, card_media:card_media_id(bucket_name, object_path), cover_media:cover_media_id(bucket_name, object_path)",
     )
     .eq("active", true)
     .order("display_order", { ascending: true, nullsFirst: false });
@@ -80,18 +82,17 @@ export async function listCategories(): Promise<CategoryVM[]> {
   if (error) throw error;
   const rows = (data ?? []) as unknown as CategoryRow[];
 
-  const refs: MediaRef[] = rows.map((r) =>
-    r.card_media
-      ? { bucket: r.card_media.bucket_name, path: r.card_media.object_path }
-      : null,
-  );
+  const refs: MediaRef[] = rows.map((r) => {
+    const m = r.card_media ?? r.cover_media;
+    return m ? { bucket: m.bucket_name, path: m.object_path } : null;
+  });
   const [urls, servicesByCategory] = await Promise.all([
     getMediaUrls(refs),
     fetchServiceNames(rows.map((r) => r.id)),
   ]);
 
   return rows.map((row, idx) =>
-    toVM(row, urls[idx] ?? "", servicesByCategory.get(row.id) ?? []),
+    toVM(row, urls[idx] || row.image_url || "", servicesByCategory.get(row.id) ?? []),
   );
 }
 
