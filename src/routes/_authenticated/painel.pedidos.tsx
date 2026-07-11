@@ -130,7 +130,8 @@ function QuoteRow({ q }: { q: MyQuote }) {
             </span>
           </div>
         </div>
-      </div>
+      </Link>
+
     </li>
   );
 }
