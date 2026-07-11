@@ -177,7 +177,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
 
   const prof = profileRes.data as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
 
-  const prof = (p.profile ?? null) as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
+  
   return {
     ...(p as unknown as AdminProRow),
     user_id: p.user_id as string,
