@@ -101,17 +101,17 @@ export function AdminSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="border-b border-sidebar-border/70">
-        <Link to="/admin" className="flex items-center gap-2.5 px-1.5 py-1.5">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_4px_14px_-4px_oklch(0.5_0.24_262/60%)]">
+      <SidebarHeader className="border-b border-sidebar-border/70 bg-sidebar">
+        <Link to="/admin" className="flex items-center gap-3 px-1.5 py-2">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.42_0.24_262)] text-primary-foreground font-black shadow-[0_6px_18px_-6px_oklch(0.51_0.245_262/55%)]">
             P
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <div className="truncate font-display text-sm font-extrabold tracking-tight text-sidebar-foreground">
+              <div className="truncate font-display text-[15px] font-extrabold tracking-tight text-sidebar-foreground">
                 ProConecta
               </div>
-              <div className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-foreground/55">
+              <div className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-primary/70">
                 Console admin
               </div>
             </div>
