@@ -53,7 +53,7 @@ function Page() {
 function MediaCard({ asset }: { asset: AdminMediaAsset }) {
   const { data: url } = useQuery({
     queryKey: ["signed-media", asset.bucket_name, asset.object_path],
-    queryFn: () => getSignedMediaUrl(asset.bucket_name, asset.object_path),
+    queryFn: () => getMediaUrl({ bucket: asset.bucket_name, path: asset.object_path }),
     staleTime: 5 * 60 * 1000,
   });
   const kb = asset.file_size_bytes ? Math.round(asset.file_size_bytes / 1024) : null;
