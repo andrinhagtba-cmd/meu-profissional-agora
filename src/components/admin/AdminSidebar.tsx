@@ -11,6 +11,8 @@ import {
   SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton,
   SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { useBrand } from "@/hooks/use-brand";
+
 
 type Item = { to: string; label: string; icon: React.ComponentType<{ size?: number }> };
 type Group = { label: string; items: Item[] };
