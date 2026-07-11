@@ -192,6 +192,7 @@ export async function addPortfolioItem(
     title,
     description: description ?? null,
     media_asset_id: res.mediaId,
+    image_url: res.url || res.path,
     sort_order: 0,
     status: "active",
   });
