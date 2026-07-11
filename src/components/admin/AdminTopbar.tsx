@@ -122,11 +122,11 @@ export function AdminTopbar() {
         <button
           type="button"
           onClick={() => setCmdOpen(true)}
-          className="hidden h-9 items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 text-[13px] text-muted-foreground transition-colors hover:bg-muted sm:flex"
+          className="hidden h-10 items-center gap-2 rounded-full border border-[oklch(0.93_0.014_258)] bg-[oklch(0.98_0.01_258)] px-4 text-[13px] text-muted-foreground transition-all hover:border-primary/30 hover:bg-white hover:shadow-[0_2px_10px_-4px_oklch(0.51_0.245_262/20%)] sm:flex"
         >
-          <Search size={14} />
-          <span>Buscar…</span>
-          <kbd className="ml-6 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
+          <Search size={14} className="text-primary" />
+          <span>Buscar no painel…</span>
+          <kbd className="ml-8 rounded-md border border-border bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">⌘K</kbd>
         </button>
         <Button variant="ghost" size="icon" onClick={() => setCmdOpen(true)} className="sm:hidden">
           <Search size={16} />
