@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
+import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CategoriasRouteImport } from './routes/categorias'
@@ -93,6 +94,11 @@ const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
 const ProfissionaisRoute = ProfissionaisRouteImport.update({
   id: '/profissionais',
   path: '/profissionais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
@@ -486,6 +492,7 @@ export interface FileRoutesByFullPath {
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
+  '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -557,6 +564,7 @@ export interface FileRoutesByTo {
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
+  '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -628,6 +636,7 @@ export interface FileRoutesById {
   '/categorias': typeof CategoriasRoute
   '/entrar': typeof EntrarRoute
   '/pedir-orcamento': typeof PedirOrcamentoRoute
+  '/planos': typeof PlanosRoute
   '/profissionais': typeof ProfissionaisRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -701,6 +710,7 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/entrar'
     | '/pedir-orcamento'
+    | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
@@ -772,6 +782,7 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/entrar'
     | '/pedir-orcamento'
+    | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
@@ -842,6 +853,7 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/entrar'
     | '/pedir-orcamento'
+    | '/planos'
     | '/profissionais'
     | '/recuperar-senha'
     | '/reset-password'
@@ -915,6 +927,7 @@ export interface RootRouteChildren {
   CategoriasRoute: typeof CategoriasRoute
   EntrarRoute: typeof EntrarRoute
   PedirOrcamentoRoute: typeof PedirOrcamentoRoute
+  PlanosRoute: typeof PlanosRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -944,6 +957,13 @@ declare module '@tanstack/react-router' {
       path: '/profissionais'
       fullPath: '/profissionais'
       preLoaderRoute: typeof ProfissionaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pedir-orcamento': {
@@ -1609,6 +1629,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriasRoute: CategoriasRoute,
   EntrarRoute: EntrarRoute,
   PedirOrcamentoRoute: PedirOrcamentoRoute,
+  PlanosRoute: PlanosRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   RecuperarSenhaRoute: RecuperarSenhaRoute,
   ResetPasswordRoute: ResetPasswordRoute,

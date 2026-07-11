@@ -3,6 +3,7 @@ import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-rea
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useBrand } from "@/hooks/use-brand";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,17 +33,44 @@ const navItems = [
 ] as const;
 
 export function Logo({ className }: { className?: string }) {
+  const { data } = useBrand();
+  const logoUrl = data?.logo_light_url;
+  const name = data?.brand_name ?? "ProConecta";
+  const tagline = data?.tagline ?? "Resolva sem complicação";
+  const rendered =
+    /^pro/i.test(name) && name.length > 3 ? (
+      <>
+        {name.slice(0, 3)}
+        <span className="text-primary">{name.slice(3)}</span>
+      </>
+    ) : (
+      name
+    );
   return (
-    <Link to="/" className={`flex items-center gap-2 ${className ?? ""}`} aria-label="ProConecta — página inicial">
-      <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
-        <Wrench size={20} aria-hidden="true" />
-      </span>
+    <Link
+      to="/"
+      className={`flex items-center gap-2 ${className ?? ""}`}
+      aria-label={`${name} — página inicial`}
+    >
+      {logoUrl ? (
+        <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-primary/5 ring-1 ring-primary/10">
+          <img
+            src={logoUrl}
+            alt={name}
+            className="h-10 w-10 object-contain"
+          />
+        </span>
+      ) : (
+        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
+          <Wrench size={20} aria-hidden="true" />
+        </span>
+      )}
       <span className="min-w-0 leading-tight">
         <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
-          Pro<span className="text-primary">Conecta</span>
+          {rendered}
         </span>
         <span className="block text-[10px] font-medium text-muted-foreground">
-          Resolva sem complicação
+          {tagline}
         </span>
       </span>
     </Link>
