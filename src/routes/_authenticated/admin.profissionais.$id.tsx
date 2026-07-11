@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -312,11 +313,11 @@ function AdminProDetailPage() {
   );
 }
 
-function Tab({ value, icon, label }: { value: string; icon: React.ReactNode; label: string }) {
+function Tab({ value, icon, label }: { value: string; icon: ReactNode; label: string }) {
   return <TabsTrigger value={value} className="h-10 rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-card">{icon}{label}</TabsTrigger>;
 }
 
-function KPI({ icon, label, value, hint }: { icon: React.ReactNode; label: string; value: number; hint: string }) {
+function KPI({ icon, label, value, hint }: { icon: ReactNode; label: string; value: number; hint: string }) {
   return (
     <div className="rounded-3xl border border-border/70 bg-background/85 p-4 shadow-card backdrop-blur">
       <div className="flex items-center justify-between gap-3">
@@ -348,6 +349,6 @@ function QualityRow({ label, value }: { label: string; value: number }) {
   );
 }
 
-function SideRow({ label, children }: { label: string; children: React.ReactNode }) {
+function SideRow({ label, children }: { label: string; children: ReactNode }) {
   return <div className="flex items-center justify-between gap-3 text-sm"><span className="font-medium text-muted-foreground">{label}</span>{children}</div>;
 }
