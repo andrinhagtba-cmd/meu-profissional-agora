@@ -1,0 +1,230 @@
+// Camada real (Supabase) para o painel do cliente:
+// pedidos (quote_requests), notificações, favoritos e perfil.
+
+import { supabase } from "@/integrations/supabase/client";
+import { professionals as mockProfessionals } from "@/data/professionals";
+
+export type MyQuote = {
+  id: string;
+  title: string;
+  description: string | null;
+  city: string;
+  state: string;
+  neighborhood: string | null;
+  urgency: string;
+  service_type: string;
+  status: string;
+  created_at: string;
+  category?: { slug: string; name: string } | null;
+};
+
+export async function listMyQuotes(userId: string): Promise<MyQuote[]> {
+  const { data, error } = await supabase
+    .from("quote_requests")
+    .select(
+      `id, title, description, city, state, neighborhood, urgency, service_type, status, created_at,
+       category:category_id(slug, name)`,
+    )
+    .eq("client_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as MyQuote[];
+}
+
+export async function countMyQuotes(userId: string) {
+  const { count, error } = await supabase
+    .from("quote_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("client_id", userId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
+// --------------------- Notifications ---------------------
+
+export type MyNotification = {
+  id: string;
+  title: string;
+  message: string | null;
+  type: string;
+  link: string | null;
+  read: boolean;
+  created_at: string;
+};
+
+export async function listNotifications(userId: string): Promise<MyNotification[]> {
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("id, title, message, type, link, read, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  return (data ?? []) as MyNotification[];
+}
+
+export async function countUnreadNotifications(userId: string) {
+  const { count, error } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("read", false);
+  if (error) throw error;
+  return count ?? 0;
+}
+
+export async function markNotificationRead(id: string) {
+  const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function markAllNotificationsRead(userId: string) {
+  const { error } = await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("user_id", userId)
+    .eq("read", false);
+  if (error) throw error;
+}
+
+// --------------------- Favorites ---------------------
+
+export async function listFavoriteProfessionalIds(userId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("professional_id")
+    .eq("client_id", userId);
+  if (error) throw error;
+  return (data ?? []).map((r) => r.professional_id as string);
+}
+
+export async function listFavoriteProfessionalSlugs(userId: string): Promise<string[]> {
+  const ids = await listFavoriteProfessionalIds(userId);
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("professional_profiles")
+    .select("slug")
+    .in("id", ids);
+  if (error) throw error;
+  return (data ?? []).map((r) => r.slug as string);
+}
+
+async function professionalIdFromSlug(slug: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("professional_profiles")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.id ?? null;
+}
+
+export async function addFavoriteBySlug(userId: string, slug: string) {
+  const id = await professionalIdFromSlug(slug);
+  if (!id) return;
+  await supabase.from("favorites").upsert(
+    { client_id: userId, professional_id: id },
+    { onConflict: "client_id,professional_id", ignoreDuplicates: true },
+  );
+}
+
+export async function removeFavoriteBySlug(userId: string, slug: string) {
+  const id = await professionalIdFromSlug(slug);
+  if (!id) return;
+  await supabase
+    .from("favorites")
+    .delete()
+    .eq("client_id", userId)
+    .eq("professional_id", id);
+}
+
+// --------------------- Profile ---------------------
+
+export type MyProfile = {
+  user_id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  city: string | null;
+  state: string | null;
+  avatar_url: string | null;
+};
+
+export async function getMyProfile(userId: string): Promise<MyProfile | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("user_id, full_name, email, phone, city, state, avatar_url")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as MyProfile | null) ?? null;
+}
+
+export async function updateMyProfile(
+  userId: string,
+  patch: Partial<Pick<MyProfile, "full_name" | "phone" | "city" | "state">>,
+) {
+  const { error } = await supabase.from("profiles").update(patch).eq("user_id", userId);
+  if (error) throw error;
+}
+
+// --------------------- Quote submission ---------------------
+
+export type SubmitQuoteInput = {
+  categoriaSlug: string;
+  servico: string; // usado como título
+  descricao: string;
+  cidade: string;
+  bairro?: string;
+  urgencia: string;
+  serviceType?: "residencial" | "empresarial" | "online";
+};
+
+export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
+  // Resolve categoria por slug (opcional — pode ficar nulo).
+  let categoryId: string | null = null;
+  if (input.categoriaSlug) {
+    const { data } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", input.categoriaSlug)
+      .maybeSingle();
+    categoryId = data?.id ?? null;
+  }
+
+  // Cidade em "SP" ou "São Paulo, SP" — separa estado se vier junto.
+  const [city, state] = input.cidade.split(",").map((s) => s.trim());
+
+  const { data, error } = await supabase
+    .from("quote_requests")
+    .insert({
+      client_id: userId,
+      category_id: categoryId,
+      title: input.servico,
+      description: input.descricao,
+      city: city || input.cidade,
+      state: state || "SP",
+      neighborhood: input.bairro || null,
+      urgency: input.urgencia as
+        | "hoje"
+        | "esta-semana"
+        | "data"
+        | "sem-urgencia",
+      service_type: (input.serviceType ?? "residencial") as
+        | "residencial"
+        | "empresarial"
+        | "online",
+      status: "open",
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return { id: data.id, protocol: `OR-${data.id.slice(0, 6).toUpperCase()}` };
+}
+
+// --------------------- Helpers ---------------------
+
+const mockBySlug = new Map(mockProfessionals.map((p) => [p.slug, p]));
+export function findMockProfessionalBySlug(slug: string) {
+  return mockBySlug.get(slug);
+}

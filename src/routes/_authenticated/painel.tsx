@@ -4,7 +4,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, Heart, ImagePlus, MessageSquare, Star, User as UserIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Bell,
+  Briefcase,
+  Heart,
+  ImagePlus,
+  MessageSquare,
+  Star,
+  User as UserIcon,
+} from "lucide-react";
+import {
+  countMyQuotes,
+  countUnreadNotifications,
+  listFavoriteProfessionalIds,
+} from "@/services/clientService";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -23,13 +37,19 @@ function Painel() {
     queryKey: ["painel", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const [profile, roles] = await Promise.all([
+      const [profile, roles, quotes, favs, unread] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user!.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user!.id),
+        countMyQuotes(user!.id),
+        listFavoriteProfessionalIds(user!.id),
+        countUnreadNotifications(user!.id),
       ]);
       return {
         profile: profile.data,
         roles: (roles.data ?? []).map((r) => r.role as string),
+        quotes,
+        favorites: favs.length,
+        unread,
       };
     },
   });
@@ -40,14 +60,29 @@ function Painel() {
   return (
     <SiteLayout>
       <div className="container-page py-10 lg:py-14">
-        <div className="mb-8">
-          <p className="text-sm font-medium text-muted-foreground">Olá,</p>
-          <h1 className="mt-1 font-display text-3xl font-extrabold text-foreground lg:text-4xl">
-            {isLoading ? <Skeleton className="h-9 w-64" /> : data?.profile?.full_name || user?.email}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {isAdmin ? "Painel administrativo" : isProfissional ? "Painel do profissional" : "Painel do cliente"}
-          </p>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Olá,</p>
+            <h1 className="mt-1 font-display text-3xl font-extrabold text-foreground lg:text-4xl">
+              {isLoading ? (
+                <Skeleton className="h-9 w-64" />
+              ) : (
+                data?.profile?.full_name || user?.email
+              )}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {isAdmin
+                ? "Painel administrativo"
+                : isProfissional
+                  ? "Painel do profissional"
+                  : "Painel do cliente"}
+            </p>
+          </div>
+          {!isProfissional && (
+            <Button asChild className="h-11 rounded-xl bg-orange px-5 font-semibold text-orange-foreground hover:bg-orange/90">
+              <Link to="/pedir-orcamento" search={{} as never}>Pedir novo orçamento</Link>
+            </Button>
+          )}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -56,14 +91,39 @@ function Painel() {
               <StatCard icon={<Briefcase />} label="Pedidos recebidos" value="—" />
               <StatCard icon={<MessageSquare />} label="Propostas enviadas" value="—" />
               <StatCard icon={<Star />} label="Avaliação média" value="—" />
-              <StatCard icon={<UserIcon />} label="Perfil" value="Editar" />
+              <StatCard
+                icon={<UserIcon />}
+                label="Perfil"
+                value="Editar"
+                to="/painel/perfil"
+              />
             </>
           ) : (
             <>
-              <StatCard icon={<MessageSquare />} label="Meus pedidos" value="—" />
-              <StatCard icon={<Heart />} label="Favoritos" value="—" />
-              <StatCard icon={<Star />} label="Minhas avaliações" value="—" />
-              <StatCard icon={<UserIcon />} label="Perfil" value="Editar" />
+              <StatCard
+                icon={<MessageSquare />}
+                label="Meus pedidos"
+                value={isLoading ? "…" : String(data?.quotes ?? 0)}
+                to="/painel/pedidos"
+              />
+              <StatCard
+                icon={<Heart />}
+                label="Favoritos"
+                value={isLoading ? "…" : String(data?.favorites ?? 0)}
+                to="/favoritos"
+              />
+              <StatCard
+                icon={<Bell />}
+                label="Notificações"
+                value={isLoading ? "…" : String(data?.unread ?? 0)}
+                to="/painel/notificacoes"
+              />
+              <StatCard
+                icon={<UserIcon />}
+                label="Perfil"
+                value="Editar"
+                to="/painel/perfil"
+              />
             </>
           )}
         </div>
@@ -92,26 +152,90 @@ function Painel() {
           </div>
         )}
 
-        <div className="mt-10 rounded-3xl border border-border bg-card p-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Em breve: gestão completa de pedidos, propostas, favoritos e avaliações — integrada ao banco de dados real.
-          </p>
-        </div>
+        {!isProfissional && (
+          <div className="mt-10 grid gap-4 lg:grid-cols-3">
+            <PanelLink
+              to="/painel/pedidos"
+              title="Meus pedidos"
+              desc="Acompanhe o status dos orçamentos que você solicitou."
+              icon={<MessageSquare />}
+            />
+            <PanelLink
+              to="/painel/notificacoes"
+              title="Notificações"
+              desc="Novas propostas, mensagens e atualizações."
+              icon={<Bell />}
+            />
+            <PanelLink
+              to="/painel/perfil"
+              title="Meu perfil"
+              desc="Nome, telefone e cidade — usados nos pedidos."
+              icon={<UserIcon />}
+            />
+          </div>
+        )}
       </div>
     </SiteLayout>
   );
 }
 
-function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+function StatCard({
+  icon,
+  label,
+  value,
+  to,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  to?: string;
+}) {
+  const inner = (
+    <div className="rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/40">
       <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-primary">{icon}</span>
+        <span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-primary">
+          {icon}
+        </span>
         <div>
           <div className="text-xs font-medium text-muted-foreground">{label}</div>
           <div className="mt-0.5 text-lg font-bold text-foreground">{value}</div>
         </div>
       </div>
     </div>
+  );
+  if (to) {
+    return (
+      <Link to={to} className="block">
+        {inner}
+      </Link>
+    );
+  }
+  return inner;
+}
+
+function PanelLink({
+  to,
+  title,
+  desc,
+  icon,
+}: {
+  to: string;
+  title: string;
+  desc: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex items-start gap-4 rounded-3xl border border-border bg-card p-6 transition-colors hover:border-primary/40"
+    >
+      <span className="grid h-11 w-11 place-items-center rounded-xl bg-secondary text-primary">
+        {icon}
+      </span>
+      <div>
+        <p className="font-display text-base font-bold text-foreground">{title}</p>
+        <p className="mt-0.5 text-sm text-muted-foreground">{desc}</p>
+      </div>
+    </Link>
   );
 }

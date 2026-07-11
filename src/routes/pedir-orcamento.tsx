@@ -23,6 +23,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { categories, cities } from "@/data/categories";
 import { submitQuoteRequest } from "@/services/mockApi";
+import { submitQuoteToDb } from "@/services/clientService";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/pedir-orcamento")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -71,6 +73,7 @@ const initialForm: FormState = {
 
 function PedirOrcamentoPage() {
   const { categoria: categoriaParam } = Route.useSearch();
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
     ...initialForm,
@@ -80,8 +83,20 @@ function PedirOrcamentoPage() {
   const [protocol, setProtocol] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: () => submitQuoteRequest(form as unknown as Record<string, unknown>),
-    onSuccess: (res) => setProtocol(res.protocol),
+    mutationFn: async () => {
+      if (user) {
+        return submitQuoteToDb(user.id, {
+          categoriaSlug: form.categoria,
+          servico: form.servico,
+          descricao: form.descricao,
+          cidade: form.cidade,
+          bairro: form.bairro,
+          urgencia: form.urgencia,
+        });
+      }
+      return submitQuoteRequest(form as unknown as Record<string, unknown>);
+    },
+    onSuccess: (res) => setProtocol(res.protocol ?? null),
   });
 
   const set = (key: keyof FormState, value: string) => {
@@ -140,7 +155,7 @@ function PedirOrcamentoPage() {
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button asChild className="h-12 rounded-xl px-6 font-semibold">
-                <Link to="/painel/cliente">Acompanhar no painel</Link>
+                <Link to="/painel/pedidos">Acompanhar no painel</Link>
               </Button>
               <Button asChild variant="outline" className="h-12 rounded-xl px-6 font-semibold">
                 <Link to="/">Voltar ao início</Link>
