@@ -62,7 +62,7 @@ function AdminLayout() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="admin-shell flex min-h-screen w-full bg-background">
         <AdminSidebar />
         <SidebarInset className="flex min-w-0 flex-1 flex-col">
           <AdminTopbar />
