@@ -33,7 +33,7 @@ const navItems = [
 ] as const;
 
 export function Logo({ className }: { className?: string }) {
-  const { data } = useBrand();
+  const { data, isLoading } = useBrand();
   const logoUrl = data?.logo_light_url;
   const name = data?.brand_name ?? "ProConecta";
   const tagline = data?.tagline ?? "Resolva sem complicação";
@@ -52,11 +52,13 @@ export function Logo({ className }: { className?: string }) {
       className={`flex items-center ${className ?? ""}`}
       aria-label={`${name} — página inicial`}
     >
-      {logoUrl ? (
+      {isLoading ? (
+        <div className="h-12 w-[160px] animate-pulse rounded-xl bg-muted" />
+      ) : logoUrl ? (
         <img
           src={logoUrl}
           alt={name}
-          className="h-10 w-auto max-w-[220px] object-contain"
+          className="h-12 w-auto max-w-[260px] object-contain"
         />
       ) : (
         <span className="flex items-center gap-2">
