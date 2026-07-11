@@ -159,6 +159,7 @@ export type AdminProProfilePatch = Partial<{
   is_featured: boolean;
   service_types: string[];
   profile_status: "draft" | "published" | "archived";
+  slug: string | null;
 }>;
 
 export async function updateProProfile(id: string, patch: AdminProProfilePatch) {
