@@ -86,12 +86,16 @@ export type AdminProRow = {
   created_at: string;
   whatsapp: string | null;
   description: string | null;
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
+  avatar_url: string | null;
+  cover_url: string | null;
 };
 
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description")
+    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id")
     .order("created_at", { ascending: false })
     .limit(200);
   if (status) q = q.eq("verification_status", status as never);
@@ -102,7 +106,17 @@ export async function listPros(status?: string, search?: string, featured?: bool
   }
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as AdminProRow[];
+  const rows = (data ?? []) as Array<Omit<AdminProRow, "avatar_url" | "cover_url">>;
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+  const urlMap = await resolveMediaUrlsByIds([
+    ...rows.map((r) => r.avatar_media_id),
+    ...rows.map((r) => r.cover_media_id),
+  ]);
+  return rows.map((r) => ({
+    ...r,
+    avatar_url: r.avatar_media_id ? urlMap.get(r.avatar_media_id) ?? null : null,
+    cover_url: r.cover_media_id ? urlMap.get(r.cover_media_id) ?? null : null,
+  }));
 }
 
 export async function setProVerification(id: string, status: "approved" | "rejected" | "pending") {
