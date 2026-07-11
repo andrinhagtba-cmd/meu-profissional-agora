@@ -3,6 +3,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Hero } from "@/components/home/Hero";
 import { PopularServices } from "@/components/home/PopularServices";
 import { FeaturedPros } from "@/components/home/FeaturedPros";
+import { NearbyPros } from "@/components/home/NearbyPros";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Benefits } from "@/components/home/Benefits";
 import { RecentRequests } from "@/components/home/RecentRequests";
@@ -19,6 +20,7 @@ function Index() {
       <Hero />
       <PopularServices />
       <FeaturedPros />
+      <NearbyPros />
       <Benefits />
       <HowItWorks />
       <RecentRequests />
