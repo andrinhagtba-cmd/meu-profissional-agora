@@ -149,3 +149,25 @@ function PropostasPage() {
     </SiteLayout>
   );
 }
+
+function OpenChat({ quoteId, proId }: { quoteId: string; proId: string }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  return (
+    <Button
+      onClick={async () => {
+        setLoading(true);
+        try {
+          const id = await getOrCreateConversation(quoteId, proId);
+          navigate({ to: "/painel/mensagens/$id", params: { id } });
+        } catch (e) {
+          toast.error((e as Error).message ?? "Erro ao abrir chat");
+        } finally { setLoading(false); }
+      }}
+      disabled={loading}
+      className="bg-primary text-primary-foreground hover:bg-primary/90"
+    >
+      <MessageSquare size={14} className="mr-1" /> Abrir chat
+    </Button>
+  );
+}
