@@ -28,16 +28,16 @@ export function AdminProReviewsPanel({ professionalId }: { professionalId: strin
   const setStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: ReviewStatus }) => setReviewStatus(id, status),
     onSuccess: (_d, v) => {
-      toast({ title: `Avaliação marcada como ${statusLabel[v.status].toLowerCase()}` });
+      toast.success(`Avaliação marcada como ${statusLabel[v.status].toLowerCase()}`);
       invalidate();
     },
-    onError: (e: Error) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteReview(id),
-    onSuccess: () => { toast({ title: "Avaliação removida" }); invalidate(); },
-    onError: (e: Error) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
+    onSuccess: () => { toast.success("Avaliação removida"); invalidate(); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const reviews = data ?? [];
