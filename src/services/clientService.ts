@@ -199,7 +199,12 @@ export async function updateMyProfile(
     .eq("user_id", userId)
     .maybeSingle();
   if (pro?.id) {
-    const proPatch: Record<string, string | null> = {};
+    const proPatch: {
+      professional_name?: string;
+      whatsapp?: string | null;
+      city?: string | null;
+      state?: string | null;
+    } = {};
     if (patch.full_name !== undefined) proPatch.professional_name = patch.full_name ?? "";
     if (patch.phone !== undefined) proPatch.whatsapp = patch.phone ?? null;
     if (patch.city !== undefined) proPatch.city = patch.city ?? null;
