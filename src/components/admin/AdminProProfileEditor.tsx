@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { BadgeCheck, ExternalLink, Eye, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
@@ -136,19 +136,19 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
     setForm((prev) => ({ ...prev, [k]: v }));
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr),380px]">
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr),390px]">
       {/* Editor */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-2 pb-3">
+      <Card className="overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+        <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
           <div>
-            <CardTitle className="text-base">Perfil público</CardTitle>
-            <p className="text-xs text-muted-foreground">Edite as informações que aparecem para clientes na busca e na página do profissional.</p>
+            <CardTitle className="font-display text-xl font-extrabold tracking-normal">Perfil público</CardTitle>
+            <p className="text-xs text-muted-foreground">Dados exibidos na busca e na página pública.</p>
           </div>
           <StatusPill tone={pro.profile_status === "published" ? "success" : pro.profile_status === "archived" ? "danger" : "warning"}>
             {pro.profile_status === "published" ? "Publicado" : pro.profile_status === "archived" ? "Suspenso" : "Rascunho"}
           </StatusPill>
         </CardHeader>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-5 p-5 sm:p-6">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nome do profissional" required>
               <Input value={form.professional_name} onChange={(e) => set("professional_name", e.target.value)} />
@@ -250,11 +250,11 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
       {/* Preview */}
       <aside className="space-y-3">
-        <Card className="sticky top-4 overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-3">
+        <Card className="sticky top-24 overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
             <div className="flex items-center gap-1.5">
               <Eye size={14} className="text-muted-foreground" />
-              <CardTitle className="text-sm font-semibold">Pré-visualização administrativa</CardTitle>
+              <CardTitle className="font-display text-base font-extrabold tracking-normal">Prévia pública</CardTitle>
             </div>
             {publicHref && (
               <Button variant="ghost" size="sm" asChild className="h-7 px-2 text-xs">
@@ -264,13 +264,8 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
               </Button>
             )}
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-5">
             <PreviewCard pro={pro} form={form} />
-            <p className="text-[11px] leading-relaxed text-muted-foreground">
-              Mostra como o perfil apareceria com as alterações atuais.
-              Salve como rascunho para reter as mudanças ou publique para
-              exibi-las publicamente.
-            </p>
           </CardContent>
         </Card>
       </aside>
@@ -283,8 +278,8 @@ function PreviewCard({ pro, form }: { pro: AdminProDetail; form: FormState }) {
   const location = [form.city, form.state].filter(Boolean).join("/");
   const types = form.service_types_text.split(",").map((s) => s.trim()).filter(Boolean);
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card">
-      <div className="h-16 bg-gradient-to-br from-primary/80 to-primary" />
+    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-card shadow-card">
+      <div className="h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))]" />
       <div className="-mt-8 px-4 pb-4">
         <InitialsAvatar name={name} className="h-16 w-16 border-4 border-card text-xl" />
         <div className="mt-2 flex items-center gap-1.5">
@@ -324,7 +319,7 @@ function PreviewCard({ pro, form }: { pro: AdminProDetail; form: FormState }) {
   );
 }
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs font-semibold text-muted-foreground">
@@ -337,7 +332,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className="flex h-10 cursor-pointer items-center justify-between gap-2 rounded-md border bg-background px-3">
+    <label className="flex h-10 cursor-pointer items-center justify-between gap-2 rounded-2xl border bg-background px-3">
       <span className="text-xs font-medium">{label}</span>
       <Switch checked={checked} onCheckedChange={onChange} />
     </label>
