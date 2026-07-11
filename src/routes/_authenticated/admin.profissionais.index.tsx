@@ -301,7 +301,10 @@ function ProfessionalCard({
   const location = pro.city ? `${pro.city}/${pro.state ?? ""}` : "Sem localização";
   return (
     <article className="group relative overflow-hidden rounded-[1.75rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
-      <div className="h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))]" />
+      <div
+        className="relative h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
+        style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
+      />
       <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
         <Checkbox
           checked={selected}
@@ -340,7 +343,16 @@ function ProfessionalCard({
       </div>
       <button type="button" onClick={() => onOpen("overview")} className="block w-full p-5 pt-0 text-left">
         <div className="-mt-9 flex items-end justify-between gap-3">
-          <InitialsAvatar name={name} className="h-[4.5rem] w-[4.5rem] border-4 border-card text-xl shadow-card" />
+          {pro.avatar_url ? (
+            <img
+              src={pro.avatar_url}
+              alt={name}
+              className="h-[4.5rem] w-[4.5rem] rounded-full border-4 border-card object-cover shadow-card"
+              loading="lazy"
+            />
+          ) : (
+            <InitialsAvatar name={name} className="h-[4.5rem] w-[4.5rem] border-4 border-card text-xl shadow-card" />
+          )}
           <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
             {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
           </StatusPill>
