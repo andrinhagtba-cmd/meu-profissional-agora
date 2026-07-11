@@ -42,21 +42,18 @@ export async function getMyProProfile(userId: string): Promise<ProProfile | null
 
 export async function updateMyProProfile(
   id: string,
-  patch: Partial<
-    Pick<
-      ProProfile,
-      | "professional_name"
-      | "business_name"
-      | "description"
-      | "whatsapp"
-      | "city"
-      | "state"
-      | "years_experience"
-      | "starting_price"
-      | "response_time"
-      | "emergency"
-    >
-  >,
+  patch: {
+    professional_name?: string | null;
+    business_name?: string | null;
+    description?: string | null;
+    whatsapp?: string | null;
+    city?: string | null;
+    state?: string | null;
+    years_experience?: number | null;
+    starting_price?: number | null;
+    response_time?: string | null;
+    emergency?: boolean;
+  },
 ) {
   const { error } = await supabase.from("professional_profiles").update(patch).eq("id", id);
   if (error) throw error;
