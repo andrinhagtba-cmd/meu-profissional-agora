@@ -20,24 +20,24 @@ export function MetricCard({
   loading?: boolean;
 }) {
   const toneMap = {
-    primary: "bg-primary/10 text-primary",
-    orange: "bg-orange/10 text-orange",
-    emerald: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    violet: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+    primary: "bg-[oklch(0.955_0.032_258)] text-primary ring-1 ring-primary/15",
+    orange: "bg-[oklch(0.97_0.04_60)] text-orange ring-1 ring-orange/20",
+    emerald: "bg-[oklch(0.96_0.05_152)] text-emerald-600 ring-1 ring-emerald-500/20",
+    violet: "bg-[oklch(0.96_0.03_300)] text-violet-600 ring-1 ring-violet-500/20",
   } as const;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-2xl border border-[oklch(0.93_0.014_258)] bg-card p-5 shadow-[0_1px_2px_oklch(0.51_0.245_262/4%),0_12px_32px_-18px_oklch(0.51_0.245_262/16%)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_oklch(0.51_0.245_262/6%),0_20px_40px_-16px_oklch(0.51_0.245_262/22%)]">
       <div className="flex items-start justify-between gap-3">
-        <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${toneMap[tone]}`}>
+        <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${toneMap[tone]}`}>
           {icon}
         </span>
         {typeof delta === "number" && !loading && (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
               delta >= 0
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                : "bg-destructive/10 text-destructive"
+                ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                : "bg-red-50 text-red-700 ring-1 ring-red-200"
             }`}
           >
             {delta >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -46,11 +46,11 @@ export function MetricCard({
           </span>
         )}
       </div>
-      <div className="mt-4">
-        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="mt-5">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
           {label}
         </div>
-        <div className="mt-1 font-display text-3xl font-extrabold text-foreground">
+        <div className="mt-1.5 font-display text-[2rem] font-extrabold leading-tight tracking-tight text-foreground">
           {loading ? <Skeleton className="h-9 w-24" /> : (value ?? 0)}
         </div>
         {hint && !loading && (
