@@ -1843,3 +1843,206 @@ export async function getSystemStatus(): Promise<SystemStatus> {
     updatedAt: new Date().toISOString(),
   };
 }
+
+// =====================================================================
+// ETAPA C — CRESCIMENTO (Cupons, Benefícios, Destaques, B2B)
+// =====================================================================
+
+// -------- COUPONS --------
+export type CouponRow = {
+  id: string;
+  code: string;
+  description: string | null;
+  discount_type: "percent" | "fixed";
+  discount_value: number;
+  min_amount: number | null;
+  max_uses: number | null;
+  uses_count: number;
+  per_user_limit: number | null;
+  applies_to: "all" | "plans" | "categories" | "professionals";
+  target_ids: string[] | null;
+  valid_from: string;
+  valid_until: string | null;
+  status: "active" | "paused" | "expired" | "draft";
+  created_at: string;
+  updated_at: string;
+};
+
+export async function listCoupons(params: { search?: string; status?: string } = {}): Promise<CouponRow[]> {
+  let q = supabase.from("coupons" as never).select("*").order("created_at", { ascending: false });
+  if (params.status) q = q.eq("status", params.status);
+  if (params.search) q = q.ilike("code", `%${params.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as CouponRow[];
+}
+
+export async function upsertCoupon(patch: Partial<CouponRow> & { code: string; discount_type: "percent" | "fixed"; discount_value: number }): Promise<CouponRow> {
+  const { id, ...rest } = patch;
+  const payload = { ...rest, code: rest.code.toUpperCase().trim() };
+  const query = id
+    ? supabase.from("coupons" as never).update(payload).eq("id", id).select("*").single()
+    : supabase.from("coupons" as never).insert(payload).select("*").single();
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as unknown as CouponRow;
+}
+
+export async function deleteCoupon(id: string): Promise<void> {
+  const { error } = await supabase.from("coupons" as never).delete().eq("id", id);
+  if (error) throw error;
+}
+
+// -------- BENEFITS --------
+export type BenefitRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  icon: string | null;
+  category: string | null;
+  audience: "client" | "pro" | "both";
+  badge_color: string | null;
+  link_url: string | null;
+  is_active: boolean;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export async function listBenefits(params: { audience?: string; search?: string } = {}): Promise<BenefitRow[]> {
+  let q = supabase.from("benefits" as never).select("*").order("priority", { ascending: false }).order("created_at", { ascending: false });
+  if (params.audience) q = q.eq("audience", params.audience);
+  if (params.search) q = q.ilike("title", `%${params.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as BenefitRow[];
+}
+
+export async function upsertBenefit(patch: Partial<BenefitRow> & { title: string }): Promise<BenefitRow> {
+  const { id, ...rest } = patch;
+  const query = id
+    ? supabase.from("benefits" as never).update(rest).eq("id", id).select("*").single()
+    : supabase.from("benefits" as never).insert(rest).select("*").single();
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as unknown as BenefitRow;
+}
+
+export async function deleteBenefit(id: string): Promise<void> {
+  const { error } = await supabase.from("benefits" as never).delete().eq("id", id);
+  if (error) throw error;
+}
+
+// -------- HIGHLIGHTS --------
+export type HighlightRow = {
+  id: string;
+  professional_id: string | null;
+  section: "home" | "category" | "city" | "banner";
+  reference: string | null;
+  position: number;
+  starts_at: string;
+  ends_at: string | null;
+  is_active: boolean;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  professional?: { id: string; professional_name: string | null; business_name: string | null; avatar_url: string | null; city: string | null; state: string | null } | null;
+};
+
+export async function listHighlights(params: { section?: string; search?: string } = {}): Promise<HighlightRow[]> {
+  let q = supabase
+    .from("highlights" as never)
+    .select("*, professional:professional_profiles(id, professional_name, business_name, avatar_url, city, state)")
+    .order("position", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (params.section) q = q.eq("section", params.section);
+  const { data, error } = await q;
+  if (error) throw error;
+  let rows = (data ?? []) as unknown as HighlightRow[];
+  if (params.search) {
+    const term = params.search.toLowerCase();
+    rows = rows.filter((r) => (r.professional?.professional_name ?? r.professional?.business_name ?? "").toLowerCase().includes(term) || (r.reference ?? "").toLowerCase().includes(term));
+  }
+  return rows;
+}
+
+export async function upsertHighlight(patch: Partial<HighlightRow> & { section: string }): Promise<HighlightRow> {
+  const { id, professional, ...rest } = patch as Partial<HighlightRow> & { professional?: unknown };
+  void professional;
+  const query = id
+    ? supabase.from("highlights" as never).update(rest).eq("id", id).select("*").single()
+    : supabase.from("highlights" as never).insert(rest).select("*").single();
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as unknown as HighlightRow;
+}
+
+export async function deleteHighlight(id: string): Promise<void> {
+  const { error } = await supabase.from("highlights" as never).delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function searchProfessionalsForHighlight(term: string): Promise<{ id: string; name: string; city: string | null; state: string | null; avatar_url: string | null }[]> {
+  const t = term.trim();
+  if (!t) return [];
+  const { data, error } = await supabase
+    .from("professional_profiles")
+    .select("id, professional_name, business_name, city, state, avatar_url")
+    .or(`professional_name.ilike.%${t}%,business_name.ilike.%${t}%`)
+    .limit(12);
+  if (error) throw error;
+  return (data ?? []).map((r: { id: string; professional_name: string | null; business_name: string | null; city: string | null; state: string | null; avatar_url: string | null }) => ({
+    id: r.id,
+    name: r.professional_name ?? r.business_name ?? "Sem nome",
+    city: r.city,
+    state: r.state,
+    avatar_url: r.avatar_url,
+  }));
+}
+
+// -------- B2B COMPANIES --------
+export type B2BCompanyRow = {
+  id: string;
+  name: string;
+  cnpj: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  website: string | null;
+  logo_url: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  segment: string | null;
+  employees_count: number | null;
+  monthly_volume: number | null;
+  plan: string | null;
+  status: "prospect" | "negotiating" | "active" | "paused" | "lost";
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export async function listB2BCompanies(params: { status?: string; search?: string } = {}): Promise<B2BCompanyRow[]> {
+  let q = supabase.from("b2b_companies" as never).select("*").order("created_at", { ascending: false });
+  if (params.status) q = q.eq("status", params.status);
+  if (params.search) q = q.or(`name.ilike.%${params.search}%,contact_name.ilike.%${params.search}%,contact_email.ilike.%${params.search}%,cnpj.ilike.%${params.search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as unknown as B2BCompanyRow[];
+}
+
+export async function upsertB2BCompany(patch: Partial<B2BCompanyRow> & { name: string }): Promise<B2BCompanyRow> {
+  const { id, ...rest } = patch;
+  const query = id
+    ? supabase.from("b2b_companies" as never).update(rest).eq("id", id).select("*").single()
+    : supabase.from("b2b_companies" as never).insert(rest).select("*").single();
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as unknown as B2BCompanyRow;
+}
+
+export async function deleteB2BCompany(id: string): Promise<void> {
+  const { error } = await supabase.from("b2b_companies" as never).delete().eq("id", id);
+  if (error) throw error;
+}
