@@ -246,6 +246,25 @@ export type PublicReview = {
   createdAt: string;
 };
 
+export async function listApprovedReviewsBySlug(
+  slug: string,
+  limit = 30,
+): Promise<PublicReview[]> {
+  const { data: pro, error: pErr } = await supabase
+    .from("professional_profiles")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (pErr) throw pErr;
+  if (!pro?.id) return [];
+  return listApprovedReviewsByPro(pro.id as string, limit);
+}
+  rating: number;
+  comment: string | null;
+  reply: string | null;
+  createdAt: string;
+};
+
 export async function listApprovedReviewsByPro(
   proId: string,
   limit = 30,
