@@ -343,7 +343,7 @@ export async function listUsersFull(opts: { search?: string; role?: string; stat
     .order("created_at", { ascending: false })
     .limit(limit);
   if (search) q = q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
-  if (status) q = q.eq("account_status", status);
+  if (status) q = q.eq("account_status", status as never);
   if (userIdsFilter) q = q.in("user_id", userIdsFilter);
   const { data, error } = await q;
   if (error) throw error;
@@ -352,16 +352,19 @@ export async function listUsersFull(opts: { search?: string; role?: string; stat
   return rows.map((r) => ({ ...r, roles: roles.get(r.user_id) ?? [] }));
 }
 
-export async function updateAccountStatus(userId: string, status: "active" | "suspended" | "banned") {
+export type AccountStatus = "active" | "suspended" | "pending";
+
+export async function updateAccountStatus(userId: string, status: AccountStatus) {
   const { error } = await supabase.from("profiles").update({ account_status: status }).eq("user_id", userId);
   if (error) throw error;
 }
 
-export async function bulkUpdateAccountStatus(userIds: string[], status: "active" | "suspended" | "banned") {
+export async function bulkUpdateAccountStatus(userIds: string[], status: AccountStatus) {
   if (userIds.length === 0) return;
   const { error } = await supabase.from("profiles").update({ account_status: status }).in("user_id", userIds);
   if (error) throw error;
 }
+
 
 export async function grantRole(userId: string, role: "admin" | "profissional" | "cliente") {
   const { error } = await supabase.from("user_roles").insert({ user_id: userId, role } as never);
