@@ -489,7 +489,7 @@ function ActionCard({
     <button
       type="button"
       onClick={open}
-      className="group flex items-start gap-3 rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card"
+      className="group flex h-full w-full cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       aria-label={`Abrir ${title}`}
     >
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-secondary text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
