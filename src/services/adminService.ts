@@ -229,7 +229,7 @@ export async function getAdminActivity(limit = 20): Promise<AdminActivity[]> {
   const [profiles, quotes, proposals, reviews, reports] = await Promise.all([
     supabase.from("profiles").select("user_id, full_name, email, created_at").order("created_at", { ascending: false }).limit(limit),
     supabase.from("quote_requests").select("id, title, city, state, created_at").order("created_at", { ascending: false }).limit(limit),
-    supabase.from("quote_proposals").select("id, price, created_at, quote_request:quote_request_id(title)").order("created_at", { ascending: false }).limit(limit),
+    supabase.from("quote_proposals").select("id, estimated_price, created_at, quote_request:quote_request_id(title)").order("created_at", { ascending: false }).limit(limit),
     supabase.from("reviews").select("id, rating, status, created_at").order("created_at", { ascending: false }).limit(limit),
     supabase.from("reports").select("id, reason, status, created_at").order("created_at", { ascending: false }).limit(limit),
   ]);
@@ -240,8 +240,8 @@ export async function getAdminActivity(limit = 20): Promise<AdminActivity[]> {
   for (const q of (quotes.data ?? []) as Array<{ id: string; title: string; city: string; state: string; created_at: string }>) {
     out.push({ id: `q:${q.id}`, type: "quote", title: "Novo pedido de orçamento", subtitle: `${q.title} · ${q.city}/${q.state}`, at: q.created_at });
   }
-  for (const pr of (proposals.data ?? []) as Array<{ id: string; price: number | null; created_at: string; quote_request?: { title: string } | null }>) {
-    const price = pr.price ? ` · R$ ${Number(pr.price).toLocaleString("pt-BR")}` : "";
+  for (const pr of (proposals.data ?? []) as Array<{ id: string; estimated_price: number | null; created_at: string; quote_request?: { title: string } | null }>) {
+    const price = pr.estimated_price ? ` · R$ ${Number(pr.estimated_price).toLocaleString("pt-BR")}` : "";
     out.push({ id: `p:${pr.id}`, type: "proposal", title: "Nova proposta enviada", subtitle: `${pr.quote_request?.title ?? "Pedido"}${price}`, at: pr.created_at });
   }
   for (const r of (reviews.data ?? []) as Array<{ id: string; rating: number; status: string; created_at: string }>) {
