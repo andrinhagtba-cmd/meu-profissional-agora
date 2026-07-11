@@ -155,7 +155,7 @@ function PedirOrcamentoPage() {
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button asChild className="h-12 rounded-xl px-6 font-semibold">
-                <Link to="/painel/cliente">Acompanhar no painel</Link>
+                <Link to="/painel/pedidos">Acompanhar no painel</Link>
               </Button>
               <Button asChild variant="outline" className="h-12 rounded-xl px-6 font-semibold">
                 <Link to="/">Voltar ao início</Link>
