@@ -157,22 +157,26 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       verification_status, is_featured, average_rating, reviews_count,
       created_at, whatsapp, description, years_experience, starting_price,
       response_time, profile_status, availability_status, emergency,
-      service_types, updated_at, avatar_media_id, cover_media_id, source,
-      profile:profiles!professional_profiles_user_id_fkey(email, full_name, avatar_url)
+      service_types, updated_at, avatar_media_id, cover_media_id, source
     `)
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error("Profissional não encontrado.");
 
-  const [svc, port, lead, rev] = await Promise.all([
+  const p = data as Record<string, unknown>;
+  const userId = p.user_id as string;
+
+  const [profileRes, svc, port, lead, rev] = await Promise.all([
+    supabase.from("profiles").select("email, full_name, avatar_url").eq("id", userId).maybeSingle(),
     supabase.from("professional_services").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("portfolio_items").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("professional_id", id),
   ]);
 
-  const p = data as Record<string, unknown>;
+  const prof = profileRes.data as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
+
   const prof = (p.profile ?? null) as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
   return {
     ...(p as unknown as AdminProRow),
