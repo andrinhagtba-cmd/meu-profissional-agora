@@ -256,10 +256,14 @@ function AdminProDetailPage() {
               <AdminProPortfolioPanel professionalId={pro.id} professionalUserId={pro.user_id} />
             </TabsContent>
 
-            {["documents","reviews","activity"].map((k) => (
+            <TabsContent value="documents" className="mt-4">
+              <AdminProDocumentsPanel professionalId={pro.id} professionalUserId={pro.user_id} />
+            </TabsContent>
+
+            {["reviews","activity"].map((k) => (
               <TabsContent key={k} value={k} className="mt-4">
                 <Card><CardContent className="p-8 text-center text-sm text-muted-foreground">
-                  Este bloco será liberado nos próximos entregáveis (Bloco D em diante).
+                  Este bloco será liberado nos próximos entregáveis (Bloco E em diante).
                 </CardContent></Card>
               </TabsContent>
             ))}
