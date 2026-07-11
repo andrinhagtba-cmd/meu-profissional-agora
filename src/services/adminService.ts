@@ -86,12 +86,16 @@ export type AdminProRow = {
   created_at: string;
   whatsapp: string | null;
   description: string | null;
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
+  avatar_url: string | null;
+  cover_url: string | null;
 };
 
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description")
+    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id")
     .order("created_at", { ascending: false })
     .limit(200);
   if (status) q = q.eq("verification_status", status as never);
@@ -102,7 +106,17 @@ export async function listPros(status?: string, search?: string, featured?: bool
   }
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as AdminProRow[];
+  const rows = (data ?? []) as Array<Omit<AdminProRow, "avatar_url" | "cover_url">>;
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+  const urlMap = await resolveMediaUrlsByIds([
+    ...rows.map((r) => r.avatar_media_id),
+    ...rows.map((r) => r.cover_media_id),
+  ]);
+  return rows.map((r) => ({
+    ...r,
+    avatar_url: r.avatar_media_id ? urlMap.get(r.avatar_media_id) ?? null : null,
+    cover_url: r.cover_media_id ? urlMap.get(r.cover_media_id) ?? null : null,
+  }));
 }
 
 export async function setProVerification(id: string, status: "approved" | "rejected" | "pending") {
@@ -165,8 +179,6 @@ export type AdminProDetail = AdminProRow & {
   emergency: boolean;
   service_types: string[] | null;
   updated_at: string;
-  avatar_media_id: string | null;
-  cover_media_id: string | null;
   source: string | null;
   profile_email: string | null;
   profile_full_name: string | null;
@@ -191,20 +203,28 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
 
   const p = data as Record<string, unknown>;
   const userId = p.user_id as string;
+  const avatarMediaId = (p.avatar_media_id as string | null) ?? null;
+  const coverMediaId = (p.cover_media_id as string | null) ?? null;
 
-  const [profileRes, svc, port, lead, rev] = await Promise.all([
+  const { resolveMediaUrlsByIds } = await import("./adminMediaService");
+
+  const [profileRes, svc, port, lead, rev, urlMap] = await Promise.all([
     supabase.from("profiles").select("email, full_name, avatar_url").eq("id", userId).maybeSingle(),
     supabase.from("professional_services").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("portfolio_items").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    resolveMediaUrlsByIds([avatarMediaId, coverMediaId]),
   ]);
 
   const prof = profileRes.data as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
 
-  
   return {
     ...(p as unknown as AdminProRow),
+    avatar_media_id: avatarMediaId,
+    cover_media_id: coverMediaId,
+    avatar_url: avatarMediaId ? urlMap.get(avatarMediaId) ?? null : null,
+    cover_url: coverMediaId ? urlMap.get(coverMediaId) ?? null : null,
     user_id: p.user_id as string,
     years_experience: (p.years_experience as number | null) ?? null,
     starting_price: (p.starting_price as number | null) ?? null,
@@ -214,8 +234,6 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     emergency: Boolean(p.emergency),
     service_types: (p.service_types as string[] | null) ?? null,
     updated_at: p.updated_at as string,
-    avatar_media_id: (p.avatar_media_id as string | null) ?? null,
-    cover_media_id: (p.cover_media_id as string | null) ?? null,
     source: (p.source as string | null) ?? null,
     profile_email: prof?.email ?? null,
     profile_full_name: prof?.full_name ?? null,
