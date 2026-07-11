@@ -5,6 +5,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { professionals as mockProfessionals } from "@/data/professionals";
+import { resolveMediaUrlsByIds } from "@/services/adminMediaService";
 import type { AttendanceType, Professional, SearchFilters } from "@/types";
 
 type DbRow = {
@@ -23,6 +24,8 @@ type DbRow = {
   is_featured: boolean;
   emergency: boolean;
   verification_status: "pending" | "approved" | "rejected";
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
   professional_services: Array<{
     starting_price: number | null;
     services: {
@@ -35,7 +38,7 @@ type DbRow = {
 const SELECT = `
   id, slug, professional_name, business_name, description, city, state,
   average_rating, reviews_count, response_time, starting_price, years_experience,
-  is_featured, emergency, verification_status,
+  is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
   professional_services(
     starting_price,
     services:service_id(
