@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Star, Check, X, Flag, Clock, Trash2 } from "lucide-react";
 import { listProReviews, setReviewStatus, deleteReview, type ReviewStatus, type AdminProReview } from "@/services/adminService";
 
