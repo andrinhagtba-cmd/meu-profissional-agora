@@ -160,12 +160,21 @@ function AdminProDetailPage() {
       </div>
 
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-float">
-        <div className="h-44 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_52%,var(--orange)))]" />
-        <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.55),transparent_25%),radial-gradient(circle_at_78%_30%,rgba(255,255,255,0.34),transparent_28%)]" />
+        <div
+          className="h-44 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_52%,var(--orange)))] bg-cover bg-center"
+          style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
+        />
+        {!pro.cover_url && (
+          <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.55),transparent_25%),radial-gradient(circle_at_78%_30%,rgba(255,255,255,0.34),transparent_28%)]" />
+        )}
         <div className="relative px-5 pb-6 sm:px-7">
           <div className="-mt-16 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-              <InitialsAvatar name={displayName} className="h-28 w-28 border-4 border-card text-3xl shadow-float" />
+              {pro.avatar_url ? (
+                <img src={pro.avatar_url} alt={displayName} className="h-28 w-28 rounded-full border-4 border-card object-cover shadow-float" />
+              ) : (
+                <InitialsAvatar name={displayName} className="h-28 w-28 border-4 border-card text-3xl shadow-float" />
+              )}
               <div className="pb-1">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
