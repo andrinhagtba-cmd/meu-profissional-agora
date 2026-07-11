@@ -1982,21 +1982,20 @@ export async function deleteHighlight(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function searchProfessionalsForHighlight(term: string): Promise<{ id: string; name: string; city: string | null; state: string | null; avatar_url: string | null }[]> {
+export async function searchProfessionalsForHighlight(term: string): Promise<{ id: string; name: string; city: string | null; state: string | null }[]> {
   const t = term.trim();
   if (!t) return [];
   const { data, error } = await supabase
     .from("professional_profiles")
-    .select("id, professional_name, business_name, city, state, avatar_url")
+    .select("id, professional_name, business_name, city, state")
     .or(`professional_name.ilike.%${t}%,business_name.ilike.%${t}%`)
     .limit(12);
   if (error) throw error;
-  return (data ?? []).map((r: { id: string; professional_name: string | null; business_name: string | null; city: string | null; state: string | null; avatar_url: string | null }) => ({
+  return (data ?? []).map((r) => ({
     id: r.id,
     name: r.professional_name ?? r.business_name ?? "Sem nome",
     city: r.city,
     state: r.state,
-    avatar_url: r.avatar_url,
   }));
 }
 
