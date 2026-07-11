@@ -133,9 +133,15 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           </p>
         </div>
 
-        {/* Services chips */}
-        {topServices.length > 0 && (
+        {/* Chips: emergency + services */}
+        {(pro.emergency || topServices.length > 0) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
+            {pro.emergency && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-orange/10 px-2.5 py-1 text-[11px] font-semibold text-orange">
+                <Zap size={11} aria-hidden="true" />
+                Emergência 24h
+              </span>
+            )}
             {topServices.map((s) => (
               <Badge
                 key={s.name}
@@ -147,6 +153,7 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
             ))}
           </div>
         )}
+
 
         {/* Footer */}
         <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
