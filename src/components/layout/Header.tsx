@@ -141,9 +141,13 @@ export function Header() {
                 <button
                   type="button"
                   aria-label="Minha conta"
-                  className="hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold transition-colors hover:bg-primary/90 sm:inline-flex"
+                  className="hidden h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground text-sm font-semibold transition-colors hover:bg-primary/90 sm:inline-flex"
                 >
-                  {(user.email ?? "?").slice(0, 1).toUpperCase()}
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    (user.email ?? "?").slice(0, 1).toUpperCase()
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
