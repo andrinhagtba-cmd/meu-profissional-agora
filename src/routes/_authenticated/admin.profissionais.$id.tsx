@@ -103,7 +103,7 @@ function AdminProDetailPage() {
 
   const displayName = pro.professional_name || pro.business_name || pro.profile_full_name || "Profissional sem nome";
   const isArchived = pro.profile_status === "archived";
-  const publicUrl = pro.slug ? `${window.location.origin}/profissional/${pro.slug}` : null;
+  const publicPath = pro.slug ? `/profissional/${pro.slug}` : null;
 
   return (
     <div className="space-y-6">
@@ -136,7 +136,12 @@ function AdminProDetailPage() {
                   <button
                     type="button"
                     className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted"
-                    onClick={() => { if (publicUrl) { navigator.clipboard.writeText(publicUrl); toast.success("Link copiado"); } }}
+                    onClick={() => {
+                      if (publicPath) {
+                        navigator.clipboard.writeText(`${window.location.origin}${publicPath}`);
+                        toast.success("Link copiado");
+                      }
+                    }}
                   >
                     <Copy size={11} /> {pro.slug}
                   </button>
@@ -146,9 +151,9 @@ function AdminProDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {publicUrl && (
+            {publicPath && (
               <Button variant="outline" size="sm" asChild>
-                <a href={publicUrl} target="_blank" rel="noreferrer">
+                <a href={publicPath} target="_blank" rel="noreferrer">
                   <ExternalLink size={14} className="mr-1.5" /> Perfil público
                 </a>
               </Button>
@@ -188,9 +193,9 @@ function AdminProDetailPage() {
                     <PlayCircle size={14} className="mr-2 text-primary" /> Reativar perfil
                   </DropdownMenuItem>
                 )}
-                {publicUrl && (
+                {publicPath && (
                   <DropdownMenuItem asChild>
-                    <a href={publicUrl} target="_blank" rel="noreferrer">
+                    <a href={publicPath} target="_blank" rel="noreferrer">
                       <Eye size={14} className="mr-2" /> Pré-visualizar público
                     </a>
                   </DropdownMenuItem>
