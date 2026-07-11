@@ -96,8 +96,8 @@ export function AdminTopbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 shadow-[0_1px_0_0_var(--border)]">
-      <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-[oklch(0.93_0.014_258)] bg-white px-4 shadow-[0_1px_0_0_oklch(0.93_0.014_258)]">
+      <SidebarTrigger className="text-muted-foreground hover:text-primary" />
       <div className="hidden min-w-0 flex-1 md:block">
         <Breadcrumb>
           <BreadcrumbList className="text-[13px]">
