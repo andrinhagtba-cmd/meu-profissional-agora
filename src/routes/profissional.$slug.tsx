@@ -35,6 +35,7 @@ import {
   getReviewsForProfessional,
   registerWhatsAppLead,
 } from "@/services/mockApi";
+import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
 export const Route = createFileRoute("/profissional/$slug")({
   loader: ({ params }) => {
@@ -88,6 +89,11 @@ function ProfilePage() {
   const { data: related } = useQuery({
     queryKey: ["related", pro.slug],
     queryFn: () => getRelatedProfessionals(pro.slug),
+  });
+  const { data: dbMedia } = useQuery({
+    queryKey: ["pro-media", pro.slug],
+    queryFn: () => getProfessionalPublicMediaBySlug(pro.slug),
+    staleTime: 5 * 60 * 1000,
   });
 
   const dist = reviews ? ratingDistribution(reviews) : [0, 0, 0, 0, 0];
@@ -155,7 +161,7 @@ function ProfilePage() {
 
           <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
             <div className="flex min-w-0 items-start gap-4">
-              <ProAvatar initials={pro.initials} color={pro.avatarColor} size="xl" className="shrink-0" />
+              <ProAvatar initials={pro.initials} color={pro.avatarColor} size="xl" className="shrink-0" imageUrl={dbMedia?.avatarUrl || undefined} alt={pro.name} />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
@@ -258,14 +264,29 @@ function ProfilePage() {
               Trabalhos recentes
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {pro.portfolio.map((item: string) => (
-                <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
-                  <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
-                    <ImageIcon size={32} aria-hidden="true" />
-                  </div>
-                  <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
-                </figure>
-              ))}
+              {(dbMedia?.portfolio.length ?? 0) > 0
+                ? dbMedia!.portfolio.map((item) => (
+                    <figure key={item.id} className="overflow-hidden rounded-2xl border border-border bg-card">
+                      <div className="aspect-video overflow-hidden bg-secondary">
+                        {item.url ? (
+                          <img src={item.url} alt={item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="grid h-full w-full place-items-center text-primary/40">
+                            <ImageIcon size={32} aria-hidden="true" />
+                          </div>
+                        )}
+                      </div>
+                      <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item.title ?? "Trabalho"}</figcaption>
+                    </figure>
+                  ))
+                : pro.portfolio.map((item: string) => (
+                    <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
+                      <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
+                        <ImageIcon size={32} aria-hidden="true" />
+                      </div>
+                      <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
+                    </figure>
+                  ))}
             </div>
           </section>
 
