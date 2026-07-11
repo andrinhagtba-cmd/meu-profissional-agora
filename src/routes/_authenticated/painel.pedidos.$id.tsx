@@ -244,6 +244,7 @@ function ReviewSection({ quoteId }: { quoteId: string }) {
 
 function ProposalCard({
   p,
+  quoteId,
   isSelected,
   canAct,
   onAccept,
@@ -251,6 +252,7 @@ function ProposalCard({
   pending,
 }: {
   p: ReceivedProposal;
+  quoteId: string;
   isSelected: boolean;
   canAct: boolean;
   onAccept: () => void;
