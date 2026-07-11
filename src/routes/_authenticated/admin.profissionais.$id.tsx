@@ -200,7 +200,7 @@ function AdminProDetailPage() {
         <div>
           <Tabs
             value={tab}
-            onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, tab: v }), resetScroll: false })}
+            onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}
           >
             <TabsList className="w-full justify-start overflow-x-auto">
               <TabsTrigger value="overview">Visão geral</TabsTrigger>
@@ -266,10 +266,10 @@ function AdminProDetailPage() {
                 </StatusPill>
               </Row>
               <Row label="Destaque">
-                <StatusPill tone={pro.is_featured ? "success" : "muted"}>{pro.is_featured ? "Sim" : "Não"}</StatusPill>
+                <StatusPill tone={pro.is_featured ? "success" : "neutral"}>{pro.is_featured ? "Sim" : "Não"}</StatusPill>
               </Row>
               <Row label="Emergência">
-                <StatusPill tone={pro.emergency ? "success" : "muted"}>{pro.emergency ? "Aceita" : "Não"}</StatusPill>
+                <StatusPill tone={pro.emergency ? "success" : "neutral"}>{pro.emergency ? "Aceita" : "Não"}</StatusPill>
               </Row>
               <Row label="Reputação">
                 <span className="font-semibold">★ {pro.average_rating ? Number(pro.average_rating).toFixed(1) : "—"} <span className="text-xs text-muted-foreground">({pro.reviews_count ?? 0})</span></span>
