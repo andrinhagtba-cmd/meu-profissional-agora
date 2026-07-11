@@ -1969,6 +1969,7 @@ export type Database = {
         | "quote_status"
         | "message"
         | "message_new"
+        | "review_new"
       price_type: "fixed" | "hourly" | "daily" | "per_visit" | "to_quote"
       profile_status: "draft" | "published" | "archived"
       proposal_status: "sent" | "viewed" | "accepted" | "rejected" | "withdrawn"
@@ -2129,6 +2130,7 @@ export const Constants = {
         "quote_status",
         "message",
         "message_new",
+        "review_new",
       ],
       price_type: ["fixed", "hourly", "daily", "per_visit", "to_quote"],
       profile_status: ["draft", "published", "archived"],
