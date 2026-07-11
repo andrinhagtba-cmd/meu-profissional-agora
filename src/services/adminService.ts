@@ -378,20 +378,18 @@ export type AdminVerificationRow = {
   slug: string | null;
   professional_name: string | null;
   business_name: string | null;
-  email: string | null;
-  phone: string | null;
+  whatsapp: string | null;
   city: string | null;
   state: string | null;
   verification_status: string;
   created_at: string;
-  cover_image_id: string | null;
-  document_url: string | null;
+  description: string | null;
 };
 
 export async function listVerificationQueue(status: string = "pending"): Promise<AdminVerificationRow[]> {
   const { data, error } = await supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, email, phone, city, state, verification_status, created_at, cover_image_id, document_url")
+    .select("id, slug, professional_name, business_name, whatsapp, city, state, verification_status, created_at, description")
     .eq("verification_status", status as never)
     .order("created_at", { ascending: false })
     .limit(200);
