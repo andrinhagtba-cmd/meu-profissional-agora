@@ -8,7 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import { Briefcase, User as UserIcon, Wrench } from "lucide-react";
+import {
+  Briefcase,
+  User as UserIcon,
+  Sparkles,
+  ShieldCheck,
+  Star,
+  BadgeCheck,
+  ArrowRight,
+  Mail,
+  Lock,
+  Phone,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import authHero from "@/assets/auth-hero.jpg";
 
 const searchSchema = z.object({
   mode: z.enum(["login", "signup"]).optional(),
@@ -21,7 +35,11 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Entrar ou criar conta — ProConecta" },
-      { name: "description", content: "Acesse sua conta ProConecta ou cadastre-se como cliente ou profissional." },
+      {
+        name: "description",
+        content:
+          "Acesse sua conta ProConecta ou cadastre-se em minutos como cliente ou profissional verificado.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -39,6 +57,7 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -77,107 +96,375 @@ function AuthPage() {
 
   return (
     <SiteLayout>
-      <div className="container-page py-12 lg:py-16">
-        <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-          <div className="hidden lg:block">
-            <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">
-              <Wrench size={14} /> ProConecta
-            </div>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight text-foreground">
-              {mode === "login" ? "Bem-vindo de volta" : "Crie sua conta"}
-            </h1>
-            <p className="mt-3 text-base text-muted-foreground">
-              Conecte-se com profissionais verificados perto de você ou receba pedidos de orçamento na sua região.
-            </p>
-            <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-primary" /> Profissionais avaliados por clientes reais</li>
-              <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-primary" /> Orçamentos rápidos, sem compromisso</li>
-              <li className="flex items-start gap-2"><span className="mt-1 h-2 w-2 rounded-full bg-primary" /> Atendimento em todo o Brasil</li>
-            </ul>
-          </div>
+      <div className="relative overflow-hidden bg-background">
+        {/* Ambient background */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-primary/15 blur-3xl" />
+          <div className="absolute top-1/3 -right-32 h-[420px] w-[420px] rounded-full bg-orange/20 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-[360px] w-[360px] rounded-full bg-primary/10 blur-3xl" />
+        </div>
 
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm lg:p-8">
-            <div className="mb-6 flex gap-2 rounded-xl bg-secondary p-1">
-              <button
-                type="button"
-                onClick={() => setMode("login")}
-                className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition ${mode === "login" ? "bg-card text-foreground shadow" : "text-muted-foreground"}`}
-              >
-                Entrar
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("signup")}
-                className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition ${mode === "signup" ? "bg-card text-foreground shadow" : "text-muted-foreground"}`}
-              >
-                Criar conta
-              </button>
-            </div>
+        <div className="container-page py-10 lg:py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.05fr_1fr] lg:items-stretch">
+            {/* LEFT — Editorial hero */}
+            <aside className="relative hidden overflow-hidden rounded-[2rem] border border-border bg-navy shadow-float lg:block">
+              <img
+                src={authHero}
+                alt="Profissional ProConecta verificado"
+                className="absolute inset-0 h-full w-full object-cover opacity-90"
+                width={1024}
+                height={1536}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/10" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-orange/25 mix-blend-overlay" />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === "signup" && (
-                <>
+              {/* Top badge */}
+              <div className="relative z-10 flex items-start justify-between p-8">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                  <Sparkles size={14} className="text-orange" />
+                  ProConecta Premium
+                </div>
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                  <ShieldCheck size={14} className="text-emerald-300" />
+                  100% verificados
+                </div>
+              </div>
+
+              {/* Headline */}
+              <div className="relative z-10 flex h-full flex-col justify-end p-8 lg:p-10">
+                <p className="text-hand text-3xl text-orange">Conexões que constroem</p>
+                <h1 className="mt-2 font-display text-4xl font-extrabold leading-[1.05] text-white xl:text-5xl">
+                  Encontre o profissional{" "}
+                  <span className="relative inline-block">
+                    <span className="relative z-10">certo</span>
+                    <span className="absolute inset-x-0 bottom-1 -z-0 h-3 rounded-full bg-orange/60" />
+                  </span>
+                  <br />
+                  para cada projeto.
+                </h1>
+                <p className="mt-4 max-w-md text-base text-white/80">
+                  Mais de 250 mil brasileiros usam a ProConecta para receber orçamentos rápidos com quem
+                  entende do assunto.
+                </p>
+
+                {/* Floating stat card */}
+                <div className="mt-8 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md">
+                    <div className="flex items-center gap-1 text-rating">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <Star key={i} size={14} className="fill-current" />
+                      ))}
+                    </div>
+                    <p className="mt-2 font-display text-2xl font-bold text-white">4.9/5</p>
+                    <p className="text-xs text-white/70">Avaliação média</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md">
+                    <div className="inline-flex items-center gap-1.5 text-emerald-300">
+                      <BadgeCheck size={16} />
+                      <span className="text-xs font-semibold uppercase tracking-wide">Verificados</span>
+                    </div>
+                    <p className="mt-2 font-display text-2xl font-bold text-white">+12 mil</p>
+                    <p className="text-xs text-white/70">Profissionais ativos</p>
+                  </div>
+                </div>
+
+                {/* Trust row */}
+                <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
+                  <div className="flex -space-x-2">
+                    {["#FF642E", "#0759F8", "#20B15A", "#FFB800"].map((c, i) => (
+                      <div
+                        key={i}
+                        className="h-8 w-8 rounded-full border-2 border-navy"
+                        style={{ background: c }}
+                      />
+                    ))}
+                  </div>
+                  <div className="text-xs text-white/85">
+                    <span className="font-semibold text-white">250.000+ clientes</span> confiam na ProConecta
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* RIGHT — Form card */}
+            <div className="relative">
+              <div className="rounded-[2rem] border border-border bg-card p-6 shadow-float lg:p-10">
+                {/* Mobile brand */}
+                <div className="mb-6 flex items-center justify-between lg:hidden">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">
+                    <Sparkles size={14} /> ProConecta
+                  </span>
+                  <Link to="/" className="text-xs font-semibold text-muted-foreground hover:text-primary">
+                    Voltar ao site
+                  </Link>
+                </div>
+
+                {/* Segmented tabs */}
+                <div className="mb-8 flex gap-1 rounded-2xl bg-secondary p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setMode("login")}
+                    className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${
+                      mode === "login"
+                        ? "bg-card text-foreground shadow-card"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Entrar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("signup")}
+                    className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${
+                      mode === "signup"
+                        ? "bg-card text-foreground shadow-card"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Criar conta
+                  </button>
+                </div>
+
+                <div className="mb-7">
+                  <h2 className="font-display text-3xl font-extrabold leading-tight text-foreground">
+                    {mode === "login" ? (
+                      <>
+                        Bem-vindo <span className="text-hand text-4xl text-orange">de volta</span>
+                      </>
+                    ) : (
+                      <>
+                        Comece <span className="text-hand text-4xl text-orange">em minutos</span>
+                      </>
+                    )}
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {mode === "login"
+                      ? "Acesse seus orçamentos, mensagens e projetos favoritos."
+                      : "Cadastre-se grátis e conecte-se aos melhores profissionais do Brasil."}
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {mode === "signup" && (
+                    <>
+                      <div>
+                        <Label className="mb-2.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          Eu quero
+                        </Label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setRole("cliente")}
+                            className={`group relative overflow-hidden rounded-2xl border-2 p-4 text-left transition-all ${
+                              role === "cliente"
+                                ? "border-primary bg-primary/5 shadow-card"
+                                : "border-border hover:border-primary/40 hover:bg-secondary/50"
+                            }`}
+                          >
+                            <div
+                              className={`mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${
+                                role === "cliente" ? "bg-primary text-primary-foreground" : "bg-secondary text-primary"
+                              }`}
+                            >
+                              <UserIcon size={18} />
+                            </div>
+                            <div className="text-sm font-bold text-foreground">Contratar</div>
+                            <div className="text-xs text-muted-foreground">Preciso de um serviço</div>
+                            {role === "cliente" && (
+                              <div className="absolute right-3 top-3 h-2 w-2 rounded-full bg-primary" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setRole("profissional")}
+                            className={`group relative overflow-hidden rounded-2xl border-2 p-4 text-left transition-all ${
+                              role === "profissional"
+                                ? "border-orange bg-orange/5 shadow-card"
+                                : "border-border hover:border-orange/40 hover:bg-secondary/50"
+                            }`}
+                          >
+                            <div
+                              className={`mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${
+                                role === "profissional"
+                                  ? "bg-orange text-orange-foreground"
+                                  : "bg-secondary text-orange"
+                              }`}
+                            >
+                              <Briefcase size={18} />
+                            </div>
+                            <div className="text-sm font-bold text-foreground">Trabalhar</div>
+                            <div className="text-xs text-muted-foreground">Ofereço serviços</div>
+                            {role === "profissional" && (
+                              <div className="absolute right-3 top-3 h-2 w-2 rounded-full bg-orange" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <Label htmlFor="fullName" className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Nome completo
+                          </Label>
+                          <div className="relative">
+                            <UserIcon
+                              size={16}
+                              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                            />
+                            <Input
+                              id="fullName"
+                              required
+                              value={fullName}
+                              onChange={(e) => setFullName(e.target.value)}
+                              placeholder="Seu nome"
+                              className="h-12 rounded-xl border-border bg-background pl-10"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="phone" className="mb-1.5 block text-xs font-semibold text-foreground">
+                            Telefone
+                          </Label>
+                          <div className="relative">
+                            <Phone
+                              size={16}
+                              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                            />
+                            <Input
+                              id="phone"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value)}
+                              placeholder="(11) 99999-9999"
+                              className="h-12 rounded-xl border-border bg-background pl-10"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   <div>
-                    <Label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quero me cadastrar como</Label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <Label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-foreground">
+                      E-mail
+                    </Label>
+                    <div className="relative">
+                      <Mail
+                        size={16}
+                        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      />
+                      <Input
+                        id="email"
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="voce@email.com"
+                        className="h-12 rounded-xl border-border bg-background pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <Label htmlFor="password" className="text-xs font-semibold text-foreground">
+                        Senha
+                      </Label>
+                      {mode === "login" && (
+                        <Link
+                          to="/recuperar-senha"
+                          className="text-xs font-semibold text-primary hover:underline"
+                        >
+                          Esqueci minha senha
+                        </Link>
+                      )}
+                    </div>
+                    <div className="relative">
+                      <Lock
+                        size={16}
+                        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      />
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        minLength={6}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Mínimo 6 caracteres"
+                        className="h-12 rounded-xl border-border bg-background pl-10 pr-11"
+                      />
                       <button
                         type="button"
-                        onClick={() => setRole("cliente")}
-                        className={`flex items-center gap-2 rounded-xl border-2 px-3 py-3 text-left text-sm transition ${role === "cliente" ? "border-primary bg-primary/5" : "border-border"}`}
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                        aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                       >
-                        <UserIcon size={18} className="text-primary" />
-                        <div>
-                          <div className="font-semibold text-foreground">Cliente</div>
-                          <div className="text-xs text-muted-foreground">Preciso de serviços</div>
-                        </div>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRole("profissional")}
-                        className={`flex items-center gap-2 rounded-xl border-2 px-3 py-3 text-left text-sm transition ${role === "profissional" ? "border-primary bg-primary/5" : "border-border"}`}
-                      >
-                        <Briefcase size={18} className="text-primary" />
-                        <div>
-                          <div className="font-semibold text-foreground">Profissional</div>
-                          <div className="text-xs text-muted-foreground">Ofereço serviços</div>
-                        </div>
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
                   </div>
-                  <div>
-                    <Label htmlFor="fullName">Nome completo</Label>
-                    <Input id="fullName" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Seu nome" />
+
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className="group h-12 w-full rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-card transition-all hover:brightness-110 hover:shadow-float"
+                  >
+                    {submitting ? (
+                      "Enviando..."
+                    ) : (
+                      <span className="inline-flex items-center gap-2">
+                        {mode === "login" ? "Entrar na minha conta" : "Criar minha conta grátis"}
+                        <ArrowRight
+                          size={16}
+                          className="transition-transform group-hover:translate-x-0.5"
+                        />
+                      </span>
+                    )}
+                  </Button>
+
+                  <div className="flex items-center gap-3 py-1">
+                    <div className="h-px flex-1 bg-border" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {mode === "login" ? "Novo por aqui?" : "Já tem conta?"}
+                    </span>
+                    <div className="h-px flex-1 bg-border" />
                   </div>
-                  <div>
-                    <Label htmlFor="phone">Telefone (opcional)</Label>
-                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" />
-                  </div>
-                </>
-              )}
-              <div>
-                <Label htmlFor="email">E-mail</Label>
-                <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
-              </div>
-              <div>
-                <Label htmlFor="password">Senha</Label>
-                <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" />
+
+                  <button
+                    type="button"
+                    onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                    className="h-12 w-full rounded-xl border-2 border-border bg-card text-sm font-semibold text-foreground transition-all hover:border-primary hover:text-primary"
+                  >
+                    {mode === "login" ? "Criar conta grátis" : "Fazer login"}
+                  </button>
+
+                  <p className="pt-2 text-center text-xs leading-relaxed text-muted-foreground">
+                    Ao continuar, você concorda com nossos{" "}
+                    <Link to="/" className="font-semibold text-primary hover:underline">
+                      termos de uso
+                    </Link>{" "}
+                    e{" "}
+                    <Link to="/" className="font-semibold text-primary hover:underline">
+                      política de privacidade
+                    </Link>
+                    .
+                  </p>
+                </form>
               </div>
 
-              <Button type="submit" disabled={submitting} className="h-11 w-full rounded-xl text-sm font-semibold">
-                {submitting ? "Enviando..." : mode === "login" ? "Entrar" : "Criar conta"}
-              </Button>
-
-              {mode === "login" && (
-                <div className="text-center text-sm">
-                  <Link to="/recuperar-senha" className="text-primary hover:underline">
-                    Esqueci minha senha
-                  </Link>
-                </div>
-              )}
-              <p className="text-center text-xs text-muted-foreground">
-                Ao continuar, você concorda com nossos termos de uso e política de privacidade.
-              </p>
-            </form>
+              {/* Small trust row below card */}
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-success" /> Dados protegidos
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <BadgeCheck size={14} className="text-primary" /> Perfis verificados
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Star size={14} className="text-rating fill-current" /> 4.9 de avaliação
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
