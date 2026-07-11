@@ -496,8 +496,8 @@ export async function listReviews(status?: string): Promise<AdminReviewRow[]> {
   return (data ?? []) as unknown as AdminReviewRow[];
 }
 
-export async function setReviewStatus(id: string, status: "approved" | "rejected" | "pending") {
-  const { error } = await supabase.from("reviews").update({ status }).eq("id", id);
+export async function setReviewStatus(id: string, status: "approved" | "rejected" | "pending" | "flagged") {
+  const { error } = await supabase.from("reviews").update({ status } as never).eq("id", id);
   if (error) throw error;
 }
 
@@ -1158,3 +1158,118 @@ export async function getBillingSummary(): Promise<AdminBillingSummary> {
 }
 
 
+
+// ============= Bloco E — Reviews & Atividade =============
+
+export type ReviewStatus = "pending" | "approved" | "rejected" | "flagged";
+
+export type AdminProReview = {
+  id: string;
+  rating: number;
+  comment: string | null;
+  status: ReviewStatus;
+  professional_reply: string | null;
+  created_at: string;
+  quote_request_id: string;
+  client_name: string | null;
+  quote_title: string | null;
+};
+
+export async function listProReviews(professionalId: string): Promise<AdminProReview[]> {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("id, rating, comment, status, professional_reply, created_at, quote_request_id, client_id")
+    .eq("professional_id", professionalId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const rows = (data ?? []) as Array<{
+    id: string; rating: number; comment: string | null; status: ReviewStatus;
+    professional_reply: string | null; created_at: string;
+    quote_request_id: string; client_id: string;
+  }>;
+  if (rows.length === 0) return [];
+  const clientIds = Array.from(new Set(rows.map(r => r.client_id)));
+  const quoteIds = Array.from(new Set(rows.map(r => r.quote_request_id)));
+  const [{ data: profs }, { data: quotes }] = await Promise.all([
+    supabase.from("profiles").select("user_id, full_name").in("user_id", clientIds),
+    supabase.from("quote_requests").select("id, title").in("id", quoteIds),
+  ]);
+  const nameByUser = new Map((profs ?? []).map((p: { user_id: string; full_name: string | null }) => [p.user_id, p.full_name]));
+  const titleByQuote = new Map((quotes ?? []).map((q: { id: string; title: string }) => [q.id, q.title]));
+  return rows.map(r => ({
+    id: r.id, rating: r.rating, comment: r.comment, status: r.status,
+    professional_reply: r.professional_reply, created_at: r.created_at,
+    quote_request_id: r.quote_request_id,
+    client_name: nameByUser.get(r.client_id) ?? null,
+    quote_title: titleByQuote.get(r.quote_request_id) ?? null,
+  }));
+}
+
+
+export async function deleteReview(id: string) {
+  const { error } = await supabase.from("reviews").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export type AdminProActivityItem = {
+  id: string;
+  kind: "quote" | "proposal" | "review" | "log";
+  title: string;
+  description: string | null;
+  status: string | null;
+  created_at: string;
+};
+
+export async function listProActivity(professionalId: string): Promise<AdminProActivityItem[]> {
+  const [proposals, reviews, logs] = await Promise.all([
+    supabase.from("quote_proposals")
+      .select("id, status, created_at, price, quote_request:quote_request_id(title)")
+      .eq("professional_id", professionalId)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase.from("reviews")
+      .select("id, rating, comment, status, created_at")
+      .eq("professional_id", professionalId)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase.from("admin_logs")
+      .select("id, action, metadata, created_at")
+      .eq("entity_type", "professional_profile")
+      .eq("entity_id", professionalId)
+      .order("created_at", { ascending: false })
+      .limit(50),
+  ]);
+  const items: AdminProActivityItem[] = [];
+  for (const p of ((proposals.data ?? []) as unknown as Array<{
+    id: string; status: string; created_at: string; price: number | null;
+    quote_request: { title: string } | null;
+  }>)) {
+    items.push({
+      id: `p-${p.id}`, kind: "proposal",
+      title: `Proposta enviada${p.quote_request?.title ? " · " + p.quote_request.title : ""}`,
+      description: p.price != null ? `R$ ${Number(p.price).toLocaleString("pt-BR")}` : null,
+      status: p.status, created_at: p.created_at,
+    });
+  }
+  for (const r of ((reviews.data ?? []) as Array<{
+    id: string; rating: number; comment: string | null; status: string; created_at: string;
+  }>)) {
+    items.push({
+      id: `r-${r.id}`, kind: "review",
+      title: `Avaliação recebida (${r.rating}★)`,
+      description: r.comment, status: r.status, created_at: r.created_at,
+    });
+  }
+  for (const l of ((logs.data ?? []) as Array<{
+    id: string; action: string; metadata: unknown; created_at: string;
+  }>)) {
+    items.push({
+      id: `l-${l.id}`, kind: "log",
+      title: `Ação admin: ${l.action}`,
+      description: l.metadata ? JSON.stringify(l.metadata) : null,
+      status: null, created_at: l.created_at,
+    });
+  }
+  items.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return items;
+}
