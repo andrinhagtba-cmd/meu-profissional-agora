@@ -184,6 +184,7 @@ export type AdminProDetail = AdminProRow & {
   availability_status: string;
   emergency: boolean;
   service_types: string[] | null;
+  search_tags: string[] | null;
   updated_at: string;
   source: string | null;
   profile_email: string | null;
@@ -200,7 +201,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       verification_status, is_featured, average_rating, reviews_count,
       created_at, whatsapp, description, years_experience, starting_price,
       response_time, profile_status, availability_status, emergency,
-      service_types, updated_at, avatar_media_id, cover_media_id, source
+      service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source
     `)
     .eq("id", id)
     .maybeSingle();
