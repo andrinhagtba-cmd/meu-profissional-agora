@@ -63,23 +63,20 @@ async function resolveMedia(
 }
 
 export async function getSettings(): Promise<SystemSettings> {
-  // Try the privileged table first (admins). Fall back to the public_branding
-  // view for anonymous / non-admin users, which exposes only public fields.
+  // Run both queries in parallel: public_branding is readable by anon and
+  // usually resolves fastest; system_settings works for admins. Whichever
+  // returns useful data first wins, and we don't wait serially.
   let row: (Partial<SystemSettings> & Record<string, unknown>) = {};
-  const priv = await supabase
-    .from("system_settings")
-    .select("*")
-    .eq("singleton", true)
-    .maybeSingle();
+  const [priv, pub] = await Promise.all([
+    supabase.from("system_settings").select("*").eq("singleton", true).maybeSingle(),
+    supabase.from("public_branding" as never).select("*").maybeSingle(),
+  ]);
   if (priv.data) {
     row = priv.data as unknown as typeof row;
-  } else {
-    const pub = await supabase
-      .from("public_branding" as never)
-      .select("*")
-      .maybeSingle();
-    if (pub.error && priv.error) throw priv.error;
-    row = (pub.data ?? {}) as typeof row;
+  } else if (pub.data) {
+    row = pub.data as typeof row;
+  } else if (priv.error && pub.error) {
+    throw priv.error;
   }
   const mediaMap = await resolveMedia([
     (row.logo_light_media_id as string | null) ?? null,
