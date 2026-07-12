@@ -346,6 +346,142 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
           <Separator />
 
+          {/* Presença digital */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Presença digital</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <Field label="Instagram">
+                <div className="relative">
+                  <Instagram size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.instagram_username}
+                    onChange={(e) => set("instagram_username", e.target.value)}
+                    placeholder="@usuario ou link"
+                  />
+                </div>
+              </Field>
+              <Field label="Facebook">
+                <div className="relative">
+                  <Facebook size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.facebook_url}
+                    onChange={(e) => set("facebook_url", e.target.value)}
+                    placeholder="facebook.com/pagina"
+                  />
+                </div>
+              </Field>
+              <Field label="Website">
+                <div className="relative">
+                  <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.website_url}
+                    onChange={(e) => set("website_url", e.target.value)}
+                    placeholder="meudominio.com.br"
+                  />
+                </div>
+              </Field>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Endereço */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Endereço profissional</h3>
+            <p className="mt-1 text-xs text-muted-foreground">Busque o endereço no Google e ajuste a privacidade exibida no perfil.</p>
+            <div className="mt-3 space-y-3">
+              <AddressAutocomplete
+                initialQuery={form.formatted_address}
+                onSelect={(r: ResolvedAddress) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    formatted_address: r.formatted_address ?? "",
+                    street: r.street ?? "",
+                    address_number: r.address_number ?? "",
+                    neighborhood: r.neighborhood ?? "",
+                    city: r.city ?? prev.city,
+                    state: r.state ?? prev.state,
+                    postal_code: r.postal_code ?? "",
+                    latitude: r.latitude != null ? String(r.latitude) : "",
+                    longitude: r.longitude != null ? String(r.longitude) : "",
+                    google_place_id: r.google_place_id ?? "",
+                  }));
+                }}
+              />
+
+              <div className="grid gap-3 sm:grid-cols-[1fr,140px,140px]">
+                <Field label="Logradouro">
+                  <Input value={form.street} onChange={(e) => set("street", e.target.value)} />
+                </Field>
+                <Field label="Número">
+                  <Input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} />
+                </Field>
+                <Field label="CEP">
+                  <Input value={form.postal_code} onChange={(e) => set("postal_code", e.target.value)} />
+                </Field>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Field label="Bairro">
+                  <Input value={form.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} />
+                </Field>
+                <Field label="Cidade">
+                  <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
+                </Field>
+                <Field label="UF">
+                  <Input maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
+                </Field>
+              </div>
+
+              <Field label="Privacidade do endereço no perfil público">
+                <Select
+                  value={form.public_address_visibility}
+                  onValueChange={(v) => set("public_address_visibility", v as AddressVisibility)}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(ADDRESS_VISIBILITY_LABEL) as AddressVisibility[]).map((k) => (
+                      <SelectItem key={k} value={k}>{ADDRESS_VISIBILITY_LABEL[k]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <LocationMap
+                latitude={form.latitude ? Number(form.latitude) : null}
+                longitude={form.longitude ? Number(form.longitude) : null}
+                radiusKm={form.service_radius_km ? Number(form.service_radius_km) : null}
+              />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Área de atendimento */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Área de atendimento</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <Field label="Raio de atendimento (km)">
+                <Input
+                  inputMode="numeric"
+                  value={form.service_radius_km}
+                  onChange={(e) => set("service_radius_km", e.target.value)}
+                  placeholder="ex: 25"
+                />
+              </Field>
+              <div className="grid grid-cols-1 gap-2">
+                <Toggle label="Atende no meu endereço" checked={form.serves_at_business_address} onChange={(v) => set("serves_at_business_address", v)} />
+                <Toggle label="Vou até o cliente" checked={form.serves_at_customer_location} onChange={(v) => set("serves_at_customer_location", v)} />
+                <Toggle label="Atendimento remoto/online" checked={form.serves_remotely} onChange={(v) => set("serves_remotely", v)} />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-muted-foreground">
               {dirty ? "Você tem alterações não salvas." : "Tudo salvo."}
