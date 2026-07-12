@@ -155,30 +155,10 @@ function ProfilePage() {
 
   return (
     <SiteLayout>
-      {dbMedia?.coverUrl ? (
-        <div className="relative w-full overflow-hidden bg-neutral-950">
-          {/* Backdrop borrado com a própria imagem para preencher laterais sem cortar */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 scale-110 bg-cover bg-center opacity-40 blur-2xl"
-            style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
-          {/* Imagem completa, sem crop */}
-          <div className="relative mx-auto flex w-full max-w-6xl items-center justify-center px-4 py-6 sm:py-8">
-            <img
-              src={dbMedia.coverUrl}
-              alt={`Capa de ${pro.name}`}
-              className="max-h-[220px] w-auto max-w-full rounded-2xl object-contain shadow-2xl ring-1 ring-white/10 sm:max-h-[320px] md:max-h-[400px] lg:max-h-[460px]"
-              loading="eager"
-            />
-          </div>
-        </div>
-      ) : null}
-      <div className="border-b border-border bg-card">
-        <div className="container-page py-8">
-
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      {/* ============== HERO PREMIUM ============== */}
+      <section className="relative w-full bg-gradient-to-b from-muted/40 to-background">
+        <div className="container-page pt-4 sm:pt-6">
+          <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">Início</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <Link to="/categoria/$slug" params={{ slug: pro.categorySlug }} className="hover:text-foreground">
@@ -188,96 +168,167 @@ function ProfilePage() {
             <span className="text-foreground">{pro.name}</span>
           </nav>
 
-          <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
-            <div className="flex min-w-0 items-start gap-4">
-              <ProAvatar initials={pro.initials} color={pro.avatarColor} size="xl" className="shrink-0" imageUrl={dbMedia?.avatarUrl || undefined} alt={pro.name} />
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
+          {/* Banner cinematográfico */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-muted to-accent/10 shadow-sm ring-1 ring-border">
+            {dbMedia?.coverUrl ? (
+              <>
+                {/* Backdrop borrado da própria capa preenche laterais em qualquer proporção */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 scale-110 bg-cover bg-center opacity-60 blur-2xl"
+                  style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
+                />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-black/10" />
+                <div className="relative flex aspect-[21/9] w-full items-center justify-center max-[640px]:aspect-[16/9]">
+                  <img
+                    src={dbMedia.coverUrl}
+                    alt={`Capa de ${pro.name}`}
+                    className="max-h-full max-w-full object-contain drop-shadow-2xl"
+                    loading="eager"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="aspect-[21/9] w-full max-[640px]:aspect-[16/9]" />
+            )}
+
+            {/* Ações flutuantes no canto do banner */}
+            <div className="absolute right-3 top-3 flex items-center gap-2 sm:right-4 sm:top-4">
+              <FavoriteButton slug={pro.slug} name={pro.name} className="rounded-full bg-white/90 shadow-md backdrop-blur hover:bg-white" />
+            </div>
+
+            {/* Badges no canto inferior direito */}
+            <div className="absolute bottom-3 right-3 flex flex-wrap items-center justify-end gap-1.5 sm:bottom-4 sm:right-4">
+              {pro.verified && (
+                <Badge className="gap-1 rounded-full bg-white/95 text-success shadow-sm backdrop-blur hover:bg-white">
+                  <BadgeCheck size={13} aria-hidden="true" /> Verificado
+                </Badge>
+              )}
+              {pro.emergency && (
+                <Badge className="gap-1 rounded-full bg-orange text-white shadow-sm hover:bg-orange">
+                  <Zap size={13} aria-hidden="true" /> Emergência 24h
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Card do profissional — sobrepõe o banner */}
+          <div className="relative z-10 -mt-10 sm:-mt-14 lg:-mt-16">
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-xl shadow-black/[0.04] sm:p-7">
+              <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 sm:gap-6 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+                {/* Avatar com ring branco premium */}
+                <div className="shrink-0">
+                  <div className="rounded-full bg-card p-1.5 shadow-lg ring-1 ring-border sm:p-2">
+                    <ProAvatar
+                      initials={pro.initials}
+                      color={pro.avatarColor}
+                      size="xl"
+                      imageUrl={dbMedia?.avatarUrl || undefined}
+                      alt={pro.name}
+                    />
+                  </div>
+                </div>
+
+                {/* Identidade */}
+                <div className="min-w-0">
+                  <h1 className="truncate font-display text-2xl font-extrabold leading-tight text-foreground sm:text-3xl lg:text-[2rem]">
                     {pro.name}
                   </h1>
-                  {pro.verified && (
-                    <Badge className="gap-1 rounded-full bg-success/12 text-success hover:bg-success/12">
-                      <BadgeCheck size={13} aria-hidden="true" /> Verificado
-                    </Badge>
-                  )}
-                  {pro.emergency && (
-                    <Badge className="gap-1 rounded-full bg-orange/12 text-orange hover:bg-orange/12">
-                      <Zap size={13} aria-hidden="true" /> Emergência 24h
-                    </Badge>
-                  )}
-                </div>
-                <p className="mt-1 font-medium text-muted-foreground">
-                  {pro.specialty}
-                  {pro.company ? ` · ${pro.company}` : ""}
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
-                  <RatingStars rating={pro.rating} />
-                  <span>({pro.reviewsCount} avaliações)</span>
-                  {(() => {
-                    const a = pro.address;
-                    const label = a
-                      ? publicAddressLabel({
-                          visibility: a.visibility,
-                          city: a.city,
-                          state: a.state,
-                          neighborhood: a.neighborhood,
-                          street: a.street,
-                          address_number: a.number,
-                          postal_code: a.postalCode,
-                          formatted_address: a.formatted,
-                        })
-                      : `${pro.city}, ${pro.state}`;
-                    return label ? (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin size={14} aria-hidden="true" />
-                        {label}
-                      </span>
-                    ) : null;
-                  })()}
-                  <span className="inline-flex items-center gap-1">
-                    <Award size={14} aria-hidden="true" />
-                    {pro.experienceYears} anos de experiência
-                  </span>
-                </div>
-                {(pro.social?.instagramUrl || pro.social?.facebook || pro.social?.website) && (
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {pro.social?.instagramUrl && (
-                      <a
-                        href={pro.social.instagramUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                      >
-                        <Instagram size={13} />@{pro.social.instagram}
-                      </a>
-                    )}
-                    {pro.social?.facebook && (
-                      <a
-                        href={pro.social.facebook}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                      >
-                        <Facebook size={13} /> Facebook
-                      </a>
-                    )}
-                    {pro.social?.website && (
-                      <a
-                        href={pro.social.website}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                      >
-                        <Globe size={13} /> Website
-                      </a>
-                    )}
+                  <p className="mt-1 truncate text-sm font-medium text-muted-foreground sm:text-base">
+                    {pro.specialty}
+                    {pro.company ? ` · ${pro.company}` : ""}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <RatingStars rating={pro.rating} />
+                      <span className="tabular-nums">({pro.reviewsCount})</span>
+                    </div>
+                    {(() => {
+                      const a = pro.address;
+                      const label = a
+                        ? publicAddressLabel({
+                            visibility: a.visibility,
+                            city: a.city,
+                            state: a.state,
+                            neighborhood: a.neighborhood,
+                            street: a.street,
+                            address_number: a.number,
+                            postal_code: a.postalCode,
+                            formatted_address: a.formatted,
+                          })
+                        : `${pro.city}, ${pro.state}`;
+                      return label ? (
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin size={14} aria-hidden="true" />
+                          {label}
+                        </span>
+                      ) : null;
+                    })()}
+                    <span className="inline-flex items-center gap-1">
+                      <Award size={14} aria-hidden="true" />
+                      {pro.experienceYears} anos de experiência
+                    </span>
                   </div>
-                )}
+
+                  {(pro.social?.instagramUrl || pro.social?.facebook || pro.social?.website) && (
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      {pro.social?.instagramUrl && (
+                        <a
+                          href={pro.social.instagramUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
+                        >
+                          <Instagram size={13} />@{pro.social.instagram}
+                        </a>
+                      )}
+                      {pro.social?.facebook && (
+                        <a
+                          href={pro.social.facebook}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
+                        >
+                          <Facebook size={13} /> Facebook
+                        </a>
+                      )}
+                      {pro.social?.website && (
+                        <a
+                          href={pro.social.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
+                        >
+                          <Globe size={13} /> Website
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA rápido no desktop */}
+                <div className="col-span-2 flex flex-col gap-2 sm:flex-row lg:col-span-1 lg:flex-col lg:items-end">
+                  <Button
+                    className="w-full bg-orange text-white shadow-md hover:bg-orange/90 lg:w-auto"
+                    onClick={() => {
+                      const el = document.getElementById("form-orcamento");
+                      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                  >
+                    Pedir orçamento
+                  </Button>
+                </div>
               </div>
             </div>
-            <FavoriteButton slug={pro.slug} name={pro.name} className="shrink-0" />
           </div>
+        </div>
+      </section>
+
+      {/* Wrapper compatível com o restante da página */}
+      <div className="hidden">
+        <div className="container-page py-8">
+
         </div>
       </div>
 
