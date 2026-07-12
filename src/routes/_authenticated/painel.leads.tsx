@@ -29,7 +29,7 @@ import { Briefcase, Clock, MapPin, Send } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/painel/leads")({
   head: () => ({
     meta: [
-      { title: "Leads disponíveis — ProConecta" },
+      { title: "Leads disponíveis" },
       { name: "robots", content: "noindex" },
     ],
   }),

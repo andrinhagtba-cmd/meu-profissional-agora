@@ -18,7 +18,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/_authenticated/painel/propostas")({
   head: () => ({
     meta: [
-      { title: "Minhas propostas — ProConecta" },
+      { title: "Minhas propostas" },
       { name: "robots", content: "noindex" },
     ],
   }),

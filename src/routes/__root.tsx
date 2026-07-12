@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ProConecta — Encontre profissionais perto de você" },
+      { title: "plataforma — Encontre profissionais perto de você" },
       {
         name: "description",
         content:
           "Compare profissionais, veja avaliações reais e solicite orçamentos de eletricistas, encanadores, pintores e mais, perto de você.",
       },
-      { name: "author", content: "ProConecta" },
-      { property: "og:title", content: "ProConecta — Encontre profissionais perto de você" },
+      { name: "author", content: "plataforma" },
+      { property: "og:title", content: "plataforma — Encontre profissionais perto de você" },
       {
         property: "og:description",
         content:
@@ -96,7 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "ProConecta — Encontre profissionais perto de você" },
+      { name: "twitter:title", content: "plataforma — Encontre profissionais perto de você" },
       { name: "twitter:description", content: "Compare profissionais, veja avaliações reais e solicite orçamentos de eletricistas, encanadores, pintores e mais, perto de você." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },

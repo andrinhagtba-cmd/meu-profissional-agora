@@ -102,7 +102,7 @@ export function AdminSidebar() {
   const isActive = (to: string) =>
     to === "/admin" ? pathname === "/admin" : pathname === to || pathname.startsWith(to + "/");
   const { data: brand, isLoading } = useBrand();
-  const brandName = brand?.brand_name ?? "ProConecta";
+  const brandName = brand?.brand_name?.trim() || "Admin";
   const logoUrl = brand?.logo_light_url ?? null;
   const initial = brandName.trim().charAt(0).toUpperCase() || "P";
 

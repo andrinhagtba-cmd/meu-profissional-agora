@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { listBlogPosts, upsertBlogPost, deleteBlogPost, slugify, type AdminBlogPost, type UpsertBlogPost } from "@/services/adminContentService";
 
 export const Route = createFileRoute("/_authenticated/admin/blog")({
-  head: () => ({ meta: [{ title: "Blog — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Blog — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

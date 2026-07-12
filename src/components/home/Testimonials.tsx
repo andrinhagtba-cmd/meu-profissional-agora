@@ -125,7 +125,7 @@ export function Testimonials() {
                 onChange={(e) => setConsent(e.target.checked)}
                 className="mt-0.5 h-4 w-4 rounded accent-[color:var(--orange)]"
               />
-              Aceito receber comunicações da ProConecta por e-mail.
+              Aceito receber comunicações da plataforma por e-mail.
             </label>
             {error && (
               <p role="alert" className="rounded-lg bg-card/15 px-3 py-2 text-xs font-medium">

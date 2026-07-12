@@ -34,7 +34,7 @@ import { TrackingSection } from "@/components/painel/TrackingSection";
 export const Route = createFileRoute("/_authenticated/painel/pedidos/$id")({
   head: () => ({
     meta: [
-      { title: "Propostas recebidas — ProConecta" },
+      { title: "Propostas recebidas" },
       { name: "robots", content: "noindex" },
     ],
   }),

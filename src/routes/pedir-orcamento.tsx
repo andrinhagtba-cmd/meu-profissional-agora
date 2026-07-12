@@ -33,7 +33,7 @@ export const Route = createFileRoute("/pedir-orcamento")({
   }),
   head: () => ({
     meta: [
-      { title: "Pedir orçamento grátis | ProConecta" },
+      { title: "Pedir orçamento grátis" },
       {
         name: "description",
         content: "Descreva o que você precisa e receba até 5 orçamentos de profissionais avaliados. Grátis e sem compromisso.",

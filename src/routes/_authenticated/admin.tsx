@@ -10,7 +10,7 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Administração — ProConecta" },
+      { title: "Administração" },
       { name: "robots", content: "noindex" },
     ],
   }),

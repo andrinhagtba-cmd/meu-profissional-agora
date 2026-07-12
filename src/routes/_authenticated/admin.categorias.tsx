@@ -50,7 +50,7 @@ import { uploadAdminMedia } from "@/services/adminMediaService";
 export const Route = createFileRoute("/_authenticated/admin/categorias")({
   head: () => ({
     meta: [
-      { title: "Categorias — Admin ProConecta" },
+      { title: "Categorias — Admin" },
       { name: "robots", content: "noindex" },
     ],
   }),

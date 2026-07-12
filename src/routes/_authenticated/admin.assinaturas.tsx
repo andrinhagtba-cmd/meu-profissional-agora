@@ -15,7 +15,7 @@ import {
 } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/assinaturas")({
-  head: () => ({ meta: [{ title: "Assinaturas — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Assinaturas — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

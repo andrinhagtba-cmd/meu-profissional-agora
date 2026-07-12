@@ -29,7 +29,7 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
   head: () => ({
     meta: [
-      { title: "Configurações — Admin ProConecta" },
+      { title: "Configurações — Admin" },
       { name: "robots", content: "noindex" },
     ],
   }),

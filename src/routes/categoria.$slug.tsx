@@ -23,7 +23,7 @@ import {
 export const Route = createFileRoute("/categoria/$slug")({
   head: () => ({
     meta: [
-      { title: "Categoria | ProConecta" },
+      { title: "Categoria" },
       {
         name: "description",
         content:

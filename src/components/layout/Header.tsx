@@ -37,29 +37,20 @@ const navItems = [
 export function Logo({ className }: { className?: string }) {
   const { data, isLoading } = useBrand();
   const logoUrl = data?.logo_light_url;
-  const name = data?.brand_name ?? "ProConecta";
-  const tagline = data?.tagline ?? "Resolva sem complicação";
-  const rendered =
-    /^pro/i.test(name) && name.length > 3 ? (
-      <>
-        {name.slice(0, 3)}
-        <span className="text-primary">{name.slice(3)}</span>
-      </>
-    ) : (
-      name
-    );
+  const name = data?.brand_name?.trim() ?? "";
+  const tagline = data?.tagline?.trim() ?? "";
   return (
     <Link
       to="/"
       className={`flex items-center ${className ?? ""}`}
-      aria-label={`${name} — página inicial`}
+      aria-label={name ? `${name} — página inicial` : "Página inicial"}
     >
       {isLoading ? (
         <div className="h-12 w-[160px] animate-pulse rounded-xl bg-muted" />
       ) : logoUrl ? (
         <img
           src={logoUrl}
-          alt={name}
+          alt={name || "Logo"}
           className="h-12 w-auto max-w-[260px] object-contain"
         />
       ) : (
@@ -67,14 +58,18 @@ export function Logo({ className }: { className?: string }) {
           <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
             <Wrench size={20} aria-hidden="true" />
           </span>
-          <span className="min-w-0 leading-tight">
-            <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
-              {rendered}
+          {name ? (
+            <span className="min-w-0 leading-tight">
+              <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
+                {name}
+              </span>
+              {tagline ? (
+                <span className="block text-[10px] font-medium text-muted-foreground">
+                  {tagline}
+                </span>
+              ) : null}
             </span>
-            <span className="block text-[10px] font-medium text-muted-foreground">
-              {tagline}
-            </span>
-          </span>
+          ) : null}
         </span>
       )}
     </Link>

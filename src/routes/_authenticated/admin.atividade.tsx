@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/admin/atividade")({
   head: () => ({
     meta: [
-      { title: "Atividade recente — Admin ProConecta" },
+      { title: "Atividade recente — Admin" },
       { name: "robots", content: "noindex" },
     ],
   }),

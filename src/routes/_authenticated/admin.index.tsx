@@ -21,7 +21,7 @@ import {
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Admin ProConecta" },
+      { title: "Dashboard — Admin" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -58,7 +58,7 @@ function AdminOverview() {
     <>
       <AdminPageHeader
         title="Dashboard"
-        description="Visão geral em tempo real do marketplace ProConecta."
+        description="Visão geral em tempo real do marketplace."
         actions={
           <Button asChild variant="outline" className="rounded-xl">
             <Link to="/admin/metricas">
