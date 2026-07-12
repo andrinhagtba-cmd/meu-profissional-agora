@@ -1474,6 +1474,7 @@ export type Database = {
           neighborhood: string | null
           postal_code: string | null
           preferred_date: string | null
+          pro_viewed_at: string | null
           selected_professional_id: string | null
           service_id: string | null
           service_type: Database["public"]["Enums"]["service_type"]
@@ -1493,6 +1494,7 @@ export type Database = {
           neighborhood?: string | null
           postal_code?: string | null
           preferred_date?: string | null
+          pro_viewed_at?: string | null
           selected_professional_id?: string | null
           service_id?: string | null
           service_type?: Database["public"]["Enums"]["service_type"]
@@ -1512,6 +1514,7 @@ export type Database = {
           neighborhood?: string | null
           postal_code?: string | null
           preferred_date?: string | null
+          pro_viewed_at?: string | null
           selected_professional_id?: string | null
           service_id?: string | null
           service_type?: Database["public"]["Enums"]["service_type"]
@@ -2057,9 +2060,36 @@ export type Database = {
     }
     Functions: {
       accept_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      count_pro_unread_direct_quotes: { Args: never; Returns: number }
       get_or_create_conversation: {
         Args: { _pro_id: string; _quote_id: string }
         Returns: string
+      }
+      get_pro_direct_quote: {
+        Args: { _id: string }
+        Returns: {
+          category_name: string
+          category_slug: string
+          city: string
+          client_city: string
+          client_email: string
+          client_id: string
+          client_name: string
+          client_phone: string
+          created_at: string
+          description: string
+          id: string
+          neighborhood: string
+          preferred_date: string
+          pro_viewed_at: string
+          service_name: string
+          service_slug: string
+          service_type: string
+          state: string
+          status: string
+          title: string
+          urgency: string
+        }[]
       }
       has_role: {
         Args: {
@@ -2069,6 +2099,26 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      list_pro_direct_quotes: {
+        Args: never
+        Returns: {
+          category_name: string
+          category_slug: string
+          city: string
+          client_name: string
+          created_at: string
+          description: string
+          id: string
+          neighborhood: string
+          pro_viewed_at: string
+          service_name: string
+          service_type: string
+          state: string
+          status: string
+          title: string
+          urgency: string
+        }[]
+      }
       list_public_quote_requests: {
         Args: { _limit?: number }
         Returns: {
@@ -2089,6 +2139,7 @@ export type Database = {
         Args: { _conversation_id: string }
         Returns: undefined
       }
+      mark_pro_quote_viewed: { Args: { _id: string }; Returns: undefined }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
       submit_review: {
