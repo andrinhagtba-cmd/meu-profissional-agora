@@ -1,9 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSettings, type SystemSettings } from "@/services/settingsService";
 
+const CACHE_KEY = "brand:settings:v1";
+
+function readCache(): SystemSettings | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    if (!raw) return undefined;
+    return JSON.parse(raw) as SystemSettings;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeCache(data: SystemSettings) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {
+    /* ignore quota errors */
+  }
+}
+
 /**
- * Reads the singleton system_settings. Cached for 5min; safe to call from
- * many components — React Query dedupes.
+ * Reads the singleton system_settings. Hydrates instantly from localStorage
+ * so the logo/brand appear without a network round-trip on repeat visits,
+ * then revalidates in the background.
  */
 export function useBrand(): {
   data: SystemSettings | undefined;
@@ -11,9 +34,15 @@ export function useBrand(): {
 } {
   const { data, isLoading } = useQuery({
     queryKey: ["system-settings"],
-    queryFn: getSettings,
+    queryFn: async () => {
+      const fresh = await getSettings();
+      writeCache(fresh);
+      return fresh;
+    },
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
+    initialData: readCache,
+    initialDataUpdatedAt: 0,
   });
-  return { data, isLoading };
+  return { data, isLoading: isLoading && !data };
 }
