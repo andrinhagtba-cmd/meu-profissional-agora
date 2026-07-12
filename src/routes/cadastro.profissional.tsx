@@ -272,8 +272,12 @@ function SignupWizard() {
       }
     }
     if (step === 3) {
-      if (!profile.city || !profile.state) {
-        toast.error("Informe seu endereço");
+      if (!profile.city || !isValidDfRegionName(profile.city)) {
+        toast.error("Selecione uma Região Administrativa válida do DF");
+        return;
+      }
+      if (profile.state && profile.state !== "DF") {
+        toast.error("Esta plataforma atende exclusivamente o Distrito Federal");
         return;
       }
     }
