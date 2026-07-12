@@ -1230,6 +1230,84 @@ export type Database = {
           },
         ]
       }
+      public_branding: {
+        Row: {
+          accent_color: string | null
+          address: string | null
+          brand_name: string
+          date_format: string | null
+          default_currency: string | null
+          default_locale: string | null
+          default_timezone: string | null
+          favicon_media_id: string | null
+          id: string
+          legal_name: string | null
+          logo_dark_media_id: string | null
+          logo_light_media_id: string | null
+          primary_color: string | null
+          singleton: boolean
+          social_facebook: string | null
+          social_instagram: string | null
+          social_linkedin: string | null
+          social_youtube: string | null
+          support_email: string | null
+          support_phone: string | null
+          tagline: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          accent_color?: string | null
+          address?: string | null
+          brand_name?: string
+          date_format?: string | null
+          default_currency?: string | null
+          default_locale?: string | null
+          default_timezone?: string | null
+          favicon_media_id?: string | null
+          id: string
+          legal_name?: string | null
+          logo_dark_media_id?: string | null
+          logo_light_media_id?: string | null
+          primary_color?: string | null
+          singleton?: boolean
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
+          social_youtube?: string | null
+          support_email?: string | null
+          support_phone?: string | null
+          tagline?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          accent_color?: string | null
+          address?: string | null
+          brand_name?: string
+          date_format?: string | null
+          default_currency?: string | null
+          default_locale?: string | null
+          default_timezone?: string | null
+          favicon_media_id?: string | null
+          id?: string
+          legal_name?: string | null
+          logo_dark_media_id?: string | null
+          logo_light_media_id?: string | null
+          primary_color?: string | null
+          singleton?: boolean
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
+          social_youtube?: string | null
+          support_email?: string | null
+          support_phone?: string | null
+          tagline?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       quote_proposals: {
         Row: {
           created_at: string
@@ -1906,103 +1984,7 @@ export type Database = {
       }
     }
     Views: {
-      public_branding: {
-        Row: {
-          accent_color: string | null
-          address: string | null
-          brand_name: string | null
-          date_format: string | null
-          default_currency: string | null
-          default_locale: string | null
-          default_timezone: string | null
-          favicon_media_id: string | null
-          id: string | null
-          legal_name: string | null
-          logo_dark_media_id: string | null
-          logo_light_media_id: string | null
-          primary_color: string | null
-          singleton: boolean | null
-          social_facebook: string | null
-          social_instagram: string | null
-          social_linkedin: string | null
-          social_youtube: string | null
-          support_email: string | null
-          support_phone: string | null
-          tagline: string | null
-          whatsapp: string | null
-        }
-        Insert: {
-          accent_color?: string | null
-          address?: string | null
-          brand_name?: string | null
-          date_format?: string | null
-          default_currency?: string | null
-          default_locale?: string | null
-          default_timezone?: string | null
-          favicon_media_id?: string | null
-          id?: string | null
-          legal_name?: string | null
-          logo_dark_media_id?: string | null
-          logo_light_media_id?: string | null
-          primary_color?: string | null
-          singleton?: boolean | null
-          social_facebook?: string | null
-          social_instagram?: string | null
-          social_linkedin?: string | null
-          social_youtube?: string | null
-          support_email?: string | null
-          support_phone?: string | null
-          tagline?: string | null
-          whatsapp?: string | null
-        }
-        Update: {
-          accent_color?: string | null
-          address?: string | null
-          brand_name?: string | null
-          date_format?: string | null
-          default_currency?: string | null
-          default_locale?: string | null
-          default_timezone?: string | null
-          favicon_media_id?: string | null
-          id?: string | null
-          legal_name?: string | null
-          logo_dark_media_id?: string | null
-          logo_light_media_id?: string | null
-          primary_color?: string | null
-          singleton?: boolean | null
-          social_facebook?: string | null
-          social_instagram?: string | null
-          social_linkedin?: string | null
-          social_youtube?: string | null
-          support_email?: string | null
-          support_phone?: string | null
-          tagline?: string | null
-          whatsapp?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "system_settings_favicon_media_id_fkey"
-            columns: ["favicon_media_id"]
-            isOneToOne: false
-            referencedRelation: "media_assets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_settings_logo_dark_media_id_fkey"
-            columns: ["logo_dark_media_id"]
-            isOneToOne: false
-            referencedRelation: "media_assets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_settings_logo_light_media_id_fkey"
-            columns: ["logo_light_media_id"]
-            isOneToOne: false
-            referencedRelation: "media_assets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       accept_proposal: { Args: { _proposal_id: string }; Returns: undefined }
