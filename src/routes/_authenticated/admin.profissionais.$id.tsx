@@ -148,9 +148,6 @@ function AdminProDetailPage() {
     toast.success("Link público copiado");
   };
 
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
 
   const handleMediaUpload = async (
     kind: "avatar" | "cover",
