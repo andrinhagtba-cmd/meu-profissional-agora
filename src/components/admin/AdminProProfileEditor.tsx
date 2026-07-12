@@ -61,6 +61,7 @@ function toForm(pro: AdminProDetail): FormState {
     emergency: Boolean(pro.emergency),
     is_featured: Boolean(pro.is_featured),
     service_types_text: (pro.service_types ?? []).join(", "),
+    search_tags_text: (pro.search_tags ?? []).join(", "),
   };
 }
 
