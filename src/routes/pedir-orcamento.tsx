@@ -1,13 +1,17 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeCheck,
   CheckCircle2,
   Loader2,
   PartyPopper,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProAvatar } from "@/components/shared/ProAvatar";
+import { getProfessionalBySlug } from "@/services/professionalService";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
