@@ -277,6 +277,7 @@ export type SubmitQuoteInput = {
   urgencia: string;
   serviceType?: "residencial" | "empresarial" | "online";
   professionalSlug?: string;
+  serviceId?: string | null;
 };
 
 export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
@@ -303,6 +304,21 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
     }
   }
 
+  // Valida que o serviço, se informado, pertence ao profissional destinatário.
+  let validatedServiceId: string | null = null;
+  if (input.serviceId && selectedProId) {
+    const { data: ps } = await supabase
+      .from("professional_services")
+      .select("service_id")
+      .eq("professional_id", selectedProId)
+      .eq("service_id", input.serviceId)
+      .maybeSingle();
+    if (!ps) {
+      throw new Error("O serviço selecionado não pertence a este profissional.");
+    }
+    validatedServiceId = input.serviceId;
+  }
+
   const [city, state] = input.cidade.split(",").map((s) => s.trim());
 
   const { data, error } = await supabase
@@ -310,6 +326,7 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
     .insert({
       client_id: userId,
       category_id: categoryId,
+      service_id: validatedServiceId,
       title: input.servico,
       description: input.descricao,
       city: city || input.cidade,
@@ -336,6 +353,7 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
     directToProfessional: Boolean(selectedProId),
   };
 }
+
 
 // --------------------- Helpers ---------------------
 
