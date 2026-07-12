@@ -183,7 +183,7 @@ function AuthPage() {
                     ))}
                   </div>
                   <div className="text-xs text-white/85">
-                    <span className="font-semibold text-white">250.000+ clientes</span> confiam na ProConecta
+                    <span className="font-semibold text-white">250.000+ clientes</span> confiam {brandName ? `na ${brandName}` : "em nós"}
                   </div>
                 </div>
               </div>
