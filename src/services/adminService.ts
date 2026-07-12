@@ -885,7 +885,7 @@ export async function getUserDetail(userId: string): Promise<AdminUserDetail> {
 
   const [{ count: quotesCount }, { count: favoritesCount }, { count: reviewsCount }] = await Promise.all([
     supabase.from("quote_requests").select("id", { count: "exact", head: true }).eq("client_id", userId),
-    supabase.from("favorites").select("id", { count: "exact", head: true }).eq("user_id", userId),
+    supabase.from("favorites").select("id", { count: "exact", head: true }).eq("client_id", userId),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("client_id", userId),
   ]);
 
