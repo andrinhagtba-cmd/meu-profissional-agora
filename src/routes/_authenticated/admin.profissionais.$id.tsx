@@ -1,5 +1,9 @@
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { Camera, ImagePlus, Loader2 } from "lucide-react";
+import { uploadAdminMedia } from "@/services/adminMediaService";
+import { updateProProfile } from "@/services/adminService";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import {
@@ -141,8 +145,32 @@ function AdminProDetailPage() {
     toast.success("Link público copiado");
   };
 
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
+
+  const handleMediaUpload = async (
+    kind: "avatar" | "cover",
+    file: File | null | undefined,
+  ) => {
+    if (!file) return;
+    try {
+      setUploading(kind);
+      const { mediaId } = await uploadAdminMedia(file, "banner");
+      await updateProProfile(id, kind === "avatar" ? { avatar_media_id: mediaId } : { cover_media_id: mediaId });
+      toast.success(kind === "avatar" ? "Avatar atualizado" : "Capa atualizada");
+      invalidate();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("avatar", e.target.files?.[0]); e.target.value = ""; }} />
+      <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("cover", e.target.files?.[0]); e.target.value = ""; }} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link to="/admin/profissionais" className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-card hover:text-primary">
           <ArrowLeft size={15} /> Voltar para profissionais
@@ -167,14 +195,34 @@ function AdminProDetailPage() {
         {!pro.cover_url && (
           <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.55),transparent_25%),radial-gradient(circle_at_78%_30%,rgba(255,255,255,0.34),transparent_28%)]" />
         )}
+        <button
+          type="button"
+          onClick={() => coverInputRef.current?.click()}
+          disabled={uploading === "cover"}
+          className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/45 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur transition hover:bg-black/60 disabled:opacity-70"
+        >
+          {uploading === "cover" ? <Loader2 size={13} className="animate-spin" /> : <ImagePlus size={13} />}
+          {pro.cover_url ? "Alterar capa" : "Adicionar capa"}
+        </button>
         <div className="relative px-5 pb-6 sm:px-7">
           <div className="-mt-16 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-              {pro.avatar_url ? (
-                <img src={pro.avatar_url} alt={displayName} className="h-28 w-28 rounded-full border-4 border-card object-cover shadow-float" />
-              ) : (
-                <InitialsAvatar name={displayName} className="h-28 w-28 border-4 border-card text-3xl shadow-float" />
-              )}
+              <div className="group relative h-28 w-28 shrink-0">
+                {pro.avatar_url ? (
+                  <img src={pro.avatar_url} alt={displayName} className="h-28 w-28 rounded-full border-4 border-card object-cover shadow-float" />
+                ) : (
+                  <InitialsAvatar name={displayName} className="h-28 w-28 border-4 border-card text-3xl shadow-float" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={uploading === "avatar"}
+                  aria-label={pro.avatar_url ? "Alterar avatar" : "Adicionar avatar"}
+                  className="absolute bottom-1 right-1 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-card bg-primary text-white shadow-float transition hover:bg-primary/90 disabled:opacity-70"
+                >
+                  {uploading === "avatar" ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
+                </button>
+              </div>
               <div className="pb-1">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
