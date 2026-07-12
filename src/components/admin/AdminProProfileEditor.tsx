@@ -151,6 +151,41 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
     nextTags.length !== currTags.length || nextTags.some((v, i) => v !== currTags[i]);
   if (changedTags) patch.search_tags = nextTags;
 
+  // Redes sociais
+  const ig = normalizeInstagramHandle(f.instagram_username);
+  setIf("instagram_username", ig.handle, pro.instagram_username);
+  setIf("instagram_url", ig.url, pro.instagram_url);
+  setIf("facebook_url", normalizeUrl(f.facebook_url), pro.facebook_url);
+  setIf("website_url", normalizeUrl(f.website_url), pro.website_url);
+
+  // Endereço
+  setIf("postal_code", norm(f.postal_code), pro.postal_code);
+  setIf("street", norm(f.street), pro.street);
+  setIf("address_number", norm(f.address_number), pro.address_number);
+  setIf("neighborhood", norm(f.neighborhood), pro.neighborhood);
+  setIf("google_place_id", norm(f.google_place_id), pro.google_place_id);
+  setIf("formatted_address", norm(f.formatted_address), pro.formatted_address);
+  const lat = f.latitude.trim() === "" ? null : Number(f.latitude);
+  if (lat !== null && !Number.isFinite(lat)) throw new Error("Latitude inválida.");
+  setIf("latitude", lat, pro.latitude);
+  const lng = f.longitude.trim() === "" ? null : Number(f.longitude);
+  if (lng !== null && !Number.isFinite(lng)) throw new Error("Longitude inválida.");
+  setIf("longitude", lng, pro.longitude);
+  if (f.public_address_visibility !== pro.public_address_visibility) {
+    patch.public_address_visibility = f.public_address_visibility;
+  }
+
+  // Atendimento
+  const rad = f.service_radius_km.trim() === "" ? null : Number(f.service_radius_km);
+  if (rad !== null && !Number.isFinite(rad)) throw new Error("Raio inválido.");
+  setIf("service_radius_km", rad, pro.service_radius_km);
+  if (Boolean(f.serves_at_business_address) !== Boolean(pro.serves_at_business_address))
+    patch.serves_at_business_address = f.serves_at_business_address;
+  if (Boolean(f.serves_at_customer_location) !== Boolean(pro.serves_at_customer_location))
+    patch.serves_at_customer_location = f.serves_at_customer_location;
+  if (Boolean(f.serves_remotely) !== Boolean(pro.serves_remotely))
+    patch.serves_remotely = f.serves_remotely;
+
   return patch;
 }
 
