@@ -51,6 +51,8 @@ function AuthPage() {
   const search = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { data: brand } = useBrand();
+  const brandName = brand?.brand_name ?? "";
 
   const [mode, setMode] = useState<"login" | "signup">(search.mode ?? "login");
   const [role, setRole] = useState<"cliente" | "profissional">(search.role ?? "cliente");
