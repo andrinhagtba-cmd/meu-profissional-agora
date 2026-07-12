@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 // Carregador único da Google Maps JavaScript API (Places New).
 // Usa a chave de referrer segura injetada pelo conector.
 
