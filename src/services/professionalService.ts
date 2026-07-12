@@ -27,6 +27,7 @@ type DbRow = {
   avatar_media_id: string | null;
   cover_media_id: string | null;
   search_tags: string[] | null;
+  whatsapp: string | null;
   instagram_username: string | null;
   instagram_url: string | null;
   facebook_url: string | null;
