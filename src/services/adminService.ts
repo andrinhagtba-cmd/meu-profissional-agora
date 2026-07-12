@@ -164,6 +164,26 @@ export type AdminProProfilePatch = Partial<{
   slug: string | null;
   avatar_media_id: string | null;
   cover_media_id: string | null;
+  // Redes sociais
+  instagram_username: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
+  website_url: string | null;
+  // Endereço
+  postal_code: string | null;
+  street: string | null;
+  address_number: string | null;
+  neighborhood: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  google_place_id: string | null;
+  formatted_address: string | null;
+  address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
+  // Atendimento
+  service_radius_km: number | null;
+  serves_at_business_address: boolean;
+  serves_at_customer_location: boolean;
+  serves_remotely: boolean;
 }>;
 
 
