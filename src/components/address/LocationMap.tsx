@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from "react";
 import { MapPin, ExternalLink } from "lucide-react";
-import { loadGoogleMaps, hasGoogleMapsKey } from "@/lib/googleMapsLoader";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -11,100 +9,18 @@ interface Props {
 }
 
 function buildOsmUrl(lat: number, lng: number) {
-  // OpenStreetMap embed: free, no API key, reliable fallback
+  // OpenStreetMap embed: free, no API key, works everywhere
   const delta = 0.02;
   const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
   return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lng}`;
 }
 
 export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Props) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const markerRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const circleRef = useRef<any>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-
   const openInGoogleMaps = () => {
     if (latitude == null || longitude == null) return;
     const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
-
-  useEffect(() => {
-    if (!hasGoogleMapsKey || latitude == null || longitude == null) {
-      setStatus("error");
-      return;
-    }
-    let cancelled = false;
-    const timeout = window.setTimeout(() => {
-      if (!cancelled) setStatus("error");
-    }, 8000);
-
-    loadGoogleMaps()
-      .then((g) => {
-        if (cancelled || !ref.current) return;
-        window.clearTimeout(timeout);
-        const pos = { lat: latitude, lng: longitude };
-        if (!mapRef.current) {
-          mapRef.current = new g.maps.Map(ref.current, {
-            center: pos,
-            zoom: 14,
-            disableDefaultUI: true,
-            zoomControl: true,
-            gestureHandling: "cooperative",
-          });
-        } else {
-          mapRef.current.setCenter(pos);
-        }
-        if (markerRef.current) markerRef.current.setMap(null);
-        markerRef.current = new g.maps.Marker({ position: pos, map: mapRef.current });
-        if (circleRef.current) circleRef.current.setMap(null);
-        if (radiusKm && radiusKm > 0) {
-          circleRef.current = new g.maps.Circle({
-            center: pos,
-            radius: radiusKm * 1000,
-            map: mapRef.current,
-            fillColor: "#0759F8",
-            fillOpacity: 0.08,
-            strokeColor: "#0759F8",
-            strokeOpacity: 0.5,
-            strokeWeight: 1,
-          });
-          mapRef.current.fitBounds(circleRef.current.getBounds());
-        }
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
-      });
-
-    // Watch for Google's injected error UI and force fallback
-    let observer: MutationObserver | null = null;
-    if (ref.current) {
-      observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (mutation.type === "childList") {
-            const hasGoogleError = ref.current?.querySelector(
-              ".gm-err-container, .gm-err-content, [src*='maps.googleapis.com/maps/api/js/Error']"
-            );
-            if (hasGoogleError && !cancelled) {
-              setStatus("error");
-            }
-          }
-        }
-      });
-      observer.observe(ref.current, { childList: true, subtree: true });
-    }
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timeout);
-      observer?.disconnect();
-    };
-  }, [latitude, longitude, radiusKm]);
 
   if (latitude == null || longitude == null) {
     return (
@@ -118,48 +34,37 @@ export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Pro
     );
   }
 
-  if (status === "error") {
-    return (
-      <div className="space-y-3">
-        <div
-          className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-muted/30"
-          style={{ height }}
-        >
-          <iframe
-            title="Mapa de localização"
-            src={buildOsmUrl(latitude, longitude)}
-            className="h-full w-full"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            Mapa alternativo exibido enquanto o Google Maps está indisponível.
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={openInGoogleMaps}
-            className="h-8 shrink-0 gap-1.5 rounded-full border-primary/30 text-xs font-medium text-primary hover:bg-primary/5"
-          >
-            <ExternalLink size={12} aria-hidden="true" />
-            Google Maps
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-border/70" style={{ height }}>
-      {status === "loading" && (
-        <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center bg-muted/50 text-xs text-muted-foreground">
-          Carregando mapa…
-        </div>
-      )}
-      <div ref={ref} className="h-full w-full" />
+    <div className="space-y-3">
+      <div
+        className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-muted/30"
+        style={{ height }}
+      >
+        <iframe
+          title="Mapa de localização"
+          src={buildOsmUrl(latitude, longitude)}
+          className="h-full w-full"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">
+          {radiusKm && radiusKm > 0
+            ? `Área de atendimento aproximada de ${radiusKm} km.`
+            : "Localização aproximada do endereço cadastrado."}
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={openInGoogleMaps}
+          className="h-8 shrink-0 gap-1.5 rounded-full border-primary/30 text-xs font-medium text-primary hover:bg-primary/5"
+        >
+          <ExternalLink size={12} aria-hidden="true" />
+          Abrir no Google Maps
+        </Button>
+      </div>
     </div>
   );
 }
