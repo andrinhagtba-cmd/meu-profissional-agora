@@ -63,13 +63,24 @@ async function resolveMedia(
 }
 
 export async function getSettings(): Promise<SystemSettings> {
-  const { data, error } = await supabase
+  // Try the privileged table first (admins). Fall back to the public_branding
+  // view for anonymous / non-admin users, which exposes only public fields.
+  let row: (Partial<SystemSettings> & Record<string, unknown>) = {};
+  const priv = await supabase
     .from("system_settings")
     .select("*")
     .eq("singleton", true)
     .maybeSingle();
-  if (error) throw error;
-  const row = (data ?? {}) as Partial<SystemSettings> & Record<string, unknown>;
+  if (priv.data) {
+    row = priv.data as unknown as typeof row;
+  } else {
+    const pub = await supabase
+      .from("public_branding" as never)
+      .select("*")
+      .maybeSingle();
+    if (pub.error && priv.error) throw priv.error;
+    row = (pub.data ?? {}) as typeof row;
+  }
   const mediaMap = await resolveMedia([
     (row.logo_light_media_id as string | null) ?? null,
     (row.logo_dark_media_id as string | null) ?? null,
