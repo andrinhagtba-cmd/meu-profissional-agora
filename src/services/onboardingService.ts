@@ -123,7 +123,7 @@ export async function saveOnboarding(
   if (Object.keys(payload).length === 0) return;
   const { error } = await supabase
     .from("professional_profiles")
-    .update(payload)
+    .update(payload as never)
     .eq("user_id", userId);
   if (error) throw error;
 }
