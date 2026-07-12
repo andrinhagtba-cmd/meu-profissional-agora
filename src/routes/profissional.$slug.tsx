@@ -36,9 +36,11 @@ import { toast } from "sonner";
 import { professionals } from "@/data/professionals";
 import {
   getRelatedProfessionals,
-  registerWhatsAppLead,
 } from "@/services/mockApi";
 import { listApprovedReviewsBySlug, getProfessionalBySlug, type PublicReview } from "@/services/professionalService";
+import { buildWhatsAppUrl, formatBrazilPhone, normalizeWhatsAppPhone } from "@/lib/whatsapp";
+import { useState } from "react";
+import { Copy } from "lucide-react";
 
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
