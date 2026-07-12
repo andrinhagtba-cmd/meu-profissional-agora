@@ -1032,86 +1032,146 @@ export type Database = {
       }
       professional_profiles: {
         Row: {
+          address_complement: string | null
+          address_number: string | null
+          address_reference: string | null
           availability_status: Database["public"]["Enums"]["availability_status"]
           avatar_media_id: string | null
           average_rating: number
           business_name: string | null
           city: string | null
+          country: string | null
           cover_media_id: string | null
           created_at: string
           description: string | null
           emergency: boolean
+          facebook_url: string | null
+          formatted_address: string | null
+          google_place_id: string | null
           id: string
+          instagram_url: string | null
+          instagram_username: string | null
           is_featured: boolean
+          latitude: number | null
+          longitude: number | null
+          neighborhood: string | null
+          postal_code: string | null
           professional_name: string | null
           profile_status: Database["public"]["Enums"]["profile_status"]
+          public_address_visibility: Database["public"]["Enums"]["address_visibility"]
           response_time: string | null
           reviews_count: number
           search_tags: string[] | null
+          serves_at_business_address: boolean
+          serves_at_customer_location: boolean
+          serves_remotely: boolean
+          service_radius_km: number | null
           service_types: Database["public"]["Enums"]["service_type"][]
           slug: string | null
           source: string
           starting_price: number | null
           state: string | null
+          street: string | null
           updated_at: string
           user_id: string | null
           verification_status: Database["public"]["Enums"]["verification_status"]
+          website_url: string | null
           whatsapp: string | null
           years_experience: number | null
         }
         Insert: {
+          address_complement?: string | null
+          address_number?: string | null
+          address_reference?: string | null
           availability_status?: Database["public"]["Enums"]["availability_status"]
           avatar_media_id?: string | null
           average_rating?: number
           business_name?: string | null
           city?: string | null
+          country?: string | null
           cover_media_id?: string | null
           created_at?: string
           description?: string | null
           emergency?: boolean
+          facebook_url?: string | null
+          formatted_address?: string | null
+          google_place_id?: string | null
           id?: string
+          instagram_url?: string | null
+          instagram_username?: string | null
           is_featured?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          neighborhood?: string | null
+          postal_code?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
+          public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
           response_time?: string | null
           reviews_count?: number
           search_tags?: string[] | null
+          serves_at_business_address?: boolean
+          serves_at_customer_location?: boolean
+          serves_remotely?: boolean
+          service_radius_km?: number | null
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
           starting_price?: number | null
           state?: string | null
+          street?: string | null
           updated_at?: string
           user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
+          website_url?: string | null
           whatsapp?: string | null
           years_experience?: number | null
         }
         Update: {
+          address_complement?: string | null
+          address_number?: string | null
+          address_reference?: string | null
           availability_status?: Database["public"]["Enums"]["availability_status"]
           avatar_media_id?: string | null
           average_rating?: number
           business_name?: string | null
           city?: string | null
+          country?: string | null
           cover_media_id?: string | null
           created_at?: string
           description?: string | null
           emergency?: boolean
+          facebook_url?: string | null
+          formatted_address?: string | null
+          google_place_id?: string | null
           id?: string
+          instagram_url?: string | null
+          instagram_username?: string | null
           is_featured?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          neighborhood?: string | null
+          postal_code?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
+          public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
           response_time?: string | null
           reviews_count?: number
           search_tags?: string[] | null
+          serves_at_business_address?: boolean
+          serves_at_customer_location?: boolean
+          serves_remotely?: boolean
+          service_radius_km?: number | null
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
           starting_price?: number | null
           state?: string | null
+          street?: string | null
           updated_at?: string
           user_id?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
+          website_url?: string | null
           whatsapp?: string | null
           years_experience?: number | null
         }
@@ -2036,6 +2096,11 @@ export type Database = {
     }
     Enums: {
       account_status: "active" | "suspended" | "pending"
+      address_visibility:
+        | "hidden"
+        | "city_state"
+        | "neighborhood_city_state"
+        | "full_address"
       app_role: "cliente" | "profissional" | "admin"
       availability_status: "available" | "busy" | "unavailable"
       notification_type:
@@ -2197,6 +2262,12 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["active", "suspended", "pending"],
+      address_visibility: [
+        "hidden",
+        "city_state",
+        "neighborhood_city_state",
+        "full_address",
+      ],
       app_role: ["cliente", "profissional", "admin"],
       availability_status: ["available", "busy", "unavailable"],
       notification_type: [
