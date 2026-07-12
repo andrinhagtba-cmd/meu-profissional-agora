@@ -48,7 +48,12 @@ function MeuPerfil() {
   }, [data]);
 
   const save = useMutation({
-    mutationFn: () => updateMyProfile(user!.id, form),
+    mutationFn: () => {
+      if (form.city && !isValidDfRegionName(form.city)) {
+        throw new Error("Selecione uma Região Administrativa válida do DF.");
+      }
+      return updateMyProfile(user!.id, { ...form, state: "DF" });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["profile"] });
       qc.invalidateQueries({ queryKey: ["painel"] });
