@@ -210,6 +210,26 @@ export type AdminProDetail = AdminProRow & {
   profile_email: string | null;
   profile_full_name: string | null;
   profile_avatar_url: string | null;
+  // Sociais
+  instagram_username: string | null;
+  instagram_url: string | null;
+  facebook_url: string | null;
+  website_url: string | null;
+  // Endereço
+  postal_code: string | null;
+  street: string | null;
+  address_number: string | null;
+  neighborhood: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  google_place_id: string | null;
+  formatted_address: string | null;
+  address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address" | null;
+  // Atendimento
+  service_radius_km: number | null;
+  serves_at_business_address: boolean;
+  serves_at_customer_location: boolean;
+  serves_remotely: boolean;
   counts: { services: number; portfolio: number; leads: number; reviews: number };
 };
 
@@ -221,7 +241,11 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       verification_status, is_featured, average_rating, reviews_count,
       created_at, whatsapp, description, years_experience, starting_price,
       response_time, profile_status, availability_status, emergency,
-      service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source
+      service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source,
+      instagram_username, instagram_url, facebook_url, website_url,
+      postal_code, street, address_number, neighborhood, latitude, longitude,
+      google_place_id, formatted_address, address_visibility,
+      service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely
     `)
     .eq("id", id)
     .maybeSingle();
@@ -245,6 +269,12 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
   ]);
 
   const prof = profileRes.data as { email?: string | null; full_name?: string | null; avatar_url?: string | null } | null;
+  const s = (k: string) => (p[k] as string | null) ?? null;
+  const n = (k: string) => {
+    const v = p[k];
+    return v == null ? null : Number(v);
+  };
+  const b = (k: string) => Boolean(p[k]);
 
   return {
     ...(p as unknown as AdminProRow),
@@ -252,20 +282,37 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     cover_media_id: coverMediaId,
     avatar_url: avatarMediaId ? urlMap.get(avatarMediaId) ?? null : null,
     cover_url: coverMediaId ? urlMap.get(coverMediaId) ?? null : null,
-    user_id: p.user_id as string,
-    years_experience: (p.years_experience as number | null) ?? null,
-    starting_price: (p.starting_price as number | null) ?? null,
-    response_time: (p.response_time as string | null) ?? null,
+    user_id: userId,
+    years_experience: n("years_experience"),
+    starting_price: n("starting_price"),
+    response_time: s("response_time"),
     profile_status: p.profile_status as string,
     availability_status: p.availability_status as string,
-    emergency: Boolean(p.emergency),
+    emergency: b("emergency"),
     service_types: (p.service_types as string[] | null) ?? null,
     search_tags: (p.search_tags as string[] | null) ?? null,
     updated_at: p.updated_at as string,
-    source: (p.source as string | null) ?? null,
+    source: s("source"),
     profile_email: prof?.email ?? null,
     profile_full_name: prof?.full_name ?? null,
     profile_avatar_url: prof?.avatar_url ?? null,
+    instagram_username: s("instagram_username"),
+    instagram_url: s("instagram_url"),
+    facebook_url: s("facebook_url"),
+    website_url: s("website_url"),
+    postal_code: s("postal_code"),
+    street: s("street"),
+    address_number: s("address_number"),
+    neighborhood: s("neighborhood"),
+    latitude: n("latitude"),
+    longitude: n("longitude"),
+    google_place_id: s("google_place_id"),
+    formatted_address: s("formatted_address"),
+    address_visibility: (p.address_visibility as AdminProDetail["address_visibility"]) ?? "city_state",
+    service_radius_km: n("service_radius_km"),
+    serves_at_business_address: b("serves_at_business_address"),
+    serves_at_customer_location: b("serves_at_customer_location"),
+    serves_remotely: b("serves_remotely"),
     counts: {
       services: svc.count ?? 0,
       portfolio: port.count ?? 0,
