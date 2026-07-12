@@ -22,6 +22,7 @@ import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { ProfessionalCard } from "@/components/shared/ProfessionalCard";
 import { RatingStars } from "@/components/shared/RatingStars";
+import { PublicPortfolioGrid } from "@/components/portfolio/PublicPortfolioGrid";
 import {
   Accordion,
   AccordionContent,
