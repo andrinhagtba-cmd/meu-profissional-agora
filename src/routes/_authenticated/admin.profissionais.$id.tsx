@@ -188,66 +188,88 @@ function AdminProDetailPage() {
       </div>
 
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-float">
-        <div
-          className="h-44 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_52%,var(--orange)))] bg-cover bg-center"
-          style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
-        />
-        {!pro.cover_url && (
-          <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.55),transparent_25%),radial-gradient(circle_at_78%_30%,rgba(255,255,255,0.34),transparent_28%)]" />
-        )}
-        <button
-          type="button"
-          onClick={() => coverInputRef.current?.click()}
-          disabled={uploading === "cover"}
-          className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/45 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur transition hover:bg-black/60 disabled:opacity-70"
-        >
-          {uploading === "cover" ? <Loader2 size={13} className="animate-spin" /> : <ImagePlus size={13} />}
-          {pro.cover_url ? "Alterar capa" : "Adicionar capa"}
-        </button>
+        {/* Capa limpa: sem texto, gradiente sutil apenas para profundidade */}
+        <div className="relative h-52 w-full overflow-hidden sm:h-60">
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-[1.02]"
+            style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
+          />
+          {!pro.cover_url && (
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_52%,var(--orange)))]" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
+          <button
+            type="button"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={uploading === "cover"}
+            className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-3.5 py-2 text-xs font-semibold text-foreground shadow-sm backdrop-blur transition hover:bg-white disabled:opacity-70"
+          >
+            {uploading === "cover" ? <Loader2 size={13} className="animate-spin text-primary" /> : <ImagePlus size={13} className="text-primary" />}
+            {pro.cover_url ? "Alterar capa" : "Adicionar capa"}
+          </button>
+        </div>
+
+        {/* Card de perfil premium abaixo da capa, sem sobrepor a imagem */}
         <div className="relative px-5 pb-6 sm:px-7">
-          <div className="-mt-16 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-              <div className="group relative h-28 w-28 shrink-0">
-                {pro.avatar_url ? (
-                  <img src={pro.avatar_url} alt={displayName} className="h-28 w-28 rounded-full border-4 border-card object-cover shadow-float" />
-                ) : (
-                  <InitialsAvatar name={displayName} className="h-28 w-28 border-4 border-card text-3xl shadow-float" />
-                )}
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div className="group relative -mt-14 h-28 w-28 shrink-0 sm:-mt-16 sm:h-32 sm:w-32">
+                <div className="h-28 w-28 rounded-full border-4 border-card bg-card p-1 shadow-float sm:h-32 sm:w-32">
+                  {pro.avatar_url ? (
+                    <img src={pro.avatar_url} alt={displayName} className="h-full w-full rounded-full object-cover" />
+                  ) : (
+                    <InitialsAvatar name={displayName} className="h-full w-full rounded-full text-3xl" />
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={() => avatarInputRef.current?.click()}
                   disabled={uploading === "avatar"}
                   aria-label={pro.avatar_url ? "Alterar avatar" : "Adicionar avatar"}
-                  className="absolute bottom-1 right-1 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-card bg-primary text-white shadow-float transition hover:bg-primary/90 disabled:opacity-70"
+                  className="absolute bottom-2 right-2 inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-card bg-primary text-white shadow-float transition hover:bg-primary/90 disabled:opacity-70"
                 >
                   {uploading === "avatar" ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
                 </button>
               </div>
-              <div className="pb-1">
-                <div className="mb-2 flex flex-wrap items-center gap-2">
+              <div className="pt-1 sm:pt-3">
+                <div className="mb-2.5 flex flex-wrap items-center gap-2">
                   <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
                     {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
                   </StatusPill>
                   <StatusPill tone={pro.profile_status === "published" ? "success" : pro.profile_status === "archived" ? "danger" : "warning"}>
                     {PROFILE_LABEL[pro.profile_status] ?? pro.profile_status}
                   </StatusPill>
-                  {pro.is_featured && <span className="inline-flex items-center gap-1 rounded-full bg-orange/10 px-2 py-0.5 text-[11px] font-bold text-orange"><Star size={12} className="fill-orange" /> Destaque</span>}
+                  {pro.is_featured && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-orange/10 px-2.5 py-1 text-[11px] font-bold text-orange">
+                      <Star size={12} className="fill-orange" /> Destaque
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-3xl font-extrabold tracking-normal text-foreground sm:text-4xl">{displayName}</h1>
-                  {pro.verification_status === "approved" && <BadgeCheck size={24} className="text-primary" />}
+                  <h1 className="font-display text-2xl font-extrabold tracking-normal text-foreground sm:text-3xl">{displayName}</h1>
+                  {pro.verification_status === "approved" && <BadgeCheck size={22} className="text-primary" />}
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  {pro.business_name && pro.business_name !== pro.professional_name && <span className="inline-flex items-center gap-1.5"><Building2 size={14} /> {pro.business_name}</span>}
-                  {pro.city && <span className="inline-flex items-center gap-1.5"><MapPin size={14} /> {pro.city}/{pro.state}</span>}
-                  <span className="inline-flex items-center gap-1.5"><CalendarDays size={14} /> {new Date(pro.created_at).toLocaleDateString("pt-BR")}</span>
+                <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                  {pro.business_name && pro.business_name !== pro.professional_name && (
+                    <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/60 px-2 py-1">
+                      <Building2 size={14} /> {pro.business_name}
+                    </span>
+                  )}
+                  {pro.city && (
+                    <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/60 px-2 py-1">
+                      <MapPin size={14} /> {pro.city}/{pro.state}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/60 px-2 py-1">
+                    <CalendarDays size={14} /> {new Date(pro.created_at).toLocaleDateString("pt-BR")}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pb-1">
+            <div className="flex flex-wrap gap-2 pt-1 lg:pt-3">
               {publicPath && (
-                <Button variant="outline" className="rounded-full bg-card/90" onClick={copyPublicLink}>
+                <Button variant="outline" className="rounded-full bg-card" onClick={copyPublicLink}>
                   <Copy size={15} /> Copiar link
                 </Button>
               )}
@@ -256,7 +278,7 @@ function AdminProDetailPage() {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-full bg-card/90"><MoreHorizontal size={16} /></Button>
+                  <Button variant="outline" size="icon" className="rounded-full bg-card"><MoreHorizontal size={16} /></Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-60">
                   <DropdownMenuLabel>Ações administrativas</DropdownMenuLabel>
@@ -276,7 +298,8 @@ function AdminProDetailPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {/* KPIs premium */}
+          <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <KPI icon={<BriefcaseBusiness size={18} />} label="Serviços" value={pro.counts.services} hint="ofertas vinculadas" />
             <KPI icon={<GalleryHorizontalEnd size={18} />} label="Portfólio" value={pro.counts.portfolio} hint="provas visuais" />
             <KPI icon={<Sparkles size={18} />} label="Leads" value={pro.counts.leads} hint="oportunidades" />
