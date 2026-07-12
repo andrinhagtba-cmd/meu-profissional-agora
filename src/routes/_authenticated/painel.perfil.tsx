@@ -205,22 +205,21 @@ function MeuPerfil() {
               </div>
               <div className="grid gap-5 sm:grid-cols-[1fr_120px]">
                 <div>
-                  <Label htmlFor="p-city" className="font-semibold">Cidade</Label>
-                  <Input
+                  <Label htmlFor="p-city" className="font-semibold">Região Administrativa (DF)</Label>
+                  <DfRegionCombobox
                     id="p-city"
                     value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    className="mt-2 h-12 rounded-xl"
+                    onChange={(name) => setForm({ ...form, city: name, state: "DF" })}
                   />
                 </div>
                 <div>
                   <Label htmlFor="p-state" className="font-semibold">Estado</Label>
                   <Input
                     id="p-state"
-                    value={form.state}
-                    onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase().slice(0, 2) })}
-                    maxLength={2}
-                    className="mt-2 h-12 rounded-xl uppercase"
+                    value="DF"
+                    readOnly
+                    disabled
+                    className="mt-2 h-12 rounded-xl uppercase bg-muted"
                   />
                 </div>
               </div>
