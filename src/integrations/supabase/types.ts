@@ -1055,6 +1055,8 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           neighborhood: string | null
+          onboarding_completed_at: string | null
+          onboarding_step: number
           postal_code: string | null
           professional_name: string | null
           profile_status: Database["public"]["Enums"]["profile_status"]
@@ -1103,6 +1105,8 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           neighborhood?: string | null
+          onboarding_completed_at?: string | null
+          onboarding_step?: number
           postal_code?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
@@ -1151,6 +1155,8 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           neighborhood?: string | null
+          onboarding_completed_at?: string | null
+          onboarding_step?: number
           postal_code?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
