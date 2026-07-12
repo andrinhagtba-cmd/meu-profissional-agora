@@ -205,13 +205,29 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             </Field>
           </div>
 
-          <Field label="Especialidades (separadas por vírgula)">
-            <Input
-              value={form.service_types_text}
-              onChange={(e) => set("service_types_text", e.target.value)}
-              placeholder="Pintura, Reforma, Elétrica"
-            />
+          <Field label="Tipos de atendimento">
+            <div className="flex flex-wrap gap-2">
+              {(["residencial", "empresarial", "online"] as const).map((t) => {
+                const list = form.service_types_text.split(",").map((s) => s.trim()).filter(Boolean);
+                const active = list.includes(t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => {
+                      const next = active ? list.filter((x) => x !== t) : [...list, t];
+                      set("service_types_text", next.join(", "));
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-sm border transition ${active ? "bg-primary text-primary-foreground border-primary" : "bg-background hover:bg-muted border-input"}`}
+                  >
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">Categorias/especialidades são gerenciadas na aba Serviços.</p>
           </Field>
+
 
           <Separator />
 
