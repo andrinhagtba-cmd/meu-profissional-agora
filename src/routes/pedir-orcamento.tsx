@@ -25,7 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { categories, cities } from "@/data/categories";
+import { categories } from "@/data/categories";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { findDfRegionByName, isValidDfRegionName } from "@/data/dfRegions";
 import { submitQuoteRequest } from "@/services/mockApi";
 import { submitQuoteToDb } from "@/services/clientService";
 import { useAuth } from "@/hooks/use-auth";
