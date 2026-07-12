@@ -434,26 +434,22 @@ function PedirOrcamentoPage() {
               <div className="space-y-5">
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="q-cidade" className="font-semibold">Cidade</Label>
-                    <Select value={form.cidade} onValueChange={(v) => set("cidade", v)}>
-                      <SelectTrigger id="q-cidade" className="mt-2 h-12! w-full rounded-xl">
-                        <SelectValue placeholder="Escolha a cidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((c) => (
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="q-cidade" className="font-semibold">Região Administrativa</Label>
+                    <DfRegionCombobox
+                      id="q-cidade"
+                      value={form.cidade}
+                      onChange={(v) => set("cidade", v)}
+                      ariaInvalid={!!errors.cidade}
+                    />
                     {errors.cidade && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.cidade}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="q-bairro" className="font-semibold">Bairro (opcional)</Label>
+                    <Label htmlFor="q-bairro" className="font-semibold">Bairro, setor ou localidade (opcional)</Label>
                     <Input
                       id="q-bairro"
                       value={form.bairro}
                       onChange={(e) => set("bairro", e.target.value)}
-                      placeholder="Ex.: Pinheiros"
+                      placeholder="Ex.: Asa Sul, P Norte, Vicente Pires, Setor O..."
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>
