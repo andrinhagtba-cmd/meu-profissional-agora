@@ -325,12 +325,8 @@ function ProfilePage() {
         </div>
       </section>
 
-      {/* Wrapper compatível com o restante da página */}
-      <div className="hidden">
-        <div className="container-page py-8">
 
-        </div>
-      </div>
+
 
 
       <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_340px]">
