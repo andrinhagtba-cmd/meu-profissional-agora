@@ -209,13 +209,6 @@ function Painel() {
               <KpiCard icon={<Briefcase />} label="Leads disponíveis" value={data?.leadsCount} loading={isLoading} to="/painel/leads" tone="blue" />
               <KpiCard icon={<MessageSquare />} label="Propostas enviadas" value={data?.proposalsCount} loading={isLoading} to="/painel/propostas" tone="emerald" />
               <KpiCard icon={<Star />} label="Avaliação média" value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"} loading={isLoading} tone="amber" />
-                icon={<Star />}
-                label="Avaliação média"
-                value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"}
-                loading={isLoading}
-                tone="amber"
-              />
-              <KpiCard icon={<Bell />} label="Notificações" value={data?.unread} loading={isLoading} to="/painel/notificacoes" tone="emerald" />
             </>
           ) : (
             <>
