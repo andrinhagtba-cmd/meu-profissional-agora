@@ -35,11 +35,11 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Entrar ou criar conta — ProConecta" },
+      { title: "Entrar ou criar conta" },
       {
         name: "description",
         content:
-          "Acesse sua conta ProConecta ou cadastre-se em minutos como cliente ou profissional verificado.",
+          "Acesse sua conta ou cadastre-se em minutos como cliente ou profissional verificado.",
       },
       { name: "robots", content: "noindex" },
     ],
