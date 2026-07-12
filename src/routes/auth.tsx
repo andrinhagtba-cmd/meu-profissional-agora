@@ -125,7 +125,7 @@ function AuthPage() {
               <div className="relative z-10 flex items-start justify-between p-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
                   <Sparkles size={14} className="text-orange" />
-                  ProConecta Premium
+                  {brandName ? `${brandName} Premium` : "Premium"}
                 </div>
                 <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
                   <ShieldCheck size={14} className="text-emerald-300" />
