@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cities } from "@/data/categories";
+import { DF_REGION_NAMES } from "@/data/dfRegions";
 import { getProfessionalsByCategory } from "@/services/mockApi";
 import {
   getCategoryBySlug,
