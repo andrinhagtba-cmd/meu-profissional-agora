@@ -231,6 +231,7 @@ function Painel() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {isProfissional ? (
               <>
+                <ActionCard to="/painel/orcamentos" title="Pedidos de orçamento" desc="Solicitações enviadas diretamente ao seu perfil." icon={<MessageSquare />} />
                 <ActionCard to="/painel/leads" title="Leads disponíveis" desc="Pedidos abertos onde você pode enviar propostas." icon={<Briefcase />} />
                 <ActionCard to="/painel/propostas" title="Minhas propostas" desc="Status das propostas e mensagens dos clientes." icon={<MessageSquare />} />
                 <ActionCard to="/painel/mensagens" title="Mensagens" desc="Converse com clientes após aceitar propostas." icon={<MessageSquare />} />
