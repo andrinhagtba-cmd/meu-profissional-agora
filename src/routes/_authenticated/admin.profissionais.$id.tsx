@@ -84,6 +84,9 @@ function AdminProDetailPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const router = useRouter();
   const qc = useQueryClient();
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
 
   const { data: pro, isLoading, error } = useQuery({
     queryKey: ["admin-pro-detail", id],
