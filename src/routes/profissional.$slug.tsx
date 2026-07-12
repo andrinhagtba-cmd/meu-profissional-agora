@@ -517,31 +517,20 @@ function ProfilePage() {
             <h2 id="portfolio" className="font-display text-xl font-bold text-foreground">
               Trabalhos recentes
             </h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {(dbMedia?.portfolio.length ?? 0) > 0
-                ? dbMedia!.portfolio.map((item) => (
-                    <figure key={item.id} className="overflow-hidden rounded-2xl border border-border bg-card">
-                      <div className="aspect-video overflow-hidden bg-secondary">
-                        {item.url ? (
-                          <img src={item.url} alt={item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
-                        ) : (
-                          <div className="grid h-full w-full place-items-center text-primary/40">
-                            <ImageIcon size={32} aria-hidden="true" />
-                          </div>
-                        )}
-                      </div>
-                      <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item.title ?? "Trabalho"}</figcaption>
-                    </figure>
-                  ))
-                : pro.portfolio.map((item: string) => (
-                    <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
-                      <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
-                        <ImageIcon size={32} aria-hidden="true" />
-                      </div>
-                      <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
-                    </figure>
-                  ))}
-            </div>
+            {(dbMedia?.portfolio.length ?? 0) > 0 ? (
+              <PublicPortfolioGrid items={dbMedia!.portfolio} />
+            ) : (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {pro.portfolio.map((item: string) => (
+                  <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
+                    <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
+                      <ImageIcon size={32} aria-hidden="true" />
+                    </div>
+                    <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
           </section>
 
           <section aria-labelledby="avaliacoes">
