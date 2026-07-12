@@ -162,6 +162,7 @@ function PedirOrcamentoPage() {
         bairro: form.bairro,
         urgencia: form.urgencia,
         professionalSlug: profissionalParam,
+        serviceId: form.servicoId || null,
       });
     },
     onSuccess: (res) => setProtocol(res.protocol ?? null),
@@ -175,9 +176,14 @@ function PedirOrcamentoPage() {
   const validateStep = (): boolean => {
     const next: Partial<Record<keyof FormState, string>> = {};
     if (step === 0) {
-      if (!form.categoria) next.categoria = "Escolha uma categoria.";
-      if (!form.servico.trim()) next.servico = "Descreva o serviço que você precisa.";
+      if (targetPro && proServices.length > 0) {
+        if (!form.servicoId) next.servico = "Escolha um serviço deste profissional.";
+      } else {
+        if (!form.categoria) next.categoria = "Escolha uma categoria.";
+        if (!form.servico.trim()) next.servico = "Descreva o serviço que você precisa.";
+      }
     }
+
     if (step === 1) {
       if (form.descricao.trim().length < 20)
         next.descricao = "Conte um pouco mais (mínimo de 20 caracteres) para receber orçamentos precisos.";
