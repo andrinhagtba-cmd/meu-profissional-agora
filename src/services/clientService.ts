@@ -319,7 +319,12 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
     validatedServiceId = input.serviceId;
   }
 
-  const [city, state] = input.cidade.split(",").map((s) => s.trim());
+  // Valida e normaliza a Região Administrativa do DF.
+  const { findDfRegionByName } = await import("@/data/dfRegions");
+  const region = findDfRegionByName(input.cidade);
+  if (!region) {
+    throw new Error("Selecione uma Região Administrativa válida do Distrito Federal.");
+  }
 
   const { data, error } = await supabase
     .from("quote_requests")
@@ -329,9 +334,9 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
       service_id: validatedServiceId,
       title: input.servico,
       description: input.descricao,
-      city: city || input.cidade,
-      state: state || "SP",
-      neighborhood: input.bairro || null,
+      city: region.name,
+      state: "DF",
+      neighborhood: input.bairro?.trim() || null,
       urgency: input.urgencia as
         | "hoje"
         | "esta-semana"
