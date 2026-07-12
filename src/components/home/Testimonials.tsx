@@ -59,17 +59,17 @@ export function Testimonials() {
   };
 
   return (
-    <section className="bg-card py-16 sm:py-20" aria-labelledby="depoimentos">
-      <div className="container-page grid gap-8 lg:grid-cols-[1fr_360px]">
-        <div>
+    <section className="overflow-hidden bg-card py-16 sm:py-20" aria-labelledby="depoimentos">
+      <div className="container-page grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0">
           <h2 id="depoimentos" className="font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             O que nossos clientes dizem
           </h2>
-          <div className="mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:overflow-visible">
+          <div className="mt-8 grid w-full min-w-0 max-w-full gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
               <figure
                 key={t.name}
-                className="flex w-[85%] shrink-0 snap-start flex-col rounded-3xl border border-border bg-background p-6 shadow-card sm:w-96 lg:w-auto"
+                className="flex min-w-0 flex-col rounded-3xl border border-border bg-background p-6 shadow-card"
               >
                 <Quote size={22} className="text-primary" aria-hidden="true" />
                 <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-foreground">
@@ -98,7 +98,7 @@ export function Testimonials() {
             Conteúdo prático sobre casa, manutenção e contratação, direto no seu e-mail.
           </p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-3" noValidate>
-            <div className="flex gap-2">
+            <div className="flex min-w-0 gap-2">
               <label htmlFor="newsletter-email" className="sr-only">
                 Digite seu e-mail
               </label>
