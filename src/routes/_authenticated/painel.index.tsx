@@ -91,9 +91,13 @@ function Painel() {
       ]);
       const rolesList = (roles.data ?? []).map((r) => r.role as string);
       const isPro = rolesList.includes("profissional");
-      const [leadsCount, proposalsCount] = isPro && pro
-        ? await Promise.all([countLeadsAvailable(), countMyProposals(pro.id)])
-        : [0, 0];
+      const [leadsCount, proposalsCount, directUnread] = isPro && pro
+        ? await Promise.all([
+            countLeadsAvailable(),
+            countMyProposals(pro.id),
+            countProUnreadDirectQuotes().catch(() => 0),
+          ])
+        : [0, 0, 0];
       return {
         profile: profile.data,
         roles: rolesList,
@@ -103,6 +107,7 @@ function Painel() {
         pro,
         leadsCount,
         proposalsCount,
+        directUnread,
         recentQuotes: recentQuotes.slice(0, 4),
         notifications: notifications.slice(0, 4),
         conversations: conversations.slice(0, 4),
