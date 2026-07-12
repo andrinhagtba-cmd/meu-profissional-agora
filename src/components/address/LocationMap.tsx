@@ -10,6 +10,13 @@ interface Props {
   height?: number;
 }
 
+function buildOsmUrl(lat: number, lng: number) {
+  // OpenStreetMap embed: free, no API key, reliable fallback
+  const delta = 0.02;
+  const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lng}`;
+}
+
 export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +34,7 @@ export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Pro
   };
 
   useEffect(() => {
-    if (!hasGoogleMapsKey || latitude == null || longitude == null || !ref.current) {
+    if (!hasGoogleMapsKey || latitude == null || longitude == null) {
       setStatus("error");
       return;
     }
@@ -74,13 +81,32 @@ export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Pro
         if (!cancelled) setStatus("error");
       });
 
+    // Watch for Google's injected error UI and force fallback
+    let observer: MutationObserver | null = null;
+    if (ref.current) {
+      observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type === "childList") {
+            const hasGoogleError = ref.current?.querySelector(
+              ".gm-err-container, .gm-err-content, [src*='maps.googleapis.com/maps/api/js/Error']"
+            );
+            if (hasGoogleError && !cancelled) {
+              setStatus("error");
+            }
+          }
+        }
+      });
+      observer.observe(ref.current, { childList: true, subtree: true });
+    }
+
     return () => {
       cancelled = true;
       window.clearTimeout(timeout);
+      observer?.disconnect();
     };
   }, [latitude, longitude, radiusKm]);
 
-  if (!hasGoogleMapsKey || latitude == null || longitude == null) {
+  if (latitude == null || longitude == null) {
     return (
       <div
         className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border/70 bg-muted/40 p-4 text-center text-xs text-muted-foreground"
@@ -94,25 +120,34 @@ export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Pro
 
   if (status === "error") {
     return (
-      <div
-        className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/70 bg-muted/40 p-5 text-center"
-        style={{ height }}
-      >
-        <MapPin size={22} className="text-primary" aria-hidden="true" />
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">Não foi possível carregar o mapa</p>
-          <p className="text-xs text-muted-foreground">A visualização pode estar indisponível no momento.</p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={openInGoogleMaps}
-          className="h-9 gap-1.5 rounded-full border-primary/30 text-xs font-medium text-primary hover:bg-primary/5"
+      <div className="space-y-3">
+        <div
+          className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-muted/30"
+          style={{ height }}
         >
-          <ExternalLink size={13} aria-hidden="true" />
-          Abrir no Google Maps
-        </Button>
+          <iframe
+            title="Mapa de localização"
+            src={buildOsmUrl(latitude, longitude)}
+            className="h-full w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">
+            Mapa alternativo exibido enquanto o Google Maps está indisponível.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={openInGoogleMaps}
+            className="h-8 shrink-0 gap-1.5 rounded-full border-primary/30 text-xs font-medium text-primary hover:bg-primary/5"
+          >
+            <ExternalLink size={12} aria-hidden="true" />
+            Google Maps
+          </Button>
+        </div>
       </div>
     );
   }
