@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { getMediaUrls, type MediaRef } from "./mediaService";
 import { categories as staticCategories } from "@/data/categories";
 import type { Category, CategoryFaq } from "@/types";
@@ -27,7 +27,7 @@ async function fetchServiceNames(
 ): Promise<Map<string, string[]>> {
   const out = new Map<string, string[]>();
   if (!categoryIds.length) return out;
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublic
     .from("services")
     .select("category_id, name, display_order")
     .in("category_id", categoryIds)
@@ -53,7 +53,7 @@ async function fetchCategoryStats(
 ): Promise<Map<string, CategoryStats>> {
   const out = new Map<string, CategoryStats>();
   if (!categoryIds.length) return out;
-  const { data: services } = await supabase
+  const { data: services } = await supabasePublic
     .from("services")
     .select("id, category_id")
     .in("category_id", categoryIds);
@@ -63,7 +63,7 @@ async function fetchCategoryStats(
   }
   const serviceIds = Array.from(serviceToCategory.keys());
   if (!serviceIds.length) return out;
-  const { data: links } = await supabase
+  const { data: links } = await supabasePublic
     .from("professional_services")
     .select("service_id, professional_id")
     .in("service_id", serviceIds);
@@ -81,7 +81,7 @@ async function fetchCategoryStats(
     catToPros.set(catId, set);
   }
   if (!proIds.size) return out;
-  const { data: pros } = await supabase
+  const { data: pros } = await supabasePublic
     .from("professional_profiles")
     .select("id, starting_price, average_rating")
     .in("id", Array.from(proIds));
@@ -149,7 +149,7 @@ function toVM(
 }
 
 export async function listCategories(): Promise<CategoryVM[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublic
     .from("categories")
     .select(
       "id, slug, name, description, badge_text, badge_active, image_alt, image_url, display_order, card_media:card_media_id(bucket_name, object_path), cover_media:cover_media_id(bucket_name, object_path)",

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { getMediaUrl } from "./mediaService";
 
 export type SystemSettings = {
@@ -48,7 +49,7 @@ async function resolveMedia(
 ): Promise<Map<string, string>> {
   const list = ids.filter(Boolean) as string[];
   if (!list.length) return new Map();
-  const { data } = await supabase
+  const { data } = await supabasePublic
     .from("media_assets")
     .select("id, bucket_name, object_path")
     .in("id", list);
@@ -62,21 +63,25 @@ async function resolveMedia(
   return map;
 }
 
-export async function getSettings(): Promise<SystemSettings> {
-  // Run both queries in parallel: public_branding is readable by anon and
-  // usually resolves fastest; system_settings works for admins. Whichever
-  // returns useful data first wins, and we don't wait serially.
+export async function getSettings(admin = false): Promise<SystemSettings> {
+  // Public pages must never use the session-aware browser client here: when a
+  // persisted JWT expires, Supabase rejects even public reads with 401.
   let row: (Partial<SystemSettings> & Record<string, unknown>) = {};
-  const [priv, pub] = await Promise.all([
-    supabase.from("system_settings").select("*").eq("singleton", true).maybeSingle(),
-    supabase.from("public_branding" as never).select("*").maybeSingle(),
-  ]);
-  if (priv.data) {
-    row = priv.data as unknown as typeof row;
-  } else if (pub.data) {
-    row = pub.data as typeof row;
-  } else if (priv.error && pub.error) {
-    throw priv.error;
+  if (admin) {
+    const { data, error } = await supabase
+      .from("system_settings")
+      .select("*")
+      .eq("singleton", true)
+      .maybeSingle();
+    if (error) throw error;
+    row = (data ?? {}) as unknown as typeof row;
+  } else {
+    const { data, error } = await supabasePublic
+      .from("public_branding" as never)
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    row = (data ?? {}) as typeof row;
   }
   const mediaMap = await resolveMedia([
     (row.logo_light_media_id as string | null) ?? null,

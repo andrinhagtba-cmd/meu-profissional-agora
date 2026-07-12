@@ -3,7 +3,7 @@
 // campos que ainda não vivem no banco (portfólio, FAQs, certificações,
 // regiões, agenda, tipos de atendimento) a partir dos mocks alinhados por slug.
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { professionals as mockProfessionals } from "@/data/professionals";
 import { resolveMediaUrlsByIds } from "@/services/adminMediaService";
 import type { AttendanceType, Professional, SearchFilters } from "@/types";
@@ -179,7 +179,7 @@ async function resolveRowMedia(rows: DbRow[]): Promise<Map<string, string>> {
 }
 
 async function fetchAll(): Promise<Professional[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublic
     .from("professional_profiles")
     .select(SELECT)
     .eq("profile_status", "published")
@@ -204,7 +204,7 @@ export async function listFeaturedProfessionals(): Promise<Professional[]> {
 export async function getProfessionalBySlug(
   slug: string,
 ): Promise<Professional | undefined> {
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublic
     .from("professional_profiles")
     .select(SELECT)
     .eq("slug", slug)
@@ -320,7 +320,7 @@ export async function listApprovedReviewsBySlug(
   slug: string,
   limit = 30,
 ): Promise<PublicReview[]> {
-  const { data: pro, error: pErr } = await supabase
+  const { data: pro, error: pErr } = await supabasePublic
     .from("professional_profiles")
     .select("id")
     .eq("slug", slug)
@@ -335,7 +335,7 @@ export async function listApprovedReviewsByPro(
   proId: string,
   limit = 30,
 ): Promise<PublicReview[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabasePublic
     .from("reviews")
     .select("id, rating, comment, professional_reply, created_at")
     .eq("professional_id", proId)

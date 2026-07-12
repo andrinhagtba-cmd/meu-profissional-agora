@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 
 export type MediaRef = { bucket: string; path: string } | null | undefined;
 
@@ -18,7 +18,7 @@ export async function getMediaUrl(ref: MediaRef): Promise<string> {
   if (running) return running;
 
   const promise = (async () => {
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabasePublic.storage
       .from(ref.bucket)
       .createSignedUrl(ref.path, SIGN_TTL_SECONDS);
     if (error || !data?.signedUrl) return "";
@@ -53,7 +53,7 @@ export async function getMediaUrls(refs: MediaRef[]): Promise<string[]> {
   await Promise.all(
     Array.from(groups.entries()).map(async ([bucket, items]) => {
       const paths = items.map((i) => i.path);
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabasePublic.storage
         .from(bucket)
         .createSignedUrls(paths, SIGN_TTL_SECONDS);
       if (error || !data) return;

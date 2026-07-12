@@ -12,13 +12,27 @@ export function useAuth(): AuthState {
   const [state, setState] = useState<AuthState>({ session: null, user: null, loading: true });
 
   useEffect(() => {
+    let active = true;
+    const syncSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      let session = data.session;
+      const expiresAt = session?.expires_at ?? 0;
+      if (session && expiresAt * 1000 <= Date.now() + 60_000) {
+        const refreshed = await supabase.auth.refreshSession();
+        session = refreshed.data.session ?? null;
+        if (!session) await supabase.auth.signOut();
+      }
+      if (active) setState({ session, user: session?.user ?? null, loading: false });
+    };
+
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setState({ session, user: session?.user ?? null, loading: false });
     });
-    supabase.auth.getSession().then(({ data }) => {
-      setState({ session: data.session, user: data.session?.user ?? null, loading: false });
-    });
-    return () => sub.subscription.unsubscribe();
+    syncSession();
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return state;

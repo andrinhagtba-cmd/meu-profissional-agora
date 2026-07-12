@@ -145,7 +145,7 @@ function Page() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["system-settings"],
-    queryFn: getSettings,
+    queryFn: () => getSettings(true),
   });
   const [editing, setEditing] = useState<Provider | null>(null);
 
