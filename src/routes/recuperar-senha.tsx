@@ -10,7 +10,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 export const Route = createFileRoute("/recuperar-senha")({
   head: () => ({
     meta: [
-      { title: "Recuperar senha — ProConecta" },
+      { title: "Recuperar senha" },
       { name: "robots", content: "noindex" },
     ],
   }),
