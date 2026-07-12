@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { toast } from "sonner";
 import { BadgeCheck, ExternalLink, Eye, ImagePlus, Loader2, MapPin, MessageCircle, Save, Send, Undo2, UserCircle2, Zap } from "lucide-react";
 
