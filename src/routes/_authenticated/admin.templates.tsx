@@ -100,7 +100,7 @@ function Page() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["system-settings"],
-    queryFn: getSettings,
+    queryFn: () => getSettings(true),
   });
   const templates = data?.email_templates ?? {};
   const [activeKey, setActiveKey] = useState(TEMPLATES[0].key);

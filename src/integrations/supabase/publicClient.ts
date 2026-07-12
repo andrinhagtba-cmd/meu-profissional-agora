@@ -37,6 +37,7 @@ export const supabasePublic = createClient<Database>(SUPABASE_URL, SUPABASE_PUBL
     fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
   },
   auth: {
+    storageKey: "supabase-public-anon",
     storage: undefined,
     persistSession: false,
     autoRefreshToken: false,
