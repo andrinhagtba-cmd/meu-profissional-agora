@@ -118,12 +118,14 @@ function ProfilePage() {
         Serviços a partir de
       </p>
       <p className="mt-1 font-display text-3xl font-extrabold text-foreground">
-        R$ {pro.priceFrom}
+        {pro.priceFrom > 0 ? `R$ ${pro.priceFrom}` : "Sob consulta"}
       </p>
-      <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-        <Clock size={15} className="text-success" aria-hidden="true" />
-        Responde em até {pro.responseTime}
-      </div>
+      {pro.responseTime && pro.responseTime !== "—" && (
+        <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+          <Clock size={15} className="text-success" aria-hidden="true" />
+          Responde em até {pro.responseTime}
+        </div>
+      )}
       <div className="mt-5 space-y-3">
         <Button asChild className="h-12 w-full rounded-xl bg-orange font-semibold text-orange-foreground hover:bg-orange/90">
           <Link to="/pedir-orcamento" search={{ profissional: pro.slug } as never}>
