@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { loadGoogleMaps, hasGoogleMapsKey } from "@/lib/googleMapsLoader";
+import { MapPin, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   latitude: number | null;
@@ -8,64 +8,63 @@ interface Props {
   height?: number;
 }
 
+function buildOsmUrl(lat: number, lng: number) {
+  // OpenStreetMap embed: free, no API key, works everywhere
+  const delta = 0.02;
+  const bbox = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lng}`;
+}
+
 export function LocationMap({ latitude, longitude, radiusKm, height = 220 }: Props) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const markerRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const circleRef = useRef<any>(null);
+  const openInGoogleMaps = () => {
+    if (latitude == null || longitude == null) return;
+    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
-  useEffect(() => {
-    if (!hasGoogleMapsKey || latitude == null || longitude == null || !ref.current) return;
-    let cancelled = false;
-    loadGoogleMaps().then((g) => {
-      if (cancelled || !ref.current) return;
-      const pos = { lat: latitude, lng: longitude };
-      if (!mapRef.current) {
-        mapRef.current = new g.maps.Map(ref.current, {
-          center: pos,
-          zoom: 14,
-          disableDefaultUI: true,
-          zoomControl: true,
-          gestureHandling: "cooperative",
-        });
-      } else {
-        mapRef.current.setCenter(pos);
-      }
-      if (markerRef.current) markerRef.current.setMap(null);
-      markerRef.current = new g.maps.Marker({ position: pos, map: mapRef.current });
-      if (circleRef.current) circleRef.current.setMap(null);
-      if (radiusKm && radiusKm > 0) {
-        circleRef.current = new g.maps.Circle({
-          center: pos,
-          radius: radiusKm * 1000,
-          map: mapRef.current,
-          fillColor: "#0759F8",
-          fillOpacity: 0.08,
-          strokeColor: "#0759F8",
-          strokeOpacity: 0.5,
-          strokeWeight: 1,
-        });
-        mapRef.current.fitBounds(circleRef.current.getBounds());
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [latitude, longitude, radiusKm]);
-
-  if (!hasGoogleMapsKey || latitude == null || longitude == null) {
+  if (latitude == null || longitude == null) {
     return (
       <div
-        className="flex items-center justify-center rounded-2xl border border-dashed border-border/70 bg-muted/40 text-xs text-muted-foreground"
+        className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border/70 bg-muted/40 p-4 text-center text-xs text-muted-foreground"
         style={{ height }}
       >
+        <MapPin size={18} aria-hidden="true" />
         Selecione um endereço para visualizar no mapa.
       </div>
     );
   }
 
-  return <div ref={ref} className="w-full overflow-hidden rounded-2xl border border-border/70" style={{ height }} />;
+  return (
+    <div className="space-y-3">
+      <div
+        className="relative w-full overflow-hidden rounded-2xl border border-border/70 bg-muted/30"
+        style={{ height }}
+      >
+        <iframe
+          title="Mapa de localização"
+          src={buildOsmUrl(latitude, longitude)}
+          className="h-full w-full"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">
+          {radiusKm && radiusKm > 0
+            ? `Área de atendimento aproximada de ${radiusKm} km.`
+            : "Localização aproximada do endereço cadastrado."}
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={openInGoogleMaps}
+          className="h-8 shrink-0 gap-1.5 rounded-full border-primary/30 text-xs font-medium text-primary hover:bg-primary/5"
+        >
+          <ExternalLink size={12} aria-hidden="true" />
+          Abrir no Google Maps
+        </Button>
+      </div>
+    </div>
+  );
 }
