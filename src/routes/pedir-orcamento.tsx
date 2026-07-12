@@ -54,6 +54,7 @@ const STEPS = ["Serviço", "Detalhes", "Local e prazo", "Contato"];
 interface FormState {
   categoria: string;
   servico: string;
+  servicoId: string;
   descricao: string;
   fotos: string;
   cidade: string;
@@ -67,6 +68,7 @@ interface FormState {
 const initialForm: FormState = {
   categoria: "",
   servico: "",
+  servicoId: "",
   descricao: "",
   fotos: "",
   cidade: "",
@@ -76,6 +78,7 @@ const initialForm: FormState = {
   telefone: "",
   email: "",
 };
+
 
 function PedirOrcamentoPage() {
   const { categoria: categoriaParam, profissional: profissionalParam } = Route.useSearch();
