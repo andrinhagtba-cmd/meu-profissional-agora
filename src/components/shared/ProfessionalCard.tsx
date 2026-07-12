@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
+import { publicAddressLabel } from "@/lib/proAddress";
 import type { Professional } from "@/types";
 
 export function ProfessionalCard({ pro }: { pro: Professional }) {
