@@ -36,6 +36,7 @@ import {
   countMyProposals,
   getMyProProfile,
 } from "@/services/professionalDashboardService";
+import { countProUnreadDirectQuotes } from "@/services/proDirectQuoteService";
 import { listMyConversations } from "@/services/chatService";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
