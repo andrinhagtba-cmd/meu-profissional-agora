@@ -276,10 +276,10 @@ export type SubmitQuoteInput = {
   bairro?: string;
   urgencia: string;
   serviceType?: "residencial" | "empresarial" | "online";
+  professionalSlug?: string;
 };
 
 export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
-  // Resolve categoria por slug (opcional — pode ficar nulo).
   let categoryId: string | null = null;
   if (input.categoriaSlug) {
     const { data } = await supabase
@@ -290,7 +290,19 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
     categoryId = data?.id ?? null;
   }
 
-  // Cidade em "SP" ou "São Paulo, SP" — separa estado se vier junto.
+  // Se veio direcionado a um profissional específico, resolve o id + valida perfil ativo.
+  let selectedProId: string | null = null;
+  if (input.professionalSlug) {
+    const { data: pro } = await supabase
+      .from("professional_profiles")
+      .select("id, profile_status")
+      .eq("slug", input.professionalSlug)
+      .maybeSingle();
+    if (pro && pro.profile_status === "published") {
+      selectedProId = pro.id as string;
+    }
+  }
+
   const [city, state] = input.cidade.split(",").map((s) => s.trim());
 
   const { data, error } = await supabase
@@ -312,12 +324,17 @@ export async function submitQuoteToDb(userId: string, input: SubmitQuoteInput) {
         | "residencial"
         | "empresarial"
         | "online",
-      status: "open",
+      status: selectedProId ? "professional_selected" : "open",
+      selected_professional_id: selectedProId,
     })
     .select("id")
     .single();
   if (error) throw error;
-  return { id: data.id, protocol: `OR-${data.id.slice(0, 6).toUpperCase()}` };
+  return {
+    id: data.id,
+    protocol: `OR-${data.id.slice(0, 6).toUpperCase()}`,
+    directToProfessional: Boolean(selectedProId),
+  };
 }
 
 // --------------------- Helpers ---------------------
