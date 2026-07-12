@@ -168,7 +168,7 @@ function ProfilePage() {
             <span className="text-foreground">{pro.name}</span>
           </nav>
 
-          {/* Banner cinematográfico */}
+          {/* Banner auto-ajustável: imagem sempre completa, altura reduzida */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-muted to-accent/10 shadow-sm ring-1 ring-border">
             {dbMedia?.coverUrl ? (
               <>
@@ -179,17 +179,17 @@ function ProfilePage() {
                   style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
                 />
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-black/10" />
-                <div className="relative flex aspect-[21/9] w-full items-center justify-center max-[640px]:aspect-[16/9]">
+                <div className="relative flex w-full items-center justify-center px-4 py-5 sm:px-6 sm:py-6 lg:py-7">
                   <img
                     src={dbMedia.coverUrl}
                     alt={`Capa de ${pro.name}`}
-                    className="max-h-full max-w-full object-contain drop-shadow-2xl"
+                    className="max-h-[180px] w-auto max-w-full object-contain drop-shadow-2xl sm:max-h-[220px] lg:max-h-[260px]"
                     loading="eager"
                   />
                 </div>
               </>
             ) : (
-              <div className="aspect-[21/9] w-full max-[640px]:aspect-[16/9]" />
+              <div className="h-36 w-full sm:h-44 lg:h-52" />
             )}
 
             {/* Ações flutuantes no canto do banner */}
