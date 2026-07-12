@@ -34,7 +34,9 @@ export const Route = createFileRoute("/pedir-orcamento")({
   validateSearch: (search: Record<string, unknown>) => ({
     profissional: typeof search.profissional === "string" ? search.profissional : undefined,
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
+    servico: typeof search.servico === "string" ? search.servico : undefined,
   }),
+
   head: () => ({
     meta: [
       { title: "Pedir orçamento grátis" },
