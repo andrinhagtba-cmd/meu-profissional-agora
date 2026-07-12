@@ -1,5 +1,9 @@
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { Camera, ImagePlus, Loader2 } from "lucide-react";
+import { uploadAdminMedia } from "@/services/adminMediaService";
+import { updateProProfile } from "@/services/adminService";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import {
