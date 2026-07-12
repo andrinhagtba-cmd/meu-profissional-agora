@@ -81,7 +81,11 @@ const initialForm: FormState = {
 
 
 function PedirOrcamentoPage() {
-  const { categoria: categoriaParam, profissional: profissionalParam } = Route.useSearch();
+  const {
+    categoria: categoriaParam,
+    profissional: profissionalParam,
+    servico: servicoParam,
+  } = Route.useSearch();
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -92,20 +96,36 @@ function PedirOrcamentoPage() {
   const [protocol, setProtocol] = useState<string | null>(null);
 
   // Carrega o profissional destinatário (quando vindo do card).
-  const { data: targetPro } = useQuery({
+  const { data: targetPro, isLoading: loadingPro } = useQuery({
     queryKey: ["quote-target-pro", profissionalParam],
     queryFn: () => (profissionalParam ? getProfessionalBySlug(profissionalParam) : Promise.resolve(undefined)),
     enabled: Boolean(profissionalParam),
     staleTime: 5 * 60 * 1000,
   });
 
-  // Se veio direcionado a um pro, herda a categoria dele.
+  const proServices = targetPro?.services?.filter((s) => s.id) ?? [];
+
+  // Pré-seleção: serviço vindo por URL, ou único serviço disponível.
   useEffect(() => {
-    if (targetPro?.categorySlug && !form.categoria) {
+    if (!targetPro || form.servicoId) return;
+    const pre = servicoParam
+      ? proServices.find((s) => s.id === servicoParam)
+      : proServices.length === 1
+        ? proServices[0]
+        : undefined;
+    if (pre) {
+      setForm((f) => ({
+        ...f,
+        servicoId: pre.id!,
+        servico: pre.name,
+        categoria: pre.categorySlug || f.categoria || targetPro.categorySlug || "",
+      }));
+    } else if (targetPro.categorySlug && !form.categoria) {
       setForm((f) => ({ ...f, categoria: targetPro.categorySlug }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetPro?.categorySlug]);
+  }, [targetPro, servicoParam]);
+
 
   // Pré-preenche dados do usuário logado.
   useEffect(() => {
