@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { getMediaUrl } from "./mediaService";
 
 const BUCKET = "public-media";
