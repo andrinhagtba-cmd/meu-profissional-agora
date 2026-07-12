@@ -155,7 +155,6 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
           </StatusPill>
         </CardHeader>
         <CardContent className="space-y-5 p-5 sm:p-6">
-          <MediaBlock pro={pro} />
 
           <div className="grid gap-3 sm:grid-cols-2">
 
