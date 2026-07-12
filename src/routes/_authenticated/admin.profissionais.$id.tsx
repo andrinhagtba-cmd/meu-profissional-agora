@@ -399,13 +399,16 @@ function Tab({ value, icon, label }: { value: string; icon: ReactNode; label: st
 
 function KPI({ icon, label, value, hint }: { icon: ReactNode; label: string; value: number; hint: string }) {
   return (
-    <div className="rounded-3xl border border-border/70 bg-background/85 p-4 shadow-card backdrop-blur">
-      <div className="flex items-center justify-between gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary">{icon}</div>
-        <div className="font-display text-2xl font-extrabold tracking-normal">{value}</div>
+    <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-card to-background p-4 shadow-card transition hover:-translate-y-0.5 hover:shadow-float">
+      <div className="absolute right-0 top-0 h-20 w-20 translate-x-6 translate-y-[-40%] rounded-full bg-primary/5 blur-2xl transition group-hover:bg-primary/10" />
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary shadow-sm">{icon}</div>
+        <div className="text-right">
+          <div className="font-display text-2xl font-extrabold tracking-normal text-foreground">{value}</div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
+        </div>
       </div>
-      <div className="mt-3 text-xs font-bold uppercase text-muted-foreground">{label}</div>
-      <div className="text-xs text-muted-foreground">{hint}</div>
+      <div className="relative mt-3 border-t border-border/40 pt-2.5 text-xs text-muted-foreground">{hint}</div>
     </div>
   );
 }
