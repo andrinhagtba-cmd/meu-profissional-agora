@@ -421,8 +421,8 @@ function QueueRow({ label, value, tone }: { label: string; value: number; tone: 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="font-display text-base font-extrabold tracking-normal text-foreground">{value}</div>
-      <div className="text-[11px] font-medium text-muted-foreground">{label}</div>
+      <div className="font-display text-sm font-extrabold tracking-normal text-foreground">{value}</div>
+      <div className="text-[10px] font-medium text-muted-foreground">{label}</div>
     </div>
   );
 }
