@@ -391,6 +391,26 @@ function ProfilePage() {
 
       <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 space-y-12">
+          <section aria-labelledby="portfolio">
+            <h2 id="portfolio" className="font-display text-xl font-bold text-foreground">
+              Trabalhos recentes
+            </h2>
+            {(dbMedia?.portfolio.length ?? 0) > 0 ? (
+              <PublicPortfolioGrid items={dbMedia!.portfolio} />
+            ) : (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {pro.portfolio.map((item: string) => (
+                  <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
+                    <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
+                      <ImageIcon size={32} aria-hidden="true" />
+                    </div>
+                    <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
+          </section>
+
           <section aria-labelledby="sobre">
             <h2 id="sobre" className="font-display text-xl font-bold text-foreground">Sobre</h2>
             <p className="mt-3 leading-relaxed text-muted-foreground">{pro.description}</p>
@@ -431,7 +451,6 @@ function ProfilePage() {
                 </li>
               ))}
             </ul>
-
           </section>
 
           <section aria-labelledby="atendimento">
@@ -457,81 +476,6 @@ function ProfilePage() {
                 </p>
               </div>
             </div>
-          </section>
-
-          {pro.address && pro.address.visibility !== "hidden" && pro.address.latitude != null && pro.address.longitude != null && (
-            <section aria-labelledby="localizacao">
-              <h2 id="localizacao" className="font-display text-xl font-bold text-foreground">
-                Localização
-              </h2>
-              <div className="mt-4 space-y-3">
-                <LocationMap
-                  latitude={pro.address.latitude}
-                  longitude={pro.address.longitude}
-                  radiusKm={pro.address.serviceRadiusKm}
-                  height={280}
-                />
-                {(() => {
-                  const a = pro.address!;
-                  const url = mapsSearchUrl({
-                    visibility: a.visibility,
-                    city: a.city,
-                    state: a.state,
-                    neighborhood: a.neighborhood,
-                    street: a.street,
-                    address_number: a.number,
-                    postal_code: a.postalCode,
-                    formatted_address: a.formatted,
-                  });
-                  const label = publicAddressLabel({
-                    visibility: a.visibility,
-                    city: a.city,
-                    state: a.state,
-                    neighborhood: a.neighborhood,
-                    street: a.street,
-                    address_number: a.number,
-                    postal_code: a.postalCode,
-                    formatted_address: a.formatted,
-                  });
-                  return (
-                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
-                      <span className="inline-flex items-center gap-2 text-muted-foreground">
-                        <MapPin size={15} className="text-primary" />
-                        {label}
-                        {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
-                      </span>
-                      {url && (
-                        <Button asChild size="sm" variant="outline">
-                          <a href={url} target="_blank" rel="noreferrer">Abrir no Google Maps</a>
-                        </Button>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
-            </section>
-          )}
-
-
-
-          <section aria-labelledby="portfolio">
-            <h2 id="portfolio" className="font-display text-xl font-bold text-foreground">
-              Trabalhos recentes
-            </h2>
-            {(dbMedia?.portfolio.length ?? 0) > 0 ? (
-              <PublicPortfolioGrid items={dbMedia!.portfolio} />
-            ) : (
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {pro.portfolio.map((item: string) => (
-                  <figure key={item} className="overflow-hidden rounded-2xl border border-border bg-card">
-                    <div className="flex aspect-video items-center justify-center bg-secondary text-primary/40">
-                      <ImageIcon size={32} aria-hidden="true" />
-                    </div>
-                    <figcaption className="px-4 py-3 text-sm font-medium text-foreground">{item}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            )}
           </section>
 
           <section aria-labelledby="avaliacoes">
@@ -595,6 +539,60 @@ function ProfilePage() {
               </ul>
             )}
           </section>
+
+          {pro.address && pro.address.visibility !== "hidden" && pro.address.latitude != null && pro.address.longitude != null && (
+            <section aria-labelledby="localizacao">
+              <h2 id="localizacao" className="font-display text-xl font-bold text-foreground">
+                Localização
+              </h2>
+              <div className="mt-4 space-y-3">
+                <LocationMap
+                  latitude={pro.address.latitude}
+                  longitude={pro.address.longitude}
+                  radiusKm={pro.address.serviceRadiusKm}
+                  height={280}
+                />
+                {(() => {
+                  const a = pro.address!;
+                  const url = mapsSearchUrl({
+                    visibility: a.visibility,
+                    city: a.city,
+                    state: a.state,
+                    neighborhood: a.neighborhood,
+                    street: a.street,
+                    address_number: a.number,
+                    postal_code: a.postalCode,
+                    formatted_address: a.formatted,
+                  });
+                  const label = publicAddressLabel({
+                    visibility: a.visibility,
+                    city: a.city,
+                    state: a.state,
+                    neighborhood: a.neighborhood,
+                    street: a.street,
+                    address_number: a.number,
+                    postal_code: a.postalCode,
+                    formatted_address: a.formatted,
+                  });
+                  return (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
+                      <span className="inline-flex items-center gap-2 text-muted-foreground">
+                        <MapPin size={15} className="text-primary" />
+                        {label}
+                        {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                      </span>
+                      {url && (
+                        <Button asChild size="sm" variant="outline">
+                          <a href={url} target="_blank" rel="noreferrer">Abrir no Google Maps</a>
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </section>
+          )}
+
 
           {reviews && reviews.length > 0 && (
             <section aria-labelledby="historico">
