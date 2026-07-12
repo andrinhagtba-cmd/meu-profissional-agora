@@ -642,10 +642,10 @@ function SignupWizard() {
                         street: a.street,
                         address_number: a.address_number,
                         neighborhood: a.neighborhood,
-                        city: a.city,
-                        state: a.state,
+                        city: isValidDfRegionName(a.city ?? "") ? a.city : profile.city,
+                        state: "DF",
                         postal_code: a.postal_code,
-                        country: a.country,
+                        country: "Brasil",
                         latitude: a.latitude,
                         longitude: a.longitude,
                         google_place_id: a.google_place_id,
@@ -653,6 +653,19 @@ function SignupWizard() {
                     }
                     placeholder="Digite rua, número, cidade…"
                   />
+                </div>
+
+                <div>
+                  <Label>Região Administrativa (DF)</Label>
+                  <DfRegionCombobox
+                    value={profile.city ?? ""}
+                    onChange={(name) =>
+                      updateProfile({ city: name, state: "DF", country: "Brasil" })
+                    }
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Atendemos exclusivamente o Distrito Federal — selecione sua RA oficial.
+                  </p>
                 </div>
 
                 {profile.latitude && profile.longitude && (
