@@ -49,7 +49,19 @@ function AdminClients() {
     <div>
       <AdminPageHeader title="Clientes" description="Todos os clientes cadastrados na plataforma." />
       <AdminToolbar search={search} onSearch={setSearch} placeholder="Buscar cliente…" />
-      <AdminTable columns={columns} rows={data} isLoading={isLoading} rowKey={(u) => u.user_id} emptyText="Nenhum cliente encontrado." />
+      <AdminTable
+        columns={columns}
+        rows={data}
+        isLoading={isLoading}
+        rowKey={(u) => u.user_id}
+        emptyText="Nenhum cliente encontrado."
+        onRowClick={(u) => setSelectedUserId(u.user_id)}
+      />
+      <UserDetailDrawer
+        userId={selectedUserId}
+        open={!!selectedUserId}
+        onOpenChange={(o) => !o && setSelectedUserId(null)}
+      />
     </div>
   );
 }
