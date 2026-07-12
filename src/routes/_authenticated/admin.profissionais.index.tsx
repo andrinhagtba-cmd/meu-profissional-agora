@@ -300,23 +300,23 @@ function ProfessionalCard({
   const name = pro.professional_name || pro.business_name || "Sem nome";
   const location = pro.city ? `${pro.city}/${pro.state ?? ""}` : "Sem localização";
   return (
-    <article className="group relative overflow-hidden rounded-[1.75rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
+    <article className="group relative overflow-hidden rounded-[1.5rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
       <div
-        className="relative z-0 h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
+        className="relative z-0 h-16 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
         style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
       />
-      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+      <div className="absolute right-3 top-3 z-20 flex items-center gap-1.5">
         <Checkbox
           checked={selected}
           onCheckedChange={onToggle}
           onClick={(e) => e.stopPropagation()}
-          className="border-primary-foreground/70 bg-card/95"
+          className="h-4 w-4 border-primary-foreground/70 bg-card/95"
           aria-label={`Selecionar ${name}`}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="outline" className="h-9 w-9 rounded-full bg-card/95" onClick={(e) => e.stopPropagation()}>
-              <MoreHorizontal size={16} />
+            <Button size="icon" variant="outline" className="h-8 w-8 rounded-full bg-card/95" onClick={(e) => e.stopPropagation()}>
+              <MoreHorizontal size={14} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56" onClick={(e) => e.stopPropagation()}>
@@ -341,54 +341,53 @@ function ProfessionalCard({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <button type="button" onClick={() => onOpen("overview")} className="relative z-10 block w-full p-5 pt-0 text-left">
-        <div className="-mt-12 flex items-end justify-between gap-3">
+      <button type="button" onClick={() => onOpen("overview")} className="relative z-10 block w-full p-4 pt-0 text-left">
+        <div className="-mt-9 flex items-end justify-between gap-2">
           {pro.avatar_url ? (
             <img
               src={pro.avatar_url}
               alt={name}
-              className="h-[4.5rem] w-[4.5rem] rounded-full border-4 border-card object-cover shadow-card"
+              className="h-12 w-12 rounded-full border-[3px] border-card object-cover shadow-card"
               loading="lazy"
             />
           ) : (
-            <InitialsAvatar name={name} className="h-[4.5rem] w-[4.5rem] border-4 border-card text-xl shadow-card" />
+            <InitialsAvatar name={name} className="h-12 w-12 border-[3px] border-card text-base shadow-card" />
           )}
           <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
             {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
           </StatusPill>
         </div>
-        <div className="mt-4 flex items-start justify-between gap-3">
+        <div className="mt-3 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h2 className="truncate font-display text-xl font-extrabold tracking-normal text-foreground group-hover:text-primary">{name}</h2>
-              {pro.verification_status === "approved" && <BadgeCheck className="text-primary" size={17} />}
-              {pro.is_featured && <Star className="fill-orange text-orange" size={15} />}
+            <div className="flex items-center gap-1">
+              <h2 className="truncate font-display text-base font-extrabold tracking-normal text-foreground group-hover:text-primary">{name}</h2>
+              {pro.verification_status === "approved" && <BadgeCheck className="shrink-0 text-primary" size={14} />}
+              {pro.is_featured && <Star className="shrink-0 fill-orange text-orange" size={12} />}
             </div>
             {pro.business_name && pro.business_name !== pro.professional_name && (
-              <div className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground"><Building2 size={12} />{pro.business_name}</div>
+              <div className="mt-0.5 inline-flex items-center gap-1 truncate text-[11px] text-muted-foreground"><Building2 size={11} />{pro.business_name}</div>
             )}
           </div>
-          <div className="shrink-0 rounded-2xl bg-rating/15 px-3 py-1.5 text-sm font-extrabold text-foreground">
+          <div className="shrink-0 rounded-xl bg-rating/15 px-2 py-1 text-xs font-extrabold text-foreground">
             ★ {pro.average_rating ? Number(pro.average_rating).toFixed(1) : "—"}
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1"><MapPin size={12} />{location}</span>
-          <span className="rounded-full bg-muted px-2.5 py-1">{pro.reviews_count ?? 0} avaliações</span>
-          <span className="rounded-full bg-muted px-2.5 py-1">Cadastro {new Date(pro.created_at).toLocaleDateString("pt-BR")}</span>
+        <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5"><MapPin size={10} />{location}</span>
+          <span className="rounded-full bg-muted px-2 py-0.5">{pro.reviews_count ?? 0} avaliações</span>
         </div>
-        <p className="mt-4 line-clamp-3 min-h-[3.75rem] text-sm leading-5 text-muted-foreground">
-          {pro.description || "Perfil sem descrição pública. Abra o painel para completar apresentação, serviços, portfólio e documentos."}
+        <p className="mt-3 line-clamp-2 min-h-[2.25rem] text-xs leading-4 text-muted-foreground">
+          {pro.description || "Perfil sem descrição pública."}
         </p>
-        <div className="mt-5 grid grid-cols-3 gap-2 border-t pt-4 text-center text-xs">
+        <div className="mt-3 grid grid-cols-3 gap-2 border-t pt-3 text-center text-[11px]">
           <MiniStat label="Reviews" value={`${pro.reviews_count ?? 0}`} />
           <MiniStat label="WhatsApp" value={pro.whatsapp ? "Sim" : "—"} />
           <MiniStat label="Slug" value={pro.slug ? "OK" : "—"} />
         </div>
-        <div className="mt-5 flex items-center justify-between gap-3">
-          <span className="text-xs font-semibold text-primary">Abrir central completa</span>
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground transition group-hover:translate-x-1">
-            <ArrowRight size={16} />
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold text-primary">Abrir central</span>
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-primary text-primary-foreground transition group-hover:translate-x-1">
+            <ArrowRight size={14} />
           </span>
         </div>
       </button>
