@@ -27,6 +27,7 @@ type DbRow = {
   avatar_media_id: string | null;
   cover_media_id: string | null;
   search_tags: string[] | null;
+  whatsapp: string | null;
   instagram_username: string | null;
   instagram_url: string | null;
   facebook_url: string | null;
@@ -61,6 +62,7 @@ const SELECT = `
   average_rating, reviews_count, response_time, starting_price, years_experience,
   is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
   search_tags,
+  whatsapp,
   instagram_username, instagram_url, facebook_url, website_url,
   postal_code, street, address_number, neighborhood, latitude, longitude,
   formatted_address, public_address_visibility,
@@ -145,6 +147,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     portfolio: mock?.portfolio ?? [],
     faqs: mock?.faqs ?? [],
     searchTags: row.search_tags ?? mock?.searchTags ?? [],
+    whatsapp: row.whatsapp ?? null,
     social: {
       instagram: row.instagram_username,
       instagramUrl: row.instagram_url,

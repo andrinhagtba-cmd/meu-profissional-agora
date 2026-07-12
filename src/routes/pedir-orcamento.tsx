@@ -1,13 +1,17 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeCheck,
   CheckCircle2,
   Loader2,
   PartyPopper,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProAvatar } from "@/components/shared/ProAvatar";
+import { getProfessionalBySlug } from "@/services/professionalService";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +40,7 @@ export const Route = createFileRoute("/pedir-orcamento")({
       { title: "Pedir orçamento grátis" },
       {
         name: "description",
-        content: "Descreva o que você precisa e receba até 5 orçamentos de profissionais avaliados. Grátis e sem compromisso.",
+        content: "Descreva o que você precisa e envie diretamente para o profissional escolhido.",
       },
     ],
   }),
@@ -72,7 +76,7 @@ const initialForm: FormState = {
 };
 
 function PedirOrcamentoPage() {
-  const { categoria: categoriaParam } = Route.useSearch();
+  const { categoria: categoriaParam, profissional: profissionalParam } = Route.useSearch();
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -82,19 +86,58 @@ function PedirOrcamentoPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [protocol, setProtocol] = useState<string | null>(null);
 
+  // Carrega o profissional destinatário (quando vindo do card).
+  const { data: targetPro } = useQuery({
+    queryKey: ["quote-target-pro", profissionalParam],
+    queryFn: () => (profissionalParam ? getProfessionalBySlug(profissionalParam) : Promise.resolve(undefined)),
+    enabled: Boolean(profissionalParam),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Se veio direcionado a um pro, herda a categoria dele.
+  useEffect(() => {
+    if (targetPro?.categorySlug && !form.categoria) {
+      setForm((f) => ({ ...f, categoria: targetPro.categorySlug }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetPro?.categorySlug]);
+
+  // Pré-preenche dados do usuário logado.
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("full_name, phone, city, state")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      setForm((f) => ({
+        ...f,
+        nome: f.nome || data?.full_name || "",
+        telefone: f.telefone || data?.phone || "",
+        email: f.email || user.email || "",
+        cidade:
+          f.cidade ||
+          (data?.city && data?.state ? `${data.city}, ${data.state}` : data?.city || ""),
+      }));
+    })();
+  }, [user]);
+
   const mutation = useMutation({
     mutationFn: async () => {
-      if (user) {
-        return submitQuoteToDb(user.id, {
-          categoriaSlug: form.categoria,
-          servico: form.servico,
-          descricao: form.descricao,
-          cidade: form.cidade,
-          bairro: form.bairro,
-          urgencia: form.urgencia,
-        });
+      if (!user) {
+        // Sem conta → não podemos criar pedido real (RLS exige client_id).
+        return submitQuoteRequest(form as unknown as Record<string, unknown>);
       }
-      return submitQuoteRequest(form as unknown as Record<string, unknown>);
+      return submitQuoteToDb(user.id, {
+        categoriaSlug: form.categoria,
+        servico: form.servico,
+        descricao: form.descricao,
+        cidade: form.cidade,
+        bairro: form.bairro,
+        urgencia: form.urgencia,
+        professionalSlug: profissionalParam,
+      });
     },
     onSuccess: (res) => setProtocol(res.protocol ?? null),
   });
@@ -175,8 +218,35 @@ function PedirOrcamentoPage() {
             Pedir orçamento grátis
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Leva menos de 2 minutos. Receba até 5 propostas de profissionais avaliados.
+            {targetPro
+              ? "Sua solicitação será enviada diretamente para o profissional escolhido."
+              : "Leva menos de 2 minutos. Descreva o serviço e envie ao profissional."}
           </p>
+
+          {targetPro && (
+            <div className="mt-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
+              <ProAvatar
+                initials={targetPro.initials}
+                color={targetPro.avatarColor}
+                size="lg"
+                imageUrl={targetPro.avatarUrl || undefined}
+                alt={targetPro.name}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Destinatário
+                </p>
+                <p className="mt-0.5 flex items-center gap-1.5 font-display text-base font-bold text-foreground">
+                  <span className="truncate">{targetPro.name}</span>
+                  {targetPro.verified && <BadgeCheck size={16} className="shrink-0 text-success" />}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {targetPro.specialty}
+                  {targetPro.company ? ` · ${targetPro.company}` : ""}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="mt-8">
             <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">

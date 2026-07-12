@@ -58,6 +58,7 @@ export interface Professional {
   portfolio: string[];
   faqs: CategoryFaq[];
   searchTags?: string[];
+  whatsapp?: string | null;
   social?: {
     instagram?: string | null;
     instagramUrl?: string | null;
