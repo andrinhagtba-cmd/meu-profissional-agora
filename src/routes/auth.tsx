@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { useBrand } from "@/hooks/use-brand";
 import {
   Briefcase,
   User as UserIcon,
@@ -34,11 +35,11 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Entrar ou criar conta — ProConecta" },
+      { title: "Entrar ou criar conta" },
       {
         name: "description",
         content:
-          "Acesse sua conta ProConecta ou cadastre-se em minutos como cliente ou profissional verificado.",
+          "Acesse sua conta ou cadastre-se em minutos como cliente ou profissional verificado.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -50,6 +51,8 @@ function AuthPage() {
   const search = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { data: brand } = useBrand();
+  const brandName = brand?.brand_name ?? "";
 
   const [mode, setMode] = useState<"login" | "signup">(search.mode ?? "login");
   const [role, setRole] = useState<"cliente" | "profissional">(search.role ?? "cliente");
@@ -110,7 +113,7 @@ function AuthPage() {
             <aside className="relative hidden overflow-hidden rounded-[2rem] border border-border bg-navy shadow-float lg:block">
               <img
                 src={authHero}
-                alt="Profissional ProConecta verificado"
+                alt={brandName ? `Profissional ${brandName} verificado` : "Profissional verificado"}
                 className="absolute inset-0 h-full w-full object-cover opacity-90"
                 width={1024}
                 height={1536}
@@ -122,7 +125,7 @@ function AuthPage() {
               <div className="relative z-10 flex items-start justify-between p-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
                   <Sparkles size={14} className="text-orange" />
-                  ProConecta Premium
+                  {brandName ? `${brandName} Premium` : "Premium"}
                 </div>
                 <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
                   <ShieldCheck size={14} className="text-emerald-300" />
@@ -143,7 +146,7 @@ function AuthPage() {
                   para cada projeto.
                 </h1>
                 <p className="mt-4 max-w-md text-base text-white/80">
-                  Mais de 250 mil brasileiros usam a ProConecta para receber orçamentos rápidos com quem
+                  Mais de 250 mil brasileiros usam {brandName ? `a ${brandName}` : "nossa plataforma"} para receber orçamentos rápidos com quem
                   entende do assunto.
                 </p>
 
@@ -180,7 +183,7 @@ function AuthPage() {
                     ))}
                   </div>
                   <div className="text-xs text-white/85">
-                    <span className="font-semibold text-white">250.000+ clientes</span> confiam na ProConecta
+                    <span className="font-semibold text-white">250.000+ clientes</span> confiam {brandName ? `na ${brandName}` : "em nós"}
                   </div>
                 </div>
               </div>
@@ -192,7 +195,7 @@ function AuthPage() {
                 {/* Mobile brand */}
                 <div className="mb-6 flex items-center justify-between lg:hidden">
                   <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">
-                    <Sparkles size={14} /> ProConecta
+                    <Sparkles size={14} /> {brandName || "Menu"}
                   </span>
                   <Link to="/" className="text-xs font-semibold text-muted-foreground hover:text-primary">
                     Voltar ao site
