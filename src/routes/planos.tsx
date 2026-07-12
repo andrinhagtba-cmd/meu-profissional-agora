@@ -9,17 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/planos")({
   head: () => ({
     meta: [
-      { title: "Planos para Profissionais — ProConecta" },
+      { title: "Planos para Profissionais" },
       {
         name: "description",
         content:
-          "Escolha o plano ideal para receber mais leads qualificados, destacar seu perfil e crescer com a ProConecta.",
+          "Escolha o plano ideal para receber mais leads qualificados, destacar seu perfil e crescer com a ${BRAND_PLACEHOLDER}.",
       },
-      { property: "og:title", content: "Planos para Profissionais — ProConecta" },
+      { property: "og:title", content: "Planos para Profissionais" },
       {
         property: "og:description",
         content:
-          "Compare planos, benefícios e limites de leads para profissionais na ProConecta.",
+          "Compare planos, benefícios e limites de leads para profissionais na ${BRAND_PLACEHOLDER}.",
       },
     ],
   }),
@@ -81,7 +81,7 @@ function PlansPage() {
             <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Cresça com a{" "}
               <span className="bg-gradient-to-r from-primary to-orange bg-clip-text text-transparent">
-                ProConecta
+                ${BRAND_PLACEHOLDER}
               </span>
             </h1>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg">

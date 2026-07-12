@@ -16,7 +16,7 @@ import {
 export const Route = createFileRoute("/_authenticated/painel/notificacoes")({
   head: () => ({
     meta: [
-      { title: "Notificações — ProConecta" },
+      { title: "Notificações" },
       { name: "robots", content: "noindex" },
     ],
   }),

@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/painel/mensagens/")({
   head: () => ({
     meta: [
-      { title: "Mensagens — ProConecta" },
+      { title: "Mensagens" },
       { name: "robots", content: "noindex" },
     ],
   }),

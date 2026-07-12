@@ -14,7 +14,7 @@ import { getSettings, updateSettings, type EmailTemplate } from "@/services/sett
 export const Route = createFileRoute("/_authenticated/admin/templates")({
   head: () => ({
     meta: [
-      { title: "Templates — Admin ProConecta" },
+      { title: "Templates — Admin ${BRAND_PLACEHOLDER}" },
       { name: "robots", content: "noindex" },
     ],
   }),

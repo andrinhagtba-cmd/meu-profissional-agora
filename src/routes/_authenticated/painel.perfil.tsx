@@ -15,7 +15,7 @@ import { getMyProfile, updateMyProfile, uploadClientAvatar } from "@/services/cl
 export const Route = createFileRoute("/_authenticated/painel/perfil")({
   head: () => ({
     meta: [
-      { title: "Meu perfil — ProConecta" },
+      { title: "Meu perfil" },
       { name: "robots", content: "noindex" },
     ],
   }),

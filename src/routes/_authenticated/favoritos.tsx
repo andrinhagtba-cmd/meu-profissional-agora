@@ -11,7 +11,7 @@ import { getProfessionals } from "@/services/mockApi";
 export const Route = createFileRoute("/_authenticated/favoritos")({
   head: () => ({
     meta: [
-      { title: "Meus favoritos — ProConecta" },
+      { title: "Meus favoritos" },
       { name: "robots", content: "noindex" },
     ],
   }),

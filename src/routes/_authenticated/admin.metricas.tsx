@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/admin/metricas")({
   head: () => ({
     meta: [
-      { title: "Métricas — Admin ProConecta" },
+      { title: "Métricas — Admin ${BRAND_PLACEHOLDER}" },
       { name: "robots", content: "noindex" },
     ],
   }),

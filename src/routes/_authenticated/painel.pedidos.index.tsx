@@ -11,7 +11,7 @@ import { listMyQuotes, type MyQuote } from "@/services/clientService";
 export const Route = createFileRoute("/_authenticated/painel/pedidos/")({
   head: () => ({
     meta: [
-      { title: "Meus pedidos — ProConecta" },
+      { title: "Meus pedidos" },
       { name: "robots", content: "noindex" },
     ],
   }),

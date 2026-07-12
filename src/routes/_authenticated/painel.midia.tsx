@@ -21,7 +21,7 @@ import {
 export const Route = createFileRoute("/_authenticated/painel/midia")({
   head: () => ({
     meta: [
-      { title: "Mídia do perfil — ProConecta" },
+      { title: "Mídia do perfil" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -123,7 +123,7 @@ function PainelMidia() {
               Foto, capa e portfólio
             </h1>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              Sua imagem no ProConecta. Mantenha uma foto nítida, uma capa que represente
+              Sua imagem no ${BRAND_PLACEHOLDER}. Mantenha uma foto nítida, uma capa que represente
               seu trabalho e envie fotos de projetos recentes.
             </p>
           </div>

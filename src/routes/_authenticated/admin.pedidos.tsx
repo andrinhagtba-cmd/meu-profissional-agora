@@ -7,7 +7,7 @@ import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTab
 import { listQuotesFull, type AdminQuoteFull } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/pedidos")({
-  head: () => ({ meta: [{ title: "Pedidos — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Pedidos — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

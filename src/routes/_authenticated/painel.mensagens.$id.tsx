@@ -20,7 +20,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/painel/mensagens/$id")({
   head: () => ({
     meta: [
-      { title: "Conversa — ProConecta" },
+      { title: "Conversa" },
       { name: "robots", content: "noindex" },
     ],
   }),

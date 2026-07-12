@@ -27,7 +27,7 @@ import {
 } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/planos")({
-  head: () => ({ meta: [{ title: "Planos — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Planos — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

@@ -32,7 +32,7 @@ import { Plus, Trash2 } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/painel/servicos")({
   head: () => ({
     meta: [
-      { title: "Meus serviços — ProConecta" },
+      { title: "Meus serviços" },
       { name: "robots", content: "noindex" },
     ],
   }),

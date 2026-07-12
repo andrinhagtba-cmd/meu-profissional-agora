@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
-      { title: "Como funciona — ProConecta" },
+      { title: "Como funciona" },
       {
         name: "description",
-        content: "Entenda como a ProConecta conecta clientes a profissionais avaliados com segurança, orçamentos e mensagens em um só lugar.",
+        content: "Entenda como a ${BRAND_PLACEHOLDER} conecta clientes a profissionais avaliados com segurança, orçamentos e mensagens em um só lugar.",
       },
-      { property: "og:title", content: "Como funciona — ProConecta" },
+      { property: "og:title", content: "Como funciona" },
       {
         property: "og:description",
         content: "Clientes pedem orçamentos, profissionais enviam propostas e tudo acontece com avaliações, chat e histórico.",
@@ -41,7 +41,7 @@ function SobrePage() {
               Contratação de serviços com clareza do pedido à avaliação.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
-              A ProConecta organiza orçamentos, propostas, mensagens e reputação para clientes e profissionais trabalharem com mais confiança.
+              A ${BRAND_PLACEHOLDER} organiza orçamentos, propostas, mensagens e reputação para clientes e profissionais trabalharem com mais confiança.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild className="h-12 rounded-xl bg-orange px-6 font-semibold text-orange-foreground hover:bg-orange/90">

@@ -16,7 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { listSitePages, upsertSitePage, deleteSitePage, slugify, type AdminSitePage, type UpsertSitePage } from "@/services/adminContentService";
 
 export const Route = createFileRoute("/_authenticated/admin/paginas")({
-  head: () => ({ meta: [{ title: "Páginas — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Páginas — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

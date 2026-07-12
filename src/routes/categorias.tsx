@@ -8,7 +8,7 @@ import { listCategories } from "@/services/categoryService";
 export const Route = createFileRoute("/categorias")({
   head: () => ({
     meta: [
-      { title: "Categorias de serviços | ProConecta" },
+      { title: "Categorias de serviços | ${BRAND_PLACEHOLDER}" },
       {
         name: "description",
         content: "Explore todas as categorias de serviços: eletricista, encanador, pintor, diarista e muito mais.",

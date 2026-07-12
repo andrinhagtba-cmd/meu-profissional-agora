@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { listReportsAdmin, setReportStatus, type AdminReportRow } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/denuncias")({
-  head: () => ({ meta: [{ title: "Denúncias — Admin ProConecta" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Denúncias — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

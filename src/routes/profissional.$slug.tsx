@@ -49,7 +49,7 @@ export const Route = createFileRoute("/profissional/$slug")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
-          { title: `${loaderData.pro.name} — ${loaderData.pro.specialty} | ProConecta` },
+          { title: `${loaderData.pro.name} — ${loaderData.pro.specialty} | ${BRAND_PLACEHOLDER}` },
           { name: "description", content: loaderData.pro.description.slice(0, 155) },
         ]
       : [],

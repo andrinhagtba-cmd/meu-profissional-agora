@@ -10,10 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/orcamentos")({
   head: () => ({
     meta: [
-      { title: "Pedidos de orçamento — ProConecta" },
+      { title: "Pedidos de orçamento" },
       { name: "description", content: "Veja pedidos recentes e acesse seu painel para responder leads e acompanhar propostas com segurança." },
-      { property: "og:title", content: "Pedidos de orçamento — ProConecta" },
-      { property: "og:description", content: "Pedidos recentes de clientes esperando profissionais qualificados na ProConecta." },
+      { property: "og:title", content: "Pedidos de orçamento" },
+      { property: "og:description", content: "Pedidos recentes de clientes esperando profissionais qualificados na ${BRAND_PLACEHOLDER}." },
     ],
   }),
   component: OrcamentosPage,

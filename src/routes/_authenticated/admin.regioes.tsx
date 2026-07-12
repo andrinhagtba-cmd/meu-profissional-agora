@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/admin/regioes")({
   head: () => ({
     meta: [
-      { title: "Regiões — Admin ProConecta" },
+      { title: "Regiões — Admin ${BRAND_PLACEHOLDER}" },
       { name: "robots", content: "noindex" },
     ],
   }),
