@@ -90,6 +90,7 @@ export type AdminProRow = {
   cover_media_id: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  search_tags: string[] | null;
 };
 
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
