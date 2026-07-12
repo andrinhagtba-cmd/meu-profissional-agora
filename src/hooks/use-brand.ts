@@ -45,7 +45,7 @@ export function useBrand(): {
   const { data, isLoading } = useQuery({
     queryKey: ["system-settings"],
     queryFn: async () => {
-      const fresh = await getSettings();
+      const fresh = await getSettings(false);
       writeCache(fresh);
       return fresh;
     },
