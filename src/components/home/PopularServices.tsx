@@ -35,16 +35,26 @@ export function PopularServices() {
         </Link>
       </div>
 
-      <Carousel opts={{ align: "start" }} className="relative w-full">
+      <div className="grid min-w-0 gap-4 sm:hidden">
+        {isLoading && categories.length === 0
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-72 rounded-3xl" />
+            ))
+          : categories.slice(0, 6).map((category) => (
+              <CategoryCard key={category.slug} category={category} />
+            ))}
+      </div>
+
+      <Carousel opts={{ align: "start" }} className="relative hidden w-full sm:block">
         <CarouselContent className="-ml-4">
           {isLoading && categories.length === 0
             ? Array.from({ length: 5 }).map((_, i) => (
-                <CarouselItem key={i} className="pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+                <CarouselItem key={i} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                   <Skeleton className="h-72 rounded-3xl" />
                 </CarouselItem>
               ))
             : categories.map((category) => (
-                <CarouselItem key={category.slug} className="pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+                <CarouselItem key={category.slug} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                   <CategoryCard category={category} />
                 </CarouselItem>
               ))}

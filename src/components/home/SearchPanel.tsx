@@ -58,28 +58,28 @@ export function SearchPanel() {
   };
 
   return (
-    <div className="max-w-full overflow-hidden rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
-      <div className="flex w-full min-w-0 gap-1 overflow-x-auto pb-1" role="tablist" aria-label="Tipo de busca">
+    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
+      <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:gap-1" role="tablist" aria-label="Tipo de busca">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             role="tab"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={`inline-flex h-11 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${
+            className={`inline-flex h-11 min-w-0 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors sm:shrink-0 sm:px-4 ${
               tab === id
                 ? "bg-secondary text-primary"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
-            <Icon size={16} aria-hidden="true" />
-            {label}
+            <Icon size={16} className="shrink-0" aria-hidden="true" />
+            <span className="truncate">{label}</span>
           </button>
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr_auto]">
-        <div className="relative">
+      <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr_auto]">
+        <div className="relative min-w-0">
           <Label htmlFor="hero-servico" className="mb-1.5 block text-xs font-semibold text-muted-foreground">
             O que você precisa?
           </Label>
@@ -118,7 +118,7 @@ export function SearchPanel() {
           )}
         </div>
 
-        <div>
+        <div className="min-w-0">
           <Label htmlFor="hero-cidade" className="mb-1.5 block text-xs font-semibold text-muted-foreground">
             Onde?
           </Label>
@@ -145,7 +145,7 @@ export function SearchPanel() {
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <Label htmlFor="hero-prazo" className="mb-1.5 block text-xs font-semibold text-muted-foreground">
             Quando precisa?
           </Label>
@@ -163,7 +163,7 @@ export function SearchPanel() {
           </Select>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <Label htmlFor="hero-atendimento" className="mb-1.5 block text-xs font-semibold text-muted-foreground">
             Tipo de atendimento
           </Label>
