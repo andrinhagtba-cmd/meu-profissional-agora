@@ -288,15 +288,6 @@ export const categories: Category[] = [
   },
 ];
 
-export const cities = [
-  "Curitiba",
-  "São Paulo",
-  "Rio de Janeiro",
-  "Belo Horizonte",
-  "Porto Alegre",
-  "Campinas",
-  "Salvador",
-  "Recife",
-  "Fortaleza",
-  "Brasília",
-];
+// Legacy `cities` removida — a plataforma atende exclusivamente o DF.
+// Use `DF_REGIONS` / `DF_REGION_NAMES` de "@/data/dfRegions".
+

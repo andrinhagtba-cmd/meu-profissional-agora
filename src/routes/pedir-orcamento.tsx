@@ -25,7 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { categories, cities } from "@/data/categories";
+import { categories } from "@/data/categories";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { findDfRegionByName, isValidDfRegionName } from "@/data/dfRegions";
 import { submitQuoteRequest } from "@/services/mockApi";
 import { submitQuoteToDb } from "@/services/clientService";
 import { useAuth } from "@/hooks/use-auth";
@@ -136,15 +138,16 @@ function PedirOrcamentoPage() {
         .select("full_name, phone, city, state")
         .eq("user_id", user.id)
         .maybeSingle();
-      setForm((f) => ({
-        ...f,
-        nome: f.nome || data?.full_name || "",
-        telefone: f.telefone || data?.phone || "",
-        email: f.email || user.email || "",
-        cidade:
-          f.cidade ||
-          (data?.city && data?.state ? `${data.city}, ${data.state}` : data?.city || ""),
-      }));
+      setForm((f) => {
+        const prefRegion = !f.cidade && data?.city ? findDfRegionByName(data.city) : undefined;
+        return {
+          ...f,
+          nome: f.nome || data?.full_name || "",
+          telefone: f.telefone || data?.phone || "",
+          email: f.email || user.email || "",
+          cidade: f.cidade || (prefRegion ? prefRegion.name : ""),
+        };
+      });
     })();
   }, [user]);
 
@@ -189,7 +192,9 @@ function PedirOrcamentoPage() {
         next.descricao = "Conte um pouco mais (mínimo de 20 caracteres) para receber orçamentos precisos.";
     }
     if (step === 2) {
-      if (!form.cidade) next.cidade = "Informe a cidade.";
+      if (!form.cidade) next.cidade = "Selecione sua Região Administrativa no DF.";
+      else if (!isValidDfRegionName(form.cidade))
+        next.cidade = "Selecione uma Região Administrativa válida do Distrito Federal.";
     }
     if (step === 3) {
       if (!form.nome.trim()) next.nome = "Informe seu nome.";
@@ -432,26 +437,22 @@ function PedirOrcamentoPage() {
               <div className="space-y-5">
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="q-cidade" className="font-semibold">Cidade</Label>
-                    <Select value={form.cidade} onValueChange={(v) => set("cidade", v)}>
-                      <SelectTrigger id="q-cidade" className="mt-2 h-12! w-full rounded-xl">
-                        <SelectValue placeholder="Escolha a cidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((c) => (
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="q-cidade" className="font-semibold">Região Administrativa</Label>
+                    <DfRegionCombobox
+                      id="q-cidade"
+                      value={form.cidade}
+                      onChange={(v) => set("cidade", v)}
+                      ariaInvalid={!!errors.cidade}
+                    />
                     {errors.cidade && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.cidade}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="q-bairro" className="font-semibold">Bairro (opcional)</Label>
+                    <Label htmlFor="q-bairro" className="font-semibold">Bairro, setor ou localidade (opcional)</Label>
                     <Input
                       id="q-bairro"
                       value={form.bairro}
                       onChange={(e) => set("bairro", e.target.value)}
-                      placeholder="Ex.: Pinheiros"
+                      placeholder="Ex.: Asa Sul, P Norte, Vicente Pires, Setor O..."
                       className="mt-2 h-12 rounded-xl"
                     />
                   </div>

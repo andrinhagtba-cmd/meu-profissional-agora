@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cities } from "@/data/categories";
+import { DF_REGION_NAMES } from "@/data/dfRegions";
 import { getProfessionalsByCategory } from "@/services/mockApi";
 import {
   getCategoryBySlug,
@@ -213,9 +213,9 @@ function CategoriaPage() {
             </Accordion>
           </div>
           <aside>
-            <h2 className="font-display text-lg font-bold text-foreground">Cidades atendidas</h2>
+            <h2 className="font-display text-lg font-bold text-foreground">Regiões atendidas</h2>
             <ul className="mt-3 space-y-1.5">
-              {cities.slice(0, 6).map((city) => (
+              {DF_REGION_NAMES.slice(0, 6).map((city) => (
                 <li key={city}>
                   <Link
                     to="/buscar"
