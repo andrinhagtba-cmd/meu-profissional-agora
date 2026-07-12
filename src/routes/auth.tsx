@@ -146,7 +146,7 @@ function AuthPage() {
                   para cada projeto.
                 </h1>
                 <p className="mt-4 max-w-md text-base text-white/80">
-                  Mais de 250 mil brasileiros usam a ProConecta para receber orçamentos rápidos com quem
+                  Mais de 250 mil brasileiros usam {brandName ? `a ${brandName}` : "nossa plataforma"} para receber orçamentos rápidos com quem
                   entende do assunto.
                 </p>
 
