@@ -145,6 +145,28 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     portfolio: mock?.portfolio ?? [],
     faqs: mock?.faqs ?? [],
     searchTags: row.search_tags ?? mock?.searchTags ?? [],
+    social: {
+      instagram: row.instagram_username,
+      instagramUrl: row.instagram_url,
+      facebook: row.facebook_url,
+      website: row.website_url,
+    },
+    address: {
+      visibility: row.public_address_visibility ?? "city_state",
+      city: row.city,
+      state: row.state,
+      neighborhood: row.neighborhood,
+      street: row.street,
+      number: row.address_number,
+      postalCode: row.postal_code,
+      formatted: row.formatted_address,
+      latitude: row.latitude,
+      longitude: row.longitude,
+      serviceRadiusKm: row.service_radius_km,
+      servesAtBusiness: Boolean(row.serves_at_business_address),
+      servesAtCustomer: Boolean(row.serves_at_customer_location),
+      servesRemotely: Boolean(row.serves_remotely),
+    },
   };
 }
 
