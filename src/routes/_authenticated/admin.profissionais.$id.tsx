@@ -145,8 +145,32 @@ function AdminProDetailPage() {
     toast.success("Link público copiado");
   };
 
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
+
+  const handleMediaUpload = async (
+    kind: "avatar" | "cover",
+    file: File | null | undefined,
+  ) => {
+    if (!file) return;
+    try {
+      setUploading(kind);
+      const { mediaId } = await uploadAdminMedia(file, "banner");
+      await updateProProfile(id, kind === "avatar" ? { avatar_media_id: mediaId } : { cover_media_id: mediaId });
+      toast.success(kind === "avatar" ? "Avatar atualizado" : "Capa atualizada");
+      invalidate();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("avatar", e.target.files?.[0]); e.target.value = ""; }} />
+      <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("cover", e.target.files?.[0]); e.target.value = ""; }} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link to="/admin/profissionais" className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-2 text-sm font-semibold text-muted-foreground shadow-card hover:text-primary">
           <ArrowLeft size={15} /> Voltar para profissionais
