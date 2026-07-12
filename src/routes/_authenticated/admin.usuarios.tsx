@@ -33,6 +33,7 @@ function AdminUsers() {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users-full", search, role],
