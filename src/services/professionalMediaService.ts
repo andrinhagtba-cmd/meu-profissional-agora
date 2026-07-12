@@ -139,14 +139,58 @@ export async function uploadCover(userId: string, professionalId: string, file: 
   return res;
 }
 
+export type PortfolioMediaType =
+  | "image"
+  | "instagram_reel"
+  | "youtube_video"
+  | "youtube_short";
+
+export type ModerationStatus = "pending" | "approved" | "rejected";
+
 export interface PortfolioItemVM {
   id: string;
+  media_type: PortfolioMediaType;
   title: string | null;
   description: string | null;
+  caption: string | null;
+  alt_text: string | null;
   media_asset_id: string | null;
+  external_url: string | null;
+  embed_url: string | null;
+  external_media_id: string | null;
+  thumbnail_url: string | null;
   sort_order: number;
   status: string;
+  moderation_status: ModerationStatus;
+  is_featured: boolean;
+  is_cover: boolean;
+  /** Resolved signed URL for images; empty for external videos. */
   url: string;
+}
+
+const PORTFOLIO_SELECT =
+  "id, media_type, title, description, caption, alt_text, media_asset_id, external_url, embed_url, external_media_id, thumbnail_url, sort_order, status, moderation_status, is_featured, is_cover";
+
+function rowToVM(r: any, url: string): PortfolioItemVM {
+  return {
+    id: r.id,
+    media_type: (r.media_type ?? "image") as PortfolioMediaType,
+    title: r.title,
+    description: r.description,
+    caption: r.caption ?? null,
+    alt_text: r.alt_text ?? null,
+    media_asset_id: r.media_asset_id ?? null,
+    external_url: r.external_url ?? null,
+    embed_url: r.embed_url ?? null,
+    external_media_id: r.external_media_id ?? null,
+    thumbnail_url: r.thumbnail_url ?? null,
+    sort_order: r.sort_order ?? 0,
+    status: r.status ?? "active",
+    moderation_status: (r.moderation_status ?? "approved") as ModerationStatus,
+    is_featured: !!r.is_featured,
+    is_cover: !!r.is_cover,
+    url,
+  };
 }
 
 export async function listPortfolio(
@@ -154,29 +198,25 @@ export async function listPortfolio(
 ): Promise<PortfolioItemVM[]> {
   const { data, error } = await supabase
     .from("portfolio_items")
-    .select("id, title, description, media_asset_id, sort_order, status")
+    .select(PORTFOLIO_SELECT)
     .eq("professional_id", professionalId)
     .order("sort_order", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
 
-  const rows = data ?? [];
-  const ids = rows.map((r) => r.media_asset_id).filter(Boolean) as string[];
+  const rows = (data ?? []) as any[];
+  const ids = rows
+    .filter((r) => r.media_type === "image")
+    .map((r) => r.media_asset_id)
+    .filter(Boolean) as string[];
   const assets = await fetchAssetRefs(ids);
   const refs: MediaRef[] = rows.map((r) =>
-    r.media_asset_id ? assets.get(r.media_asset_id) ?? null : null,
+    r.media_type === "image" && r.media_asset_id
+      ? assets.get(r.media_asset_id) ?? null
+      : null,
   );
   const urls = await getMediaUrls(refs);
-
-  return rows.map((r, i) => ({
-    id: r.id,
-    title: r.title,
-    description: r.description,
-    media_asset_id: r.media_asset_id,
-    sort_order: r.sort_order ?? 0,
-    status: r.status ?? "active",
-    url: urls[i] ?? "",
-  }));
+  return rows.map((r, i) => rowToVM(r, urls[i] ?? ""));
 }
 
 export async function addPortfolioItem(
@@ -193,11 +233,83 @@ export async function addPortfolioItem(
     description: description ?? null,
     media_asset_id: res.mediaId,
     image_url: res.url || res.path,
+    media_type: "image",
     sort_order: 0,
     status: "active",
-  });
+  } as never);
   if (error) throw error;
   return res;
+}
+
+export interface ExternalMediaInput {
+  media_type: "instagram_reel" | "youtube_video" | "youtube_short";
+  external_url: string;
+  embed_url: string;
+  external_media_id: string | null;
+  thumbnail_url: string | null;
+  title?: string | null;
+  caption?: string | null;
+  description?: string | null;
+}
+
+export async function addExternalPortfolioItem(
+  professionalId: string,
+  input: ExternalMediaInput,
+): Promise<void> {
+  const { error } = await supabase.from("portfolio_items").insert({
+    professional_id: professionalId,
+    media_type: input.media_type,
+    external_url: input.external_url,
+    embed_url: input.embed_url,
+    external_media_id: input.external_media_id,
+    thumbnail_url: input.thumbnail_url,
+    title: input.title ?? null,
+    caption: input.caption ?? null,
+    description: input.description ?? null,
+    sort_order: 0,
+    status: "active",
+  } as never);
+  if (error) throw error;
+}
+
+export async function updatePortfolioItemFields(
+  itemId: string,
+  patch: Partial<
+    Pick<
+      PortfolioItemVM,
+      "title" | "description" | "caption" | "alt_text" | "is_featured" | "status"
+    >
+  >,
+) {
+  const { error } = await supabase
+    .from("portfolio_items")
+    .update(patch as never)
+    .eq("id", itemId);
+  if (error) throw error;
+}
+
+export async function reorderPortfolioItems(
+  professionalId: string,
+  orderedIds: string[],
+) {
+  const { error } = await supabase.rpc("reorder_portfolio_items" as never, {
+    _professional_id: professionalId,
+    _ordered_ids: orderedIds,
+  } as never);
+  if (error) throw error;
+}
+
+export async function moderatePortfolioItem(
+  itemId: string,
+  status: ModerationStatus,
+  notes?: string,
+) {
+  const { error } = await supabase.rpc("moderate_portfolio_item" as never, {
+    _id: itemId,
+    _status: status,
+    _notes: notes ?? null,
+  } as never);
+  if (error) throw error;
 }
 
 export async function deletePortfolioItem(itemId: string) {
@@ -233,6 +345,8 @@ export async function getProfessionalPublicMediaBySlug(slug: string) {
     id: data.id,
     avatarUrl,
     coverUrl,
-    portfolio: portfolio.filter((p) => p.status === "active"),
+    portfolio: portfolio.filter(
+      (p) => p.status === "active" && p.moderation_status === "approved",
+    ),
   };
 }
