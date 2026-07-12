@@ -147,7 +147,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     priceFrom: Number(row.starting_price ?? mock?.priceFrom ?? 0),
     experienceYears: row.years_experience ?? mock?.experienceYears ?? 0,
     description: row.description ?? mock?.description ?? "",
-    services: services.length ? services : mock?.services ?? [],
+    services: (services.length ? services : mock?.services ?? []) as Professional["services"],
     regions: mock?.regions ?? [],
     certifications: mock?.certifications ?? [],
     schedule: mock?.schedule ?? "Seg a Sáb, 8h às 18h",
