@@ -34,7 +34,9 @@ export const Route = createFileRoute("/pedir-orcamento")({
   validateSearch: (search: Record<string, unknown>) => ({
     profissional: typeof search.profissional === "string" ? search.profissional : undefined,
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
+    servico: typeof search.servico === "string" ? search.servico : undefined,
   }),
+
   head: () => ({
     meta: [
       { title: "Pedir orçamento grátis" },
@@ -52,6 +54,7 @@ const STEPS = ["Serviço", "Detalhes", "Local e prazo", "Contato"];
 interface FormState {
   categoria: string;
   servico: string;
+  servicoId: string;
   descricao: string;
   fotos: string;
   cidade: string;
@@ -65,6 +68,7 @@ interface FormState {
 const initialForm: FormState = {
   categoria: "",
   servico: "",
+  servicoId: "",
   descricao: "",
   fotos: "",
   cidade: "",
@@ -75,8 +79,13 @@ const initialForm: FormState = {
   email: "",
 };
 
+
 function PedirOrcamentoPage() {
-  const { categoria: categoriaParam, profissional: profissionalParam } = Route.useSearch();
+  const {
+    categoria: categoriaParam,
+    profissional: profissionalParam,
+    servico: servicoParam,
+  } = Route.useSearch();
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -87,20 +96,36 @@ function PedirOrcamentoPage() {
   const [protocol, setProtocol] = useState<string | null>(null);
 
   // Carrega o profissional destinatário (quando vindo do card).
-  const { data: targetPro } = useQuery({
+  const { data: targetPro, isLoading: loadingPro } = useQuery({
     queryKey: ["quote-target-pro", profissionalParam],
     queryFn: () => (profissionalParam ? getProfessionalBySlug(profissionalParam) : Promise.resolve(undefined)),
     enabled: Boolean(profissionalParam),
     staleTime: 5 * 60 * 1000,
   });
 
-  // Se veio direcionado a um pro, herda a categoria dele.
+  const proServices = targetPro?.services?.filter((s) => s.id) ?? [];
+
+  // Pré-seleção: serviço vindo por URL, ou único serviço disponível.
   useEffect(() => {
-    if (targetPro?.categorySlug && !form.categoria) {
+    if (!targetPro || form.servicoId) return;
+    const pre = servicoParam
+      ? proServices.find((s) => s.id === servicoParam)
+      : proServices.length === 1
+        ? proServices[0]
+        : undefined;
+    if (pre) {
+      setForm((f) => ({
+        ...f,
+        servicoId: pre.id!,
+        servico: pre.name,
+        categoria: pre.categorySlug || f.categoria || targetPro.categorySlug || "",
+      }));
+    } else if (targetPro.categorySlug && !form.categoria) {
       setForm((f) => ({ ...f, categoria: targetPro.categorySlug }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetPro?.categorySlug]);
+  }, [targetPro, servicoParam]);
+
 
   // Pré-preenche dados do usuário logado.
   useEffect(() => {
@@ -137,6 +162,7 @@ function PedirOrcamentoPage() {
         bairro: form.bairro,
         urgencia: form.urgencia,
         professionalSlug: profissionalParam,
+        serviceId: form.servicoId || null,
       });
     },
     onSuccess: (res) => setProtocol(res.protocol ?? null),
@@ -150,9 +176,14 @@ function PedirOrcamentoPage() {
   const validateStep = (): boolean => {
     const next: Partial<Record<keyof FormState, string>> = {};
     if (step === 0) {
-      if (!form.categoria) next.categoria = "Escolha uma categoria.";
-      if (!form.servico.trim()) next.servico = "Descreva o serviço que você precisa.";
+      if (targetPro && proServices.length > 0) {
+        if (!form.servicoId) next.servico = "Escolha um serviço deste profissional.";
+      } else {
+        if (!form.categoria) next.categoria = "Escolha uma categoria.";
+        if (!form.servico.trim()) next.servico = "Descreva o serviço que você precisa.";
+      }
     }
+
     if (step === 1) {
       if (form.descricao.trim().length < 20)
         next.descricao = "Conte um pouco mais (mínimo de 20 caracteres) para receber orçamentos precisos.";
@@ -261,33 +292,107 @@ function PedirOrcamentoPage() {
           <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-card sm:p-8">
             {step === 0 && (
               <div className="space-y-5">
-                <div>
-                  <Label htmlFor="q-categoria" className="font-semibold">Qual categoria de serviço?</Label>
-                  <Select value={form.categoria} onValueChange={(v) => set("categoria", v)}>
-                    <SelectTrigger id="q-categoria" className="mt-2 h-12! w-full rounded-xl">
-                      <SelectValue placeholder="Escolha a categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((c) => (
-                        <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.categoria && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.categoria}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="q-servico" className="font-semibold">O que você precisa exatamente?</Label>
-                  <Input
-                    id="q-servico"
-                    value={form.servico}
-                    onChange={(e) => set("servico", e.target.value)}
-                    placeholder="Ex.: instalar 3 tomadas e 1 chuveiro elétrico"
-                    className="mt-2 h-12 rounded-xl"
-                  />
-                  {errors.servico && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.servico}</p>}
-                </div>
+                {targetPro ? (
+                  proServices.length > 0 ? (
+                    <div>
+                      <Label className="font-semibold">
+                        Qual serviço deste profissional você deseja contratar?
+                      </Label>
+                      <div className="mt-3 space-y-2.5">
+                        {proServices.map((s) => {
+                          const selected = form.servicoId === s.id;
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() =>
+                                setForm((f) => ({
+                                  ...f,
+                                  servicoId: s.id!,
+                                  servico: s.name,
+                                  categoria: s.categorySlug || f.categoria || targetPro.categorySlug || "",
+                                }))
+                              }
+                              className={`flex w-full items-center justify-between gap-4 rounded-xl border p-4 text-left transition-colors ${
+                                selected
+                                  ? "border-primary bg-secondary"
+                                  : "border-border bg-background hover:border-primary/40"
+                              }`}
+                            >
+                              <div className="min-w-0">
+                                <p className={`text-sm font-semibold ${selected ? "text-primary" : "text-foreground"}`}>
+                                  {s.name}
+                                </p>
+                                {s.categoryName && (
+                                  <p className="mt-0.5 text-xs text-muted-foreground">{s.categoryName}</p>
+                                )}
+                              </div>
+                              <span className="shrink-0 text-sm font-bold text-primary">
+                                {s.priceFrom > 0 ? `a partir de R$ ${s.priceFrom}` : "Sob consulta"}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {errors.servico && (
+                        <p className="mt-2 text-xs font-medium text-destructive">{errors.servico}</p>
+                      )}
+                    </div>
+                  ) : loadingPro ? (
+                    <p className="text-sm text-muted-foreground">Carregando serviços disponíveis...</p>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="rounded-xl bg-secondary p-4 text-sm text-muted-foreground">
+                        Este profissional ainda não cadastrou serviços disponíveis para orçamento.
+                        Você pode enviar uma <strong className="text-foreground">solicitação geral</strong> descrevendo o
+                        que precisa.
+                      </p>
+                      <Label htmlFor="q-servico" className="font-semibold">O que você precisa?</Label>
+                      <Input
+                        id="q-servico"
+                        value={form.servico}
+                        onChange={(e) => set("servico", e.target.value)}
+                        placeholder="Descreva o serviço desejado"
+                        className="mt-2 h-12 rounded-xl"
+                      />
+                      {errors.servico && (
+                        <p className="mt-1.5 text-xs font-medium text-destructive">{errors.servico}</p>
+                      )}
+                    </div>
+                  )
+                ) : (
+                  <>
+                    <div>
+                      <Label htmlFor="q-categoria" className="font-semibold">Qual categoria de serviço?</Label>
+                      <Select value={form.categoria} onValueChange={(v) => set("categoria", v)}>
+                        <SelectTrigger id="q-categoria" className="mt-2 h-12! w-full rounded-xl">
+                          <SelectValue placeholder="Escolha a categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((c) => (
+                            <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.categoria && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.categoria}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="q-servico" className="font-semibold">O que você precisa exatamente?</Label>
+                      <Input
+                        id="q-servico"
+                        value={form.servico}
+                        onChange={(e) => set("servico", e.target.value)}
+                        placeholder="Ex.: instalar 3 tomadas e 1 chuveiro elétrico"
+                        className="mt-2 h-12 rounded-xl"
+                      />
+                      {errors.servico && <p className="mt-1.5 text-xs font-medium text-destructive">{errors.servico}</p>}
+                    </div>
+                  </>
+                )}
               </div>
             )}
+
+
 
             {step === 1 && (
               <div className="space-y-5">

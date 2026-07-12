@@ -51,6 +51,7 @@ type DbRow = {
   professional_services: Array<{
     starting_price: number | null;
     services: {
+      id: string;
       name: string;
       categories: { slug: string; name: string } | null;
     } | null;
@@ -70,6 +71,7 @@ const SELECT = `
   professional_services(
     starting_price,
     services:service_id(
+      id,
       name,
       categories:category_id(slug, name)
     )
@@ -93,10 +95,17 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     row.professional_services
       ?.map((ps) =>
         ps.services
-          ? { name: ps.services.name, priceFrom: Number(ps.starting_price ?? 0) }
+          ? {
+              id: ps.services.id,
+              name: ps.services.name,
+              priceFrom: Number(ps.starting_price ?? 0),
+              categorySlug: ps.services.categories?.slug,
+              categoryName: ps.services.categories?.name,
+            }
           : null,
       )
-      .filter((v): v is { name: string; priceFrom: number } => v !== null) ?? [];
+      .filter((v): v is NonNullable<typeof v> => v !== null) ?? [];
+
 
   const categorySlug =
     row.professional_services?.find((ps) => ps.services?.categories?.slug)?.services
@@ -138,7 +147,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     priceFrom: Number(row.starting_price ?? mock?.priceFrom ?? 0),
     experienceYears: row.years_experience ?? mock?.experienceYears ?? 0,
     description: row.description ?? mock?.description ?? "",
-    services: services.length ? services : mock?.services ?? [],
+    services: (services.length ? services : mock?.services ?? []) as Professional["services"],
     regions: mock?.regions ?? [],
     certifications: mock?.certifications ?? [],
     schedule: mock?.schedule ?? "Seg a Sáb, 8h às 18h",
