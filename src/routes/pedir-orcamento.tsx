@@ -76,7 +76,7 @@ const initialForm: FormState = {
 };
 
 function PedirOrcamentoPage() {
-  const { categoria: categoriaParam } = Route.useSearch();
+  const { categoria: categoriaParam, profissional: profissionalParam } = Route.useSearch();
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>({
@@ -86,19 +86,58 @@ function PedirOrcamentoPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [protocol, setProtocol] = useState<string | null>(null);
 
+  // Carrega o profissional destinatário (quando vindo do card).
+  const { data: targetPro } = useQuery({
+    queryKey: ["quote-target-pro", profissionalParam],
+    queryFn: () => (profissionalParam ? getProfessionalBySlug(profissionalParam) : Promise.resolve(undefined)),
+    enabled: Boolean(profissionalParam),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Se veio direcionado a um pro, herda a categoria dele.
+  useEffect(() => {
+    if (targetPro?.categorySlug && !form.categoria) {
+      setForm((f) => ({ ...f, categoria: targetPro.categorySlug }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetPro?.categorySlug]);
+
+  // Pré-preenche dados do usuário logado.
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("full_name, phone, city, state")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      setForm((f) => ({
+        ...f,
+        nome: f.nome || data?.full_name || "",
+        telefone: f.telefone || data?.phone || "",
+        email: f.email || user.email || "",
+        cidade:
+          f.cidade ||
+          (data?.city && data?.state ? `${data.city}, ${data.state}` : data?.city || ""),
+      }));
+    })();
+  }, [user]);
+
   const mutation = useMutation({
     mutationFn: async () => {
-      if (user) {
-        return submitQuoteToDb(user.id, {
-          categoriaSlug: form.categoria,
-          servico: form.servico,
-          descricao: form.descricao,
-          cidade: form.cidade,
-          bairro: form.bairro,
-          urgencia: form.urgencia,
-        });
+      if (!user) {
+        // Sem conta → não podemos criar pedido real (RLS exige client_id).
+        return submitQuoteRequest(form as unknown as Record<string, unknown>);
       }
-      return submitQuoteRequest(form as unknown as Record<string, unknown>);
+      return submitQuoteToDb(user.id, {
+        categoriaSlug: form.categoria,
+        servico: form.servico,
+        descricao: form.descricao,
+        cidade: form.cidade,
+        bairro: form.bairro,
+        urgencia: form.urgencia,
+        professionalSlug: profissionalParam,
+      });
     },
     onSuccess: (res) => setProtocol(res.protocol ?? null),
   });
