@@ -147,6 +147,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     portfolio: mock?.portfolio ?? [],
     faqs: mock?.faqs ?? [],
     searchTags: row.search_tags ?? mock?.searchTags ?? [],
+    whatsapp: row.whatsapp ?? null,
     social: {
       instagram: row.instagram_username,
       instagramUrl: row.instagram_url,
