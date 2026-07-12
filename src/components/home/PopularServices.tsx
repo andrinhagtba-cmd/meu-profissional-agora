@@ -21,7 +21,7 @@ export function PopularServices() {
   const categories = data ?? [];
 
   return (
-    <section className="container-page py-16 sm:py-20" aria-labelledby="servicos-populares">
+    <section className="container-page overflow-hidden py-16 sm:py-20" aria-labelledby="servicos-populares">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <h2 id="servicos-populares" className="font-display text-3xl font-extrabold text-foreground sm:text-4xl">
           Serviços populares
@@ -35,7 +35,7 @@ export function PopularServices() {
         </Link>
       </div>
 
-      <Carousel opts={{ align: "start" }} className="relative">
+      <Carousel opts={{ align: "start" }} className="relative w-full">
         <CarouselContent className="-ml-4">
           {isLoading && categories.length === 0
             ? Array.from({ length: 5 }).map((_, i) => (

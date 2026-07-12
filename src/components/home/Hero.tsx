@@ -13,7 +13,7 @@ const avatars = [
 
 export function Hero() {
   return (
-    <section className="relative" aria-label="Encontre o profissional certo">
+    <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
         <img
           src={images.hero}
@@ -32,7 +32,7 @@ export function Hero() {
           <div className="max-w-xl">
             <h1 className="font-display text-4xl font-extrabold leading-[1.08] text-foreground sm:text-5xl lg:text-6xl">
               Encontre o{" "}
-              <span className="text-hand whitespace-nowrap text-5xl font-bold text-orange sm:text-6xl lg:text-7xl">
+              <span className="text-hand text-5xl font-bold text-orange sm:whitespace-nowrap sm:text-6xl lg:text-7xl">
                 profissional certo.
               </span>
               <br />
@@ -94,7 +94,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="container-page relative z-10 -mt-32 sm:-mt-32">
+      <div className="container-page relative z-10 -mt-32 min-w-0 sm:-mt-32">
         <SearchPanel />
       </div>
     </section>
