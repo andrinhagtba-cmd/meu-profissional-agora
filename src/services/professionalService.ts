@@ -62,6 +62,7 @@ const SELECT = `
   average_rating, reviews_count, response_time, starting_price, years_experience,
   is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
   search_tags,
+  whatsapp,
   instagram_username, instagram_url, facebook_url, website_url,
   postal_code, street, address_number, neighborhood, latitude, longitude,
   formatted_address, public_address_visibility,
