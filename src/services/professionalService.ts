@@ -320,7 +320,7 @@ export async function listApprovedReviewsBySlug(
   slug: string,
   limit = 30,
 ): Promise<PublicReview[]> {
-  const { data: pro, error: pErr } = await supabase
+  const { data: pro, error: pErr } = await supabasePublic
     .from("professional_profiles")
     .select("id")
     .eq("slug", slug)
