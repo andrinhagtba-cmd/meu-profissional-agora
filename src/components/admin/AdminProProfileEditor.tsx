@@ -260,6 +260,17 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             </div>
           </div>
 
+          <Field label="Hashtags / palavras-chave">
+            <Input
+              value={form.search_tags_text}
+              onChange={(e) => set("search_tags_text", e.target.value)}
+              placeholder="ex: trafego pago, marketing digital, gestao de anuncios"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Separe por vírgula. Essas tags ajudam o profissional a aparecer na busca do site.
+            </p>
+          </Field>
+
           <Separator />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
