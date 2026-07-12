@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { getMediaUrl } from "./mediaService";
 
 export type SystemSettings = {
@@ -48,7 +49,7 @@ async function resolveMedia(
 ): Promise<Map<string, string>> {
   const list = ids.filter(Boolean) as string[];
   if (!list.length) return new Map();
-  const { data } = await supabase
+  const { data } = await supabasePublic
     .from("media_assets")
     .select("id, bucket_name, object_path")
     .in("id", list);
@@ -69,7 +70,7 @@ export async function getSettings(): Promise<SystemSettings> {
   let row: (Partial<SystemSettings> & Record<string, unknown>) = {};
   const [priv, pub] = await Promise.all([
     supabase.from("system_settings").select("*").eq("singleton", true).maybeSingle(),
-    supabase.from("public_branding" as never).select("*").maybeSingle(),
+    supabasePublic.from("public_branding" as never).select("*").maybeSingle(),
   ]);
   if (priv.data) {
     row = priv.data as unknown as typeof row;

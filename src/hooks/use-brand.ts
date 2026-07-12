@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSettings, type SystemSettings } from "@/services/settingsService";
 
 const CACHE_KEY = "brand:settings:v2";
@@ -40,6 +41,7 @@ export function useBrand(): {
   data: SystemSettings | undefined;
   isLoading: boolean;
 } {
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["system-settings"],
     queryFn: async () => {
@@ -49,8 +51,12 @@ export function useBrand(): {
     },
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
-    initialData: readCache,
-    initialDataUpdatedAt: 0,
   });
+
+  useEffect(() => {
+    const cached = readCache();
+    if (cached) queryClient.setQueryData(["system-settings"], cached);
+  }, [queryClient]);
+
   return { data, isLoading: isLoading && !data };
 }
