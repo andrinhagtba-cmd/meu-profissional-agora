@@ -58,6 +58,28 @@ export interface Professional {
   portfolio: string[];
   faqs: CategoryFaq[];
   searchTags?: string[];
+  social?: {
+    instagram?: string | null;
+    instagramUrl?: string | null;
+    facebook?: string | null;
+    website?: string | null;
+  };
+  address?: {
+    visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
+    city: string | null;
+    state: string | null;
+    neighborhood: string | null;
+    street: string | null;
+    number: string | null;
+    postalCode: string | null;
+    formatted: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    serviceRadiusKm: number | null;
+    servesAtBusiness: boolean;
+    servesAtCustomer: boolean;
+    servesRemotely: boolean;
+  };
 }
 
 export type AttendanceType = "residencial" | "empresarial" | "online";

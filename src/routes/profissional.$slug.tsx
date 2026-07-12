@@ -6,12 +6,17 @@ import {
   CalendarClock,
   ChevronRight,
   Clock,
+  Facebook,
+  Globe,
   ImageIcon,
+  Instagram,
   MapPin,
   MessageCircle,
   Phone,
   Zap,
 } from "lucide-react";
+import { publicAddressLabel, mapsSearchUrl } from "@/lib/proAddress";
+import { LocationMap } from "@/components/address/LocationMap";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
@@ -188,21 +193,73 @@ function ProfilePage() {
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
                   <RatingStars rating={pro.rating} />
                   <span>({pro.reviewsCount} avaliações)</span>
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin size={14} aria-hidden="true" />
-                    {pro.city}, {pro.state} · a {pro.distanceKm} km
-                  </span>
+                  {(() => {
+                    const a = pro.address;
+                    const label = a
+                      ? publicAddressLabel({
+                          visibility: a.visibility,
+                          city: a.city,
+                          state: a.state,
+                          neighborhood: a.neighborhood,
+                          street: a.street,
+                          address_number: a.number,
+                          postal_code: a.postalCode,
+                          formatted_address: a.formatted,
+                        })
+                      : `${pro.city}, ${pro.state}`;
+                    return label ? (
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin size={14} aria-hidden="true" />
+                        {label}
+                      </span>
+                    ) : null;
+                  })()}
                   <span className="inline-flex items-center gap-1">
                     <Award size={14} aria-hidden="true" />
                     {pro.experienceYears} anos de experiência
                   </span>
                 </div>
+                {(pro.social?.instagramUrl || pro.social?.facebook || pro.social?.website) && (
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {pro.social?.instagramUrl && (
+                      <a
+                        href={pro.social.instagramUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        <Instagram size={13} />@{pro.social.instagram}
+                      </a>
+                    )}
+                    {pro.social?.facebook && (
+                      <a
+                        href={pro.social.facebook}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        <Facebook size={13} /> Facebook
+                      </a>
+                    )}
+                    {pro.social?.website && (
+                      <a
+                        href={pro.social.website}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        <Globe size={13} /> Website
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             <FavoriteButton slug={pro.slug} name={pro.name} className="shrink-0" />
           </div>
         </div>
       </div>
+
 
       <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 space-y-12">
@@ -261,6 +318,61 @@ function ProfilePage() {
               </div>
             </div>
           </section>
+
+          {pro.address && pro.address.visibility !== "hidden" && pro.address.latitude != null && pro.address.longitude != null && (
+            <section aria-labelledby="localizacao">
+              <h2 id="localizacao" className="font-display text-xl font-bold text-foreground">
+                Localização
+              </h2>
+              <div className="mt-4 space-y-3">
+                <LocationMap
+                  latitude={pro.address.latitude}
+                  longitude={pro.address.longitude}
+                  radiusKm={pro.address.serviceRadiusKm}
+                  height={280}
+                />
+                {(() => {
+                  const a = pro.address!;
+                  const url = mapsSearchUrl({
+                    visibility: a.visibility,
+                    city: a.city,
+                    state: a.state,
+                    neighborhood: a.neighborhood,
+                    street: a.street,
+                    address_number: a.number,
+                    postal_code: a.postalCode,
+                    formatted_address: a.formatted,
+                  });
+                  const label = publicAddressLabel({
+                    visibility: a.visibility,
+                    city: a.city,
+                    state: a.state,
+                    neighborhood: a.neighborhood,
+                    street: a.street,
+                    address_number: a.number,
+                    postal_code: a.postalCode,
+                    formatted_address: a.formatted,
+                  });
+                  return (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
+                      <span className="inline-flex items-center gap-2 text-muted-foreground">
+                        <MapPin size={15} className="text-primary" />
+                        {label}
+                        {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                      </span>
+                      {url && (
+                        <Button asChild size="sm" variant="outline">
+                          <a href={url} target="_blank" rel="noreferrer">Abrir no Google Maps</a>
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </section>
+          )}
+
+
 
           <section aria-labelledby="portfolio">
             <h2 id="portfolio" className="font-display text-xl font-bold text-foreground">

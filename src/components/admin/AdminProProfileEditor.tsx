@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "sonner";
-import { BadgeCheck, ExternalLink, Eye, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
+import { BadgeCheck, ExternalLink, Eye, Facebook, Globe, Instagram, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/select";
 import { InitialsAvatar, StatusPill } from "@/components/admin/AdminTable";
 import { updateProProfile, type AdminProDetail, type AdminProProfilePatch } from "@/services/adminService";
+import { AddressAutocomplete, type ResolvedAddress } from "@/components/address/AddressAutocomplete";
+import { LocationMap } from "@/components/address/LocationMap";
+import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 
 
 type Availability = "available" | "busy" | "unavailable";
@@ -37,6 +40,25 @@ type FormState = {
   is_featured: boolean;
   service_types_text: string;
   search_tags_text: string;
+  // Social
+  instagram_username: string;
+  facebook_url: string;
+  website_url: string;
+  // Endereço
+  postal_code: string;
+  street: string;
+  address_number: string;
+  neighborhood: string;
+  latitude: string;
+  longitude: string;
+  google_place_id: string;
+  formatted_address: string;
+  public_address_visibility: AddressVisibility;
+  // Atendimento
+  service_radius_km: string;
+  serves_at_business_address: boolean;
+  serves_at_customer_location: boolean;
+  serves_remotely: boolean;
 };
 
 const AVAILABILITY_LABEL: Record<Availability, string> = {
@@ -62,6 +84,22 @@ function toForm(pro: AdminProDetail): FormState {
     is_featured: Boolean(pro.is_featured),
     service_types_text: (pro.service_types ?? []).join(", "),
     search_tags_text: (pro.search_tags ?? []).join(", "),
+    instagram_username: pro.instagram_username ?? "",
+    facebook_url: pro.facebook_url ?? "",
+    website_url: pro.website_url ?? "",
+    postal_code: pro.postal_code ?? "",
+    street: pro.street ?? "",
+    address_number: pro.address_number ?? "",
+    neighborhood: pro.neighborhood ?? "",
+    latitude: pro.latitude != null ? String(pro.latitude) : "",
+    longitude: pro.longitude != null ? String(pro.longitude) : "",
+    google_place_id: pro.google_place_id ?? "",
+    formatted_address: pro.formatted_address ?? "",
+    public_address_visibility: (pro.public_address_visibility as AddressVisibility) ?? "city_state",
+    service_radius_km: pro.service_radius_km != null ? String(pro.service_radius_km) : "",
+    serves_at_business_address: Boolean(pro.serves_at_business_address),
+    serves_at_customer_location: Boolean(pro.serves_at_customer_location),
+    serves_remotely: Boolean(pro.serves_remotely),
   };
 }
 
@@ -112,6 +150,41 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   const changedTags =
     nextTags.length !== currTags.length || nextTags.some((v, i) => v !== currTags[i]);
   if (changedTags) patch.search_tags = nextTags;
+
+  // Redes sociais
+  const ig = normalizeInstagramHandle(f.instagram_username);
+  setIf("instagram_username", ig.handle, pro.instagram_username);
+  setIf("instagram_url", ig.url, pro.instagram_url);
+  setIf("facebook_url", normalizeUrl(f.facebook_url), pro.facebook_url);
+  setIf("website_url", normalizeUrl(f.website_url), pro.website_url);
+
+  // Endereço
+  setIf("postal_code", norm(f.postal_code), pro.postal_code);
+  setIf("street", norm(f.street), pro.street);
+  setIf("address_number", norm(f.address_number), pro.address_number);
+  setIf("neighborhood", norm(f.neighborhood), pro.neighborhood);
+  setIf("google_place_id", norm(f.google_place_id), pro.google_place_id);
+  setIf("formatted_address", norm(f.formatted_address), pro.formatted_address);
+  const lat = f.latitude.trim() === "" ? null : Number(f.latitude);
+  if (lat !== null && !Number.isFinite(lat)) throw new Error("Latitude inválida.");
+  setIf("latitude", lat, pro.latitude);
+  const lng = f.longitude.trim() === "" ? null : Number(f.longitude);
+  if (lng !== null && !Number.isFinite(lng)) throw new Error("Longitude inválida.");
+  setIf("longitude", lng, pro.longitude);
+  if (f.public_address_visibility !== pro.public_address_visibility) {
+    patch.public_address_visibility = f.public_address_visibility;
+  }
+
+  // Atendimento
+  const rad = f.service_radius_km.trim() === "" ? null : Number(f.service_radius_km);
+  if (rad !== null && !Number.isFinite(rad)) throw new Error("Raio inválido.");
+  setIf("service_radius_km", rad, pro.service_radius_km);
+  if (Boolean(f.serves_at_business_address) !== Boolean(pro.serves_at_business_address))
+    patch.serves_at_business_address = f.serves_at_business_address;
+  if (Boolean(f.serves_at_customer_location) !== Boolean(pro.serves_at_customer_location))
+    patch.serves_at_customer_location = f.serves_at_customer_location;
+  if (Boolean(f.serves_remotely) !== Boolean(pro.serves_remotely))
+    patch.serves_remotely = f.serves_remotely;
 
   return patch;
 }
@@ -272,6 +345,142 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
           </Field>
 
           <Separator />
+
+          {/* Presença digital */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Presença digital</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <Field label="Instagram">
+                <div className="relative">
+                  <Instagram size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.instagram_username}
+                    onChange={(e) => set("instagram_username", e.target.value)}
+                    placeholder="@usuario ou link"
+                  />
+                </div>
+              </Field>
+              <Field label="Facebook">
+                <div className="relative">
+                  <Facebook size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.facebook_url}
+                    onChange={(e) => set("facebook_url", e.target.value)}
+                    placeholder="facebook.com/pagina"
+                  />
+                </div>
+              </Field>
+              <Field label="Website">
+                <div className="relative">
+                  <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    className="pl-8"
+                    value={form.website_url}
+                    onChange={(e) => set("website_url", e.target.value)}
+                    placeholder="meudominio.com.br"
+                  />
+                </div>
+              </Field>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Endereço */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Endereço profissional</h3>
+            <p className="mt-1 text-xs text-muted-foreground">Busque o endereço no Google e ajuste a privacidade exibida no perfil.</p>
+            <div className="mt-3 space-y-3">
+              <AddressAutocomplete
+                initialQuery={form.formatted_address}
+                onSelect={(r: ResolvedAddress) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    formatted_address: r.formatted_address ?? "",
+                    street: r.street ?? "",
+                    address_number: r.address_number ?? "",
+                    neighborhood: r.neighborhood ?? "",
+                    city: r.city ?? prev.city,
+                    state: r.state ?? prev.state,
+                    postal_code: r.postal_code ?? "",
+                    latitude: r.latitude != null ? String(r.latitude) : "",
+                    longitude: r.longitude != null ? String(r.longitude) : "",
+                    google_place_id: r.google_place_id ?? "",
+                  }));
+                }}
+              />
+
+              <div className="grid gap-3 sm:grid-cols-[1fr,140px,140px]">
+                <Field label="Logradouro">
+                  <Input value={form.street} onChange={(e) => set("street", e.target.value)} />
+                </Field>
+                <Field label="Número">
+                  <Input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} />
+                </Field>
+                <Field label="CEP">
+                  <Input value={form.postal_code} onChange={(e) => set("postal_code", e.target.value)} />
+                </Field>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Field label="Bairro">
+                  <Input value={form.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} />
+                </Field>
+                <Field label="Cidade">
+                  <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
+                </Field>
+                <Field label="UF">
+                  <Input maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
+                </Field>
+              </div>
+
+              <Field label="Privacidade do endereço no perfil público">
+                <Select
+                  value={form.public_address_visibility}
+                  onValueChange={(v) => set("public_address_visibility", v as AddressVisibility)}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(ADDRESS_VISIBILITY_LABEL) as AddressVisibility[]).map((k) => (
+                      <SelectItem key={k} value={k}>{ADDRESS_VISIBILITY_LABEL[k]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <LocationMap
+                latitude={form.latitude ? Number(form.latitude) : null}
+                longitude={form.longitude ? Number(form.longitude) : null}
+                radiusKm={form.service_radius_km ? Number(form.service_radius_km) : null}
+              />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Área de atendimento */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Área de atendimento</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <Field label="Raio de atendimento (km)">
+                <Input
+                  inputMode="numeric"
+                  value={form.service_radius_km}
+                  onChange={(e) => set("service_radius_km", e.target.value)}
+                  placeholder="ex: 25"
+                />
+              </Field>
+              <div className="grid grid-cols-1 gap-2">
+                <Toggle label="Atende no meu endereço" checked={form.serves_at_business_address} onChange={(v) => set("serves_at_business_address", v)} />
+                <Toggle label="Vou até o cliente" checked={form.serves_at_customer_location} onChange={(v) => set("serves_at_customer_location", v)} />
+                <Toggle label="Atendimento remoto/online" checked={form.serves_remotely} onChange={(v) => set("serves_remotely", v)} />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-muted-foreground">
