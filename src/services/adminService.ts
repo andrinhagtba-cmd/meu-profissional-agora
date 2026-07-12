@@ -14,7 +14,7 @@ export type AdminStats = {
   openReports: number;
 };
 
-async function count(table: string, filters?: (q: ReturnType<typeof supabase.from>) => unknown) {
+async function count(table: string, filters?: (q: any) => unknown) {
   let q = supabase.from(table as never).select("id", { count: "exact", head: true });
   if (filters) filters(q as never);
   const { count, error } = await q;
