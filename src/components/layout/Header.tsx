@@ -35,7 +35,7 @@ const navItems = [
 ] as const;
 
 export function Logo({ className }: { className?: string }) {
-  const { data, isLoading } = useBrand();
+  const { data } = useBrand();
   const logoUrl = data?.logo_light_url;
   const name = data?.brand_name?.trim() ?? "";
   const tagline = data?.tagline?.trim() ?? "";
@@ -45,9 +45,7 @@ export function Logo({ className }: { className?: string }) {
       className={`flex items-center ${className ?? ""}`}
       aria-label={name ? `${name} — página inicial` : "Página inicial"}
     >
-      {isLoading ? (
-        <div className="h-12 w-[160px] animate-pulse rounded-xl bg-muted" />
-      ) : logoUrl ? (
+      {logoUrl ? (
         <img
           src={logoUrl}
           alt={name || "Logo"}
@@ -55,11 +53,9 @@ export function Logo({ className }: { className?: string }) {
         />
       ) : (
         <span className="min-w-0 leading-tight">
-          {name ? (
-            <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
-              {name}
-            </span>
-          ) : null}
+          <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
+            {name || "\u00A0"}
+          </span>
           {tagline ? (
             <span className="block text-[10px] font-medium text-muted-foreground">
               {tagline}
@@ -70,6 +66,7 @@ export function Logo({ className }: { className?: string }) {
     </Link>
   );
 }
+
 
 
 export function Header() {
