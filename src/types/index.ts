@@ -44,8 +44,8 @@ export interface Professional {
   city: string;
   state: string;
   distanceKm: number;
-  responseTime: string;
   responseMinutes: number;
+  responseTime: string;
   priceFrom: number;
   experienceYears: number;
   description: string;
@@ -57,6 +57,7 @@ export interface Professional {
   emergency: boolean;
   portfolio: string[];
   faqs: CategoryFaq[];
+  searchTags?: string[];
 }
 
 export type AttendanceType = "residencial" | "empresarial" | "online";

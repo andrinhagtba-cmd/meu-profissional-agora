@@ -90,19 +90,20 @@ export type AdminProRow = {
   cover_media_id: string | null;
   avatar_url: string | null;
   cover_url: string | null;
+  search_tags: string[] | null;
 };
 
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id")
+    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id, search_tags")
     .order("created_at", { ascending: false })
     .limit(200);
   if (status) q = q.eq("verification_status", status as never);
   if (typeof featured === "boolean") q = q.eq("is_featured", featured);
   if (search && search.trim()) {
     const s = search.trim().replace(/[%,]/g, "");
-    q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%,slug.ilike.%${s}%`);
+    q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%,slug.ilike.%${s}%,search_tags.cs.{${s}}`);
   }
   const { data, error } = await q;
   if (error) throw error;
@@ -158,6 +159,7 @@ export type AdminProProfilePatch = Partial<{
   emergency: boolean;
   is_featured: boolean;
   service_types: string[];
+  search_tags: string[];
   profile_status: "draft" | "published" | "archived";
   slug: string | null;
   avatar_media_id: string | null;
@@ -182,6 +184,7 @@ export type AdminProDetail = AdminProRow & {
   availability_status: string;
   emergency: boolean;
   service_types: string[] | null;
+  search_tags: string[] | null;
   updated_at: string;
   source: string | null;
   profile_email: string | null;
@@ -198,7 +201,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       verification_status, is_featured, average_rating, reviews_count,
       created_at, whatsapp, description, years_experience, starting_price,
       response_time, profile_status, availability_status, emergency,
-      service_types, updated_at, avatar_media_id, cover_media_id, source
+      service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source
     `)
     .eq("id", id)
     .maybeSingle();
@@ -237,6 +240,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     availability_status: p.availability_status as string,
     emergency: Boolean(p.emergency),
     service_types: (p.service_types as string[] | null) ?? null,
+    search_tags: (p.search_tags as string[] | null) ?? null,
     updated_at: p.updated_at as string,
     source: (p.source as string | null) ?? null,
     profile_email: prof?.email ?? null,

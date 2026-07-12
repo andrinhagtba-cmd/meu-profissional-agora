@@ -36,6 +36,7 @@ type FormState = {
   emergency: boolean;
   is_featured: boolean;
   service_types_text: string;
+  search_tags_text: string;
 };
 
 const AVAILABILITY_LABEL: Record<Availability, string> = {
@@ -60,6 +61,7 @@ function toForm(pro: AdminProDetail): FormState {
     emergency: Boolean(pro.emergency),
     is_featured: Boolean(pro.is_featured),
     service_types_text: (pro.service_types ?? []).join(", "),
+    search_tags_text: (pro.search_tags ?? []).join(", "),
   };
 }
 
@@ -100,6 +102,16 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   const changedTypes =
     nextTypes.length !== currTypes.length || nextTypes.some((v, i) => v !== currTypes[i]);
   if (changedTypes) patch.service_types = nextTypes;
+
+  const nextTags = Array.from(
+    new Set(
+      f.search_tags_text.split(",").map((s) => s.trim().replace(/^#+/, "").toLowerCase()).filter(Boolean),
+    ),
+  );
+  const currTags = pro.search_tags ?? [];
+  const changedTags =
+    nextTags.length !== currTags.length || nextTags.some((v, i) => v !== currTags[i]);
+  if (changedTags) patch.search_tags = nextTags;
 
   return patch;
 }
@@ -247,6 +259,17 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
               <Toggle label="Destaque" checked={form.is_featured} onChange={(v) => set("is_featured", v)} />
             </div>
           </div>
+
+          <Field label="Hashtags / palavras-chave">
+            <Input
+              value={form.search_tags_text}
+              onChange={(e) => set("search_tags_text", e.target.value)}
+              placeholder="ex: trafego pago, marketing digital, gestao de anuncios"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Separe por vírgula. Essas tags ajudam o profissional a aparecer na busca do site.
+            </p>
+          </Field>
 
           <Separator />
 

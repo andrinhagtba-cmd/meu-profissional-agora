@@ -26,6 +26,7 @@ type DbRow = {
   verification_status: "pending" | "approved" | "rejected";
   avatar_media_id: string | null;
   cover_media_id: string | null;
+  search_tags: string[] | null;
   professional_services: Array<{
     starting_price: number | null;
     services: {
@@ -39,6 +40,7 @@ const SELECT = `
   id, slug, professional_name, business_name, description, city, state,
   average_rating, reviews_count, response_time, starting_price, years_experience,
   is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
+  search_tags,
   professional_services(
     starting_price,
     services:service_id(
@@ -118,6 +120,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     emergency: row.emergency,
     portfolio: mock?.portfolio ?? [],
     faqs: mock?.faqs ?? [],
+    searchTags: row.search_tags ?? mock?.searchTags ?? [],
   };
 }
 
@@ -201,7 +204,8 @@ export async function searchProfessionals(
         norm(p.specialty).includes(q) ||
         norm(p.name).includes(q) ||
         norm(p.categorySlug).includes(q) ||
-        p.services.some((s) => norm(s.name).includes(q)),
+        p.services.some((s) => norm(s.name).includes(q)) ||
+        p.searchTags?.some((tag) => norm(tag).includes(q)),
     );
   }
   if (filters.cidade) {
