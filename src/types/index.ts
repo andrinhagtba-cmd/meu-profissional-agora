@@ -20,9 +20,13 @@ export interface Category {
 }
 
 export interface ProfessionalService {
+  id?: string;
   name: string;
   priceFrom: number;
+  categorySlug?: string;
+  categoryName?: string;
 }
+
 
 export interface Professional {
   id: string;
