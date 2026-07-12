@@ -31,15 +31,39 @@ export const Route = createFileRoute("/pedir-orcamento")({
     profissional: typeof search.profissional === "string" ? search.profissional : undefined,
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
   }),
+  loader: async ({ location }) => {
+    const slug =
+      typeof location.search === "object" && location.search
+        ? (location.search as Record<string, unknown>).profissional
+        : undefined;
+    if (typeof slug !== "string" || !slug) return { pro: null };
+    const { getProfessionalBySlug } = await import("@/services/professionalService");
+    const pro = await getProfessionalBySlug(slug).catch(() => undefined);
+    return { pro: pro ?? null };
+  },
   head: () => ({
     meta: [
       { title: "Pedir orçamento grátis" },
       {
         name: "description",
-        content: "Descreva o que você precisa e receba até 5 orçamentos de profissionais avaliados. Grátis e sem compromisso.",
+        content: "Descreva o que você precisa e envie diretamente para o profissional escolhido.",
       },
     ],
   }),
+  errorComponent: () => (
+    <SiteLayout>
+      <div className="container-page py-16 text-center">
+        <p className="text-muted-foreground">Não foi possível carregar. Tente novamente.</p>
+      </div>
+    </SiteLayout>
+  ),
+  notFoundComponent: () => (
+    <SiteLayout>
+      <div className="container-page py-16 text-center">
+        <p className="text-muted-foreground">Página não encontrada.</p>
+      </div>
+    </SiteLayout>
+  ),
   component: PedirOrcamentoPage,
 });
 
