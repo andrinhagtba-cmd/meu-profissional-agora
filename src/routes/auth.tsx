@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { useBrand } from "@/hooks/use-brand";
 import {
   Briefcase,
   User as UserIcon,
