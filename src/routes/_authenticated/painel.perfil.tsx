@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile, updateMyProfile, uploadClientAvatar } from "@/services/clientService";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { isValidDfRegion } from "@/data/dfRegions";
 
 export const Route = createFileRoute("/_authenticated/painel/perfil")({
   head: () => ({
