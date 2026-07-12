@@ -252,7 +252,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
   if (error) throw error;
   if (!data) throw new Error("Profissional não encontrado.");
 
-  const p = data as Record<string, unknown>;
+  const p = data as unknown as Record<string, unknown>;
   const userId = p.user_id as string;
   const avatarMediaId = (p.avatar_media_id as string | null) ?? null;
   const coverMediaId = (p.cover_media_id as string | null) ?? null;
