@@ -84,6 +84,22 @@ function toForm(pro: AdminProDetail): FormState {
     is_featured: Boolean(pro.is_featured),
     service_types_text: (pro.service_types ?? []).join(", "),
     search_tags_text: (pro.search_tags ?? []).join(", "),
+    instagram_username: pro.instagram_username ?? "",
+    facebook_url: pro.facebook_url ?? "",
+    website_url: pro.website_url ?? "",
+    postal_code: pro.postal_code ?? "",
+    street: pro.street ?? "",
+    address_number: pro.address_number ?? "",
+    neighborhood: pro.neighborhood ?? "",
+    latitude: pro.latitude != null ? String(pro.latitude) : "",
+    longitude: pro.longitude != null ? String(pro.longitude) : "",
+    google_place_id: pro.google_place_id ?? "",
+    formatted_address: pro.formatted_address ?? "",
+    public_address_visibility: (pro.public_address_visibility as AddressVisibility) ?? "city_state",
+    service_radius_km: pro.service_radius_km != null ? String(pro.service_radius_km) : "",
+    serves_at_business_address: Boolean(pro.serves_at_business_address),
+    serves_at_customer_location: Boolean(pro.serves_at_customer_location),
+    serves_remotely: Boolean(pro.serves_remotely),
   };
 }
 
