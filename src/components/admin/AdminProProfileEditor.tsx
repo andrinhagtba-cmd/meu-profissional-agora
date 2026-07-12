@@ -103,6 +103,16 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
     nextTypes.length !== currTypes.length || nextTypes.some((v, i) => v !== currTypes[i]);
   if (changedTypes) patch.service_types = nextTypes;
 
+  const nextTags = Array.from(
+    new Set(
+      f.search_tags_text.split(",").map((s) => s.trim().replace(/^#+/, "").toLowerCase()).filter(Boolean),
+    ),
+  );
+  const currTags = pro.search_tags ?? [];
+  const changedTags =
+    nextTags.length !== currTags.length || nextTags.some((v, i) => v !== currTags[i]);
+  if (changedTags) patch.search_tags = nextTags;
+
   return patch;
 }
 
