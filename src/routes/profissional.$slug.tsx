@@ -212,10 +212,10 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* Card do profissional — sobrepõe o banner */}
+          {/* Card do profissional — mobile: coluna centralizada; desktop: grid com avatar + info + CTA */}
           <div className="relative z-10 -mt-10 sm:-mt-14 lg:-mt-16">
             <div className="rounded-3xl border border-border bg-card p-5 shadow-xl shadow-black/[0.04] sm:p-7">
-              <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 sm:gap-6 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+              <div className="flex flex-col items-center text-center sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-6 sm:text-left lg:items-center">
                 {/* Avatar com ring branco premium */}
                 <div className="shrink-0">
                   <div className="rounded-full bg-card p-1.5 shadow-lg ring-1 ring-border sm:p-2">
@@ -230,16 +230,16 @@ function ProfilePage() {
                 </div>
 
                 {/* Identidade */}
-                <div className="min-w-0">
-                  <h1 className="truncate font-display text-2xl font-extrabold leading-tight text-foreground sm:text-3xl lg:text-[2rem]">
+                <div className="mt-4 min-w-0 sm:mt-0">
+                  <h1 className="font-display text-2xl font-extrabold leading-tight text-foreground sm:text-3xl lg:text-[2rem]">
                     {pro.name}
                   </h1>
-                  <p className="mt-1 truncate text-sm font-medium text-muted-foreground sm:text-base">
+                  <p className="mt-1 text-sm font-medium text-muted-foreground sm:text-base">
                     {pro.specialty}
                     {pro.company ? ` · ${pro.company}` : ""}
                   </p>
 
-                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground sm:justify-start">
                     <div className="flex items-center gap-1.5">
                       <RatingStars rating={pro.rating} />
                       <span className="tabular-nums">({pro.reviewsCount})</span>
@@ -265,14 +265,16 @@ function ProfilePage() {
                         </span>
                       ) : null;
                     })()}
-                    <span className="inline-flex items-center gap-1">
-                      <Award size={14} aria-hidden="true" />
-                      {pro.experienceYears} anos de experiência
-                    </span>
+                    {pro.experienceYears > 0 && (
+                      <span className="inline-flex items-center gap-1">
+                        <Award size={14} aria-hidden="true" />
+                        {pro.experienceYears} anos de experiência
+                      </span>
+                    )}
                   </div>
 
                   {(pro.social?.instagramUrl || pro.social?.facebook || pro.social?.website) && (
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                       {pro.social?.instagramUrl && (
                         <a
                           href={pro.social.instagramUrl}
@@ -307,10 +309,10 @@ function ProfilePage() {
                   )}
                 </div>
 
-                {/* CTA rápido no desktop */}
-                <div className="col-span-2 flex flex-col gap-2 sm:flex-row lg:col-span-1 lg:flex-col lg:items-end">
+                {/* CTA rápido — escondido no mobile (sticky bottom já existe) */}
+                <div className="hidden lg:flex lg:flex-col lg:items-end">
                   <Button
-                    className="w-full bg-orange text-white shadow-md hover:bg-orange/90 lg:w-auto"
+                    className="h-11 bg-orange px-6 text-white shadow-md hover:bg-orange/90"
                     onClick={() => {
                       const el = document.getElementById("form-orcamento");
                       el?.scrollIntoView({ behavior: "smooth", block: "start" });
