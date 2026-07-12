@@ -410,15 +410,27 @@ function ProfilePage() {
               Serviços e preços
             </h2>
             <ul className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-              {pro.services.map((s: { name: string; priceFrom: number }) => (
-                <li key={s.name} className="flex items-center justify-between gap-4 px-5 py-4">
+              {pro.services.map((s) => (
+                <li key={s.id ?? s.name} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                   <span className="text-sm font-medium text-foreground">{s.name}</span>
-                  <span className="shrink-0 text-sm font-bold text-primary">
-                    {s.priceFrom > 0 ? `a partir de R$ ${s.priceFrom}` : "Sob consulta"}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="shrink-0 text-sm font-bold text-primary">
+                      {s.priceFrom > 0 ? `a partir de R$ ${s.priceFrom}` : "Sob consulta"}
+                    </span>
+                    {s.id && (
+                      <Link
+                        to="/pedir-orcamento"
+                        search={{ profissional: pro.slug, servico: s.id } as never}
+                        className="text-xs font-semibold text-primary underline-offset-4 hover:underline"
+                      >
+                        Solicitar
+                      </Link>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
+
           </section>
 
           <section aria-labelledby="atendimento">
