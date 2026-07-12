@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
+import { publicAddressLabel } from "@/lib/proAddress";
 import type { Professional } from "@/types";
 
 export function ProfessionalCard({ pro }: { pro: Professional }) {
@@ -60,10 +61,28 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
           <RatingStars rating={pro.rating} />
           <span className="text-xs">({pro.reviewsCount} avaliações)</span>
         </div>
-        <p className="flex items-center gap-1.5">
-          <MapPin size={14} className="shrink-0 text-primary" aria-hidden="true" />
-          {pro.city}, {pro.state} · {pro.distanceKm.toFixed(1).replace(".", ",")} km
-        </p>
+        {(() => {
+          const a = pro.address;
+          const label = a
+            ? publicAddressLabel({
+                visibility: a.visibility,
+                city: a.city,
+                state: a.state,
+                neighborhood: a.neighborhood,
+                street: a.street,
+                address_number: a.number,
+                postal_code: a.postalCode,
+                formatted_address: a.formatted,
+              })
+            : [pro.city, pro.state].filter(Boolean).join(", ");
+          if (!label) return null;
+          return (
+            <p className="flex items-center gap-1.5">
+              <MapPin size={14} className="shrink-0 text-primary" aria-hidden="true" />
+              <span className="truncate">{label}</span>
+            </p>
+          );
+        })()}
         <p className="flex items-center gap-1.5">
           <Clock size={14} className="shrink-0 text-primary" aria-hidden="true" />
           Responde em {pro.responseTime}
