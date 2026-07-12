@@ -120,6 +120,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     emergency: row.emergency,
     portfolio: mock?.portfolio ?? [],
     faqs: mock?.faqs ?? [],
+    searchTags: row.search_tags ?? mock?.searchTags ?? [],
   };
 }
 
