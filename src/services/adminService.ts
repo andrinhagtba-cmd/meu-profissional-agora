@@ -826,7 +826,7 @@ export async function getUserDetail(userId: string): Promise<AdminUserDetail> {
     supabase
       .from("favorites")
       .select("professional_id, created_at")
-      .eq("user_id", userId)
+      .eq("client_id", userId)
       .order("created_at", { ascending: false })
       .limit(10),
     supabase
