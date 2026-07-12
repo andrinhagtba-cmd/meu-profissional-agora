@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BadgeCheck, ExternalLink, Eye, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
+import { BadgeCheck, ExternalLink, Eye, ImagePlus, Loader2, MapPin, MessageCircle, Save, Send, Undo2, UserCircle2, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { InitialsAvatar, StatusPill } from "@/components/admin/AdminTable";
 import { updateProProfile, type AdminProDetail, type AdminProProfilePatch } from "@/services/adminService";
+import { uploadAdminMedia } from "@/services/adminMediaService";
+
 
 type Availability = "available" | "busy" | "unavailable";
 type ProfileStatus = "draft" | "published" | "archived";
