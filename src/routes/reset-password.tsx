@@ -10,7 +10,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Redefinir senha — ProConecta" },
+      { title: "Redefinir senha" },
       { name: "robots", content: "noindex" },
     ],
   }),
