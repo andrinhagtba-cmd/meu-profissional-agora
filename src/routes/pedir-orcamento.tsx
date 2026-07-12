@@ -191,7 +191,9 @@ function PedirOrcamentoPage() {
         next.descricao = "Conte um pouco mais (mínimo de 20 caracteres) para receber orçamentos precisos.";
     }
     if (step === 2) {
-      if (!form.cidade) next.cidade = "Informe a cidade.";
+      if (!form.cidade) next.cidade = "Selecione sua Região Administrativa no DF.";
+      else if (!isValidDfRegionName(form.cidade))
+        next.cidade = "Selecione uma Região Administrativa válida do Distrito Federal.";
     }
     if (step === 3) {
       if (!form.nome.trim()) next.nome = "Informe seu nome.";
