@@ -46,6 +46,7 @@ import {
 import { LocationMap } from "@/components/address/LocationMap";
 import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
 import { isValidDfRegionName } from "@/data/dfRegions";
+import { PortfolioManager } from "@/components/portfolio/PortfolioManager";
 
 export const Route = createFileRoute("/cadastro/profissional")({
   component: SignupWizard,
