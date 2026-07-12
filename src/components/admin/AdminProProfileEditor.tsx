@@ -36,6 +36,7 @@ type FormState = {
   emergency: boolean;
   is_featured: boolean;
   service_types_text: string;
+  search_tags_text: string;
 };
 
 const AVAILABILITY_LABEL: Record<Availability, string> = {
