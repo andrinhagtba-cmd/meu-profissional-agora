@@ -410,7 +410,7 @@ function ProfilePage() {
               Serviços e preços
             </h2>
             <ul className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-              {pro.services.map((s) => (
+              {pro.services.map((s: { id?: string; name: string; priceFrom: number }) => (
                 <li key={s.id ?? s.name} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                   <span className="text-sm font-medium text-foreground">{s.name}</span>
                   <div className="flex items-center gap-3">
