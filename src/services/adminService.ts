@@ -159,6 +159,7 @@ export type AdminProProfilePatch = Partial<{
   emergency: boolean;
   is_featured: boolean;
   service_types: string[];
+  search_tags: string[];
   profile_status: "draft" | "published" | "archived";
   slug: string | null;
   avatar_media_id: string | null;
