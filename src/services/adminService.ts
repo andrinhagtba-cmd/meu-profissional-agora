@@ -240,6 +240,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     availability_status: p.availability_status as string,
     emergency: Boolean(p.emergency),
     service_types: (p.service_types as string[] | null) ?? null,
+    search_tags: (p.search_tags as string[] | null) ?? null,
     updated_at: p.updated_at as string,
     source: (p.source as string | null) ?? null,
     profile_email: prof?.email ?? null,
