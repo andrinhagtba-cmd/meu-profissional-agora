@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "sonner";
-import { BadgeCheck, ExternalLink, Eye, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
+import { BadgeCheck, ExternalLink, Eye, Facebook, Globe, Instagram, MapPin, MessageCircle, Save, Send, Undo2, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/select";
 import { InitialsAvatar, StatusPill } from "@/components/admin/AdminTable";
 import { updateProProfile, type AdminProDetail, type AdminProProfilePatch } from "@/services/adminService";
+import { AddressAutocomplete, type ResolvedAddress } from "@/components/address/AddressAutocomplete";
+import { LocationMap } from "@/components/address/LocationMap";
+import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 
 
 type Availability = "available" | "busy" | "unavailable";
