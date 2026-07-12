@@ -72,7 +72,7 @@ export async function getSettings(): Promise<SystemSettings> {
     .eq("singleton", true)
     .maybeSingle();
   if (priv.data) {
-    row = priv.data as typeof row;
+    row = priv.data as unknown as typeof row;
   } else {
     const pub = await supabase
       .from("public_branding" as never)
