@@ -195,7 +195,7 @@ function AuthPage() {
                 {/* Mobile brand */}
                 <div className="mb-6 flex items-center justify-between lg:hidden">
                   <span className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary">
-                    <Sparkles size={14} /> ProConecta
+                    <Sparkles size={14} /> {brandName || "Menu"}
                   </span>
                   <Link to="/" className="text-xs font-semibold text-muted-foreground hover:text-primary">
                     Voltar ao site
