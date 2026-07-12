@@ -37,6 +37,7 @@ import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authe
 import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
 import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
 import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
+import { Route as AuthenticatedPainelOrcamentosRouteImport } from './routes/_authenticated/painel.orcamentos'
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 import { Route as AuthenticatedPainelMensagensRouteImport } from './routes/_authenticated/painel.mensagens'
@@ -82,9 +83,11 @@ import { Route as AuthenticatedAdminAtividadeRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_authenticated/admin.assinaturas'
 import { Route as AuthenticatedAdminAdministradoresRouteImport } from './routes/_authenticated/admin.administradores'
 import { Route as AuthenticatedPainelPedidosIndexRouteImport } from './routes/_authenticated/painel.pedidos.index'
+import { Route as AuthenticatedPainelOrcamentosIndexRouteImport } from './routes/_authenticated/painel.orcamentos.index'
 import { Route as AuthenticatedPainelMensagensIndexRouteImport } from './routes/_authenticated/painel.mensagens.index'
 import { Route as AuthenticatedAdminProfissionaisIndexRouteImport } from './routes/_authenticated/admin.profissionais.index'
 import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
+import { Route as AuthenticatedPainelOrcamentosIdRouteImport } from './routes/_authenticated/painel.orcamentos.$id'
 import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
 import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
 import { Route as AuthenticatedAdminProfissionaisIdRouteImport } from './routes/_authenticated/admin.profissionais.$id'
@@ -232,6 +235,12 @@ const AuthenticatedPainelPedidosRoute =
   AuthenticatedPainelPedidosRouteImport.update({
     id: '/pedidos',
     path: '/pedidos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelOrcamentosRoute =
+  AuthenticatedPainelOrcamentosRouteImport.update({
+    id: '/orcamentos',
+    path: '/orcamentos',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
 const AuthenticatedPainelNotificacoesRoute =
@@ -500,6 +509,12 @@ const AuthenticatedPainelPedidosIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPainelPedidosRoute,
   } as any)
+const AuthenticatedPainelOrcamentosIndexRoute =
+  AuthenticatedPainelOrcamentosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
+  } as any)
 const AuthenticatedPainelMensagensIndexRoute =
   AuthenticatedPainelMensagensIndexRouteImport.update({
     id: '/',
@@ -517,6 +532,12 @@ const AuthenticatedPainelPedidosIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedPainelPedidosRoute,
+  } as any)
+const AuthenticatedPainelOrcamentosIdRoute =
+  AuthenticatedPainelOrcamentosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
   } as any)
 const AuthenticatedPainelMensagensIdRoute =
   AuthenticatedPainelMensagensIdRouteImport.update({
@@ -602,6 +623,7 @@ export interface FileRoutesByFullPath {
   '/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/painel/orcamentos': typeof AuthenticatedPainelOrcamentosRouteWithChildren
   '/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
@@ -612,9 +634,11 @@ export interface FileRoutesByFullPath {
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
+  '/painel/orcamentos/$id': typeof AuthenticatedPainelOrcamentosIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
   '/painel/mensagens/': typeof AuthenticatedPainelMensagensIndexRoute
+  '/painel/orcamentos/': typeof AuthenticatedPainelOrcamentosIndexRoute
   '/painel/pedidos/': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRoutesByTo {
@@ -687,9 +711,11 @@ export interface FileRoutesByTo {
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
+  '/painel/orcamentos/$id': typeof AuthenticatedPainelOrcamentosIdRoute
   '/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisIndexRoute
   '/painel/mensagens': typeof AuthenticatedPainelMensagensIndexRoute
+  '/painel/orcamentos': typeof AuthenticatedPainelOrcamentosIndexRoute
   '/painel/pedidos': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRoutesById {
@@ -759,6 +785,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
+  '/_authenticated/painel/orcamentos': typeof AuthenticatedPainelOrcamentosRouteWithChildren
   '/_authenticated/painel/pedidos': typeof AuthenticatedPainelPedidosRouteWithChildren
   '/_authenticated/painel/perfil': typeof AuthenticatedPainelPerfilRoute
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
@@ -769,9 +796,11 @@ export interface FileRoutesById {
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
   '/_authenticated/admin/profissionais/novo': typeof AuthenticatedAdminProfissionaisNovoRoute
   '/_authenticated/painel/mensagens/$id': typeof AuthenticatedPainelMensagensIdRoute
+  '/_authenticated/painel/orcamentos/$id': typeof AuthenticatedPainelOrcamentosIdRoute
   '/_authenticated/painel/pedidos/$id': typeof AuthenticatedPainelPedidosIdRoute
   '/_authenticated/admin/profissionais/': typeof AuthenticatedAdminProfissionaisIndexRoute
   '/_authenticated/painel/mensagens/': typeof AuthenticatedPainelMensagensIndexRoute
+  '/_authenticated/painel/orcamentos/': typeof AuthenticatedPainelOrcamentosIndexRoute
   '/_authenticated/painel/pedidos/': typeof AuthenticatedPainelPedidosIndexRoute
 }
 export interface FileRouteTypes {
@@ -841,6 +870,7 @@ export interface FileRouteTypes {
     | '/painel/mensagens'
     | '/painel/midia'
     | '/painel/notificacoes'
+    | '/painel/orcamentos'
     | '/painel/pedidos'
     | '/painel/perfil'
     | '/painel/propostas'
@@ -851,9 +881,11 @@ export interface FileRouteTypes {
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
+    | '/painel/orcamentos/$id'
     | '/painel/pedidos/$id'
     | '/admin/profissionais/'
     | '/painel/mensagens/'
+    | '/painel/orcamentos/'
     | '/painel/pedidos/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -926,9 +958,11 @@ export interface FileRouteTypes {
     | '/admin/profissionais/$id'
     | '/admin/profissionais/novo'
     | '/painel/mensagens/$id'
+    | '/painel/orcamentos/$id'
     | '/painel/pedidos/$id'
     | '/admin/profissionais'
     | '/painel/mensagens'
+    | '/painel/orcamentos'
     | '/painel/pedidos'
   id:
     | '__root__'
@@ -997,6 +1031,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/mensagens'
     | '/_authenticated/painel/midia'
     | '/_authenticated/painel/notificacoes'
+    | '/_authenticated/painel/orcamentos'
     | '/_authenticated/painel/pedidos'
     | '/_authenticated/painel/perfil'
     | '/_authenticated/painel/propostas'
@@ -1007,9 +1042,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/profissionais/$id'
     | '/_authenticated/admin/profissionais/novo'
     | '/_authenticated/painel/mensagens/$id'
+    | '/_authenticated/painel/orcamentos/$id'
     | '/_authenticated/painel/pedidos/$id'
     | '/_authenticated/admin/profissionais/'
     | '/_authenticated/painel/mensagens/'
+    | '/_authenticated/painel/orcamentos/'
     | '/_authenticated/painel/pedidos/'
   fileRoutesById: FileRoutesById
 }
@@ -1230,6 +1267,13 @@ declare module '@tanstack/react-router' {
       path: '/pedidos'
       fullPath: '/painel/pedidos'
       preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/orcamentos': {
+      id: '/_authenticated/painel/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/painel/orcamentos'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
     '/_authenticated/painel/notificacoes': {
@@ -1547,6 +1591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelPedidosIndexRouteImport
       parentRoute: typeof AuthenticatedPainelPedidosRoute
     }
+    '/_authenticated/painel/orcamentos/': {
+      id: '/_authenticated/painel/orcamentos/'
+      path: '/'
+      fullPath: '/painel/orcamentos/'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
+    }
     '/_authenticated/painel/mensagens/': {
       id: '/_authenticated/painel/mensagens/'
       path: '/'
@@ -1567,6 +1618,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/painel/pedidos/$id'
       preLoaderRoute: typeof AuthenticatedPainelPedidosIdRouteImport
       parentRoute: typeof AuthenticatedPainelPedidosRoute
+    }
+    '/_authenticated/painel/orcamentos/$id': {
+      id: '/_authenticated/painel/orcamentos/$id'
+      path: '/$id'
+      fullPath: '/painel/orcamentos/$id'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIdRouteImport
+      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
     }
     '/_authenticated/painel/mensagens/$id': {
       id: '/_authenticated/painel/mensagens/$id'
@@ -1723,6 +1781,23 @@ const AuthenticatedPainelMensagensRouteWithChildren =
     AuthenticatedPainelMensagensRouteChildren,
   )
 
+interface AuthenticatedPainelOrcamentosRouteChildren {
+  AuthenticatedPainelOrcamentosIdRoute: typeof AuthenticatedPainelOrcamentosIdRoute
+  AuthenticatedPainelOrcamentosIndexRoute: typeof AuthenticatedPainelOrcamentosIndexRoute
+}
+
+const AuthenticatedPainelOrcamentosRouteChildren: AuthenticatedPainelOrcamentosRouteChildren =
+  {
+    AuthenticatedPainelOrcamentosIdRoute: AuthenticatedPainelOrcamentosIdRoute,
+    AuthenticatedPainelOrcamentosIndexRoute:
+      AuthenticatedPainelOrcamentosIndexRoute,
+  }
+
+const AuthenticatedPainelOrcamentosRouteWithChildren =
+  AuthenticatedPainelOrcamentosRoute._addFileChildren(
+    AuthenticatedPainelOrcamentosRouteChildren,
+  )
+
 interface AuthenticatedPainelPedidosRouteChildren {
   AuthenticatedPainelPedidosIdRoute: typeof AuthenticatedPainelPedidosIdRoute
   AuthenticatedPainelPedidosIndexRoute: typeof AuthenticatedPainelPedidosIndexRoute
@@ -1744,6 +1819,7 @@ interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelMensagensRoute: typeof AuthenticatedPainelMensagensRouteWithChildren
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
   AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
+  AuthenticatedPainelOrcamentosRoute: typeof AuthenticatedPainelOrcamentosRouteWithChildren
   AuthenticatedPainelPedidosRoute: typeof AuthenticatedPainelPedidosRouteWithChildren
   AuthenticatedPainelPerfilRoute: typeof AuthenticatedPainelPerfilRoute
   AuthenticatedPainelPropostasRoute: typeof AuthenticatedPainelPropostasRoute
@@ -1758,6 +1834,8 @@ const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
     AuthenticatedPainelMensagensRouteWithChildren,
   AuthenticatedPainelMidiaRoute: AuthenticatedPainelMidiaRoute,
   AuthenticatedPainelNotificacoesRoute: AuthenticatedPainelNotificacoesRoute,
+  AuthenticatedPainelOrcamentosRoute:
+    AuthenticatedPainelOrcamentosRouteWithChildren,
   AuthenticatedPainelPedidosRoute: AuthenticatedPainelPedidosRouteWithChildren,
   AuthenticatedPainelPerfilRoute: AuthenticatedPainelPerfilRoute,
   AuthenticatedPainelPropostasRoute: AuthenticatedPainelPropostasRoute,
