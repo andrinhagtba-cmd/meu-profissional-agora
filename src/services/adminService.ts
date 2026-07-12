@@ -178,7 +178,7 @@ export type AdminProProfilePatch = Partial<{
   longitude: number | null;
   google_place_id: string | null;
   formatted_address: string | null;
-  address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
+  public_address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
   // Atendimento
   service_radius_km: number | null;
   serves_at_business_address: boolean;
@@ -224,7 +224,7 @@ export type AdminProDetail = AdminProRow & {
   longitude: number | null;
   google_place_id: string | null;
   formatted_address: string | null;
-  address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address" | null;
+  public_address_visibility: "hidden" | "city_state" | "neighborhood_city_state" | "full_address" | null;
   // Atendimento
   service_radius_km: number | null;
   serves_at_business_address: boolean;
@@ -244,7 +244,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source,
       instagram_username, instagram_url, facebook_url, website_url,
       postal_code, street, address_number, neighborhood, latitude, longitude,
-      google_place_id, formatted_address, address_visibility,
+      google_place_id, formatted_address, public_address_visibility,
       service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely
     `)
     .eq("id", id)
@@ -308,7 +308,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     longitude: n("longitude"),
     google_place_id: s("google_place_id"),
     formatted_address: s("formatted_address"),
-    address_visibility: (p.address_visibility as AdminProDetail["address_visibility"]) ?? "city_state",
+    public_address_visibility: (p.public_address_visibility as AdminProDetail["public_address_visibility"]) ?? "city_state",
     service_radius_km: n("service_radius_km"),
     serves_at_business_address: b("serves_at_business_address"),
     serves_at_customer_location: b("serves_at_customer_location"),
