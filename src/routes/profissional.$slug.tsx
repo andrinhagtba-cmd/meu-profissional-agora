@@ -357,7 +357,7 @@ function ProfilePage() {
                 <li key={s.name} className="flex items-center justify-between gap-4 px-5 py-4">
                   <span className="text-sm font-medium text-foreground">{s.name}</span>
                   <span className="shrink-0 text-sm font-bold text-primary">
-                    a partir de R$ {s.priceFrom}
+                    {s.priceFrom > 0 ? `a partir de R$ ${s.priceFrom}` : "Sob consulta"}
                   </span>
                 </li>
               ))}
