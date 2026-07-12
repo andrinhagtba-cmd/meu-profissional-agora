@@ -83,10 +83,12 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
             </p>
           );
         })()}
-        <p className="flex items-center gap-1.5">
-          <Clock size={14} className="shrink-0 text-primary" aria-hidden="true" />
-          Responde em {pro.responseTime}
-        </p>
+        {pro.responseTime && pro.responseTime !== "—" && (
+          <p className="flex items-center gap-1.5">
+            <Clock size={14} className="shrink-0 text-primary" aria-hidden="true" />
+            Responde em {pro.responseTime}
+          </p>
+        )}
       </div>
 
       <div className="mt-4 flex items-end justify-between gap-3 border-t border-border pt-4">
