@@ -155,8 +155,20 @@ function ProfilePage() {
 
   return (
     <SiteLayout>
+      {dbMedia?.coverUrl ? (
+        <div className="relative w-full overflow-hidden bg-muted">
+          <div
+            className="h-48 w-full bg-cover bg-center sm:h-64 md:h-80 lg:h-[22rem]"
+            style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
+            role="img"
+            aria-label={`Capa de ${pro.name}`}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        </div>
+      ) : null}
       <div className="border-b border-border bg-card">
         <div className="container-page py-8">
+
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">Início</Link>
             <ChevronRight size={12} aria-hidden="true" />
