@@ -66,8 +66,10 @@ export function Logo({ className }: { className?: string }) {
               {tagline ? (
                 <span className="block text-[10px] font-medium text-muted-foreground">
                   {tagline}
+                </span>
+              ) : null}
             </span>
-          </span>
+          ) : null}
         </span>
       )}
     </Link>
