@@ -204,7 +204,8 @@ export async function searchProfessionals(
         norm(p.specialty).includes(q) ||
         norm(p.name).includes(q) ||
         norm(p.categorySlug).includes(q) ||
-        p.services.some((s) => norm(s.name).includes(q)),
+        p.services.some((s) => norm(s.name).includes(q)) ||
+        p.searchTags?.some((tag) => norm(tag).includes(q)),
     );
   }
   if (filters.cidade) {
