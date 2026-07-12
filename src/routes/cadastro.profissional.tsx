@@ -44,6 +44,8 @@ import {
   type ResolvedAddress,
 } from "@/components/address/AddressAutocomplete";
 import { LocationMap } from "@/components/address/LocationMap";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { isValidDfRegionName } from "@/data/dfRegions";
 
 export const Route = createFileRoute("/cadastro/profissional")({
   component: SignupWizard,
