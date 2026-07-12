@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { AdminTable, StatusPill, InitialsAvatar, type Column } from "@/components/admin/AdminTable";
+import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 import { listUsersFull, type AdminUserFull } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/clientes")({
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin/clientes")({
 
 function AdminClients() {
   const [search, setSearch] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ["admin-clients", search],
     queryFn: () => listUsersFull({ search, role: "cliente" }),
