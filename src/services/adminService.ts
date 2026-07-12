@@ -160,7 +160,10 @@ export type AdminProProfilePatch = Partial<{
   service_types: string[];
   profile_status: "draft" | "published" | "archived";
   slug: string | null;
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
 }>;
+
 
 export async function updateProProfile(id: string, patch: AdminProProfilePatch) {
   const { error } = await supabase
