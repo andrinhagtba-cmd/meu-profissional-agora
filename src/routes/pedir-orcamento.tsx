@@ -138,15 +138,16 @@ function PedirOrcamentoPage() {
         .select("full_name, phone, city, state")
         .eq("user_id", user.id)
         .maybeSingle();
-      setForm((f) => ({
-        ...f,
-        nome: f.nome || data?.full_name || "",
-        telefone: f.telefone || data?.phone || "",
-        email: f.email || user.email || "",
-        cidade:
-          f.cidade ||
-          (data?.city && data?.state ? `${data.city}, ${data.state}` : data?.city || ""),
-      }));
+      setForm((f) => {
+        const prefRegion = !f.cidade && data?.city ? findDfRegionByName(data.city) : undefined;
+        return {
+          ...f,
+          nome: f.nome || data?.full_name || "",
+          telefone: f.telefone || data?.phone || "",
+          email: f.email || user.email || "",
+          cidade: f.cidade || (prefRegion ? prefRegion.name : ""),
+        };
+      });
     })();
   }, [user]);
 
