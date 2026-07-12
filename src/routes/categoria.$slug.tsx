@@ -23,7 +23,7 @@ import {
 export const Route = createFileRoute("/categoria/$slug")({
   head: () => ({
     meta: [
-      { title: "Categoria | ${BRAND_PLACEHOLDER}" },
+      { title: "Categoria" },
       {
         name: "description",
         content:

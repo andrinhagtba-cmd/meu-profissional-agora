@@ -9,7 +9,7 @@ import { getMediaUrl } from "@/services/mediaService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/admin/midias")({
-  head: () => ({ meta: [{ title: "Mídias — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Mídias — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

@@ -94,7 +94,7 @@ export function Footer() {
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
           <p>
-            © {new Date().getFullYear()} ${BRAND_PLACEHOLDER}. Todos os direitos reservados. · CNPJ
+            © {new Date().getFullYear()} plataforma. Todos os direitos reservados. · CNPJ
             00.000.000/0001-00 (demonstração)
           </p>
           <a

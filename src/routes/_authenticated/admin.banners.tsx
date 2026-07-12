@@ -17,7 +17,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
 
 export const Route = createFileRoute("/_authenticated/admin/banners")({
-  head: () => ({ meta: [{ title: "Banners — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Banners — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

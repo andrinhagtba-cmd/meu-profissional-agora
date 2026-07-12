@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getBillingSummary } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/faturamento")({
-  head: () => ({ meta: [{ title: "Faturamento — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Faturamento — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

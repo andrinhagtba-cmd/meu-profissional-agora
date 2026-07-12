@@ -16,7 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { listTestimonials, upsertTestimonial, deleteTestimonial, toggleTestimonialPublish, type AdminTestimonial, type UpsertTestimonial } from "@/services/adminContentService";
 
 export const Route = createFileRoute("/_authenticated/admin/depoimentos")({
-  head: () => ({ meta: [{ title: "Depoimentos — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Depoimentos — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

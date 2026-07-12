@@ -12,7 +12,7 @@ export const Route = createFileRoute("/blog")({
       { title: "Blog" },
       { name: "description", content: "Guias, tendências e dicas para contratar serviços profissionais com segurança." },
       { property: "og:title", content: "Blog" },
-      { property: "og:description", content: "Conteúdos da ${BRAND_PLACEHOLDER} para clientes e profissionais de serviços." },
+      { property: "og:description", content: "Conteúdos da plataforma para clientes e profissionais de serviços." },
     ],
   }),
   component: BlogPage,
@@ -53,7 +53,7 @@ function BlogPage() {
       <section className="container-page py-12 lg:py-16">
         <div className="rounded-3xl border border-border bg-card p-8 shadow-card lg:p-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-xs font-bold text-primary">
-            <Sparkles size={13} /> Conteúdo ${BRAND_PLACEHOLDER}
+            <Sparkles size={13} /> Conteúdo editorial
           </div>
           <h1 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">Blog</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">

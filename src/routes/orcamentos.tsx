@@ -13,7 +13,7 @@ export const Route = createFileRoute("/orcamentos")({
       { title: "Pedidos de orçamento" },
       { name: "description", content: "Veja pedidos recentes e acesse seu painel para responder leads e acompanhar propostas com segurança." },
       { property: "og:title", content: "Pedidos de orçamento" },
-      { property: "og:description", content: "Pedidos recentes de clientes esperando profissionais qualificados na ${BRAND_PLACEHOLDER}." },
+      { property: "og:description", content: "Pedidos recentes de clientes esperando profissionais qualificados na plataforma." },
     ],
   }),
   component: OrcamentosPage,

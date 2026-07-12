@@ -9,7 +9,7 @@ import { getProfessionals } from "@/services/mockApi";
 export const Route = createFileRoute("/profissionais")({
   head: () => ({
     meta: [
-      { title: "Profissionais avaliados perto de você | ${BRAND_PLACEHOLDER}" },
+      { title: "Profissionais avaliados perto de você" },
       {
         name: "description",
         content: "Conheça profissionais verificados e avaliados por clientes reais em todo o Brasil.",

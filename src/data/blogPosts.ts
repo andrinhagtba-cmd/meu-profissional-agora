@@ -10,13 +10,13 @@ export const blogPosts: BlogPost[] = [
     date: "2026-07-02",
     readTime: "6 min",
     imageKey: "eletricista",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "Problemas elétricos não avisam quando vão aparecer — e quando aparecem, a pressa pode levar a contratações arriscadas. Antes de fechar com qualquer profissional, vale seguir alguns passos simples que reduzem muito a chance de dor de cabeça.",
       "1. Verifique as avaliações de outros clientes. A experiência de quem já contratou é o melhor termômetro. Dê atenção especial a comentários sobre pontualidade, limpeza e transparência no orçamento.",
       "2. Confirme a qualificação. Serviços elétricos exigem conhecimento técnico real. Pergunte sobre cursos como NR-10 e experiência com o tipo de serviço que você precisa.",
       "3. Peça orçamento detalhado por escrito. Um bom profissional descreve o que será feito, os materiais e o prazo. Desconfie de valores muito abaixo do mercado.",
-      "4. Prefira profissionais verificados. Na ${BRAND_PLACEHOLDER}, o selo de verificação indica que o profissional passou por análise de documentos.",
+      "4. Prefira profissionais verificados. Na plataforma, o selo de verificação indica que o profissional passou por análise de documentos.",
       "5. Combine garantia. Serviços elétricos bem executados têm garantia. Alinhe isso antes do início do trabalho.",
     ],
   },
@@ -29,13 +29,13 @@ export const blogPosts: BlogPost[] = [
     date: "2026-06-25",
     readTime: "8 min",
     imageKey: "pintor",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "O preço de uma pintura varia bastante conforme a cidade, o estado das paredes e o tipo de tinta. Em geral, os profissionais calculam por metro quadrado de parede — não de piso.",
       "Para um apartamento de 60m², a área de parede pintável costuma ficar entre 140m² e 180m². Com preparação simples e tinta acrílica padrão, o investimento típico fica entre R$ 2.000 e R$ 4.500, incluindo mão de obra.",
       "Fatores que aumentam o valor: paredes com trincas ou mofo, cores escuras que exigem mais demãos, pé-direito alto e prazo apertado.",
       "Para economizar: peça pelo menos três orçamentos, compare o que está incluso (massa corrida, lixamento, proteção de móveis) e considere pintar fora de períodos de alta demanda, como o fim do ano.",
-      "Na ${BRAND_PLACEHOLDER} você compara pintores avaliados por clientes reais e solicita orçamentos sem compromisso.",
+      "Na plataforma você compara pintores avaliados por clientes reais e solicita orçamentos sem compromisso.",
     ],
   },
   {
@@ -47,7 +47,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-06-18",
     readTime: "5 min",
     imageKey: "ar-condicionado",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "O ar-condicionado é um dos eletrodomésticos que mais sofrem com a falta de manutenção — e um dos que mais impactam a conta de luz quando estão sujos.",
       "Filtros obstruídos forçam o compressor, aumentando o consumo em até 30%. Além disso, a sujeira acumulada favorece fungos e bactérias que circulam pelo ambiente.",
@@ -65,7 +65,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-06-10",
     readTime: "10 min",
     imageKey: "pedreiro",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "Reformar é um dos maiores investimentos de quem tem casa própria — e também uma das maiores fontes de estresse quando falta planejamento.",
       "Comece definindo o escopo com clareza: o que é essencial, o que é desejável e o que pode ficar para uma segunda etapa. Isso evita o famoso 'já que estamos mexendo...' que estoura qualquer orçamento.",
@@ -83,7 +83,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-05-28",
     readTime: "7 min",
     imageKey: "diarista",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "A escolha entre diarista e mensalista depende principalmente da frequência que sua casa precisa de limpeza e do seu orçamento mensal.",
       "A diarista trabalha por dia, sem vínculo empregatício, desde que atenda no máximo 2 vezes por semana na mesma residência. É ideal para apartamentos menores e rotinas mais simples.",
@@ -101,7 +101,7 @@ export const blogPosts: BlogPost[] = [
     date: "2026-05-15",
     readTime: "6 min",
     imageKey: "informatica",
-    author: "Equipe ${BRAND_PLACEHOLDER}",
+    author: "Equipe editorial",
     content: [
       "Computador lento é uma das queixas mais comuns — e nem sempre o problema exige um técnico.",
       "Antes de chamar ajuda, tente: reiniciar a máquina, desinstalar programas que você não usa, limpar a pasta de downloads e verificar se o disco não está cheio (deixe ao menos 15% livre).",

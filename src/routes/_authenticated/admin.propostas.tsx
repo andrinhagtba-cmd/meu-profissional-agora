@@ -7,7 +7,7 @@ import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTab
 import { listProposalsAdmin, type AdminProposalRow } from "@/services/adminService";
 
 export const Route = createFileRoute("/_authenticated/admin/propostas")({
-  head: () => ({ meta: [{ title: "Propostas — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Propostas — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

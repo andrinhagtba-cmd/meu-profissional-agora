@@ -37,7 +37,7 @@ const navItems = [
 export function Logo({ className }: { className?: string }) {
   const { data, isLoading } = useBrand();
   const logoUrl = data?.logo_light_url;
-  const name = data?.brand_name ?? "${BRAND_PLACEHOLDER}";
+  const name = data?.brand_name ?? "plataforma";
   const tagline = data?.tagline ?? "Resolva sem complicação";
   const rendered =
     /^pro/i.test(name) && name.length > 3 ? (

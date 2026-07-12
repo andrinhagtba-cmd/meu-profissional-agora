@@ -181,7 +181,7 @@ function BenefitDialog({ value, onClose, onSave, saving }: {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">{form.id ? "Editar benefício" : "Novo benefício"}</DialogTitle>
-          <DialogDescription>Aparece nas seções de "por que escolher a ${BRAND_PLACEHOLDER}" das landing pages.</DialogDescription>
+          <DialogDescription>Aparece nas seções de "por que escolher a plataforma" das landing pages.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           <div>

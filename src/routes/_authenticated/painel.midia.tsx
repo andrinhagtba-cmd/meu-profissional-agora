@@ -123,7 +123,7 @@ function PainelMidia() {
               Foto, capa e portfólio
             </h1>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              Sua imagem no ${BRAND_PLACEHOLDER}. Mantenha uma foto nítida, uma capa que represente
+              Sua imagem na plataforma. Mantenha uma foto nítida, uma capa que represente
               seu trabalho e envie fotos de projetos recentes.
             </p>
           </div>

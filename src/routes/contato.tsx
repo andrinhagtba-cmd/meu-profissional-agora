@@ -14,9 +14,9 @@ export const Route = createFileRoute("/contato")({
   head: () => ({
     meta: [
       { title: "Contato" },
-      { name: "description", content: "Fale com a equipe ${BRAND_PLACEHOLDER} para suporte, imprensa, parcerias e dúvidas sobre serviços profissionais." },
+      { name: "description", content: "Fale com a equipe plataforma para suporte, imprensa, parcerias e dúvidas sobre serviços profissionais." },
       { property: "og:title", content: "Contato" },
-      { property: "og:description", content: "Envie sua mensagem para a equipe ${BRAND_PLACEHOLDER}." },
+      { property: "og:description", content: "Envie sua mensagem para a equipe plataforma." },
     ],
   }),
   component: ContatoPage,
@@ -61,7 +61,7 @@ function ContatoPage() {
       <section className="container-page grid gap-8 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:py-16">
         <div className="rounded-3xl border border-border bg-gradient-to-br from-primary via-primary to-[#0a4bd8] p-8 text-primary-foreground shadow-card lg:p-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide">
-            <MessageCircle size={13} /> Atendimento ${BRAND_PLACEHOLDER}
+            <MessageCircle size={13} /> Atendimento
           </div>
           <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight lg:text-5xl">Contato</h1>
           <p className="mt-4 text-sm leading-relaxed text-white/85 lg:text-base">

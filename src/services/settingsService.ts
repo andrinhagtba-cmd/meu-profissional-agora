@@ -77,7 +77,7 @@ export async function getSettings(): Promise<SystemSettings> {
   ]);
   return {
     id: (row.id as string) ?? "",
-    brand_name: (row.brand_name as string) ?? "${BRAND_PLACEHOLDER}",
+    brand_name: (row.brand_name as string) ?? "plataforma",
     tagline: (row.tagline as string) ?? null,
     logo_light_media_id: (row.logo_light_media_id as string | null) ?? null,
     logo_dark_media_id: (row.logo_dark_media_id as string | null) ?? null,

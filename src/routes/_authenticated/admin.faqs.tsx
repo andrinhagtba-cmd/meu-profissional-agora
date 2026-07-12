@@ -16,7 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { listFaqs, upsertFaq, deleteFaq, type AdminFaq, type UpsertFaq } from "@/services/adminContentService";
 
 export const Route = createFileRoute("/_authenticated/admin/faqs")({
-  head: () => ({ meta: [{ title: "FAQs — Admin ${BRAND_PLACEHOLDER}" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "FAQs — Admin" }, { name: "robots", content: "noindex" }] }),
   component: Page,
 });
 

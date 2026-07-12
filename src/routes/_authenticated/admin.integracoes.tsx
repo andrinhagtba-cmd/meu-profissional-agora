@@ -31,7 +31,7 @@ import { getSettings, updateSettings, type IntegrationConfig } from "@/services/
 export const Route = createFileRoute("/_authenticated/admin/integracoes")({
   head: () => ({
     meta: [
-      { title: "Integrações — Admin ${BRAND_PLACEHOLDER}" },
+      { title: "Integrações — Admin" },
       { name: "robots", content: "noindex" },
     ],
   }),
