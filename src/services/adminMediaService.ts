@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { supabasePublic } from "@/integrations/supabase/publicClient";
 import { getMediaUrl } from "./mediaService";
 
 const BUCKET = "public-media";
@@ -70,7 +71,9 @@ export async function resolveMediaUrlsByIds(
   const unique = Array.from(new Set(ids.filter(Boolean) as string[]));
   const map = new Map<string, string>();
   if (!unique.length) return map;
-  const { data } = await supabase
+  // Use the isolated anon client so an expired auth session on the shared
+  // client can't 401 this public read (avatars/covers on public cards).
+  const { data } = await supabasePublic
     .from("media_assets")
     .select("id, bucket_name, object_path")
     .in("id", unique);
