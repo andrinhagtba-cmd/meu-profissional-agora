@@ -40,6 +40,25 @@ type FormState = {
   is_featured: boolean;
   service_types_text: string;
   search_tags_text: string;
+  // Social
+  instagram_username: string;
+  facebook_url: string;
+  website_url: string;
+  // Endereço
+  postal_code: string;
+  street: string;
+  address_number: string;
+  neighborhood: string;
+  latitude: string;
+  longitude: string;
+  google_place_id: string;
+  formatted_address: string;
+  public_address_visibility: AddressVisibility;
+  // Atendimento
+  service_radius_km: string;
+  serves_at_business_address: boolean;
+  serves_at_customer_location: boolean;
+  serves_remotely: boolean;
 };
 
 const AVAILABILITY_LABEL: Record<Availability, string> = {
