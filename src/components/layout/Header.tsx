@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Briefcase, Heart, LogOut, Menu, Search, User, Wrench } from "lucide-react";
+import { Briefcase, Heart, LogOut, Menu, Search, User } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,20 +54,15 @@ export function Logo({ className }: { className?: string }) {
           className="h-12 w-auto max-w-[260px] object-contain"
         />
       ) : (
-        <span className="flex items-center gap-2">
-          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
-            <Wrench size={20} aria-hidden="true" />
-          </span>
+        <span className="min-w-0 leading-tight">
           {name ? (
-            <span className="min-w-0 leading-tight">
-              <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
-                {name}
-              </span>
-              {tagline ? (
-                <span className="block text-[10px] font-medium text-muted-foreground">
-                  {tagline}
-                </span>
-              ) : null}
+            <span className="block font-display text-lg font-extrabold tracking-tight text-foreground">
+              {name}
+            </span>
+          ) : null}
+          {tagline ? (
+            <span className="block text-[10px] font-medium text-muted-foreground">
+              {tagline}
             </span>
           ) : null}
         </span>
