@@ -1,14 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSettings, type SystemSettings } from "@/services/settingsService";
 
-const CACHE_KEY = "brand:settings:v1";
+const CACHE_KEY = "brand:settings:v2";
 
 function readCache(): SystemSettings | undefined {
   if (typeof window === "undefined") return undefined;
   try {
     const raw = window.localStorage.getItem(CACHE_KEY);
     if (!raw) return undefined;
-    return JSON.parse(raw) as SystemSettings;
+    const parsed = JSON.parse(raw) as SystemSettings;
+    const hasVisibleBrand = Boolean(
+      parsed.logo_light_url ||
+        parsed.logo_dark_url ||
+        parsed.logo_light_media_id ||
+        parsed.logo_dark_media_id ||
+        parsed.brand_name?.trim(),
+    );
+    return hasVisibleBrand ? parsed : undefined;
   } catch {
     return undefined;
   }
