@@ -1,22 +1,18 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ImagePlus, Loader2, Trash2, Upload, User as UserIcon } from "lucide-react";
+import { Loader2, Upload, User as UserIcon } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  addPortfolioItem,
-  deletePortfolioItem,
   getMyProfessionalProfile,
-  listPortfolio,
   uploadAvatar,
   uploadCover,
 } from "@/services/professionalMediaService";
+import { PortfolioManager } from "@/components/portfolio/PortfolioManager";
 
 export const Route = createFileRoute("/_authenticated/painel/midia")({
   head: () => ({
