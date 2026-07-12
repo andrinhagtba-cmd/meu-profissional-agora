@@ -1744,7 +1744,7 @@ export type AdminContactRow = {
 };
 
 export async function listContactsAdmin(opts: { search?: string; status?: string; priority?: string } = {}): Promise<AdminContactRow[]> {
-  let q = (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>)
+  let q = (supabase.from("contact_messages" as never) as any)
     .select("id, name, email, phone, subject, message, channel, status, priority, internal_note, created_at, handled_at")
     .order("created_at", { ascending: false })
     .limit(300);
@@ -1759,12 +1759,12 @@ export async function listContactsAdmin(opts: { search?: string; status?: string
 export async function updateContactMessage(id: string, patch: Partial<Pick<AdminContactRow, "status" | "priority" | "internal_note">>) {
   const payload: Record<string, unknown> = { ...patch };
   if (patch.status === "resolved") payload.handled_at = new Date().toISOString();
-  const { error } = await (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>).update(payload).eq("id", id);
+  const { error } = await (supabase.from("contact_messages" as never) as any).update(payload).eq("id", id);
   if (error) throw error;
 }
 
 export async function deleteContactMessage(id: string) {
-  const { error } = await (supabase.from("contact_messages" as never) as ReturnType<typeof supabase.from>).delete().eq("id", id);
+  const { error } = await (supabase.from("contact_messages" as never) as any).delete().eq("id", id);
   if (error) throw error;
 }
 
