@@ -1047,6 +1047,7 @@ export type Database = {
           profile_status: Database["public"]["Enums"]["profile_status"]
           response_time: string | null
           reviews_count: number
+          search_tags: string[] | null
           service_types: Database["public"]["Enums"]["service_type"][]
           slug: string | null
           source: string
@@ -1074,6 +1075,7 @@ export type Database = {
           profile_status?: Database["public"]["Enums"]["profile_status"]
           response_time?: string | null
           reviews_count?: number
+          search_tags?: string[] | null
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
@@ -1101,6 +1103,7 @@ export type Database = {
           profile_status?: Database["public"]["Enums"]["profile_status"]
           response_time?: string | null
           reviews_count?: number
+          search_tags?: string[] | null
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
