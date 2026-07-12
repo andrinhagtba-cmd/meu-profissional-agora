@@ -36,6 +36,7 @@ import {
   countMyProposals,
   getMyProProfile,
 } from "@/services/professionalDashboardService";
+import { countProUnreadDirectQuotes } from "@/services/proDirectQuoteService";
 import { listMyConversations } from "@/services/chatService";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
@@ -90,9 +91,13 @@ function Painel() {
       ]);
       const rolesList = (roles.data ?? []).map((r) => r.role as string);
       const isPro = rolesList.includes("profissional");
-      const [leadsCount, proposalsCount] = isPro && pro
-        ? await Promise.all([countLeadsAvailable(), countMyProposals(pro.id)])
-        : [0, 0];
+      const [leadsCount, proposalsCount, directUnread] = isPro && pro
+        ? await Promise.all([
+            countLeadsAvailable(),
+            countMyProposals(pro.id),
+            countProUnreadDirectQuotes().catch(() => 0),
+          ])
+        : [0, 0, 0];
       return {
         profile: profile.data,
         roles: rolesList,
@@ -102,6 +107,7 @@ function Painel() {
         pro,
         leadsCount,
         proposalsCount,
+        directUnread,
         recentQuotes: recentQuotes.slice(0, 4),
         notifications: notifications.slice(0, 4),
         conversations: conversations.slice(0, 4),
@@ -199,16 +205,10 @@ function Painel() {
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isProfissional ? (
             <>
+              <KpiCard icon={<MessageSquare />} label="Pedidos de orçamento" value={data?.directUnread ? `${data.directUnread} novos` : (data?.directUnread ?? 0)} loading={isLoading} to="/painel/orcamentos" tone="orange" />
               <KpiCard icon={<Briefcase />} label="Leads disponíveis" value={data?.leadsCount} loading={isLoading} to="/painel/leads" tone="blue" />
-              <KpiCard icon={<MessageSquare />} label="Propostas enviadas" value={data?.proposalsCount} loading={isLoading} to="/painel/propostas" tone="orange" />
-              <KpiCard
-                icon={<Star />}
-                label="Avaliação média"
-                value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"}
-                loading={isLoading}
-                tone="amber"
-              />
-              <KpiCard icon={<Bell />} label="Notificações" value={data?.unread} loading={isLoading} to="/painel/notificacoes" tone="emerald" />
+              <KpiCard icon={<MessageSquare />} label="Propostas enviadas" value={data?.proposalsCount} loading={isLoading} to="/painel/propostas" tone="emerald" />
+              <KpiCard icon={<Star />} label="Avaliação média" value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"} loading={isLoading} tone="amber" />
             </>
           ) : (
             <>
@@ -231,6 +231,7 @@ function Painel() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {isProfissional ? (
               <>
+                <ActionCard to="/painel/orcamentos" title="Pedidos de orçamento" desc="Solicitações enviadas diretamente ao seu perfil." icon={<MessageSquare />} />
                 <ActionCard to="/painel/leads" title="Leads disponíveis" desc="Pedidos abertos onde você pode enviar propostas." icon={<Briefcase />} />
                 <ActionCard to="/painel/propostas" title="Minhas propostas" desc="Status das propostas e mensagens dos clientes." icon={<MessageSquare />} />
                 <ActionCard to="/painel/mensagens" title="Mensagens" desc="Converse com clientes após aceitar propostas." icon={<MessageSquare />} />
