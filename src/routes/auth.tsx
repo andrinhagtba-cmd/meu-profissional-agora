@@ -113,7 +113,7 @@ function AuthPage() {
             <aside className="relative hidden overflow-hidden rounded-[2rem] border border-border bg-navy shadow-float lg:block">
               <img
                 src={authHero}
-                alt="Profissional ProConecta verificado"
+                alt={brandName ? `Profissional ${brandName} verificado` : "Profissional verificado"}
                 className="absolute inset-0 h-full w-full object-cover opacity-90"
                 width={1024}
                 height={1536}
