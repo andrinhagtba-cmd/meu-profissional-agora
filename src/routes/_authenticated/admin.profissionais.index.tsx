@@ -240,8 +240,8 @@ function AdminPros() {
 
       <section>
         {isLoading ? (
-          <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-72 rounded-[1.75rem]" />)}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-[1.5rem]" />)}
           </div>
         ) : data.length === 0 ? (
           <div className="rounded-[2rem] border border-dashed bg-card p-12 text-center shadow-card">
@@ -250,7 +250,7 @@ function AdminPros() {
             <p className="mt-1 text-sm text-muted-foreground">Ajuste filtros ou cadastre um novo profissional.</p>
           </div>
         ) : (
-          <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {data.map((pro) => (
               <ProfessionalCard
                 key={pro.id}
