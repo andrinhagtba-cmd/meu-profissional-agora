@@ -981,37 +981,79 @@ export type Database = {
       }
       portfolio_items: {
         Row: {
+          alt_text: string | null
+          caption: string | null
           created_at: string
           description: string | null
+          embed_url: string | null
+          external_media_id: string | null
+          external_url: string | null
           id: string
-          image_url: string
+          image_url: string | null
+          is_cover: boolean
+          is_featured: boolean
           media_asset_id: string | null
+          media_type: string
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
+          moderation_status: string
           professional_id: string
           sort_order: number
           status: string
+          thumbnail_url: string | null
           title: string | null
+          updated_at: string
         }
         Insert: {
+          alt_text?: string | null
+          caption?: string | null
           created_at?: string
           description?: string | null
+          embed_url?: string | null
+          external_media_id?: string | null
+          external_url?: string | null
           id?: string
-          image_url: string
+          image_url?: string | null
+          is_cover?: boolean
+          is_featured?: boolean
           media_asset_id?: string | null
+          media_type?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string
           professional_id: string
           sort_order?: number
           status?: string
+          thumbnail_url?: string | null
           title?: string | null
+          updated_at?: string
         }
         Update: {
+          alt_text?: string | null
+          caption?: string | null
           created_at?: string
           description?: string | null
+          embed_url?: string | null
+          external_media_id?: string | null
+          external_url?: string | null
           id?: string
-          image_url?: string
+          image_url?: string | null
+          is_cover?: boolean
+          is_featured?: boolean
           media_asset_id?: string | null
+          media_type?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string
           professional_id?: string
           sort_order?: number
           status?: string
+          thumbnail_url?: string | null
           title?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -2140,8 +2182,16 @@ export type Database = {
         Returns: undefined
       }
       mark_pro_quote_viewed: { Args: { _id: string }; Returns: undefined }
+      moderate_portfolio_item: {
+        Args: { _id: string; _notes?: string; _status: string }
+        Returns: undefined
+      }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      reorder_portfolio_items: {
+        Args: { _ordered_ids: string[]; _professional_id: string }
+        Returns: undefined
+      }
       submit_review: {
         Args: { _comment: string; _quote_id: string; _rating: number }
         Returns: string

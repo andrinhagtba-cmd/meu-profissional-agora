@@ -46,6 +46,7 @@ import {
 import { LocationMap } from "@/components/address/LocationMap";
 import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
 import { isValidDfRegionName } from "@/data/dfRegions";
+import { PortfolioManager } from "@/components/portfolio/PortfolioManager";
 
 export const Route = createFileRoute("/cadastro/profissional")({
   component: SignupWizard,
@@ -763,39 +764,11 @@ function SignupWizard() {
                 </div>
 
                 <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <Label>Portfólio (3 a 6 fotos recomendadas)</Label>
-                    <UploadInline onFile={handlePortfolioAdd} disabled={busy}>
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-                        <ImagePlus size={14} /> Adicionar foto
-                      </span>
-                    </UploadInline>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {portfolio.map((p) => (
-                      <div key={p.id} className="group relative aspect-square overflow-hidden rounded-xl border border-border">
-                        {p.url ? (
-                          <img src={p.url} alt={p.title ?? ""} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
-                            sem imagem
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => handlePortfolioRemove(p.id)}
-                          className="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1.5 text-white opacity-0 transition group-hover:opacity-100"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    ))}
-                    {portfolio.length === 0 && (
-                      <div className="col-span-full rounded-xl border border-dashed border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
-                        Nenhum item ainda. Adicione fotos dos seus melhores trabalhos.
-                      </div>
-                    )}
-                  </div>
+                  <Label>Portfólio multimídia</Label>
+                  <p className="mb-3 mt-1 text-xs text-muted-foreground">
+                    Imagens, Reels do Instagram e vídeos do YouTube. Itens novos ficam pendentes até a aprovação do time.
+                  </p>
+                  <PortfolioManager professionalId={profile.id} professionalUserId={userId ?? profile.user_id} />
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
