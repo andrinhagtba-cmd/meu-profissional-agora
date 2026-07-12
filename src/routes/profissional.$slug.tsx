@@ -156,14 +156,23 @@ function ProfilePage() {
   return (
     <SiteLayout>
       {dbMedia?.coverUrl ? (
-        <div className="relative w-full overflow-hidden bg-muted">
+        <div className="relative w-full overflow-hidden bg-neutral-950">
+          {/* Backdrop borrado com a própria imagem para preencher laterais sem cortar */}
           <div
-            className="h-48 w-full bg-cover bg-center sm:h-64 md:h-80 lg:h-[22rem]"
+            aria-hidden="true"
+            className="absolute inset-0 scale-110 bg-cover bg-center opacity-40 blur-2xl"
             style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
-            role="img"
-            aria-label={`Capa de ${pro.name}`}
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
+          {/* Imagem completa, sem crop */}
+          <div className="relative mx-auto flex w-full max-w-6xl items-center justify-center px-4 py-6 sm:py-8">
+            <img
+              src={dbMedia.coverUrl}
+              alt={`Capa de ${pro.name}`}
+              className="max-h-[220px] w-auto max-w-full rounded-2xl object-contain shadow-2xl ring-1 ring-white/10 sm:max-h-[320px] md:max-h-[400px] lg:max-h-[460px]"
+              loading="eager"
+            />
+          </div>
         </div>
       ) : null}
       <div className="border-b border-border bg-card">
