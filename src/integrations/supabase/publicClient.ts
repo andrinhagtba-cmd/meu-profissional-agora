@@ -1,6 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
+const emptyStorage = {
+  getItem: () => null,
+  setItem: () => undefined,
+  removeItem: () => undefined,
+};
+
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
 }
@@ -38,7 +44,7 @@ export const supabasePublic = createClient<Database>(SUPABASE_URL, SUPABASE_PUBL
   },
   auth: {
     storageKey: "supabase-public-anon",
-    storage: undefined,
+    storage: emptyStorage,
     persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false,
