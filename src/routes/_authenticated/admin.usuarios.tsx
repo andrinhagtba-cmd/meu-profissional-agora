@@ -159,6 +159,12 @@ function AdminUsers() {
         rowKey={(u) => u.user_id}
         emptyText="Nenhum usuário encontrado."
         selectable={{ selected, onToggle: toggle, onToggleAll: toggleAll }}
+        onRowClick={(u) => setSelectedUserId(u.user_id)}
+      />
+      <UserDetailDrawer
+        userId={selectedUserId}
+        open={!!selectedUserId}
+        onOpenChange={(o) => !o && setSelectedUserId(null)}
       />
     </div>
   );
