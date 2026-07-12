@@ -6,12 +6,17 @@ import {
   CalendarClock,
   ChevronRight,
   Clock,
+  Facebook,
+  Globe,
   ImageIcon,
+  Instagram,
   MapPin,
   MessageCircle,
   Phone,
   Zap,
 } from "lucide-react";
+import { publicAddressLabel, mapsSearchUrl } from "@/lib/proAddress";
+import { LocationMap } from "@/components/address/LocationMap";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
