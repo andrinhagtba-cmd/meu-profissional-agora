@@ -26,6 +26,7 @@ type DbRow = {
   verification_status: "pending" | "approved" | "rejected";
   avatar_media_id: string | null;
   cover_media_id: string | null;
+  search_tags: string[] | null;
   professional_services: Array<{
     starting_price: number | null;
     services: {
@@ -39,6 +40,7 @@ const SELECT = `
   id, slug, professional_name, business_name, description, city, state,
   average_rating, reviews_count, response_time, starting_price, years_experience,
   is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
+  search_tags,
   professional_services(
     starting_price,
     services:service_id(
