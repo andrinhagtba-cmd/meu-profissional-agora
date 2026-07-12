@@ -96,14 +96,14 @@ export type AdminProRow = {
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id")
+    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id, search_tags")
     .order("created_at", { ascending: false })
     .limit(200);
   if (status) q = q.eq("verification_status", status as never);
   if (typeof featured === "boolean") q = q.eq("is_featured", featured);
   if (search && search.trim()) {
     const s = search.trim().replace(/[%,]/g, "");
-    q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%,slug.ilike.%${s}%`);
+    q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%,slug.ilike.%${s}%,search_tags.cs.{${s}}`);
   }
   const { data, error } = await q;
   if (error) throw error;
