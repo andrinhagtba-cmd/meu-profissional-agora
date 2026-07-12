@@ -104,7 +104,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
             }
           : null,
       )
-      .filter((v): v is { id: string; name: string; priceFrom: number; categorySlug?: string; categoryName?: string } => v !== null) ?? [];
+      .filter((v): v is NonNullable<typeof v> => v !== null) ?? [];
 
 
   const categorySlug =
