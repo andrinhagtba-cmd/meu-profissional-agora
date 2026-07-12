@@ -205,9 +205,10 @@ function Painel() {
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isProfissional ? (
             <>
+              <KpiCard icon={<MessageSquare />} label="Pedidos de orçamento" value={data?.directUnread ? `${data.directUnread} novos` : (data?.directUnread ?? 0)} loading={isLoading} to="/painel/orcamentos" tone="orange" />
               <KpiCard icon={<Briefcase />} label="Leads disponíveis" value={data?.leadsCount} loading={isLoading} to="/painel/leads" tone="blue" />
-              <KpiCard icon={<MessageSquare />} label="Propostas enviadas" value={data?.proposalsCount} loading={isLoading} to="/painel/propostas" tone="orange" />
-              <KpiCard
+              <KpiCard icon={<MessageSquare />} label="Propostas enviadas" value={data?.proposalsCount} loading={isLoading} to="/painel/propostas" tone="emerald" />
+              <KpiCard icon={<Star />} label="Avaliação média" value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"} loading={isLoading} tone="amber" />
                 icon={<Star />}
                 label="Avaliação média"
                 value={data?.pro?.average_rating != null ? Number(data.pro.average_rating).toFixed(1) : "—"}
