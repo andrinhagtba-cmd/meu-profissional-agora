@@ -168,28 +168,26 @@ function ProfilePage() {
             <span className="text-foreground">{pro.name}</span>
           </nav>
 
-          {/* Banner auto-ajustável: imagem sempre completa, altura reduzida */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-muted to-accent/10 shadow-sm ring-1 ring-border">
+          {/* Banner: imagem 100% visível e completa dentro do container */}
+          <div className="relative overflow-hidden rounded-3xl bg-black shadow-sm ring-1 ring-border">
             {dbMedia?.coverUrl ? (
               <>
-                {/* Backdrop borrado da própria capa preenche laterais em qualquer proporção */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 scale-110 bg-cover bg-center opacity-60 blur-2xl"
-                  style={{ backgroundImage: `url(${dbMedia.coverUrl})` }}
+                <img
+                  src={dbMedia.coverUrl}
+                  alt={`Capa de ${pro.name}`}
+                  className="h-auto w-full object-contain"
+                  loading="eager"
                 />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-black/10" />
-                <div className="relative flex w-full items-center justify-center px-4 py-5 sm:px-6 sm:py-6 lg:py-7">
-                  <img
-                    src={dbMedia.coverUrl}
-                    alt={`Capa de ${pro.name}`}
-                    className="max-h-[180px] w-auto max-w-full object-contain drop-shadow-2xl sm:max-h-[220px] lg:max-h-[260px]"
-                    loading="eager"
-                  />
-                </div>
+                {/* Gradiente sutil na base para suavizar a transição com o card */}
+                <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
               </>
             ) : (
-              <div className="h-36 w-full sm:h-44 lg:h-52" />
+              <div className="flex h-48 w-full items-center justify-center bg-gradient-to-br from-muted to-accent/10 sm:h-56 lg:h-64">
+                <div className="text-center text-muted-foreground/60">
+                  <ImageIcon size={40} className="mx-auto" />
+                  <p className="mt-2 text-sm">Sem capa cadastrada</p>
+                </div>
+              </div>
             )}
 
             {/* Ações flutuantes no canto do banner */}
