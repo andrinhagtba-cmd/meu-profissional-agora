@@ -44,15 +44,8 @@ function PainelMidia() {
 
   const proId = profileQ.data?.id ?? null;
 
-  const portfolioQ = useQuery({
-    queryKey: ["my-portfolio", proId],
-    enabled: !!proId,
-    queryFn: () => listPortfolio(proId!),
-  });
-
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["my-pro-profile", user?.id] });
-    qc.invalidateQueries({ queryKey: ["my-portfolio", proId] });
   };
 
   const avatarMut = useMutation({
@@ -73,34 +66,10 @@ function PainelMidia() {
     onError: (e: Error) => toast.error(e.message || "Falha ao enviar capa"),
   });
 
-  const addMut = useMutation({
-    mutationFn: (p: { title: string; file: File; description?: string }) =>
-      addPortfolioItem(user!.id, proId!, p.title, p.file, p.description),
-    onSuccess: () => {
-      toast.success("Trabalho adicionado ao portfólio");
-      invalidate();
-    },
-    onError: (e: Error) => toast.error(e.message || "Falha ao adicionar"),
-  });
-
-  const delMut = useMutation({
-    mutationFn: (id: string) => deletePortfolioItem(id),
-    onSuccess: () => {
-      toast.success("Item removido");
-      invalidate();
-    },
-    onError: (e: Error) => toast.error(e.message || "Falha ao remover"),
-  });
-
   const avatarRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
-  const portfolioFileRef = useRef<HTMLInputElement>(null);
-  const [newTitle, setNewTitle] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-  const [newFile, setNewFile] = useState<File | null>(null);
 
-  const busy =
-    avatarMut.isPending || coverMut.isPending || addMut.isPending || delMut.isPending;
+  const busy = avatarMut.isPending || coverMut.isPending;
 
   const noProfile = !loading && profileQ.data === null;
 
