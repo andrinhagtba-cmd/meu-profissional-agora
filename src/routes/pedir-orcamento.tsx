@@ -218,8 +218,35 @@ function PedirOrcamentoPage() {
             Pedir orçamento grátis
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Leva menos de 2 minutos. Receba até 5 propostas de profissionais avaliados.
+            {targetPro
+              ? "Sua solicitação será enviada diretamente para o profissional escolhido."
+              : "Leva menos de 2 minutos. Descreva o serviço e envie ao profissional."}
           </p>
+
+          {targetPro && (
+            <div className="mt-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
+              <ProAvatar
+                initials={targetPro.initials}
+                color={targetPro.avatarColor}
+                size="lg"
+                imageUrl={targetPro.avatarUrl || undefined}
+                alt={targetPro.name}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Destinatário
+                </p>
+                <p className="mt-0.5 flex items-center gap-1.5 font-display text-base font-bold text-foreground">
+                  <span className="truncate">{targetPro.name}</span>
+                  {targetPro.verified && <BadgeCheck size={16} className="shrink-0 text-success" />}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {targetPro.specialty}
+                  {targetPro.company ? ` · ${targetPro.company}` : ""}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="mt-8">
             <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
