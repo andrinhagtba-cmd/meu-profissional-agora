@@ -14,6 +14,7 @@ import {
   listUsersFull, updateAccountStatus, bulkUpdateAccountStatus, grantRole, revokeRole,
   type AdminUserFull, type AccountStatus,
 } from "@/services/adminService";
+import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   head: () => ({ meta: [{ title: "Usuários · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
