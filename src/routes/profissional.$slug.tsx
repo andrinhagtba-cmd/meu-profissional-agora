@@ -109,9 +109,37 @@ function ProfilePage() {
   const dist = reviews ? ratingDistribution(reviews) : [0, 0, 0, 0, 0];
   const totalReviews = reviews?.length ?? 0;
 
-  const handleWhatsApp = async () => {
-    await registerWhatsAppLead(pro.slug);
-    toast.success("Contato registrado! Abrindo conversa (simulação)...");
+  const [phoneRevealed, setPhoneRevealed] = useState(false);
+
+  const waNumber = normalizeWhatsAppPhone(pro.whatsapp);
+  const waUrl = buildWhatsAppUrl(pro.whatsapp);
+  const phoneFormatted = formatBrazilPhone(pro.whatsapp);
+  const hasContact = Boolean(waNumber);
+
+  const handleWhatsApp = () => {
+    if (!waUrl) {
+      toast.info("Este profissional ainda não disponibilizou contato pelo WhatsApp.");
+      return;
+    }
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleRevealPhone = async () => {
+    if (!phoneFormatted) {
+      toast.info("Este profissional não disponibilizou o telefone publicamente.");
+      return;
+    }
+    setPhoneRevealed(true);
+  };
+
+  const copyPhone = async () => {
+    if (!phoneFormatted) return;
+    try {
+      await navigator.clipboard.writeText(phoneFormatted);
+      toast.success("Telefone copiado.");
+    } catch {
+      toast.error("Não foi possível copiar.");
+    }
   };
 
   const contactCard = (
@@ -136,20 +164,47 @@ function ProfilePage() {
         </Button>
         <Button
           onClick={handleWhatsApp}
+          disabled={!hasContact}
           variant="outline"
-          className="h-12 w-full rounded-xl border-success/40 font-semibold text-success hover:bg-success/10 hover:text-success"
+          className="h-12 w-full rounded-xl border-success/40 font-semibold text-success hover:bg-success/10 hover:text-success disabled:cursor-not-allowed disabled:opacity-60"
+          aria-label={hasContact ? `Chamar ${pro.name} no WhatsApp` : "WhatsApp indisponível"}
         >
           <MessageCircle size={17} aria-hidden="true" />
-          Chamar no WhatsApp
+          {hasContact ? "Chamar no WhatsApp" : "WhatsApp indisponível"}
         </Button>
-        <Button
-          onClick={() => toast.info("Telefone disponível após o primeiro contato (demonstração).")}
-          variant="ghost"
-          className="h-11 w-full rounded-xl font-semibold text-muted-foreground"
-        >
-          <Phone size={16} aria-hidden="true" />
-          Ver telefone
-        </Button>
+        {phoneRevealed && phoneFormatted ? (
+          <div className="flex items-center gap-2">
+            <Button
+              asChild
+              variant="ghost"
+              className="h-11 flex-1 rounded-xl font-semibold text-foreground"
+            >
+              <a href={`tel:+${waNumber}`} aria-label={`Ligar para ${phoneFormatted}`}>
+                <Phone size={16} aria-hidden="true" />
+                {phoneFormatted}
+              </a>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={copyPhone}
+              className="h-11 rounded-xl px-3 text-muted-foreground"
+              aria-label="Copiar telefone"
+            >
+              <Copy size={16} aria-hidden="true" />
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={handleRevealPhone}
+            disabled={!phoneFormatted}
+            variant="ghost"
+            className="h-11 w-full rounded-xl font-semibold text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Phone size={16} aria-hidden="true" />
+            {phoneFormatted ? "Ver telefone" : "Telefone não disponível"}
+          </Button>
+        )}
       </div>
       <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
         Grátis e sem compromisso. Seus dados só são compartilhados quando você decide.
