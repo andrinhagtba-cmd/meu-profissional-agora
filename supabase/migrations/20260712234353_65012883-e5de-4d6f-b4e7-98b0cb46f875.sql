@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "public read portfolio" ON public.portfolio_items;
