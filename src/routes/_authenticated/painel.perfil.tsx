@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile, updateMyProfile, uploadClientAvatar } from "@/services/clientService";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { isValidDfRegionName } from "@/data/dfRegions";
 
 export const Route = createFileRoute("/_authenticated/painel/perfil")({
   head: () => ({
@@ -46,7 +48,12 @@ function MeuPerfil() {
   }, [data]);
 
   const save = useMutation({
-    mutationFn: () => updateMyProfile(user!.id, form),
+    mutationFn: () => {
+      if (form.city && !isValidDfRegionName(form.city)) {
+        throw new Error("Selecione uma Região Administrativa válida do DF.");
+      }
+      return updateMyProfile(user!.id, { ...form, state: "DF" });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["profile"] });
       qc.invalidateQueries({ queryKey: ["painel"] });
@@ -198,22 +205,21 @@ function MeuPerfil() {
               </div>
               <div className="grid gap-5 sm:grid-cols-[1fr_120px]">
                 <div>
-                  <Label htmlFor="p-city" className="font-semibold">Cidade</Label>
-                  <Input
+                  <Label htmlFor="p-city" className="font-semibold">Região Administrativa (DF)</Label>
+                  <DfRegionCombobox
                     id="p-city"
                     value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    className="mt-2 h-12 rounded-xl"
+                    onChange={(name) => setForm({ ...form, city: name, state: "DF" })}
                   />
                 </div>
                 <div>
                   <Label htmlFor="p-state" className="font-semibold">Estado</Label>
                   <Input
                     id="p-state"
-                    value={form.state}
-                    onChange={(e) => setForm({ ...form, state: e.target.value.toUpperCase().slice(0, 2) })}
-                    maxLength={2}
-                    className="mt-2 h-12 rounded-xl uppercase"
+                    value="DF"
+                    readOnly
+                    disabled
+                    className="mt-2 h-12 rounded-xl uppercase bg-muted"
                   />
                 </div>
               </div>
