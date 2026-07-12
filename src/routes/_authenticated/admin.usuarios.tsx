@@ -14,6 +14,7 @@ import {
   listUsersFull, updateAccountStatus, bulkUpdateAccountStatus, grantRole, revokeRole,
   type AdminUserFull, type AccountStatus,
 } from "@/services/adminService";
+import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   head: () => ({ meta: [{ title: "Usuários · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -32,6 +33,7 @@ function AdminUsers() {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users-full", search, role],
@@ -157,6 +159,12 @@ function AdminUsers() {
         rowKey={(u) => u.user_id}
         emptyText="Nenhum usuário encontrado."
         selectable={{ selected, onToggle: toggle, onToggleAll: toggleAll }}
+        onRowClick={(u) => setSelectedUserId(u.user_id)}
+      />
+      <UserDetailDrawer
+        userId={selectedUserId}
+        open={!!selectedUserId}
+        onOpenChange={(o) => !o && setSelectedUserId(null)}
       />
     </div>
   );

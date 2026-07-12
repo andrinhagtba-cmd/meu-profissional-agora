@@ -763,6 +763,163 @@ export async function revokeRole(userId: string, role: "admin" | "profissional" 
   if (error) throw error;
 }
 
+export type AdminUserDetail = {
+  user_id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  city: string | null;
+  state: string | null;
+  avatar_url: string | null;
+  account_status: string | null;
+  created_at: string;
+  updated_at: string;
+  roles: string[];
+  client_profile: {
+    cpf: string | null;
+    preferred_contact: string | null;
+    notification_preferences: unknown;
+    created_at: string;
+  } | null;
+  stats: {
+    quote_requests: number;
+    favorites: number;
+    proposals_received: number;
+    reviews_given: number;
+    unread_notifications: number;
+  };
+  recent_quotes: Array<{
+    id: string;
+    title: string;
+    status: string;
+    city: string | null;
+    state: string | null;
+    created_at: string;
+  }>;
+  recent_favorites: Array<{
+    professional_id: string;
+    created_at: string;
+    professional_name: string | null;
+    slug: string | null;
+  }>;
+};
+
+export async function getUserDetail(userId: string): Promise<AdminUserDetail> {
+  const [profileRes, clientRes, rolesRes, quotesRes, favoritesRes, unreadRes] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("user_id, full_name, email, phone, city, state, avatar_url, account_status, created_at, updated_at")
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabase
+      .from("client_profiles")
+      .select("cpf, preferred_contact, notification_preferences, created_at")
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabase.from("user_roles").select("role").eq("user_id", userId),
+    supabase
+      .from("quote_requests")
+      .select("id, title, status, city, state, created_at")
+      .eq("client_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10),
+    supabase
+      .from("favorites")
+      .select("professional_id, created_at")
+      .eq("client_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10),
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("read", false),
+  ]);
+
+  if (profileRes.error) throw profileRes.error;
+  if (!profileRes.data) throw new Error("Usuário não encontrado");
+
+  const profile = profileRes.data as {
+    user_id: string; full_name: string | null; email: string | null; phone: string | null;
+    city: string | null; state: string | null; avatar_url: string | null;
+    account_status: string | null; created_at: string; updated_at: string;
+  };
+
+  const quoteRows = (quotesRes.data ?? []) as Array<{
+    id: string; title: string; status: string; city: string | null; state: string | null; created_at: string;
+  }>;
+  const favoriteRows = (favoritesRes.data ?? []) as Array<{ professional_id: string; created_at: string }>;
+  const roles = ((rolesRes.data ?? []) as Array<{ role: string }>).map((r) => r.role);
+
+  // Enrich favorites with professional info
+  const proIds = Array.from(new Set(favoriteRows.map((f) => f.professional_id)));
+  const prosMap = new Map<string, { name: string | null; slug: string | null }>();
+  if (proIds.length > 0) {
+    const { data: pros } = await supabase
+      .from("professional_profiles")
+      .select("id, professional_name, business_name, slug")
+      .in("id", proIds);
+    for (const p of (pros ?? []) as Array<{ id: string; professional_name: string | null; business_name: string | null; slug: string | null }>) {
+      prosMap.set(p.id, { name: p.professional_name ?? p.business_name, slug: p.slug });
+    }
+  }
+
+  // Count proposals received across the client's quotes
+  let proposalsReceived = 0;
+  if (quoteRows.length > 0) {
+    // Fetch all quote IDs (up to 500) for accurate count
+    const { data: allQuotes } = await supabase
+      .from("quote_requests")
+      .select("id")
+      .eq("client_id", userId)
+      .limit(500);
+    const allIds = ((allQuotes ?? []) as Array<{ id: string }>).map((q) => q.id);
+    if (allIds.length > 0) {
+      const { count } = await supabase
+        .from("quote_proposals")
+        .select("id", { count: "exact", head: true })
+        .in("quote_request_id", allIds);
+      proposalsReceived = count ?? 0;
+    }
+  }
+
+  const [{ count: quotesCount }, { count: favoritesCount }, { count: reviewsCount }] = await Promise.all([
+    supabase.from("quote_requests").select("id", { count: "exact", head: true }).eq("client_id", userId),
+    supabase.from("favorites").select("id", { count: "exact", head: true }).eq("client_id", userId),
+    supabase.from("reviews").select("id", { count: "exact", head: true }).eq("client_id", userId),
+  ]);
+
+  return {
+    user_id: profile.user_id,
+    full_name: profile.full_name,
+    email: profile.email,
+    phone: profile.phone,
+    city: profile.city,
+    state: profile.state,
+    avatar_url: profile.avatar_url,
+    account_status: profile.account_status,
+    created_at: profile.created_at,
+    updated_at: profile.updated_at,
+    roles,
+    client_profile: (clientRes.data as AdminUserDetail["client_profile"]) ?? null,
+    stats: {
+      quote_requests: quotesCount ?? 0,
+      favorites: favoritesCount ?? 0,
+      proposals_received: proposalsReceived,
+      reviews_given: reviewsCount ?? 0,
+      unread_notifications: unreadRes.count ?? 0,
+    },
+    recent_quotes: quoteRows,
+    recent_favorites: favoriteRows.map((f) => ({
+      professional_id: f.professional_id,
+      created_at: f.created_at,
+      professional_name: prosMap.get(f.professional_id)?.name ?? null,
+      slug: prosMap.get(f.professional_id)?.slug ?? null,
+    })),
+  };
+}
+
+
 export type AdminVerificationRow = {
   id: string;
   slug: string | null;
