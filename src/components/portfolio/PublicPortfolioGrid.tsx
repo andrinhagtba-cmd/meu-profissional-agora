@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Play, Sparkles } from "lucide-react";
 
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
