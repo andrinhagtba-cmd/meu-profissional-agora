@@ -115,14 +115,23 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
           const isYouTube = item.media_type.startsWith("youtube");
           const vertical = isVerticalMedia(item.media_type);
 
-          if (isInstagram) return <InstagramReelCard key={item.id} item={item} />;
+          const slideCls = "snap-start shrink-0 w-[85%] sm:w-[360px]";
+
+          if (isInstagram)
+            return (
+              <div key={item.id} className={slideCls}>
+                <InstagramReelCard item={item} />
+              </div>
+            );
 
           return (
             <figure
               key={item.id}
               className={cn(
+                slideCls,
                 "group relative rounded-[24px] border border-border bg-card p-0 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-1.5",
               )}
+
             >
               <div
                 className={cn(
