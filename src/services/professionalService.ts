@@ -182,6 +182,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       servesAtCustomer: Boolean(row.serves_at_customer_location),
       servesRemotely: Boolean(row.serves_remotely),
     },
+    viewsTotal: Number(row.initial_view_count ?? 0) + Number(row.real_view_count ?? 0),
   };
 }
 
