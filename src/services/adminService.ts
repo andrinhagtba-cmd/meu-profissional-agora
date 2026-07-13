@@ -230,6 +230,8 @@ export type AdminProDetail = AdminProRow & {
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
+  initial_view_count: number;
+  real_view_count: number;
   counts: { services: number; portfolio: number; leads: number; reviews: number };
 };
 
@@ -245,7 +247,8 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       instagram_username, instagram_url, facebook_url, website_url,
       postal_code, street, address_number, neighborhood, latitude, longitude,
       google_place_id, formatted_address, public_address_visibility,
-      service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely
+      service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
+      initial_view_count, real_view_count
     `)
     .eq("id", id)
     .maybeSingle();
@@ -313,6 +316,8 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     serves_at_business_address: b("serves_at_business_address"),
     serves_at_customer_location: b("serves_at_customer_location"),
     serves_remotely: b("serves_remotely"),
+    initial_view_count: Number((p.initial_view_count as number | null) ?? 0),
+    real_view_count: Number((p.real_view_count as number | null) ?? 0),
     counts: {
       services: svc.count ?? 0,
       portfolio: port.count ?? 0,

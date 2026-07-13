@@ -37,6 +37,8 @@ import {
   getMyProProfile,
 } from "@/services/professionalDashboardService";
 import { countProUnreadDirectQuotes } from "@/services/proDirectQuoteService";
+import { getProfessionalViewStats } from "@/services/profileViewsService";
+import { formatProfileViews } from "@/lib/formatViews";
 import { listMyConversations } from "@/services/chatService";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
@@ -219,6 +221,8 @@ function Painel() {
             </>
           )}
         </section>
+
+        {isProfissional && data?.pro?.id && <ProfileViewsStrip professionalId={data.pro.id} />}
 
         {/* AÇÕES RÁPIDAS */}
         <section className="mt-8">
@@ -514,6 +518,48 @@ function EmptyState({
       </div>
       <p className="mt-3 text-sm font-medium text-muted-foreground">{label}</p>
       {cta}
+    </div>
+  );
+}
+
+function ProfileViewsStrip({ professionalId }: { professionalId: string }) {
+  const { data } = useQuery({
+    queryKey: ["pro-view-stats", professionalId],
+    queryFn: () => getProfessionalViewStats(professionalId),
+    staleTime: 60_000,
+  });
+  if (!data) return null;
+  return (
+    <section className="mt-4">
+      <div className="rounded-3xl border border-border bg-card p-5 shadow-card">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Visitas ao perfil
+            </p>
+            <p className="mt-1 font-display text-3xl font-extrabold text-foreground">
+              {formatProfileViews(data.public_total)}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {formatProfileViews(data.real_count)} reais · +{formatProfileViews(data.views_7d)} nos últimos 7 dias
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <MiniStat label="Hoje" value={formatProfileViews(data.views_today)} />
+            <MiniStat label="7 dias" value={formatProfileViews(data.views_7d)} />
+            <MiniStat label="30 dias" value={formatProfileViews(data.views_30d)} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-muted/50 px-3 py-2 min-w-[64px]">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="font-display text-base font-extrabold text-foreground tabular-nums">{value}</p>
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Clock, MapPin } from "lucide-react";
+import { BadgeCheck, Clock, Eye, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
 import { publicAddressLabel } from "@/lib/proAddress";
+import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
 export function ProfessionalCard({ pro }: { pro: Professional }) {
@@ -57,9 +58,20 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
       </div>
 
       <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <RatingStars rating={pro.rating} />
-          <span className="text-xs">({pro.reviewsCount} avaliações)</span>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <div className="flex items-center gap-2">
+            <RatingStars rating={pro.rating} />
+            <span className="text-xs">({pro.reviewsCount})</span>
+          </div>
+          {typeof pro.viewsTotal === "number" && pro.viewsTotal > 0 && (
+            <span
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+              title={`${formatProfileViews(pro.viewsTotal)} visitas ao perfil`}
+            >
+              <Eye size={13} aria-hidden="true" />
+              <span className="tabular-nums">{formatProfileViews(pro.viewsTotal, { compact: true })}</span>
+            </span>
+          )}
         </div>
         {(() => {
           const a = pro.address;

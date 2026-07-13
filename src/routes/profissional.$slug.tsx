@@ -6,6 +6,7 @@ import {
   CalendarClock,
   ChevronRight,
   Clock,
+  Eye,
   Facebook,
   Globe,
   ImageIcon,
@@ -40,8 +41,10 @@ import {
 } from "@/services/mockApi";
 import { listApprovedReviewsBySlug, getProfessionalBySlug, type PublicReview } from "@/services/professionalService";
 import { buildWhatsAppUrl, formatBrazilPhone, normalizeWhatsAppPhone } from "@/lib/whatsapp";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy } from "lucide-react";
+import { registerProfileView } from "@/lib/viewTracker";
+import { formatViewsLabel, formatProfileViews } from "@/lib/formatViews";
 
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
@@ -111,6 +114,24 @@ function ProfilePage() {
   const totalReviews = reviews?.length ?? 0;
 
   const [phoneRevealed, setPhoneRevealed] = useState(false);
+  const [liveViews, setLiveViews] = useState<number | null>(
+    typeof pro.viewsTotal === "number" ? pro.viewsTotal : null,
+  );
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    const t = window.setTimeout(() => {
+      registerProfileView(pro.slug)
+        .then((r) => {
+          if (r) setLiveViews(r.public_total);
+        })
+        .catch(() => undefined);
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [pro.slug]);
+
+  const displayViews = liveViews ?? pro.viewsTotal ?? 0;
 
   const waNumber = normalizeWhatsAppPhone(pro.whatsapp);
   const waUrl = buildWhatsAppUrl(pro.whatsapp);
@@ -327,6 +348,15 @@ function ProfilePage() {
                       <span className="inline-flex items-center gap-1">
                         <Award size={14} aria-hidden="true" />
                         {pro.experienceYears} anos de experiência
+                      </span>
+                    )}
+                    {displayViews > 0 && (
+                      <span
+                        className="inline-flex items-center gap-1"
+                        title={`${formatProfileViews(displayViews)} visitas ao perfil`}
+                      >
+                        <Eye size={14} aria-hidden="true" />
+                        <span className="tabular-nums">{formatViewsLabel(displayViews)}</span>
                       </span>
                     )}
                   </div>

@@ -85,6 +85,7 @@ export interface Professional {
     servesAtCustomer: boolean;
     servesRemotely: boolean;
   };
+  viewsTotal?: number;
 }
 
 export type AttendanceType = "residencial" | "empresarial" | "online";
