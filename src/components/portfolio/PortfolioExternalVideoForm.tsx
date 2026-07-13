@@ -8,12 +8,10 @@ import {
   Heart,
   MessageCircle,
   Send,
+  Bookmark,
   MoreHorizontal,
-  ShoppingBag,
-  Home,
-  Search,
-  Film,
-  Camera,
+  BadgeCheck,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +26,7 @@ import { YouTubeEmbed } from "./YouTubeEmbed";
 import { InstagramEmbed } from "./InstagramEmbed";
 import { cn } from "@/lib/utils";
 import type { ExternalMediaInput } from "@/services/professionalMediaService";
+
 
 type Kind = "instagram" | "youtube";
 
