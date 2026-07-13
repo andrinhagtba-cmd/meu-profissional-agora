@@ -22,56 +22,36 @@ function YouTubeGlyph({ className }: { className?: string }) {
 
 function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
   return (
-    <figure className="group relative mx-auto w-full max-w-[390px] overflow-hidden rounded-[2rem] bg-neutral-950 p-1.5 shadow-[0_28px_70px_-36px_rgba(16,24,40,0.65)] ring-1 ring-neutral-950/10 transition-all duration-500 hover:-translate-y-1">
-      <div className="relative overflow-hidden rounded-[1.65rem] bg-neutral-950">
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-28 bg-gradient-to-b from-neutral-950/90 via-neutral-950/45 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40 bg-gradient-to-t from-neutral-950/95 via-neutral-950/55 to-transparent" />
-
-        <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-4 pt-4 text-white">
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-extrabold tracking-normal">Reels</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
-            <span className="text-[11px] font-semibold text-white/75">Portfólio</span>
-          </div>
-          <MoreHorizontal size={20} strokeWidth={2.25} />
-        </div>
-
-        <div className="relative aspect-[9/16] overflow-hidden bg-neutral-950">
+    <figure className="group relative mx-auto w-full max-w-[390px]">
+      {/* Clean phone-style frame — no fake overlays, IG chrome is hidden by <InstagramEmbed bare /> */}
+      <div className="relative overflow-hidden rounded-[2rem] bg-neutral-950 p-1.5 shadow-[0_28px_70px_-36px_rgba(16,24,40,0.65)] ring-1 ring-neutral-950/10 transition-all duration-500 group-hover:-translate-y-1">
+        <div className="relative aspect-[9/16] overflow-hidden rounded-[1.65rem] bg-neutral-950">
           {item.embed_url ? (
-            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive className="rounded-none" />
+            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive bare />
           ) : (
             <div className="grid h-full w-full place-items-center bg-neutral-900 text-white/45">
               <Play size={42} fill="currentColor" />
             </div>
           )}
         </div>
-
-        <div className="pointer-events-none absolute bottom-5 right-3 z-30 flex flex-col items-center gap-4 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
-          <span className="grid gap-1 place-items-center">
-            <Heart size={24} strokeWidth={2.2} />
-            <span className="text-[10px] font-bold">Curtir</span>
-          </span>
-          <span className="grid gap-1 place-items-center">
-            <MessageCircle size={24} strokeWidth={2.2} />
-            <span className="text-[10px] font-bold">Comentar</span>
-          </span>
-          <span className="grid gap-1 place-items-center">
-            <Send size={23} strokeWidth={2.2} />
-            <span className="text-[10px] font-bold">Enviar</span>
-          </span>
-          <Bookmark size={23} strokeWidth={2.2} />
-        </div>
-
-        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 z-30 px-4 pb-5 pr-16 text-white">
-          <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 text-[11px] font-black ring-1 ring-white/25 backdrop-blur">
-              IG
-            </span>
-            <span className="line-clamp-1 text-sm font-extrabold">{item.title || "Trabalho recente"}</span>
-          </div>
-          {item.caption && <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-white/82">{item.caption}</p>}
-        </figcaption>
       </div>
+
+      {(item.title || item.caption) && (
+        <figcaption className="mt-3 flex items-start gap-3 px-1">
+          <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+          </span>
+          <div className="min-w-0 flex-1">
+            {item.title && (
+              <p className="line-clamp-1 text-sm font-bold tracking-tight text-foreground">{item.title}</p>
+            )}
+            {item.caption && (
+              <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{item.caption}</p>
+            )}
+          </div>
+        </figcaption>
+      )}
+
       {item.external_url && (
         <a
           href={item.external_url}
@@ -85,6 +65,7 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
     </figure>
   );
 }
+
 
 export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
