@@ -37,6 +37,8 @@ import {
   getMyProProfile,
 } from "@/services/professionalDashboardService";
 import { countProUnreadDirectQuotes } from "@/services/proDirectQuoteService";
+import { getProfessionalViewStats } from "@/services/profileViewsService";
+import { formatProfileViews } from "@/lib/formatViews";
 import { listMyConversations } from "@/services/chatService";
 
 export const Route = createFileRoute("/_authenticated/painel/")({
@@ -219,6 +221,8 @@ function Painel() {
             </>
           )}
         </section>
+
+        {isProfissional && data?.pro?.id && <ProfileViewsStrip professionalId={data.pro.id} />}
 
         {/* AÇÕES RÁPIDAS */}
         <section className="mt-8">
