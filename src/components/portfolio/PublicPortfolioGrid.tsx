@@ -120,8 +120,7 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
     <div className="relative">
       <div
         ref={scrollRef}
-        className="mt-5 flex gap-5 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
-        style={{ scrollPaddingInline: "7.5%" }}
+        className="mt-5 flex gap-5 overflow-x-auto scroll-smooth px-[7.5vw] pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
       >
         {items.map((item) => {
 
@@ -130,7 +129,7 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
           const isYouTube = item.media_type.startsWith("youtube");
           const vertical = isVerticalMedia(item.media_type);
 
-          const slideCls = "snap-center shrink-0 w-[85%] sm:w-[360px]";
+          const slideCls = "snap-center shrink-0 w-[85vw] sm:w-[360px]";
 
           if (isInstagram)
             return (
