@@ -107,8 +107,9 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
 
   return (
     <>
-      <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 -mx-4 flex gap-5 overflow-x-auto scroll-smooth px-4 pb-4 snap-x snap-mandatory [scrollbar-width:thin] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {items.map((item) => {
+
           const isImage = item.media_type === "image";
           const isInstagram = item.media_type === "instagram_reel";
           const isYouTube = item.media_type.startsWith("youtube");
