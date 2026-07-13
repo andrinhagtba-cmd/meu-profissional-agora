@@ -1,11 +1,41 @@
 import { useState } from "react";
-import { Instagram, Youtube, Image as ImageIcon } from "lucide-react";
+import { ImageIcon, Sparkles } from "lucide-react";
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
 import { PortfolioLightbox } from "./PortfolioLightbox";
 import { InstagramEmbed } from "./InstagramEmbed";
 import { YouTubeEmbed } from "./YouTubeEmbed";
 import { cn } from "@/lib/utils";
+
+/** Inline SVG glyphs — mais elegantes que os ícones lucide padrão para branding. */
+function InstagramGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="ig-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#F9CE34" />
+          <stop offset="50%" stopColor="#EE2A7B" />
+          <stop offset="100%" stopColor="#6228D7" />
+        </linearGradient>
+      </defs>
+      <rect x="3" y="3" width="18" height="18" rx="5.5" stroke="url(#ig-grad)" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4" stroke="url(#ig-grad)" strokeWidth="1.8" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="url(#ig-grad)" />
+    </svg>
+  );
+}
+
+function YouTubeGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path
+        d="M22.5 6.5c-.25-1.4-1.3-2.45-2.7-2.7C17.2 3.3 12 3.3 12 3.3s-5.2 0-7.8.5C2.8 4.05 1.75 5.1 1.5 6.5 1 9.1 1 12 1 12s0 2.9.5 5.5c.25 1.4 1.3 2.45 2.7 2.7 2.6.5 7.8.5 7.8.5s5.2 0 7.8-.5c1.4-.25 2.45-1.3 2.7-2.7.5-2.6.5-5.5.5-5.5s0-2.9-.5-5.5Z"
+        fill="#FF0033"
+      />
+      <path d="M9.75 15.5V8.5L15.75 12l-6 3.5Z" fill="#fff" />
+    </svg>
+  );
+}
 
 export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
@@ -15,94 +45,138 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
 
   return (
     <>
-      <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item, i) => {
+      <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => {
           const isImage = item.media_type === "image";
           const isInstagram = item.media_type === "instagram_reel";
           const isYouTube = item.media_type.startsWith("youtube");
           const vertical = isVerticalMedia(item.media_type);
 
-          const Icon = isImage ? ImageIcon : isInstagram ? Instagram : Youtube;
-          const chipBg = isInstagram
-            ? "bg-gradient-to-tr from-yellow-400 via-fuchsia-500 to-purple-600"
+          // Cor de sombra ambiente conforme plataforma
+          const glow = isInstagram
+            ? "shadow-[0_20px_50px_-20px_rgba(238,42,123,0.45)]"
             : isYouTube
-              ? "bg-red-600"
-              : "bg-primary";
+              ? "shadow-[0_20px_50px_-20px_rgba(255,0,51,0.4)]"
+              : "shadow-[0_20px_50px_-20px_rgba(7,89,248,0.35)]";
+
+          const gradientBorder = isInstagram
+            ? "from-[#F9CE34] via-[#EE2A7B] to-[#6228D7]"
+            : isYouTube
+              ? "from-[#FF0033] via-[#FF4D6D] to-[#FF8A5B]"
+              : "from-primary/60 via-primary/30 to-transparent";
 
           return (
             <figure
               key={item.id}
               className={cn(
-                "group relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm ring-1 ring-black/[0.02] transition-all duration-500",
-                "hover:-translate-y-1 hover:shadow-xl hover:ring-primary/20",
+                "group relative rounded-[26px] p-[1.5px] transition-all duration-500",
+                "bg-gradient-to-br",
+                gradientBorder,
+                "hover:-translate-y-1.5",
+                glow,
               )}
             >
-              <div className={cn("relative w-full overflow-hidden bg-neutral-900", vertical && !isInstagram ? "aspect-[9/16]" : !isInstagram ? "aspect-video" : "")}>
-                {isInstagram && item.embed_url ? (
-                  // Real Instagram embed — user clicks play inside the embed to watch inline
-                  <InstagramEmbed
-                    embedUrl={item.embed_url}
-                    title={item.title}
-                    interactive
-                    className="rounded-none"
-                  />
-                ) : isYouTube && item.embed_url ? (
-                  // YouTube click-to-play — replaces thumb with autoplaying iframe inline
-                  <YouTubeEmbed
-                    embedUrl={item.embed_url}
-                    thumbnailUrl={item.thumbnail_url}
-                    title={item.title}
-                    vertical={item.media_type === "youtube_short"}
-                    autoplay
-                    className="rounded-none"
-                  />
-                ) : isImage && item.url ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const idx = imageItems.findIndex((it) => it.id === item.id);
-                      setImageIndex(idx >= 0 ? idx : 0);
-                    }}
-                    className="block h-full w-full"
-                    aria-label={`Ampliar ${item.title ?? "imagem"}`}
-                  >
-                    <img
-                      src={item.url}
-                      alt={item.alt_text ?? item.title ?? ""}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+              <div className="overflow-hidden rounded-[24px] bg-card">
+                <div
+                  className={cn(
+                    "relative w-full overflow-hidden bg-neutral-950",
+                    vertical && !isInstagram ? "aspect-[9/16]" : !isInstagram ? "aspect-video" : "",
+                  )}
+                >
+                  {isInstagram && item.embed_url ? (
+                    <InstagramEmbed
+                      embedUrl={item.embed_url}
+                      title={item.title}
+                      interactive
+                      className="rounded-none"
                     />
-                  </button>
-                ) : (
-                  <div className="grid h-full w-full place-items-center text-white/40">
-                    <Icon size={40} />
-                  </div>
-                )}
+                  ) : isYouTube && item.embed_url ? (
+                    <YouTubeEmbed
+                      embedUrl={item.embed_url}
+                      thumbnailUrl={item.thumbnail_url}
+                      title={item.title}
+                      vertical={item.media_type === "youtube_short"}
+                      autoplay
+                      className="rounded-none"
+                    />
+                  ) : isImage && item.url ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const idx = imageItems.findIndex((it) => it.id === item.id);
+                        setImageIndex(idx >= 0 ? idx : 0);
+                      }}
+                      className="block h-full w-full"
+                      aria-label={`Ampliar ${item.title ?? "imagem"}`}
+                    >
+                      <img
+                        src={item.url}
+                        alt={item.alt_text ?? item.title ?? ""}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.08]"
+                      />
+                    </button>
+                  ) : (
+                    <div className="grid h-full w-full place-items-center text-white/30">
+                      <ImageIcon size={40} />
+                    </div>
+                  )}
 
-                {/* Type chip (skip on Instagram — its own embed already brands itself) */}
-                {!isInstagram && (
-                  <span
-                    className={cn(
-                      "pointer-events-none absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-white shadow-lg backdrop-blur",
-                      chipBg,
-                    )}
-                  >
-                    <Icon size={12} className={isImage ? "" : "fill-current"} />
-                    {isImage ? "Foto" : item.media_type === "youtube_short" ? "Shorts" : "YouTube"}
-                  </span>
+                  {/* Selo flutuante — sem chip retangular; glyph puro sobre glass */}
+                  {!isInstagram && (
+                    <span
+                      className={cn(
+                        "pointer-events-none absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full",
+                        "bg-white/85 shadow-lg ring-1 ring-white backdrop-blur-md",
+                        "transition-transform duration-500 group-hover:scale-110",
+                      )}
+                    >
+                      {isYouTube ? (
+                        <YouTubeGlyph className="h-5 w-5" />
+                      ) : (
+                        <ImageIcon className="h-4 w-4 text-primary" strokeWidth={2.4} />
+                      )}
+                    </span>
+                  )}
+                </div>
+
+                {(item.title || item.caption) && (
+                  <figcaption className="relative px-5 py-4">
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={cn(
+                          "mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full",
+                          isInstagram
+                            ? "bg-gradient-to-br from-[#F9CE34]/15 via-[#EE2A7B]/15 to-[#6228D7]/15"
+                            : isYouTube
+                              ? "bg-red-500/10"
+                              : "bg-primary/10",
+                        )}
+                      >
+                        {isInstagram ? (
+                          <InstagramGlyph className="h-4 w-4" />
+                        ) : isYouTube ? (
+                          <YouTubeGlyph className="h-4 w-4" />
+                        ) : (
+                          <Sparkles className="h-3.5 w-3.5 text-primary" />
+                        )}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        {item.title && (
+                          <p className="line-clamp-1 text-sm font-bold tracking-tight text-foreground">
+                            {item.title}
+                          </p>
+                        )}
+                        {item.caption && (
+                          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                            {item.caption}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </figcaption>
                 )}
               </div>
-
-              {(item.title || item.caption) && (
-                <figcaption className="border-t border-border/50 bg-card px-4 py-3">
-                  {item.title && (
-                    <p className="line-clamp-1 text-sm font-bold text-foreground">{item.title}</p>
-                  )}
-                  {item.caption && (
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{item.caption}</p>
-                  )}
-                </figcaption>
-              )}
             </figure>
           );
         })}
