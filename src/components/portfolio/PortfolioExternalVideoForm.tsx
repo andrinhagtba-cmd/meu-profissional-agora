@@ -8,12 +8,10 @@ import {
   Heart,
   MessageCircle,
   Send,
+  Bookmark,
   MoreHorizontal,
-  ShoppingBag,
-  Home,
-  Search,
-  Film,
-  Camera,
+  BadgeCheck,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +26,7 @@ import { YouTubeEmbed } from "./YouTubeEmbed";
 import { InstagramEmbed } from "./InstagramEmbed";
 import { cn } from "@/lib/utils";
 import type { ExternalMediaInput } from "@/services/professionalMediaService";
+
 
 type Kind = "instagram" | "youtube";
 
@@ -164,30 +163,56 @@ export function PortfolioExternalVideoForm({
             </Button>
           </div>
 
-          {/* Right — realistic phone mockup */}
+          {/* Right — premium Instagram-style post card */}
           <div className="flex flex-col items-center gap-3">
+
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Prévia real
+              Prévia premium
             </span>
 
-            {/* Phone frame — neutral, no colored glow */}
-            <div className="relative w-full max-w-[290px]">
-              <div className="rounded-[2.5rem] bg-neutral-900 p-2 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.5)] ring-1 ring-neutral-800">
-                <div className="relative overflow-hidden rounded-[2rem] bg-black">
-                  {/* Notch */}
-                  <div className="pointer-events-none absolute left-1/2 top-2 z-30 flex h-6 w-32 -translate-x-1/2 items-center justify-center gap-2 rounded-full bg-black">
-                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-700" />
-                    <span className="h-2 w-2 rounded-full bg-neutral-800 ring-1 ring-neutral-700" />
+            <div className="w-full max-w-[320px]">
+              <article
+                className={cn(
+                  "group/preview overflow-hidden rounded-2xl border border-neutral-200/80 bg-white",
+                  "shadow-[0_1px_2px_rgba(16,24,40,0.04),0_12px_32px_-12px_rgba(16,24,40,0.18)]",
+                  "transition-all duration-300 hover:-translate-y-0.5",
+                  "hover:shadow-[0_2px_4px_rgba(16,24,40,0.06),0_24px_48px_-16px_rgba(16,24,40,0.22)]",
+                )}
+              >
+                {/* Header — Instagram post style */}
+                <header className="flex items-center gap-3 px-4 py-3">
+                  <div className="relative">
+                    <span
+                      aria-hidden
+                      className="absolute -inset-[2px] rounded-full bg-[conic-gradient(from_45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75)]"
+                    />
+                    <div className="relative grid h-9 w-9 place-items-center rounded-full bg-white p-[2px]">
+                      <div className="grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-neutral-100 to-neutral-200">
+                        {isIG ? (
+                          <Instagram size={14} className="text-neutral-700" />
+                        ) : (
+                          <Youtube size={14} className="text-neutral-700" />
+                        )}
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Status bar */}
-                  <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 pt-2 text-[10px] font-semibold text-white">
-                    <span>9:41</span>
-                    <span className="opacity-80">••• 5G ▮</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <span className="truncate text-[13px] font-semibold text-neutral-900">
+                        {isIG ? "seu.perfil" : "Seu canal"}
+                      </span>
+                      <BadgeCheck size={13} className="shrink-0 fill-sky-500 text-white" />
+                    </div>
+                    <span className="text-[11px] text-neutral-500">
+                      {isIG ? "Original audio" : "Publicado no YouTube"}
+                    </span>
                   </div>
+                  <MoreHorizontal size={18} className="text-neutral-700" />
+                </header>
 
-                  {/* Media surface (9:16) */}
-                  <div className="relative aspect-[9/16] bg-neutral-950">
+                {/* Media — 9:16 with subtle inner shadow */}
+                <div className="relative">
+                  <div className="relative aspect-[9/16] overflow-hidden bg-neutral-100">
                     {parsed ? (
                       isIG ? (
                         <InstagramEmbed
@@ -206,86 +231,86 @@ export function PortfolioExternalVideoForm({
                         />
                       )
                     ) : (
-                      <div className="grid h-full w-full place-items-center bg-neutral-900">
-                        <div className="flex flex-col items-center gap-2 text-center">
-                          <div className="grid h-12 w-12 place-items-center rounded-full bg-white/10 ring-1 ring-white/15">
-                            <KindIcon size={22} className="text-white/80" />
+                      <div className="relative grid h-full w-full place-items-center overflow-hidden bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+                        <div
+                          aria-hidden
+                          className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-fuchsia-200/40 via-rose-200/30 to-transparent blur-2xl"
+                        />
+                        <div
+                          aria-hidden
+                          className="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-gradient-to-br from-amber-200/40 via-orange-200/30 to-transparent blur-2xl"
+                        />
+                        <div className="relative flex flex-col items-center gap-3 text-center">
+                          <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white shadow-md ring-1 ring-neutral-200">
+                            <KindIcon size={24} className="text-neutral-700" />
                           </div>
-                          <p className="text-xs font-semibold text-white/70">
-                            {isIG ? "Cole o link do Reel" : "Cole o link do vídeo"}
+                          <p className="px-6 text-[12px] font-medium text-neutral-500">
+                            {isIG
+                              ? "Cole o link do Reel para ver a prévia real"
+                              : "Cole o link do vídeo para ver a prévia"}
                           </p>
                         </div>
                       </div>
                     )}
-
-                    {/* App overlay — only when Instagram (matches reference) */}
-                    {isIG && (
-                      <>
-                        {/* Top: Reels label + camera */}
-                        <div className="pointer-events-none absolute inset-x-0 top-9 z-20 flex items-center justify-between px-4">
-                          <span className="text-lg font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
-                            Reels
-                          </span>
-                          <Camera size={20} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]" />
-                        </div>
-
-                        {/* Right rail — actions */}
-                        <div className="pointer-events-none absolute bottom-24 right-2 z-20 flex flex-col items-center gap-4 text-white">
-                          <div className="flex flex-col items-center">
-                            <Heart size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
-                            <span className="mt-0.5 text-[10px] font-semibold drop-shadow">107K</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <MessageCircle size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
-                            <span className="mt-0.5 text-[10px] font-semibold drop-shadow">342</span>
-                          </div>
-                          <Send size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
-                          <MoreHorizontal size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
-                          <div className="grid h-7 w-7 place-items-center rounded-md bg-white/90 ring-1 ring-white">
-                            <ShoppingBag size={14} className="text-black" />
-                          </div>
-                        </div>
-
-                        {/* Bottom: username + caption */}
-                        <div className="pointer-events-none absolute inset-x-0 bottom-14 z-20 px-4 text-white">
-                          <div className="flex items-center gap-2">
-                            <div className="h-6 w-6 rounded-full bg-white/90 ring-1 ring-white" />
-                            <span className="text-xs font-bold drop-shadow">username</span>
-                            <span className="rounded-md border border-white/60 px-2 py-0.5 text-[10px] font-semibold">
-                              Seguir
-                            </span>
-                          </div>
-                          {(title || caption) && (
-                            <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug drop-shadow">
-                              {caption || title}
-                            </p>
-                          )}
-                        </div>
-                      </>
-                    )}
-
-                    {/* Bottom tab bar (iOS/IG) */}
-                    <div className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-around border-t border-white/5 bg-black/80 px-4 pb-3 pt-2 backdrop-blur-sm">
-                      <Home size={18} className="text-white" />
-                      <Search size={18} className="text-white/80" />
-                      <Film size={18} className="text-white" />
-                      <ShoppingBag size={18} className="text-white/80" />
-                      <div className="h-5 w-5 rounded-full bg-white/90 ring-1 ring-white" />
-                    </div>
-
-                    {/* Home indicator */}
-                    <div className="pointer-events-none absolute bottom-1 left-1/2 z-30 h-1 w-24 -translate-x-1/2 rounded-full bg-white/80" />
+                    {/* Inner shadow for depth */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.04),inset_0_-40px_60px_-40px_rgba(0,0,0,0.15)]"
+                    />
                   </div>
                 </div>
-              </div>
+
+                {/* Actions bar */}
+                <div className="flex items-center justify-between px-4 pt-3">
+                  <div className="flex items-center gap-4">
+                    <Heart size={22} className="text-neutral-800 transition-colors hover:text-rose-500" strokeWidth={1.75} />
+                    <MessageCircle size={22} className="text-neutral-800" strokeWidth={1.75} />
+                    <Send size={22} className="text-neutral-800" strokeWidth={1.75} />
+                  </div>
+                  <Bookmark size={22} className="text-neutral-800" strokeWidth={1.75} />
+                </div>
+
+                {/* Caption */}
+                <div className="px-4 pb-3 pt-2">
+                  <p className="text-[12px] font-semibold text-neutral-900">
+                    {(1247).toLocaleString("pt-BR")} curtidas
+                  </p>
+                  {(title || caption) ? (
+                    <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-neutral-800">
+                      <span className="font-semibold">{isIG ? "seu.perfil " : "Seu canal "}</span>
+                      {caption || title}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-[12.5px] leading-snug text-neutral-400">
+                      <span className="font-semibold text-neutral-500">{isIG ? "seu.perfil " : "Seu canal "}</span>
+                      Sua legenda aparecerá aqui…
+                    </p>
+                  )}
+                  <p className="mt-1 text-[11px] uppercase tracking-wide text-neutral-400">Há alguns instantes</p>
+                </div>
+
+                {/* Footer CTA */}
+                <div className="border-t border-neutral-100 bg-neutral-50/60 px-4 py-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
+                      {isIG ? <Instagram size={12} /> : <Youtube size={12} />}
+                      {isIG ? "Instagram" : "YouTube"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-neutral-700">
+                      Ver no {isIG ? "Instagram" : "YouTube"} <ExternalLink size={12} />
+                    </span>
+                  </div>
+                </div>
+              </article>
             </div>
 
             {parsed && (
               <p className="text-center text-[11px] text-muted-foreground">
-                É exatamente assim que aparecerá no feed
+                É exatamente assim que aparecerá no portfólio
               </p>
             )}
           </div>
+
         </div>
       </div>
     </div>
