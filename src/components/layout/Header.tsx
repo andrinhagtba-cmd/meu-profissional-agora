@@ -49,7 +49,7 @@ export function Logo({ className }: { className?: string }) {
         <img
           src={logoUrl}
           alt={name || "Logo"}
-          className="h-12 w-auto max-w-[260px] object-contain"
+          className="h-9 w-auto max-w-[160px] object-contain sm:h-12 sm:max-w-[260px]"
         />
       ) : (
         <span className="min-w-0 leading-tight">
@@ -89,8 +89,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-      <div className="container-page grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 lg:flex lg:justify-between">
-        <div className="flex min-w-0 items-center gap-6">
+      <div className="container-page grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:h-16 sm:gap-3 lg:flex lg:justify-between">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+
           <Logo />
           <nav aria-label="Navegação principal" className="hidden items-center gap-1 xl:flex">
             {navItems.slice(0, 7).map((item) => (
@@ -161,11 +162,15 @@ export function Header() {
               <User size={19} />
             </Link>
           )}
-          <Button asChild className="ml-1 h-11 rounded-xl px-3 text-sm font-semibold sm:px-5">
+          <Button
+            asChild
+            size="icon"
+            className="h-10 w-10 shrink-0 rounded-xl p-0 sm:h-11 sm:w-auto sm:px-5 sm:text-sm sm:font-semibold"
+            aria-label="Sou profissional"
+          >
             <Link to="/cadastro/profissional">
-              <Briefcase className="sm:hidden" size={16} aria-hidden="true" />
+              <Briefcase className="sm:hidden" size={18} aria-hidden="true" />
               <span className="hidden sm:inline">Sou profissional</span>
-              <span className="sm:hidden">Profissional</span>
             </Link>
           </Button>
 
@@ -174,10 +179,11 @@ export function Header() {
               <button
                 type="button"
                 aria-label="Abrir menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary xl:hidden"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary sm:h-11 sm:w-11 xl:hidden"
               >
                 <Menu size={22} />
               </button>
+
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
               <SheetHeader>
