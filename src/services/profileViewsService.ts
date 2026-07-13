@@ -28,7 +28,7 @@ export async function adminSetInitialViewCount(professionalId: string, value: nu
   const { error } = await supabase.rpc("admin_set_initial_view_count", {
     p_professional_id: professionalId,
     p_value: value,
-    p_reason: reason ?? null,
+    p_reason: reason ?? undefined,
   });
   if (error) throw error;
 }

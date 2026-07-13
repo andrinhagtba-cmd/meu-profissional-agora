@@ -48,8 +48,7 @@ export function isLikelyBot(): boolean {
   const ua = navigator.userAgent || "";
   if (!ua) return true;
   if (BOT_UA.test(ua)) return true;
-  // @ts-expect-error non-standard
-  if (navigator.webdriver) return true;
+  if ((navigator as unknown as { webdriver?: boolean }).webdriver) return true;
   return false;
 }
 
@@ -83,9 +82,9 @@ export async function registerProfileView(slug: string): Promise<ViewRegistratio
     p_slug: slug,
     p_anonymous_visitor_id: anonId,
     p_source: "web",
-    p_referrer: referrer || null,
+    p_referrer: referrer || undefined,
     p_ua_category: uaCat,
-    p_session_id: sessionId || null,
+    p_session_id: sessionId || undefined,
   });
   if (error) return null;
   const row = Array.isArray(data) ? data[0] : data;
