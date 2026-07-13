@@ -54,16 +54,6 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
             <p className="truncate text-[13px] font-semibold text-neutral-900">{handle}</p>
             <p className="text-[11px] font-medium text-neutral-500">Instagram · Reel</p>
           </div>
-          {item.external_url && (
-            <a
-              href={item.external_url}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-neutral-900 px-3.5 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-neutral-700"
-            >
-              Ver perfil
-            </a>
-          )}
         </header>
 
         {/* Media — video fits fully, no cropping */}
@@ -77,13 +67,6 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
           )}
         </div>
 
-        {/* Actions — IG-style bar */}
-        <div className="flex items-center gap-4 px-4 pt-3 text-neutral-800">
-          <Heart className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
-          <MessageCircle className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
-          <Send className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
-          <Bookmark className="ml-auto h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
-        </div>
 
         {/* Caption */}
         {(item.title || item.caption) && (
