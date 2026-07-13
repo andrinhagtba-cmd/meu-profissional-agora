@@ -156,46 +156,112 @@ export function PortfolioExternalVideoForm({
             </Button>
           </div>
 
-          {/* Right — premium device preview */}
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Prévia ao vivo
-            </span>
-            <div className="relative">
-              {/* Phone frame */}
-              <div className="rounded-[2.2rem] bg-neutral-900 p-2 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/10">
-                <div className="relative w-[240px] overflow-hidden rounded-[1.7rem] bg-black">
-                  {parsed ? (
-                    isIG ? (
-                      <InstagramEmbed
-                        embedUrl={(parsed as ParsedInstagram).embedUrl}
-                        title={title || "Prévia"}
-                        className="rounded-none"
-                      />
-                    ) : (
-                      <YouTubeEmbed
-                        embedUrl={(parsed as ParsedYouTube).embedUrl}
-                        thumbnailUrl={(parsed as ParsedYouTube).thumbnailUrl}
-                        title={title || "Prévia"}
-                        vertical={parsed.type === "youtube_short"}
-                        autoplay={false}
-                        className="rounded-none"
-                      />
-                    )
-                  ) : (
-                    <div className={cn("flex aspect-[9/16] flex-col items-center justify-center gap-3 p-6 text-center text-white/80", "bg-gradient-to-br", brandBg)}>
-                      <KindIcon size={32} className={cn("text-white", isIG ? "" : "fill-current")} />
-                      <p className="text-xs font-semibold text-white/90">
-                        Cole o link ao lado para ver a prévia
-                      </p>
+          {/* Right — premium live preview */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="relative inline-flex h-2 w-2">
+                <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", isIG ? "bg-fuchsia-500" : "bg-red-500")} />
+                <span className={cn("relative inline-flex h-2 w-2 rounded-full", isIG ? "bg-fuchsia-500" : "bg-red-500")} />
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                Prévia ao vivo
+              </span>
+            </div>
+
+            <div className="relative w-full max-w-[300px]">
+              {/* Ambient glow */}
+              <div
+                aria-hidden="true"
+                className={cn(
+                  "absolute -inset-4 -z-10 rounded-[2rem] opacity-60 blur-2xl transition-opacity",
+                  isIG
+                    ? "bg-gradient-to-br from-fuchsia-400 via-purple-500 to-orange-400"
+                    : "bg-gradient-to-br from-red-500 via-rose-500 to-orange-400",
+                  parsed ? "opacity-70" : "opacity-30",
+                )}
+              />
+
+              {/* Gradient border shell */}
+              <div
+                className={cn(
+                  "rounded-[1.75rem] p-[1.5px] shadow-[0_25px_60px_-25px_rgba(0,0,0,0.45)]",
+                  "bg-gradient-to-br",
+                  isIG
+                    ? "from-yellow-400 via-fuchsia-500 to-purple-600"
+                    : "from-red-500 via-rose-500 to-orange-500",
+                )}
+              >
+                <div className="overflow-hidden rounded-[1.65rem] bg-neutral-950">
+                  {/* Top chrome */}
+                  <div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-red-500/80" />
+                      <span className="h-2 w-2 rounded-full bg-yellow-400/80" />
+                      <span className="h-2 w-2 rounded-full bg-emerald-500/80" />
                     </div>
-                  )}
+                    <span className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white",
+                      isIG ? "bg-gradient-to-r from-fuchsia-500 to-purple-600" : "bg-red-600",
+                    )}>
+                      <KindIcon size={9} className="fill-current" />
+                      {isIG ? "Reels" : "YouTube"}
+                    </span>
+                  </div>
+
+                  {/* Media surface */}
+                  <div className="relative bg-black">
+                    {parsed ? (
+                      isIG ? (
+                        <InstagramEmbed
+                          embedUrl={(parsed as ParsedInstagram).embedUrl}
+                          title={title || "Prévia"}
+                          className="rounded-none"
+                        />
+                      ) : (
+                        <YouTubeEmbed
+                          embedUrl={(parsed as ParsedYouTube).embedUrl}
+                          thumbnailUrl={(parsed as ParsedYouTube).thumbnailUrl}
+                          title={title || "Prévia"}
+                          vertical={parsed.type === "youtube_short"}
+                          autoplay={false}
+                          className="rounded-none"
+                        />
+                      )
+                    ) : (
+                      <div className="relative flex aspect-[9/16] flex-col items-center justify-center gap-4 overflow-hidden p-6 text-center">
+                        {/* Animated mesh */}
+                        <div aria-hidden="true" className={cn(
+                          "absolute inset-0 opacity-90",
+                          isIG
+                            ? "bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.5),transparent_50%),radial-gradient(circle_at_80%_30%,rgba(168,85,247,0.45),transparent_45%),radial-gradient(circle_at_50%_90%,rgba(251,146,60,0.4),transparent_50%)]"
+                            : "bg-[radial-gradient(circle_at_30%_20%,rgba(239,68,68,0.55),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(251,113,133,0.4),transparent_50%)]",
+                        )} />
+                        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
+                        <div className="relative z-10 grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/20">
+                          <KindIcon size={26} className={cn("text-white", isIG ? "" : "fill-current")} />
+                        </div>
+                        <div className="relative z-10 space-y-1">
+                          <p className="text-sm font-bold text-white">
+                            {isIG ? "Seu Reel aparece aqui" : "Seu vídeo aparece aqui"}
+                          </p>
+                          <p className="text-[11px] leading-relaxed text-white/70">
+                            Cole o link ao lado para carregar a prévia real
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-              {/* Notch */}
-              <span className="absolute left-1/2 top-2 h-1.5 w-16 -translate-x-1/2 rounded-full bg-neutral-800" />
             </div>
+
+            {parsed && (
+              <p className="text-center text-[11px] text-muted-foreground">
+                É exatamente assim que aparecerá no seu portfólio
+              </p>
+            )}
           </div>
+
         </div>
       </div>
     </div>
