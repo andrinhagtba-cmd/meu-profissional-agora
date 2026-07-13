@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bookmark, ExternalLink, Heart, ImageIcon, MessageCircle, MoreHorizontal, Play, Send, Sparkles } from "lucide-react";
+import { ExternalLink, ImageIcon, Play, Sparkles } from "lucide-react";
+
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
 import { PortfolioLightbox } from "./PortfolioLightbox";
