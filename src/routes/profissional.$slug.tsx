@@ -6,6 +6,7 @@ import {
   CalendarClock,
   ChevronRight,
   Clock,
+  Eye,
   Facebook,
   Globe,
   ImageIcon,
@@ -40,8 +41,10 @@ import {
 } from "@/services/mockApi";
 import { listApprovedReviewsBySlug, getProfessionalBySlug, type PublicReview } from "@/services/professionalService";
 import { buildWhatsAppUrl, formatBrazilPhone, normalizeWhatsAppPhone } from "@/lib/whatsapp";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy } from "lucide-react";
+import { registerProfileView } from "@/lib/viewTracker";
+import { formatViewsLabel, formatProfileViews } from "@/lib/formatViews";
 
 import { getProfessionalPublicMediaBySlug } from "@/services/professionalMediaService";
 
