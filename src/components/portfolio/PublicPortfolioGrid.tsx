@@ -248,7 +248,7 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
           <Button
             variant="secondary"
             size="icon"
-            className="absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:left-2 sm:flex"
+            className="absolute left-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:left-2 sm:h-10 sm:w-10"
             onClick={() => scrollBy(-1)}
             aria-label="Anterior"
           >
@@ -257,7 +257,7 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
           <Button
             variant="secondary"
             size="icon"
-            className="absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:right-2 sm:flex"
+            className="absolute right-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:right-2 sm:h-10 sm:w-10"
             onClick={() => scrollBy(1)}
             aria-label="Próximo"
           >
