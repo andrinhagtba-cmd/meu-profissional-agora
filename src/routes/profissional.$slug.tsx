@@ -114,6 +114,24 @@ function ProfilePage() {
   const totalReviews = reviews?.length ?? 0;
 
   const [phoneRevealed, setPhoneRevealed] = useState(false);
+  const [liveViews, setLiveViews] = useState<number | null>(
+    typeof pro.viewsTotal === "number" ? pro.viewsTotal : null,
+  );
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    const t = window.setTimeout(() => {
+      registerProfileView(pro.slug)
+        .then((r) => {
+          if (r) setLiveViews(r.public_total);
+        })
+        .catch(() => undefined);
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [pro.slug]);
+
+  const displayViews = liveViews ?? pro.viewsTotal ?? 0;
 
   const waNumber = normalizeWhatsAppPhone(pro.whatsapp);
   const waUrl = buildWhatsAppUrl(pro.whatsapp);
