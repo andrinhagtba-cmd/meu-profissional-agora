@@ -120,7 +120,8 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
     <div className="relative">
       <div
         ref={scrollRef}
-        className="mt-5 flex gap-5 overflow-x-auto scroll-smooth px-[7.5%] pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+        className="mt-5 flex gap-5 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+        style={{ scrollPaddingInline: "7.5%" }}
       >
         {items.map((item) => {
 
