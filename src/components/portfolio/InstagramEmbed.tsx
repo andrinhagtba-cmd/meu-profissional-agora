@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Instagram } from "lucide-react";
+import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -30,14 +30,16 @@ export function InstagramEmbed({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-fuchsia-500/20 via-purple-500/15 to-orange-500/15",
+        "relative w-full overflow-hidden rounded-2xl bg-neutral-950",
         "aspect-[9/16]",
         className,
       )}
     >
       {!loaded && (
         <div className="absolute inset-0 grid place-items-center">
-          <Instagram className="text-white/80 animate-pulse" size={40} />
+          <span className="grid h-14 w-14 place-items-center rounded-full bg-white/10 text-white ring-1 ring-white/15 backdrop-blur">
+            <Play size={22} fill="currentColor" />
+          </span>
         </div>
       )}
       <iframe
