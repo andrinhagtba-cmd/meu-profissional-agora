@@ -160,8 +160,12 @@ export function PortfolioExternalVideoForm({
             >
               {submitting ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
               Adicionar ao portfólio
+            </Button>
+          </div>
+
           {/* Right — premium Instagram-style post card */}
           <div className="flex flex-col items-center gap-3">
+
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
               Prévia premium
             </span>
