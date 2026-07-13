@@ -162,11 +162,15 @@ export function Header() {
               <User size={19} />
             </Link>
           )}
-          <Button asChild className="ml-1 h-11 rounded-xl px-3 text-sm font-semibold sm:px-5">
+          <Button
+            asChild
+            size="icon"
+            className="h-10 w-10 shrink-0 rounded-xl p-0 sm:h-11 sm:w-auto sm:px-5 sm:text-sm sm:font-semibold"
+            aria-label="Sou profissional"
+          >
             <Link to="/cadastro/profissional">
-              <Briefcase className="sm:hidden" size={16} aria-hidden="true" />
+              <Briefcase className="sm:hidden" size={18} aria-hidden="true" />
               <span className="hidden sm:inline">Sou profissional</span>
-              <span className="sm:hidden">Profissional</span>
             </Link>
           </Button>
 
@@ -175,10 +179,11 @@ export function Header() {
               <button
                 type="button"
                 aria-label="Abrir menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary xl:hidden"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary sm:h-11 sm:w-11 xl:hidden"
               >
                 <Menu size={22} />
               </button>
+
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
               <SheetHeader>
