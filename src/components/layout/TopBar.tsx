@@ -1,10 +1,10 @@
 import { BadgeCheck, Headset, MessageCircle, Star } from "lucide-react";
 
 const items = [
-  { icon: BadgeCheck, text: "Profissionais verificados" },
-  { icon: Star, text: "Avaliações de clientes reais" },
-  { icon: MessageCircle, text: "Contato direto" },
-  { icon: Headset, text: "Suporte especializado" },
+  { icon: BadgeCheck, text: "Profissionais verificados no DF" },
+  { icon: Star, text: "Avaliações reais no Distrito Federal" },
+  { icon: MessageCircle, text: "Orçamento direto no DF" },
+  { icon: Headset, text: "Suporte especializado para o DF" },
 ];
 
 export function TopBar() {
