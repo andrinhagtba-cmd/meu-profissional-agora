@@ -1,5 +1,20 @@
 import { useMemo, useState } from "react";
-import { Instagram, Loader2, Youtube, Sparkles, LinkIcon } from "lucide-react";
+import {
+  Instagram,
+  Loader2,
+  Youtube,
+  Sparkles,
+  LinkIcon,
+  Heart,
+  MessageCircle,
+  Send,
+  MoreHorizontal,
+  ShoppingBag,
+  Home,
+  Search,
+  Film,
+  Camera,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,13 +58,6 @@ export function PortfolioExternalVideoForm({
     ? "Cole o link de um Reels ou publicação pública do Instagram."
     : "Cole a URL de um vídeo do YouTube ou de um YouTube Shorts.";
 
-  const brandBg = isIG
-    ? "from-fuchsia-500/10 via-purple-500/10 to-orange-400/10"
-    : "from-red-500/10 via-rose-500/5 to-orange-400/10";
-  const brandRing = isIG ? "ring-fuchsia-500/20" : "ring-red-500/20";
-  const brandIconBg = isIG
-    ? "bg-gradient-to-tr from-yellow-400 via-fuchsia-500 to-purple-600"
-    : "bg-red-600";
   const KindIcon = isIG ? Instagram : Youtube;
 
   const canSubmit = !!parsed && !submitting;
@@ -72,12 +80,12 @@ export function PortfolioExternalVideoForm({
   };
 
   return (
-    <div className={cn("overflow-hidden rounded-3xl border bg-gradient-to-br p-1 shadow-sm ring-1", brandBg, brandRing)}>
-      <div className="rounded-[calc(1.5rem-4px)] bg-card p-5 sm:p-6">
+    <div className="overflow-hidden rounded-3xl border bg-card shadow-sm">
+      <div className="p-5 sm:p-6">
         {/* Header */}
         <div className="mb-5 flex items-center gap-3">
-          <span className={cn("grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white shadow-md", brandIconBg)}>
-            <KindIcon size={20} className="fill-current" />
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-neutral-900 text-white shadow-sm">
+            <KindIcon size={20} />
           </span>
           <div className="min-w-0">
             <h4 className="font-display text-base font-extrabold text-foreground">
@@ -156,60 +164,30 @@ export function PortfolioExternalVideoForm({
             </Button>
           </div>
 
-          {/* Right — premium live preview */}
+          {/* Right — realistic phone mockup */}
           <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="relative inline-flex h-2 w-2">
-                <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", isIG ? "bg-fuchsia-500" : "bg-red-500")} />
-                <span className={cn("relative inline-flex h-2 w-2 rounded-full", isIG ? "bg-fuchsia-500" : "bg-red-500")} />
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                Prévia ao vivo
-              </span>
-            </div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Prévia real
+            </span>
 
-            <div className="relative w-full max-w-[300px]">
-              {/* Ambient glow */}
-              <div
-                aria-hidden="true"
-                className={cn(
-                  "absolute -inset-4 -z-10 rounded-[2rem] opacity-60 blur-2xl transition-opacity",
-                  isIG
-                    ? "bg-gradient-to-br from-fuchsia-400 via-purple-500 to-orange-400"
-                    : "bg-gradient-to-br from-red-500 via-rose-500 to-orange-400",
-                  parsed ? "opacity-70" : "opacity-30",
-                )}
-              />
-
-              {/* Gradient border shell */}
-              <div
-                className={cn(
-                  "rounded-[1.75rem] p-[1.5px] shadow-[0_25px_60px_-25px_rgba(0,0,0,0.45)]",
-                  "bg-gradient-to-br",
-                  isIG
-                    ? "from-yellow-400 via-fuchsia-500 to-purple-600"
-                    : "from-red-500 via-rose-500 to-orange-500",
-                )}
-              >
-                <div className="overflow-hidden rounded-[1.65rem] bg-neutral-950">
-                  {/* Top chrome */}
-                  <div className="flex items-center justify-between border-b border-white/5 px-3 py-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-red-500/80" />
-                      <span className="h-2 w-2 rounded-full bg-yellow-400/80" />
-                      <span className="h-2 w-2 rounded-full bg-emerald-500/80" />
-                    </div>
-                    <span className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white",
-                      isIG ? "bg-gradient-to-r from-fuchsia-500 to-purple-600" : "bg-red-600",
-                    )}>
-                      <KindIcon size={9} className="fill-current" />
-                      {isIG ? "Reels" : "YouTube"}
-                    </span>
+            {/* Phone frame — neutral, no colored glow */}
+            <div className="relative w-full max-w-[290px]">
+              <div className="rounded-[2.5rem] bg-neutral-900 p-2 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.5)] ring-1 ring-neutral-800">
+                <div className="relative overflow-hidden rounded-[2rem] bg-black">
+                  {/* Notch */}
+                  <div className="pointer-events-none absolute left-1/2 top-2 z-30 flex h-6 w-32 -translate-x-1/2 items-center justify-center gap-2 rounded-full bg-black">
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-700" />
+                    <span className="h-2 w-2 rounded-full bg-neutral-800 ring-1 ring-neutral-700" />
                   </div>
 
-                  {/* Media surface */}
-                  <div className="relative bg-black">
+                  {/* Status bar */}
+                  <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 pt-2 text-[10px] font-semibold text-white">
+                    <span>9:41</span>
+                    <span className="opacity-80">••• 5G ▮</span>
+                  </div>
+
+                  {/* Media surface (9:16) */}
+                  <div className="relative aspect-[9/16] bg-neutral-950">
                     {parsed ? (
                       isIG ? (
                         <InstagramEmbed
@@ -228,28 +206,75 @@ export function PortfolioExternalVideoForm({
                         />
                       )
                     ) : (
-                      <div className="relative flex aspect-[9/16] flex-col items-center justify-center gap-4 overflow-hidden p-6 text-center">
-                        {/* Animated mesh */}
-                        <div aria-hidden="true" className={cn(
-                          "absolute inset-0 opacity-90",
-                          isIG
-                            ? "bg-[radial-gradient(circle_at_20%_20%,rgba(236,72,153,0.5),transparent_50%),radial-gradient(circle_at_80%_30%,rgba(168,85,247,0.45),transparent_45%),radial-gradient(circle_at_50%_90%,rgba(251,146,60,0.4),transparent_50%)]"
-                            : "bg-[radial-gradient(circle_at_30%_20%,rgba(239,68,68,0.55),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(251,113,133,0.4),transparent_50%)]",
-                        )} />
-                        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.55))]" />
-                        <div className="relative z-10 grid h-14 w-14 place-items-center rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/20">
-                          <KindIcon size={26} className={cn("text-white", isIG ? "" : "fill-current")} />
-                        </div>
-                        <div className="relative z-10 space-y-1">
-                          <p className="text-sm font-bold text-white">
-                            {isIG ? "Seu Reel aparece aqui" : "Seu vídeo aparece aqui"}
-                          </p>
-                          <p className="text-[11px] leading-relaxed text-white/70">
-                            Cole o link ao lado para carregar a prévia real
+                      <div className="grid h-full w-full place-items-center bg-neutral-900">
+                        <div className="flex flex-col items-center gap-2 text-center">
+                          <div className="grid h-12 w-12 place-items-center rounded-full bg-white/10 ring-1 ring-white/15">
+                            <KindIcon size={22} className="text-white/80" />
+                          </div>
+                          <p className="text-xs font-semibold text-white/70">
+                            {isIG ? "Cole o link do Reel" : "Cole o link do vídeo"}
                           </p>
                         </div>
                       </div>
                     )}
+
+                    {/* App overlay — only when Instagram (matches reference) */}
+                    {isIG && (
+                      <>
+                        {/* Top: Reels label + camera */}
+                        <div className="pointer-events-none absolute inset-x-0 top-9 z-20 flex items-center justify-between px-4">
+                          <span className="text-lg font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                            Reels
+                          </span>
+                          <Camera size={20} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]" />
+                        </div>
+
+                        {/* Right rail — actions */}
+                        <div className="pointer-events-none absolute bottom-24 right-2 z-20 flex flex-col items-center gap-4 text-white">
+                          <div className="flex flex-col items-center">
+                            <Heart size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
+                            <span className="mt-0.5 text-[10px] font-semibold drop-shadow">107K</span>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <MessageCircle size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
+                            <span className="mt-0.5 text-[10px] font-semibold drop-shadow">342</span>
+                          </div>
+                          <Send size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
+                          <MoreHorizontal size={26} className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
+                          <div className="grid h-7 w-7 place-items-center rounded-md bg-white/90 ring-1 ring-white">
+                            <ShoppingBag size={14} className="text-black" />
+                          </div>
+                        </div>
+
+                        {/* Bottom: username + caption */}
+                        <div className="pointer-events-none absolute inset-x-0 bottom-14 z-20 px-4 text-white">
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full bg-white/90 ring-1 ring-white" />
+                            <span className="text-xs font-bold drop-shadow">username</span>
+                            <span className="rounded-md border border-white/60 px-2 py-0.5 text-[10px] font-semibold">
+                              Seguir
+                            </span>
+                          </div>
+                          {(title || caption) && (
+                            <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug drop-shadow">
+                              {caption || title}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Bottom tab bar (iOS/IG) */}
+                    <div className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-around border-t border-white/5 bg-black/80 px-4 pb-3 pt-2 backdrop-blur-sm">
+                      <Home size={18} className="text-white" />
+                      <Search size={18} className="text-white/80" />
+                      <Film size={18} className="text-white" />
+                      <ShoppingBag size={18} className="text-white/80" />
+                      <div className="h-5 w-5 rounded-full bg-white/90 ring-1 ring-white" />
+                    </div>
+
+                    {/* Home indicator */}
+                    <div className="pointer-events-none absolute bottom-1 left-1/2 z-30 h-1 w-24 -translate-x-1/2 rounded-full bg-white/80" />
                   </div>
                 </div>
               </div>
@@ -257,11 +282,10 @@ export function PortfolioExternalVideoForm({
 
             {parsed && (
               <p className="text-center text-[11px] text-muted-foreground">
-                É exatamente assim que aparecerá no seu portfólio
+                É exatamente assim que aparecerá no feed
               </p>
             )}
           </div>
-
         </div>
       </div>
     </div>
