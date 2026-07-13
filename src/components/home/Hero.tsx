@@ -31,16 +31,16 @@ export function Hero() {
         <div className="container-page relative pb-40 pt-14 sm:pb-44 lg:pb-48 lg:pt-20">
           <div className="max-w-xl">
             <h1 className="font-display text-4xl font-extrabold leading-[1.08] text-foreground sm:text-5xl lg:text-6xl">
-              Encontre o{" "}
+              Encontre as{" "}
               <span className="text-hand text-5xl font-bold text-orange sm:whitespace-nowrap sm:text-6xl lg:text-7xl">
-                profissional certo.
+                melhores empresas
               </span>
               <br />
-              Resolva sem complicação.
+              e profissionais do DF e entorno em um só lugar.
             </h1>
             <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Compare profissionais, consulte avaliações e solicite orçamentos de quem atende perto
-              de você.
+              Compare, consulte avaliações e solicite orçamentos de quem atende perto de você com
+              segurança.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
