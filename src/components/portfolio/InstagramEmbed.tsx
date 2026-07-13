@@ -25,7 +25,7 @@ export function InstagramEmbed({
   /** When true, strips Instagram's own header/footer chrome so the video fills the frame. */
   bare?: boolean;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(bare);
   // Bare mode: use /embed/ (no captioned card). Otherwise keep captioned.
   const normalized = embedUrl.replace(/\/captioned\/?$/, "/").replace(/\/?$/, "/");
   const src = bare ? normalized : (embedUrl.includes("/captioned") ? embedUrl : normalized + "captioned/");
@@ -46,8 +46,8 @@ export function InstagramEmbed({
           </span>
         </div>
       )}
-      {/* In bare mode we scale the iframe so IG's top bar / bottom actions get
-          clipped by the container, leaving the video edge-to-edge. */}
+      {/* Bare mode keeps the official Instagram embed, but crops only the top/bottom
+          chrome. No horizontal zoom: this avoids cutting the Reel on the sides. */}
       <iframe
         src={src}
         title={title ?? "Instagram Reel"}
@@ -55,10 +55,10 @@ export function InstagramEmbed({
           bare
             ? {
                 position: "absolute",
-                top: "-14%",
-                left: "-6%",
-                width: "112%",
-                height: "132%",
+                top: "-10%",
+                left: 0,
+                width: "100%",
+                height: "124%",
                 border: 0,
               }
             : undefined
@@ -66,7 +66,7 @@ export function InstagramEmbed({
         className={cn(
           !bare && "h-full w-full border-0",
           "transition-opacity duration-500",
-          loaded ? "opacity-100" : "opacity-0",
+          bare || loaded ? "opacity-100" : "opacity-0",
           !interactive && "pointer-events-none",
         )}
         allow="autoplay; encrypted-media; picture-in-picture; web-share"
