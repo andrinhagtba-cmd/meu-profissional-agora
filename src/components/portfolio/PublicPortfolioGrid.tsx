@@ -107,21 +107,31 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
 
   return (
     <>
-      <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 -mx-4 flex gap-5 overflow-x-auto scroll-smooth px-4 pb-4 snap-x snap-mandatory [scrollbar-width:thin] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {items.map((item) => {
+
           const isImage = item.media_type === "image";
           const isInstagram = item.media_type === "instagram_reel";
           const isYouTube = item.media_type.startsWith("youtube");
           const vertical = isVerticalMedia(item.media_type);
 
-          if (isInstagram) return <InstagramReelCard key={item.id} item={item} />;
+          const slideCls = "snap-start shrink-0 w-[85%] sm:w-[360px]";
+
+          if (isInstagram)
+            return (
+              <div key={item.id} className={slideCls}>
+                <InstagramReelCard item={item} />
+              </div>
+            );
 
           return (
             <figure
               key={item.id}
               className={cn(
+                slideCls,
                 "group relative rounded-[24px] border border-border bg-card p-0 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-1.5",
               )}
+
             >
               <div
                 className={cn(
