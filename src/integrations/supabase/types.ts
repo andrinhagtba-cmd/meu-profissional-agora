@@ -1072,6 +1072,56 @@ export type Database = {
           },
         ]
       }
+      professional_profile_views: {
+        Row: {
+          anonymous_visitor_id: string | null
+          created_at: string
+          id: string
+          professional_id: string
+          referrer: string | null
+          session_id: string | null
+          source: string | null
+          user_agent_category: string | null
+          view_day: string
+          viewed_at: string
+          visitor_user_id: string | null
+        }
+        Insert: {
+          anonymous_visitor_id?: string | null
+          created_at?: string
+          id?: string
+          professional_id: string
+          referrer?: string | null
+          session_id?: string | null
+          source?: string | null
+          user_agent_category?: string | null
+          view_day?: string
+          viewed_at?: string
+          visitor_user_id?: string | null
+        }
+        Update: {
+          anonymous_visitor_id?: string | null
+          created_at?: string
+          id?: string
+          professional_id?: string
+          referrer?: string | null
+          session_id?: string | null
+          source?: string | null
+          user_agent_category?: string | null
+          view_day?: string
+          viewed_at?: string
+          visitor_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_profile_views_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_profiles: {
         Row: {
           address_complement: string | null
@@ -1091,6 +1141,7 @@ export type Database = {
           formatted_address: string | null
           google_place_id: string | null
           id: string
+          initial_view_count: number
           instagram_url: string | null
           instagram_username: string | null
           is_featured: boolean
@@ -1103,6 +1154,7 @@ export type Database = {
           professional_name: string | null
           profile_status: Database["public"]["Enums"]["profile_status"]
           public_address_visibility: Database["public"]["Enums"]["address_visibility"]
+          real_view_count: number
           response_time: string | null
           reviews_count: number
           search_tags: string[] | null
@@ -1141,6 +1193,7 @@ export type Database = {
           formatted_address?: string | null
           google_place_id?: string | null
           id?: string
+          initial_view_count?: number
           instagram_url?: string | null
           instagram_username?: string | null
           is_featured?: boolean
@@ -1153,6 +1206,7 @@ export type Database = {
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
           public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
+          real_view_count?: number
           response_time?: string | null
           reviews_count?: number
           search_tags?: string[] | null
@@ -1191,6 +1245,7 @@ export type Database = {
           formatted_address?: string | null
           google_place_id?: string | null
           id?: string
+          initial_view_count?: number
           instagram_url?: string | null
           instagram_username?: string | null
           is_featured?: boolean
@@ -1203,6 +1258,7 @@ export type Database = {
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
           public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
+          real_view_count?: number
           response_time?: string | null
           reviews_count?: number
           search_tags?: string[] | null
@@ -2102,6 +2158,10 @@ export type Database = {
     }
     Functions: {
       accept_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      admin_set_initial_view_count: {
+        Args: { p_professional_id: string; p_reason?: string; p_value: number }
+        Returns: number
+      }
       count_pro_unread_direct_quotes: { Args: never; Returns: number }
       get_or_create_conversation: {
         Args: { _pro_id: string; _quote_id: string }
@@ -2131,6 +2191,17 @@ export type Database = {
           status: string
           title: string
           urgency: string
+        }[]
+      }
+      get_professional_view_stats: {
+        Args: { p_professional_id: string }
+        Returns: {
+          initial_count: number
+          public_total: number
+          real_count: number
+          views_30d: number
+          views_7d: number
+          views_today: number
         }[]
       }
       has_role: {
@@ -2187,6 +2258,21 @@ export type Database = {
         Returns: undefined
       }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
+      register_professional_profile_view: {
+        Args: {
+          p_anonymous_visitor_id?: string
+          p_referrer?: string
+          p_session_id?: string
+          p_slug: string
+          p_source?: string
+          p_ua_category?: string
+        }
+        Returns: {
+          initial_count: number
+          public_total: number
+          real_count: number
+        }[]
+      }
       reject_proposal: { Args: { _proposal_id: string }; Returns: undefined }
       reorder_portfolio_items: {
         Args: { _ordered_ids: string[]; _professional_id: string }
