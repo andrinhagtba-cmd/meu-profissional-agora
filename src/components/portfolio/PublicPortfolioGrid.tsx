@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bookmark, ExternalLink, Heart, ImageIcon, MessageCircle, Play, Send, Sparkles } from "lucide-react";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Play, Sparkles } from "lucide-react";
 
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
@@ -7,6 +7,7 @@ import { PortfolioLightbox } from "./PortfolioLightbox";
 import { InstagramEmbed } from "./InstagramEmbed";
 import { YouTubeEmbed } from "./YouTubeEmbed";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 function YouTubeGlyph({ className }: { className?: string }) {
   return (
