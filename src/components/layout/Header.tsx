@@ -49,7 +49,7 @@ export function Logo({ className }: { className?: string }) {
         <img
           src={logoUrl}
           alt={name || "Logo"}
-          className="h-12 w-auto max-w-[260px] object-contain"
+          className="h-9 w-auto max-w-[160px] object-contain sm:h-12 sm:max-w-[260px]"
         />
       ) : (
         <span className="min-w-0 leading-tight">
