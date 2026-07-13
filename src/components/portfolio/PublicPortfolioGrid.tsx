@@ -22,10 +22,10 @@ function YouTubeGlyph({ className }: { className?: string }) {
 
 function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
   return (
-    <figure className="group relative mx-auto w-full max-w-[390px]">
-      {/* Clean phone-style frame — no fake overlays, IG chrome is hidden by <InstagramEmbed bare /> */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-neutral-950 p-1.5 shadow-[0_28px_70px_-36px_rgba(16,24,40,0.65)] ring-1 ring-neutral-950/10 transition-all duration-500 group-hover:-translate-y-1">
-        <div className="relative aspect-[9/16] overflow-hidden rounded-[1.65rem] bg-neutral-950">
+    <figure className="group relative mx-auto w-full max-w-[360px]">
+      <div className="relative overflow-hidden rounded-[2.35rem] bg-neutral-950 p-2.5 shadow-[0_30px_70px_-34px_rgba(15,23,42,0.8)] ring-1 ring-neutral-950/15 transition-all duration-500 group-hover:-translate-y-1">
+        <div className="pointer-events-none absolute left-1/2 top-2.5 z-20 h-5 w-24 -translate-x-1/2 rounded-b-2xl bg-neutral-950" />
+        <div className="relative aspect-[9/16] overflow-hidden rounded-[1.85rem] bg-neutral-950 ring-1 ring-white/10">
           {item.embed_url ? (
             <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive bare />
           ) : (
@@ -33,6 +33,7 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
               <Play size={42} fill="currentColor" />
             </div>
           )}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-neutral-950/45 to-transparent" />
         </div>
       </div>
 
