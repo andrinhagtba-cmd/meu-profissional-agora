@@ -52,31 +52,28 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
           const isYouTube = item.media_type.startsWith("youtube");
           const vertical = isVerticalMedia(item.media_type);
 
-          // Cor de sombra ambiente conforme plataforma
-          const glow = isInstagram
-            ? "shadow-[0_20px_50px_-20px_rgba(238,42,123,0.45)]"
-            : isYouTube
-              ? "shadow-[0_20px_50px_-20px_rgba(255,0,51,0.4)]"
-              : "shadow-[0_20px_50px_-20px_rgba(7,89,248,0.35)]";
+          // Sombra neutra premium, sem cores da plataforma
+          const glow = "shadow-[0_20px_50px_-25px_rgba(0,0,0,0.35)]";
 
-          const gradientBorder = isInstagram
-            ? "from-[#F9CE34] via-[#EE2A7B] to-[#6228D7]"
-            : isYouTube
-              ? "from-[#FF0033] via-[#FF4D6D] to-[#FF8A5B]"
-              : "from-primary/60 via-primary/30 to-transparent";
-
+          // Instagram: phone frame preto neutro (sem borda gradiente).
+          // Outros: card padrão com borda sutil.
           return (
             <figure
               key={item.id}
               className={cn(
-                "group relative rounded-[26px] p-[1.5px] transition-all duration-500",
-                "bg-gradient-to-br",
-                gradientBorder,
-                "hover:-translate-y-1.5",
+                "group relative transition-all duration-500 hover:-translate-y-1.5",
+                isInstagram
+                  ? "rounded-[2.25rem] bg-neutral-900 p-2 ring-1 ring-neutral-800"
+                  : "rounded-[24px] border border-border bg-card p-0",
                 glow,
               )}
             >
-              <div className="overflow-hidden rounded-[24px] bg-card">
+              <div
+                className={cn(
+                  "overflow-hidden bg-card",
+                  isInstagram ? "rounded-[1.85rem]" : "rounded-[24px]",
+                )}
+              >
                 <div
                   className={cn(
                     "relative w-full overflow-hidden bg-neutral-950",
