@@ -421,10 +421,8 @@ function ProfilePage() {
 
       <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 space-y-12">
-          <section aria-labelledby="portfolio">
-            <h2 id="portfolio" className="font-display text-xl font-bold text-foreground">
-              Trabalhos recentes
-            </h2>
+          <section aria-label="Portfólio">
+
             {(dbMedia?.portfolio.length ?? 0) > 0 ? (
               <PublicPortfolioGrid items={dbMedia!.portfolio} />
             ) : (
