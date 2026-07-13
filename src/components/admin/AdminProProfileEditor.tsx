@@ -333,6 +333,8 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             </div>
           </div>
 
+          <ViewsCounterSection professionalId={pro.id} initialFromDb={pro.initial_view_count ?? 0} realFromDb={pro.real_view_count ?? 0} />
+
           <Field label="Hashtags / palavras-chave">
             <Input
               value={form.search_tags_text}
