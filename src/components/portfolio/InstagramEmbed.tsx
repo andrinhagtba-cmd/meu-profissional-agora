@@ -16,6 +16,7 @@ export function InstagramEmbed({
   className,
   interactive = true,
   captioned = false,
+  fit = "contain",
 }: {
   embedUrl: string;
   externalUrl?: string;
@@ -24,6 +25,8 @@ export function InstagramEmbed({
   interactive?: boolean;
   /** When true uses Instagram's captioned card (with IG header/footer). */
   captioned?: boolean;
+  /** Cover zoom hides Instagram's native side letterboxing inside vertical previews. */
+  fit?: "contain" | "cover";
 }) {
   const [loaded, setLoaded] = useState(false);
   const base = embedUrl.replace(/\/captioned\/?$/, "/").replace(/\/?$/, "/");
@@ -42,7 +45,10 @@ export function InstagramEmbed({
         src={src}
         title={title ?? "Instagram Reel"}
         className={cn(
-          "absolute inset-0 h-full w-full border-0 transition-opacity duration-500",
+          "absolute border-0 transition-opacity duration-500",
+          fit === "cover"
+            ? "left-1/2 top-1/2 h-full w-full max-w-none -translate-x-1/2 -translate-y-1/2 scale-[1.72]"
+            : "inset-0 h-full w-full",
           loaded ? "opacity-100" : "opacity-0",
           !interactive && "pointer-events-none",
         )}

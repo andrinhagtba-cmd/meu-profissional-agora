@@ -59,7 +59,7 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
         {/* Media — video fits fully, no cropping */}
         <div className="relative aspect-[9/16] w-full overflow-hidden bg-neutral-950">
           {item.embed_url ? (
-            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive />
+            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive fit="cover" />
           ) : (
             <div className="grid h-full w-full place-items-center text-white/45">
               <Play size={42} fill="currentColor" />
