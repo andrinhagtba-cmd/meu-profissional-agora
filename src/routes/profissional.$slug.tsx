@@ -350,6 +350,15 @@ function ProfilePage() {
                         {pro.experienceYears} anos de experiência
                       </span>
                     )}
+                    {displayViews > 0 && (
+                      <span
+                        className="inline-flex items-center gap-1"
+                        title={`${formatProfileViews(displayViews)} visitas ao perfil`}
+                      >
+                        <Eye size={14} aria-hidden="true" />
+                        <span className="tabular-nums">{formatViewsLabel(displayViews)}</span>
+                      </span>
+                    )}
                   </div>
 
                   {(pro.social?.instagramUrl || pro.social?.facebook || pro.social?.website) && (
