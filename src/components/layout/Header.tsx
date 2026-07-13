@@ -89,8 +89,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-      <div className="container-page grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 lg:flex lg:justify-between">
-        <div className="flex min-w-0 items-center gap-6">
+      <div className="container-page grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:h-16 sm:gap-3 lg:flex lg:justify-between">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+
           <Logo />
           <nav aria-label="Navegação principal" className="hidden items-center gap-1 xl:flex">
             {navItems.slice(0, 7).map((item) => (
