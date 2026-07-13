@@ -608,3 +608,75 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
   );
 }
 
+function ViewsCounterSection({
+  professionalId,
+  initialFromDb,
+  realFromDb,
+}: {
+  professionalId: string;
+  initialFromDb: number;
+  realFromDb: number;
+}) {
+  const [initial, setInitial] = useState<string>(String(initialFromDb ?? 0));
+  const [real, setReal] = useState<number>(realFromDb ?? 0);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setInitial(String(initialFromDb ?? 0));
+    setReal(realFromDb ?? 0);
+  }, [initialFromDb, realFromDb]);
+
+  const total = (Number(initial) || 0) + (real || 0);
+
+  const save = async () => {
+    const v = Math.max(0, Math.floor(Number(initial) || 0));
+    setSaving(true);
+    try {
+      const { adminSetInitialViewCount } = await import("@/services/profileViewsService");
+      await adminSetInitialViewCount(professionalId, v);
+      toast.success("Contador inicial atualizado.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao salvar contador.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border bg-muted/30 p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <Eye size={16} className="text-primary" />
+        <h3 className="font-display text-sm font-extrabold">Visibilidade e contador de visitas</h3>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Field label="Contador inicial de visitas">
+          <Input
+            type="number"
+            min={0}
+            step={1}
+            value={initial}
+            onChange={(e) => setInitial(e.target.value.replace(/[^0-9]/g, ""))}
+            placeholder="Ex.: 200"
+          />
+        </Field>
+        <Field label="Visitas reais (somente leitura)">
+          <Input value={real.toLocaleString("pt-BR")} readOnly disabled />
+        </Field>
+        <Field label="Total público exibido">
+          <Input value={total.toLocaleString("pt-BR")} readOnly disabled />
+        </Field>
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Este valor será somado às visitas reais recebidas pelo perfil. As visitas reais são registradas
+        automaticamente pelo sistema e não são alteradas por este campo.
+      </p>
+      <div className="mt-3 flex justify-end">
+        <Button size="sm" onClick={save} disabled={saving} className="rounded-full">
+          <Save size={14} /> Salvar contador inicial
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+
