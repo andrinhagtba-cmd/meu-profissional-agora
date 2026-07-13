@@ -25,7 +25,7 @@ export function InstagramEmbed({
   /** When true, strips Instagram's own header/footer chrome so the video fills the frame. */
   bare?: boolean;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(bare);
   // Bare mode: use /embed/ (no captioned card). Otherwise keep captioned.
   const normalized = embedUrl.replace(/\/captioned\/?$/, "/").replace(/\/?$/, "/");
   const src = bare ? normalized : (embedUrl.includes("/captioned") ? embedUrl : normalized + "captioned/");
@@ -55,10 +55,10 @@ export function InstagramEmbed({
           bare
             ? {
                 position: "absolute",
-                top: "-21%",
+                top: "-10%",
                 left: 0,
                 width: "100%",
-                height: "142%",
+                height: "124%",
                 border: 0,
               }
             : undefined
@@ -66,7 +66,7 @@ export function InstagramEmbed({
         className={cn(
           !bare && "h-full w-full border-0",
           "transition-opacity duration-500",
-          loaded ? "opacity-100" : "opacity-0",
+          bare || loaded ? "opacity-100" : "opacity-0",
           !interactive && "pointer-events-none",
         )}
         allow="autoplay; encrypted-media; picture-in-picture; web-share"
