@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bookmark, ExternalLink, Heart, ImageIcon, MessageCircle, Play, Send, Sparkles } from "lucide-react";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, ExternalLink, ImageIcon, Play, Sparkles } from "lucide-react";
 
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
@@ -7,6 +7,7 @@ import { PortfolioLightbox } from "./PortfolioLightbox";
 import { InstagramEmbed } from "./InstagramEmbed";
 import { YouTubeEmbed } from "./YouTubeEmbed";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 function YouTubeGlyph({ className }: { className?: string }) {
   return (
@@ -101,13 +102,26 @@ function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
 
 export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   if (items.length === 0) return null;
 
   const imageItems = items.filter((it) => it.media_type === "image");
 
+  const scrollBy = (direction: 1 | -1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const firstChild = el.firstElementChild as HTMLElement | null;
+    const gap = 20;
+    const step = firstChild ? firstChild.offsetWidth + gap : 380;
+    el.scrollTo({ left: el.scrollLeft + direction * step, behavior: "smooth" });
+  };
+
   return (
-    <>
-      <div className="mt-5 -mx-4 flex gap-5 overflow-x-auto scroll-smooth px-4 pb-4 snap-x snap-mandatory [scrollbar-width:thin] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div className="relative">
+      <div
+        ref={scrollRef}
+        className="mt-5 -mx-4 flex gap-5 overflow-x-auto scroll-smooth px-4 pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+      >
         {items.map((item) => {
 
           const isImage = item.media_type === "image";
@@ -229,12 +243,35 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
         })}
       </div>
 
+      {items.length > 1 && (
+        <>
+          <Button
+            variant="secondary"
+            size="icon"
+            className="absolute left-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:left-2 sm:h-10 sm:w-10"
+            onClick={() => scrollBy(-1)}
+            aria-label="Anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="secondary"
+            size="icon"
+            className="absolute right-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm hover:bg-white sm:right-2 sm:h-10 sm:w-10"
+            onClick={() => scrollBy(1)}
+            aria-label="Próximo"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </>
+      )}
+
       <PortfolioLightbox
         items={imageItems}
         startIndex={imageIndex ?? 0}
         open={imageIndex !== null}
         onClose={() => setImageIndex(null)}
       />
-    </>
+    </div>
   );
 }
