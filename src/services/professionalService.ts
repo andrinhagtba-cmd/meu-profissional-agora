@@ -48,6 +48,8 @@ type DbRow = {
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
+  initial_view_count: number | null;
+  real_view_count: number | null;
   professional_services: Array<{
     starting_price: number | null;
     services: {
@@ -68,6 +70,7 @@ const SELECT = `
   postal_code, street, address_number, neighborhood, latitude, longitude,
   formatted_address, public_address_visibility,
   service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
+  initial_view_count, real_view_count,
   professional_services(
     starting_price,
     services:service_id(
