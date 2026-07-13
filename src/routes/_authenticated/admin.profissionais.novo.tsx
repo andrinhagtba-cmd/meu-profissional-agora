@@ -15,6 +15,13 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { createProProfile, type CreateProInput } from "@/services/adminService";
+import {
+  AddressAutocomplete,
+  type ResolvedAddress,
+} from "@/components/address/AddressAutocomplete";
+import { LocationMap } from "@/components/address/LocationMap";
+import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
+import { isValidDfRegionName } from "@/data/dfRegions";
 
 export const Route = createFileRoute("/_authenticated/admin/profissionais/novo")({
   head: () => ({ meta: [{ title: "Novo profissional · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -27,7 +34,12 @@ const SERVICE_TYPES = [
   { value: "online", label: "Online" },
 ] as const;
 
-const UF = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
+const VISIBILITY_OPTIONS = [
+  { value: "hidden", label: "Não exibir" },
+  { value: "city_only", label: "Apenas RA" },
+  { value: "neighborhood_city_state", label: "Bairro + RA + DF" },
+  { value: "full", label: "Endereço completo" },
+] as const;
 
 const digits = (s: string) => s.replace(/\D/g, "");
 
@@ -36,8 +48,8 @@ const step1Schema = z.object({
   business_name: z.string().trim().max(120).optional().or(z.literal("")),
   whatsapp: z.string().trim().optional().or(z.literal(""))
     .refine((v) => !v || digits(v).length >= 10, { message: "WhatsApp inválido (DDD + número)" }),
-  city: z.string().trim().min(2, "Informe a cidade").max(80),
-  state: z.string().length(2, "UF de 2 letras"),
+  city: z.string().trim().min(2, "Selecione a RA")
+    .refine((v) => isValidDfRegionName(v), { message: "Escolha uma Região Administrativa oficial do DF" }),
   years_experience: z.coerce.number().int().min(0).max(80).optional(),
 });
 
@@ -50,9 +62,25 @@ const step2Schema = z.object({
   service_types: z.array(z.enum(["residencial", "empresarial", "online"])).min(1, "Selecione ao menos um tipo"),
 });
 
+type Visibility = "hidden" | "city_only" | "neighborhood_city_state" | "full";
+
 type Form = {
   professional_name: string; business_name: string; whatsapp: string;
-  city: string; state: string; years_experience: string;
+  years_experience: string;
+  // Localização
+  city: string;             // RA do DF
+  state: "DF";
+  formatted_address: string;
+  street: string;
+  address_number: string;
+  neighborhood: string;
+  postal_code: string;
+  latitude: number | null;
+  longitude: number | null;
+  google_place_id: string;
+  address_complement: string;
+  service_radius_km: string;
+  public_address_visibility: Visibility;
   description: string; starting_price: string; response_time: string;
   availability_status: "available" | "busy" | "unavailable";
   emergency: boolean;
@@ -64,14 +92,19 @@ type Form = {
 
 const INITIAL: Form = {
   professional_name: "", business_name: "", whatsapp: "",
-  city: "", state: "", years_experience: "",
+  years_experience: "",
+  city: "", state: "DF",
+  formatted_address: "", street: "", address_number: "", neighborhood: "",
+  postal_code: "", latitude: null, longitude: null, google_place_id: "",
+  address_complement: "", service_radius_km: "",
+  public_address_visibility: "neighborhood_city_state",
   description: "", starting_price: "", response_time: "Até 24h",
   availability_status: "available", emergency: false, service_types: [],
   verification_status: "pending", profile_status: "draft", is_featured: false,
 };
 
 const STEPS = [
-  { title: "Identificação", hint: "Dados básicos e contato" },
+  { title: "Identificação", hint: "Dados básicos e localização" },
   { title: "Perfil profissional", hint: "Descrição e serviços" },
   { title: "Publicação", hint: "Situação inicial e revisão" },
 ];
@@ -84,6 +117,22 @@ function AdminProNew() {
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
+
+  const applyAddress = (a: ResolvedAddress) => {
+    setForm((f) => ({
+      ...f,
+      formatted_address: a.formatted_address ?? "",
+      street: a.street ?? "",
+      address_number: a.address_number ?? "",
+      neighborhood: a.neighborhood ?? "",
+      city: isValidDfRegionName(a.city ?? "") ? (a.city ?? "") : f.city,
+      state: "DF",
+      postal_code: a.postal_code ?? "",
+      latitude: a.latitude ?? null,
+      longitude: a.longitude ?? null,
+      google_place_id: a.google_place_id ?? "",
+    }));
+  };
 
   const validateStep = (s: number): boolean => {
     const err: Record<string, string> = {};
@@ -121,7 +170,7 @@ function AdminProNew() {
       description: form.description.trim(),
       whatsapp: form.whatsapp ? digits(form.whatsapp) : null,
       city: form.city.trim(),
-      state: form.state.toUpperCase(),
+      state: "DF",
       years_experience: form.years_experience ? Number(form.years_experience) : null,
       starting_price: form.starting_price ? Number(form.starting_price) : null,
       response_time: form.response_time || null,
@@ -131,12 +180,22 @@ function AdminProNew() {
       verification_status: form.verification_status,
       profile_status: form.profile_status,
       is_featured: form.is_featured,
+      formatted_address: form.formatted_address || null,
+      street: form.street || null,
+      address_number: form.address_number || null,
+      neighborhood: form.neighborhood || null,
+      postal_code: form.postal_code || null,
+      country: "Brasil",
+      latitude: form.latitude,
+      longitude: form.longitude,
+      google_place_id: form.google_place_id || null,
+      address_complement: form.address_complement || null,
+      service_radius_km: form.service_radius_km ? Number(form.service_radius_km) : null,
+      public_address_visibility: form.public_address_visibility,
     });
   };
 
-  const next = () => {
-    if (validateStep(step)) setStep((s) => Math.min(s + 1, 2));
-  };
+  const next = () => { if (validateStep(step)) setStep((s) => Math.min(s + 1, 2)); };
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
@@ -181,28 +240,95 @@ function AdminProNew() {
 
       <div className="rounded-2xl border bg-card p-6">
         {step === 0 && (
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Nome do profissional*" error={errors.professional_name}>
-              <Input value={form.professional_name} onChange={(e) => set("professional_name", e.target.value)} placeholder="Ex.: João da Silva" />
-            </Field>
-            <Field label="Nome da empresa" error={errors.business_name}>
-              <Input value={form.business_name} onChange={(e) => set("business_name", e.target.value)} placeholder="Opcional" />
-            </Field>
-            <Field label="WhatsApp" error={errors.whatsapp}>
-              <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(11) 98888-7777" />
-            </Field>
-            <Field label="Anos de experiência" error={errors.years_experience}>
-              <Input type="number" min={0} max={80} value={form.years_experience} onChange={(e) => set("years_experience", e.target.value)} />
-            </Field>
-            <Field label="Cidade*" error={errors.city}>
-              <Input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="São Paulo" />
-            </Field>
-            <Field label="UF*" error={errors.state}>
-              <Select value={form.state} onValueChange={(v) => set("state", v)}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{UF.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
-              </Select>
-            </Field>
+          <div className="space-y-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Nome do profissional*" error={errors.professional_name}>
+                <Input value={form.professional_name} onChange={(e) => set("professional_name", e.target.value)} placeholder="Ex.: João da Silva" />
+              </Field>
+              <Field label="Nome da empresa" error={errors.business_name}>
+                <Input value={form.business_name} onChange={(e) => set("business_name", e.target.value)} placeholder="Opcional" />
+              </Field>
+              <Field label="WhatsApp" error={errors.whatsapp}>
+                <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="(61) 98888-7777" />
+              </Field>
+              <Field label="Anos de experiência" error={errors.years_experience}>
+                <Input type="number" min={0} max={80} value={form.years_experience} onChange={(e) => set("years_experience", e.target.value)} />
+              </Field>
+            </div>
+
+            <div className="rounded-xl border bg-muted/20 p-4 space-y-5">
+              <div>
+                <h3 className="text-sm font-bold text-foreground">Localização (Distrito Federal)</h3>
+                <p className="text-xs text-muted-foreground">
+                  Atendemos exclusivamente o DF. Busque o endereço no Google e selecione a Região Administrativa oficial.
+                </p>
+              </div>
+
+              <div>
+                <Label>Endereço (Google Maps)</Label>
+                <AddressAutocomplete
+                  initialQuery={form.formatted_address}
+                  onSelect={applyAddress}
+                  placeholder="Digite rua, número, RA…"
+                />
+              </div>
+
+              <Field label="Região Administrativa (DF)*" error={errors.city}>
+                <DfRegionCombobox
+                  value={form.city}
+                  onChange={(name) => set("city", name)}
+                />
+              </Field>
+
+              {form.latitude !== null && form.longitude !== null && (
+                <LocationMap
+                  latitude={Number(form.latitude)}
+                  longitude={Number(form.longitude)}
+                  radiusKm={form.service_radius_km ? Number(form.service_radius_km) : undefined}
+                />
+              )}
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Complemento">
+                  <Input
+                    value={form.address_complement}
+                    maxLength={100}
+                    onChange={(e) => set("address_complement", e.target.value)}
+                    placeholder="Sala, apto, ponto de referência"
+                  />
+                </Field>
+                <Field label="Raio de atendimento (km)">
+                  <Input
+                    type="number" min={0} max={500}
+                    value={form.service_radius_km}
+                    onChange={(e) => set("service_radius_km", e.target.value)}
+                  />
+                </Field>
+              </div>
+
+              <div>
+                <Label className="mb-1.5 block text-sm font-semibold">O que exibir publicamente</Label>
+                <div className="flex flex-wrap gap-2">
+                  {VISIBILITY_OPTIONS.map((o) => {
+                    const active = form.public_address_visibility === o.value;
+                    return (
+                      <button
+                        key={o.value}
+                        type="button"
+                        onClick={() => set("public_address_visibility", o.value)}
+                        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-foreground hover:border-primary/40"
+                        }`}
+                      >
+                        {o.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -291,10 +417,12 @@ function AdminProNew() {
               <dl className="grid gap-2 text-sm sm:grid-cols-2">
                 <Row label="Nome" value={form.professional_name} />
                 <Row label="Empresa" value={form.business_name || "—"} />
-                <Row label="Localização" value={`${form.city}/${form.state}`} />
+                <Row label="RA / UF" value={`${form.city || "—"}/DF`} />
+                <Row label="Endereço" value={form.formatted_address || "—"} />
                 <Row label="WhatsApp" value={form.whatsapp || "—"} />
                 <Row label="Experiência" value={form.years_experience ? `${form.years_experience} anos` : "—"} />
                 <Row label="Preço inicial" value={form.starting_price ? `R$ ${form.starting_price}` : "—"} />
+                <Row label="Raio (km)" value={form.service_radius_km || "—"} />
                 <Row label="Atendimento" value={form.service_types.join(", ") || "—"} />
                 <Row label="Emergência" value={form.emergency ? "Sim" : "Não"} />
               </dl>

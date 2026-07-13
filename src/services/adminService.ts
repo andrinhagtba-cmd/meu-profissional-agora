@@ -1628,6 +1628,19 @@ export type CreateProInput = {
   is_featured?: boolean;
   verification_status?: "pending" | "approved" | "rejected";
   profile_status?: "draft" | "published" | "archived";
+  // Localização (Google Maps + RA do DF)
+  formatted_address?: string | null;
+  street?: string | null;
+  address_number?: string | null;
+  neighborhood?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  google_place_id?: string | null;
+  address_complement?: string | null;
+  service_radius_km?: number | null;
+  public_address_visibility?: "hidden" | "city_only" | "neighborhood_city_state" | "full";
 };
 
 function slugify(input: string): string {
@@ -1660,6 +1673,18 @@ export async function createProProfile(input: CreateProInput): Promise<{ id: str
       is_featured: input.is_featured ?? false,
       verification_status: input.verification_status ?? "pending",
       profile_status: input.profile_status ?? "draft",
+      formatted_address: input.formatted_address ?? null,
+      street: input.street ?? null,
+      address_number: input.address_number ?? null,
+      neighborhood: input.neighborhood ?? null,
+      postal_code: input.postal_code ?? null,
+      country: input.country ?? "Brasil",
+      latitude: input.latitude ?? null,
+      longitude: input.longitude ?? null,
+      google_place_id: input.google_place_id ?? null,
+      address_complement: input.address_complement ?? null,
+      service_radius_km: input.service_radius_km ?? null,
+      public_address_visibility: input.public_address_visibility ?? "neighborhood_city_state",
       slug,
       source: "admin_created",
     };
