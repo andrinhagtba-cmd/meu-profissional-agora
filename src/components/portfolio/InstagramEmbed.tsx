@@ -45,8 +45,10 @@ export function InstagramEmbed({
         src={src}
         title={title ?? "Instagram Reel"}
         className={cn(
-          "absolute inset-0 h-full w-full border-0 transition-opacity duration-500",
-          fit === "cover" && "left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 scale-[1.38]",
+          "absolute border-0 transition-opacity duration-500",
+          fit === "cover"
+            ? "left-1/2 top-1/2 h-full w-[150%] max-w-none -translate-x-1/2 -translate-y-1/2"
+            : "inset-0 h-full w-full",
           loaded ? "opacity-100" : "opacity-0",
           !interactive && "pointer-events-none",
         )}
