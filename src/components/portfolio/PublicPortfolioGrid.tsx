@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, ImageIcon, Play, Sparkles } from "lucide-react";
+import { Bookmark, ExternalLink, Heart, ImageIcon, MessageCircle, Play, Send, Sparkles } from "lucide-react";
 
 import type { PortfolioItemVM } from "@/services/professionalMediaService";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
@@ -20,49 +20,97 @@ function YouTubeGlyph({ className }: { className?: string }) {
   );
 }
 
-function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
+function InstagramGlyph({ className }: { className?: string }) {
   return (
-    <figure className="group relative mx-auto w-full max-w-[360px]">
-      <div className="relative overflow-hidden rounded-[2.35rem] bg-neutral-950 p-2.5 shadow-[0_30px_70px_-34px_rgba(15,23,42,0.8)] ring-1 ring-neutral-950/15 transition-all duration-500 group-hover:-translate-y-1">
-        <div className="pointer-events-none absolute left-1/2 top-2.5 z-20 h-5 w-24 -translate-x-1/2 rounded-b-2xl bg-neutral-950" />
-        <div className="relative aspect-[9/16] overflow-hidden rounded-[1.85rem] bg-neutral-950 ring-1 ring-white/10">
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none">
+      <defs>
+        <linearGradient id="ig-grad-card" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#FEDA75" />
+          <stop offset="0.35" stopColor="#FA7E1E" />
+          <stop offset="0.65" stopColor="#D62976" />
+          <stop offset="1" stopColor="#4F5BD5" />
+        </linearGradient>
+      </defs>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#ig-grad-card)" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4.2" stroke="url(#ig-grad-card)" strokeWidth="1.8" />
+      <circle cx="17.5" cy="6.6" r="1.15" fill="url(#ig-grad-card)" />
+    </svg>
+  );
+}
+
+function InstagramReelCard({ item }: { item: PortfolioItemVM }) {
+  const handle = "instagram";
+  return (
+    <figure className="group relative mx-auto w-full max-w-[380px]">
+      <div className="overflow-hidden rounded-[26px] bg-white shadow-[0_20px_60px_-32px_rgba(15,23,42,0.35)] ring-1 ring-neutral-200/80 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_30px_80px_-30px_rgba(15,23,42,0.45)]">
+        {/* Header — IG-style, refined */}
+        <header className="flex items-center gap-3 px-4 py-3">
+          <span className="relative grid h-10 w-10 place-items-center rounded-full bg-gradient-to-tr from-[#FEDA75] via-[#D62976] to-[#4F5BD5] p-[2px]">
+            <span className="grid h-full w-full place-items-center rounded-full bg-white">
+              <InstagramGlyph className="h-5 w-5" />
+            </span>
+          </span>
+          <div className="min-w-0 flex-1 leading-tight">
+            <p className="truncate text-[13px] font-semibold text-neutral-900">{handle}</p>
+            <p className="text-[11px] font-medium text-neutral-500">Instagram · Reel</p>
+          </div>
+          {item.external_url && (
+            <a
+              href={item.external_url}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-neutral-900 px-3.5 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-neutral-700"
+            >
+              Ver perfil
+            </a>
+          )}
+        </header>
+
+        {/* Media — video fits fully, no cropping */}
+        <div className="relative aspect-[9/16] w-full overflow-hidden bg-neutral-950">
           {item.embed_url ? (
-            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive bare />
+            <InstagramEmbed embedUrl={item.embed_url} title={item.title} interactive />
           ) : (
-            <div className="grid h-full w-full place-items-center bg-neutral-900 text-white/45">
+            <div className="grid h-full w-full place-items-center text-white/45">
               <Play size={42} fill="currentColor" />
             </div>
           )}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-neutral-950/45 to-transparent" />
         </div>
-      </div>
 
-      {(item.title || item.caption) && (
-        <figcaption className="mt-3 flex items-start gap-3 px-1">
-          <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-          </span>
-          <div className="min-w-0 flex-1">
+        {/* Actions — IG-style bar */}
+        <div className="flex items-center gap-4 px-4 pt-3 text-neutral-800">
+          <Heart className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
+          <MessageCircle className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
+          <Send className="h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
+          <Bookmark className="ml-auto h-6 w-6 transition-transform hover:scale-110" strokeWidth={1.75} />
+        </div>
+
+        {/* Caption */}
+        {(item.title || item.caption) && (
+          <figcaption className="px-4 pb-2 pt-2">
             {item.title && (
-              <p className="line-clamp-1 text-sm font-bold tracking-tight text-foreground">{item.title}</p>
+              <p className="line-clamp-1 text-[13px] font-semibold text-neutral-900">{item.title}</p>
             )}
             {item.caption && (
-              <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{item.caption}</p>
+              <p className="mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-neutral-600">{item.caption}</p>
             )}
-          </div>
-        </figcaption>
-      )}
+          </figcaption>
+        )}
 
-      {item.external_url && (
-        <a
-          href={item.external_url}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 flex items-center justify-center gap-2 rounded-2xl bg-card px-4 py-3 text-xs font-extrabold text-foreground ring-1 ring-border transition-colors hover:bg-muted"
-        >
-          Ver publicação original <ExternalLink size={14} />
-        </a>
-      )}
+        {/* CTA footer */}
+        {item.external_url && (
+          <a
+            href={item.external_url}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-1 flex items-center justify-center gap-2 border-t border-neutral-100 px-4 py-3 text-[12px] font-semibold text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
+          >
+            <InstagramGlyph className="h-4 w-4" />
+            Ver mais no Instagram
+            <ExternalLink size={12} className="opacity-60" />
+          </a>
+        )}
+      </div>
     </figure>
   );
 }
