@@ -107,14 +107,42 @@ export function PublicPortfolioGrid({ items }: { items: PortfolioItemVM[] }) {
 
   const imageItems = items.filter((it) => it.media_type === "image");
 
+  const centerSlide = (slide: HTMLElement, behavior: ScrollBehavior = "smooth") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const containerWidth = el.clientWidth;
+    const slideWidth = slide.offsetWidth;
+    const target = slide.offsetLeft - (containerWidth - slideWidth) / 2;
+    el.scrollTo({ left: Math.max(0, target), behavior });
+  };
+
   const scrollBy = (direction: 1 | -1) => {
     const el = scrollRef.current;
     if (!el) return;
-    const firstChild = el.firstElementChild as HTMLElement | null;
-    const gap = 20;
-    const step = firstChild ? firstChild.offsetWidth + gap : 380;
-    el.scrollTo({ left: el.scrollLeft + direction * step, behavior: "smooth" });
+    const children = Array.from(el.children) as HTMLElement[];
+    if (!children.length) return;
+    const containerCenter = el.scrollLeft + el.clientWidth / 2;
+    let currentIndex = 0;
+    let minDistance = Infinity;
+    children.forEach((child, i) => {
+      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      const distance = Math.abs(childCenter - containerCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        currentIndex = i;
+      }
+    });
+    const nextIndex = Math.max(0, Math.min(children.length - 1, currentIndex + direction));
+    centerSlide(children[nextIndex]);
   };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const first = el.firstElementChild as HTMLElement | null;
+    if (!first) return;
+    centerSlide(first, "auto");
+  }, []);
 
   return (
     <div className="relative">
