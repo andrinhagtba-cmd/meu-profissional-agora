@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin/banners")({
 
 const POSITIONS = [
   { value: "", label: "Todas posições" },
+  { value: "hero", label: "Hero (Home)" },
   { value: "home", label: "Home" },
   { value: "top", label: "Topo" },
   { value: "sidebar", label: "Lateral" },
