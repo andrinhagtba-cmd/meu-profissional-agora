@@ -36,7 +36,7 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
   const isSingle = banners.length === 1;
 
   return (
-    <section className="container mx-auto px-4 py-8">
+    <section className="container-page py-8">
       <div className={isSingle ? "grid gap-4" : "grid gap-4 md:grid-cols-2"}>
         {banners.map((b) => {
           const to = b.link_url || "#";
