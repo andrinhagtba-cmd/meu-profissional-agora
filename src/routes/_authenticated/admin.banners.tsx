@@ -192,3 +192,73 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
     </Dialog>
   );
 }
+
+function ImageUploadField({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione uma imagem válida");
+      return;
+    }
+    setUploading(true);
+    try {
+      const res = await uploadAdminMedia(file, "banner");
+      onChange(res.url);
+      toast.success("Imagem enviada");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha no upload");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div>
+      <Label>Imagem do banner</Label>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+      {value ? (
+        <div className="mt-1 flex items-center gap-3 rounded-lg border border-border p-2">
+          <img src={value} alt="Prévia" className="h-20 w-32 rounded-md object-cover" />
+          <div className="flex flex-1 flex-col gap-2">
+            <span className="line-clamp-1 text-xs text-muted-foreground">{value}</span>
+            <div className="flex gap-2">
+              <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={() => inputRef.current?.click()}>
+                {uploading ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Upload size={14} className="mr-1" />}
+                Trocar
+              </Button>
+              <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")}>
+                <Trash2 size={14} className="mr-1 text-destructive" /> Remover
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => inputRef.current?.click()}
+          className="mt-1 flex h-32 w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-secondary/30 text-sm text-muted-foreground transition hover:border-primary hover:text-primary"
+        >
+          {uploading ? (
+            <><Loader2 size={20} className="animate-spin" /><span>Enviando…</span></>
+          ) : (
+            <><Upload size={20} /><span>Clique para enviar imagem</span></>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
