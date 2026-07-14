@@ -152,10 +152,10 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         <div className="grid gap-3">
           <div><Label>Título</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
           <div><Label>Subtítulo</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
+          <ImageUploadField value={image} onChange={setImage} />
+          <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div><Label>URL da imagem</Label><Input value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://…" /></div>
-            <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
-          </div>
+
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label>Posição</Label>
