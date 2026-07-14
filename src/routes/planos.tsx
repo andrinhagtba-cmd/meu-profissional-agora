@@ -208,9 +208,13 @@ function PlansPage() {
                         : "bg-primary text-primary-foreground hover:bg-primary/90"
                     }`}
                   >
-                    <Link to="/cadastro/profissional" search={{ plan: plan.id } as never}>
+                    <a
+                      href={getWhatsAppLink(plan.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Começar agora
-                    </Link>
+                    </a>
                   </Button>
                 </article>
               );
