@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Image as ImageIcon, Pencil, Plus, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Pencil, Plus, Trash2, Upload, Loader2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTable";
@@ -13,6 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
+import { uploadAdminMedia } from "@/services/adminMediaService";
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
 
