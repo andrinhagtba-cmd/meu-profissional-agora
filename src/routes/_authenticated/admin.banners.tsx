@@ -127,35 +127,70 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
   onSubmit: (i: UpsertBanner) => void; submitting: boolean;
 }) {
   const [title, setTitle] = useState("");
+  const [highlight, setHighlight] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [image, setImage] = useState("");
   const [link, setLink] = useState("");
-  const [position, setPosition] = useState("home");
+  const [position, setPosition] = useState("hero");
   const [starts, setStarts] = useState("");
   const [ends, setEnds] = useState("");
   const [order, setOrder] = useState<number>(0);
   const [active, setActive] = useState(true);
+  const [ctaPLabel, setCtaPLabel] = useState("");
+  const [ctaPHref, setCtaPHref] = useState("");
+  const [ctaSLabel, setCtaSLabel] = useState("");
+  const [ctaSHref, setCtaSHref] = useState("");
 
   useEffect(() => {
     if (open) {
       setTitle(initial?.title ?? ""); setSubtitle(initial?.subtitle ?? "");
+      setHighlight(initial?.highlight_text ?? "");
       setImage(initial?.image_url ?? ""); setLink(initial?.link_url ?? "");
-      setPosition(initial?.position ?? "home");
+      setPosition(initial?.position ?? "hero");
       setStarts(initial?.starts_at?.slice(0, 10) ?? ""); setEnds(initial?.ends_at?.slice(0, 10) ?? "");
       setOrder(initial?.display_order ?? 0); setActive(initial?.is_active ?? true);
+      setCtaPLabel(initial?.cta_primary_label ?? "");
+      setCtaPHref(initial?.cta_primary_href ?? "");
+      setCtaSLabel(initial?.cta_secondary_label ?? "");
+      setCtaSHref(initial?.cta_secondary_href ?? "");
     }
   }, [open, initial]);
 
+  const isHero = position === "hero";
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{initial ? "Editar banner" : "Novo banner"}</DialogTitle></DialogHeader>
         <div className="grid gap-3">
-          <div><Label>Título</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
-          <div><Label>Subtítulo</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
+          <div>
+            <Label>Título</Label>
+            <Textarea value={title} onChange={(e) => setTitle(e.target.value)} rows={2} placeholder="Ex: Encontre as {{highlight}} do DF em um só lugar." />
+            {isHero && <p className="mt-1 text-xs text-muted-foreground">Use <code>{"{{highlight}}"}</code> onde o texto destacado (manuscrito laranja) deve aparecer.</p>}
+          </div>
+          {isHero && (
+            <div>
+              <Label>Texto destacado (manuscrito)</Label>
+              <Input value={highlight} onChange={(e) => setHighlight(e.target.value)} placeholder="melhores empresas" />
+            </div>
+          )}
+          <div><Label>{isHero ? "Descrição" : "Subtítulo"}</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
           <ImageUploadField value={image} onChange={setImage} />
-          <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
+          {!isHero && (
+            <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
+          )}
 
+          {isHero && (
+            <div className="grid gap-3 rounded-lg border border-border bg-secondary/30 p-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Botões de ação</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label>Botão principal — rótulo</Label><Input value={ctaPLabel} onChange={(e) => setCtaPLabel(e.target.value)} placeholder="Encontrar profissional" /></div>
+                <div><Label>Botão principal — link</Label><Input value={ctaPHref} onChange={(e) => setCtaPHref(e.target.value)} placeholder="/buscar" /></div>
+                <div><Label>Botão secundário — rótulo</Label><Input value={ctaSLabel} onChange={(e) => setCtaSLabel(e.target.value)} placeholder="Pedir orçamento" /></div>
+                <div><Label>Botão secundário — link</Label><Input value={ctaSHref} onChange={(e) => setCtaSHref(e.target.value)} placeholder="/pedir-orcamento" /></div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-3">
             <div>
@@ -163,6 +198,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
               <Select value={position} onValueChange={setPosition}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="hero">Hero (Home)</SelectItem>
                   <SelectItem value="home">Home</SelectItem>
                   <SelectItem value="top">Topo</SelectItem>
                   <SelectItem value="sidebar">Lateral</SelectItem>
@@ -174,7 +210,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
             <div><Label>Fim</Label><Input type="date" value={ends} onChange={(e) => setEnds(e.target.value)} /></div>
           </div>
           <div className="grid grid-cols-2 gap-3 items-end">
-            <div><Label>Ordem</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
+            <div><Label>Ordem {isHero && <span className="text-xs text-muted-foreground">(2+ vira slider)</span>}</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
             <div className="flex items-center gap-2"><Switch checked={active} onCheckedChange={setActive} /><Label>Ativo</Label></div>
           </div>
         </div>
@@ -183,6 +219,11 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
           <Button disabled={submitting || !title}
             onClick={() => onSubmit({
               id: initial?.id, title, subtitle, image_url: image, link_url: link, position,
+              highlight_text: highlight || null,
+              cta_primary_label: ctaPLabel || null,
+              cta_primary_href: ctaPHref || null,
+              cta_secondary_label: ctaSLabel || null,
+              cta_secondary_href: ctaSHref || null,
               starts_at: starts ? new Date(starts).toISOString() : null,
               ends_at: ends ? new Date(ends).toISOString() : null,
               display_order: order, is_active: active,
