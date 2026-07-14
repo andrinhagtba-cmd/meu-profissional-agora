@@ -90,6 +90,9 @@ function Page() {
             <TabsTrigger value="company" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building2 size={15} /> Empresa
             </TabsTrigger>
+            <TabsTrigger value="footer" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <LayoutTemplate size={15} /> Rodapé
+            </TabsTrigger>
             <TabsTrigger value="prefs" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Settings2 size={15} /> Preferências
             </TabsTrigger>
@@ -104,6 +107,9 @@ function Page() {
           <TabsContent value="company">
             <CompanyTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
           </TabsContent>
+          <TabsContent value="footer">
+            <FooterTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
+          </TabsContent>
           <TabsContent value="prefs">
             <PrefsTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
           </TabsContent>
@@ -111,6 +117,7 @@ function Page() {
             <MyProfileTab />
           </TabsContent>
         </Tabs>
+
       )}
     </>
   );
