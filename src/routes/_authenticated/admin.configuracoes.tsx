@@ -14,17 +14,23 @@ import {
   Upload,
   User,
   X,
+  LayoutTemplate,
+  Plus,
+  Trash2,
+  GripVertical,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getSettings, updateSettings, type UpdateSettingsInput } from "@/services/settingsService";
+import { getSettings, updateSettings, type UpdateSettingsInput, type FooterColumn, type FooterConfig } from "@/services/settingsService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+
 
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
   head: () => ({
@@ -84,6 +90,9 @@ function Page() {
             <TabsTrigger value="company" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Building2 size={15} /> Empresa
             </TabsTrigger>
+            <TabsTrigger value="footer" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <LayoutTemplate size={15} /> Rodapé
+            </TabsTrigger>
             <TabsTrigger value="prefs" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Settings2 size={15} /> Preferências
             </TabsTrigger>
@@ -98,6 +107,9 @@ function Page() {
           <TabsContent value="company">
             <CompanyTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
           </TabsContent>
+          <TabsContent value="footer">
+            <FooterTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
+          </TabsContent>
           <TabsContent value="prefs">
             <PrefsTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
           </TabsContent>
@@ -105,6 +117,7 @@ function Page() {
             <MyProfileTab />
           </TabsContent>
         </Tabs>
+
       )}
     </>
   );
@@ -345,7 +358,193 @@ function CompanyTab({
   );
 }
 
+// ------------------------- FOOTER -------------------------
+
+function FooterTab({
+  settings,
+  save,
+  saving,
+}: {
+  settings: Awaited<ReturnType<typeof getSettings>>;
+  save: (patch: UpdateSettingsInput) => void;
+  saving: boolean;
+}) {
+  const initial: FooterConfig = settings.footer_config ?? {};
+  const [description, setDescription] = useState(initial.description ?? "");
+  const [copyright, setCopyright] = useState(initial.copyright ?? "");
+  const [cnpjNote, setCnpjNote] = useState(initial.cnpj_note ?? "");
+  const [contactEmail, setContactEmail] = useState(initial.contact_email ?? "");
+  const [columns, setColumns] = useState<FooterColumn[]>(
+    initial.columns && initial.columns.length > 0
+      ? initial.columns
+      : [{ title: "Nova coluna", links: [{ label: "Link", href: "/" }] }],
+  );
+
+  function updateColumn(i: number, patch: Partial<FooterColumn>) {
+    setColumns((c) => c.map((col, idx) => (idx === i ? { ...col, ...patch } : col)));
+  }
+  function updateLink(ci: number, li: number, patch: Partial<{ label: string; href: string }>) {
+    setColumns((c) =>
+      c.map((col, idx) =>
+        idx === ci
+          ? { ...col, links: col.links.map((l, j) => (j === li ? { ...l, ...patch } : l)) }
+          : col,
+      ),
+    );
+  }
+  function addLink(ci: number) {
+    setColumns((c) =>
+      c.map((col, idx) =>
+        idx === ci ? { ...col, links: [...col.links, { label: "Novo link", href: "/" }] } : col,
+      ),
+    );
+  }
+  function removeLink(ci: number, li: number) {
+    setColumns((c) =>
+      c.map((col, idx) => (idx === ci ? { ...col, links: col.links.filter((_, j) => j !== li) } : col)),
+    );
+  }
+  function addColumn() {
+    if (columns.length >= 6) return toast.error("Máximo de 6 colunas");
+    setColumns((c) => [...c, { title: "Nova coluna", links: [] }]);
+  }
+  function removeColumn(ci: number) {
+    setColumns((c) => c.filter((_, idx) => idx !== ci));
+  }
+  function moveColumn(ci: number, dir: -1 | 1) {
+    setColumns((c) => {
+      const next = [...c];
+      const target = ci + dir;
+      if (target < 0 || target >= next.length) return c;
+      [next[ci], next[target]] = [next[target], next[ci]];
+      return next;
+    });
+  }
+
+  function handleSave() {
+    save({
+      footer_config: {
+        description: description || undefined,
+        copyright: copyright || undefined,
+        cnpj_note: cnpjNote || undefined,
+        contact_email: contactEmail || undefined,
+        columns,
+      },
+    });
+  }
+
+  return (
+    <div className="space-y-5">
+      <Card title="Textos do rodapé" icon={<LayoutTemplate size={16} />}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Descrição" className="sm:col-span-2">
+            <Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+          </Field>
+          <Field label="Copyright (após o ano)">
+            <Input value={copyright} onChange={(e) => setCopyright(e.target.value)} placeholder="Minha Marca. Todos os direitos reservados." />
+          </Field>
+          <Field label="Nota adicional (CNPJ, etc)">
+            <Input value={cnpjNote} onChange={(e) => setCnpjNote(e.target.value)} placeholder="CNPJ 00.000.000/0001-00" />
+          </Field>
+          <Field label="E-mail de contato exibido">
+            <Input value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="contato@dominio.com" />
+          </Field>
+        </div>
+      </Card>
+
+      <Card title="Colunas de links" icon={<GripVertical size={16} />}>
+        <div className="space-y-4">
+          {columns.map((col, ci) => (
+            <div
+              key={ci}
+              className="rounded-2xl border border-[oklch(0.93_0.014_258)] bg-white/60 p-4"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  value={col.title}
+                  onChange={(e) => updateColumn(ci, { title: e.target.value })}
+                  placeholder="Título da coluna"
+                  className="max-w-xs font-semibold"
+                />
+                <div className="ml-auto flex gap-1">
+                  <Button type="button" size="sm" variant="outline" onClick={() => moveColumn(ci, -1)} disabled={ci === 0}>
+                    ↑
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" onClick={() => moveColumn(ci, 1)} disabled={ci === columns.length - 1}>
+                    ↓
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => removeColumn(ci)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 size={13} />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                {col.links.map((link, li) => (
+                  <div key={li} className="flex flex-wrap items-center gap-2">
+                    <Input
+                      value={link.label}
+                      onChange={(e) => updateLink(ci, li, { label: e.target.value })}
+                      placeholder="Rótulo"
+                      className="max-w-[180px]"
+                    />
+                    <Input
+                      value={link.href}
+                      onChange={(e) => updateLink(ci, li, { href: e.target.value })}
+                      placeholder="/rota ou https://…"
+                      className="flex-1 min-w-[200px]"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => removeLink(ci, li)}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <X size={14} />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => addLink(ci)}
+                  className="rounded-xl"
+                >
+                  <Plus size={12} className="mr-1" /> Adicionar link
+                </Button>
+              </div>
+            </div>
+          ))}
+
+          <Button type="button" variant="outline" onClick={addColumn} className="rounded-xl">
+            <Plus size={13} className="mr-1.5" /> Adicionar coluna
+          </Button>
+        </div>
+      </Card>
+
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="rounded-xl bg-primary shadow-lg shadow-primary/25 hover:bg-primary/90"
+        >
+          <Save size={14} className="mr-1.5" /> Salvar rodapé
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ------------------------- PREFS -------------------------
+
 
 function PrefsTab({
   settings,
