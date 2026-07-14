@@ -125,6 +125,8 @@ export async function getSettings(admin = false): Promise<SystemSettings> {
     date_format: (row.date_format as string | null) ?? "dd/MM/yyyy",
     integrations: ((row.integrations as Record<string, IntegrationConfig>) ?? {}),
     email_templates: ((row.email_templates as Record<string, EmailTemplate>) ?? {}),
+    footer_config: ((row.footer_config as FooterConfig) ?? {}),
+
     logo_light_url: row.logo_light_media_id
       ? mediaMap.get(row.logo_light_media_id as string) ?? null
       : null,
