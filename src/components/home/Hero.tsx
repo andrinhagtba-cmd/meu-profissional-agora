@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Zap } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { images } from "@/data/images";
@@ -132,22 +132,6 @@ export function Hero() {
                 Mais de <span className="font-bold">25 mil clientes</span> já encontraram ajuda.
               </p>
             </div>
-          </div>
-
-          <div className="absolute right-8 top-16 hidden w-64 rounded-3xl bg-card/95 p-5 shadow-float backdrop-blur lg:block">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary text-primary">
-              <MapPin size={20} aria-hidden="true" />
-            </span>
-            <h2 className="mt-3 font-display text-base font-bold text-foreground">
-              Atendimento perto de você
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Encontre profissionais disponíveis na sua região.
-            </p>
-            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-success-soft px-3 py-1 text-xs font-bold text-success">
-              <Zap size={13} aria-hidden="true" />
-              Resposta rápida
-            </p>
           </div>
 
           {total > 1 && (
