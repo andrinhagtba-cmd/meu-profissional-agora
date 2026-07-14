@@ -54,6 +54,14 @@ function formatBRL(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
 }
 
+function getWhatsAppLink(planName: string) {
+  const phone = "5561998662261";
+  const message = encodeURIComponent(
+    `Olá! Vi o plano ${planName} no Guia DF na Mídia e quero começar agora. Pode me passar mais informações?`
+  );
+  return `https://wa.me/${phone}?text=${message}`;
+}
+
 function periodLabel(p: string) {
   const map: Record<string, string> = {
     monthly: "/mês",
