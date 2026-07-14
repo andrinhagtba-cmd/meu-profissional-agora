@@ -33,14 +33,16 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
 
   if (!banners.length) return null;
 
+  const isSingle = banners.length === 1;
+
   return (
-    <section className="container mx-auto px-4 py-6">
-      <div className="grid gap-4 md:grid-cols-2">
+    <section className="container mx-auto px-4 py-8">
+      <div className={isSingle ? "grid gap-4" : "grid gap-4 md:grid-cols-2"}>
         {banners.map((b) => {
           const to = b.link_url || "#";
           const isExternal = /^https?:\/\//.test(to);
           const content = (
-            <div className="group relative aspect-[21/9] overflow-hidden rounded-2xl shadow-md">
+            <div className={`group relative w-full overflow-hidden rounded-2xl shadow-md ${isSingle ? "aspect-[32/9]" : "aspect-[21/9]"}`}>
               <img
                 src={b.image_url}
                 alt={b.title ?? "Banner"}
@@ -50,19 +52,20 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
               {(b.title || b.subtitle) && (
                 <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 text-white">
                   {b.title && <h3 className="text-xl font-bold md:text-2xl">{b.title}</h3>}
-                  {b.subtitle && <p className="mt-1 line-clamp-2 text-sm opacity-90">{b.subtitle}</p>}
+                  {b.subtitle && <p className="mt-1 line-clamp-2 max-w-2xl text-sm opacity-90">{b.subtitle}</p>}
                 </div>
               )}
             </div>
           );
           if (!b.link_url) return <div key={b.id}>{content}</div>;
           return isExternal ? (
-            <a key={b.id} href={to} target="_blank" rel="noopener noreferrer">{content}</a>
+            <a key={b.id} href={to} target="_blank" rel="noopener noreferrer" className="block">{content}</a>
           ) : (
-            <Link key={b.id} to={to.startsWith("/") ? to : `/${to}`}>{content}</Link>
+            <Link key={b.id} to={to.startsWith("/") ? to : `/${to}`} className="block">{content}</Link>
           );
         })}
       </div>
     </section>
   );
 }
+
