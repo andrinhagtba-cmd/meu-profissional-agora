@@ -26,10 +26,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getSettings, updateSettings, type UpdateSettingsInput } from "@/services/settingsService";
+import { getSettings, updateSettings, type UpdateSettingsInput, type FooterColumn, type FooterConfig } from "@/services/settingsService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+
 
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
   head: () => ({
