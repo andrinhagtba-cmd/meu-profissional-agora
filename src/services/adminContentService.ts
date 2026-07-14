@@ -121,6 +121,11 @@ export type AdminBanner = {
   ends_at: string | null;
   is_active: boolean;
   display_order: number;
+  highlight_text: string | null;
+  cta_primary_label: string | null;
+  cta_primary_href: string | null;
+  cta_secondary_label: string | null;
+  cta_secondary_href: string | null;
   created_at: string;
   updated_at: string;
 };
