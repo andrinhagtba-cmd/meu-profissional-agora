@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Image as ImageIcon, Pencil, Plus, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Pencil, Plus, Trash2, Upload, Loader2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTable";
@@ -15,6 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
+import { uploadAdminMedia } from "@/services/adminMediaService";
+
+
 
 export const Route = createFileRoute("/_authenticated/admin/banners")({
   head: () => ({ meta: [{ title: "Banners — Admin" }, { name: "robots", content: "noindex" }] }),
@@ -149,10 +152,10 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         <div className="grid gap-3">
           <div><Label>Título</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
           <div><Label>Subtítulo</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
-          <div className="grid grid-cols-2 gap-3">
-            <div><Label>URL da imagem</Label><Input value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://…" /></div>
-            <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
-          </div>
+          <ImageUploadField value={image} onChange={setImage} />
+          <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
+
+
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label>Posição</Label>
@@ -189,3 +192,73 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
     </Dialog>
   );
 }
+
+function ImageUploadField({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione uma imagem válida");
+      return;
+    }
+    setUploading(true);
+    try {
+      const res = await uploadAdminMedia(file, "banner");
+      onChange(res.url);
+      toast.success("Imagem enviada");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha no upload");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div>
+      <Label>Imagem do banner</Label>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+      {value ? (
+        <div className="mt-1 flex items-center gap-3 rounded-lg border border-border p-2">
+          <img src={value} alt="Prévia" className="h-20 w-32 rounded-md object-cover" />
+          <div className="flex flex-1 flex-col gap-2">
+            <span className="line-clamp-1 text-xs text-muted-foreground">{value}</span>
+            <div className="flex gap-2">
+              <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={() => inputRef.current?.click()}>
+                {uploading ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Upload size={14} className="mr-1" />}
+                Trocar
+              </Button>
+              <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")}>
+                <Trash2 size={14} className="mr-1 text-destructive" /> Remover
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => inputRef.current?.click()}
+          className="mt-1 flex h-32 w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-secondary/30 text-sm text-muted-foreground transition hover:border-primary hover:text-primary"
+        >
+          {uploading ? (
+            <><Loader2 size={20} className="animate-spin" /><span>Enviando…</span></>
+          ) : (
+            <><Upload size={20} /><span>Clique para enviar imagem</span></>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
