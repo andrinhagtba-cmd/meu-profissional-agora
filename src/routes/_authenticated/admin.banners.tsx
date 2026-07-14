@@ -147,7 +147,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{initial ? "Editar banner" : "Novo banner"}</DialogTitle></DialogHeader>
         <div className="grid gap-3">
           <div><Label>Título</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
@@ -229,19 +229,16 @@ function ImageUploadField({ value, onChange }: { value: string; onChange: (url: 
         }}
       />
       {value ? (
-        <div className="mt-1 flex items-center gap-3 rounded-lg border border-border p-2">
+        <div className="mt-1 flex items-center gap-3 rounded-lg border border-border p-2 w-full min-w-0 overflow-hidden">
           <img src={value} alt="Prévia" className="h-20 w-32 shrink-0 rounded-md object-cover" />
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <span className="truncate text-xs text-muted-foreground">{value}</span>
-            <div className="flex gap-2">
-              <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={() => inputRef.current?.click()}>
-                {uploading ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Upload size={14} className="mr-1" />}
-                Trocar
-              </Button>
-              <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")}>
-                <Trash2 size={14} className="mr-1 text-destructive" /> Remover
-              </Button>
-            </div>
+          <div className="flex min-w-0 flex-1 gap-2">
+            <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={() => inputRef.current?.click()}>
+              {uploading ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Upload size={14} className="mr-1" />}
+              Trocar
+            </Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => onChange("")}>
+              <Trash2 size={14} className="mr-1 text-destructive" /> Remover
+            </Button>
           </div>
         </div>
       ) : (
