@@ -27,11 +27,23 @@ export type SystemSettings = {
   date_format: string | null;
   integrations: Record<string, IntegrationConfig>;
   email_templates: Record<string, EmailTemplate>;
+  footer_config: FooterConfig;
   // resolved
   logo_light_url: string | null;
   logo_dark_url: string | null;
   favicon_url: string | null;
 };
+
+export type FooterLink = { label: string; href: string };
+export type FooterColumn = { title: string; links: FooterLink[] };
+export type FooterConfig = {
+  description?: string;
+  copyright?: string;
+  cnpj_note?: string;
+  contact_email?: string;
+  columns?: FooterColumn[];
+};
+
 
 export type IntegrationConfig = {
   enabled: boolean;

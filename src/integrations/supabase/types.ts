@@ -1422,6 +1422,7 @@ export type Database = {
           default_locale: string | null
           default_timezone: string | null
           favicon_media_id: string | null
+          footer_config: Json
           id: string
           legal_name: string | null
           logo_dark_media_id: string | null
@@ -1447,6 +1448,7 @@ export type Database = {
           default_locale?: string | null
           default_timezone?: string | null
           favicon_media_id?: string | null
+          footer_config?: Json
           id: string
           legal_name?: string | null
           logo_dark_media_id?: string | null
@@ -1472,6 +1474,7 @@ export type Database = {
           default_locale?: string | null
           default_timezone?: string | null
           favicon_media_id?: string | null
+          footer_config?: Json
           id?: string
           legal_name?: string | null
           logo_dark_media_id?: string | null
@@ -2005,6 +2008,7 @@ export type Database = {
           default_timezone: string | null
           email_templates: Json
           favicon_media_id: string | null
+          footer_config: Json
           id: string
           integrations: Json
           legal_name: string | null
@@ -2034,6 +2038,7 @@ export type Database = {
           default_timezone?: string | null
           email_templates?: Json
           favicon_media_id?: string | null
+          footer_config?: Json
           id?: string
           integrations?: Json
           legal_name?: string | null
@@ -2063,6 +2068,7 @@ export type Database = {
           default_timezone?: string | null
           email_templates?: Json
           favicon_media_id?: string | null
+          footer_config?: Json
           id?: string
           integrations?: Json
           legal_name?: string | null
