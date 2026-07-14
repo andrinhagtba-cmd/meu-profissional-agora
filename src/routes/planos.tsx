@@ -54,6 +54,14 @@ function formatBRL(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
 }
 
+function getWhatsAppLink(planName: string) {
+  const phone = "5561998662261";
+  const message = encodeURIComponent(
+    `Olá! Vi o plano ${planName} no Guia DF na Mídia e quero começar agora. Pode me passar mais informações?`
+  );
+  return `https://wa.me/${phone}?text=${message}`;
+}
+
 function periodLabel(p: string) {
   const map: Record<string, string> = {
     monthly: "/mês",
@@ -208,9 +216,13 @@ function PlansPage() {
                         : "bg-primary text-primary-foreground hover:bg-primary/90"
                     }`}
                   >
-                    <Link to="/cadastro/profissional" search={{ plan: plan.id } as never}>
+                    <a
+                      href={getWhatsAppLink(plan.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Começar agora
-                    </Link>
+                    </a>
                   </Button>
                 </article>
               );
