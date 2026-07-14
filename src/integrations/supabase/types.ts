@@ -149,8 +149,13 @@ export type Database = {
       banners: {
         Row: {
           created_at: string
+          cta_primary_href: string | null
+          cta_primary_label: string | null
+          cta_secondary_href: string | null
+          cta_secondary_label: string | null
           display_order: number
           ends_at: string | null
+          highlight_text: string | null
           id: string
           image_url: string | null
           is_active: boolean
@@ -163,8 +168,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          cta_primary_href?: string | null
+          cta_primary_label?: string | null
+          cta_secondary_href?: string | null
+          cta_secondary_label?: string | null
           display_order?: number
           ends_at?: string | null
+          highlight_text?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
@@ -177,8 +187,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          cta_primary_href?: string | null
+          cta_primary_label?: string | null
+          cta_secondary_href?: string | null
+          cta_secondary_label?: string | null
           display_order?: number
           ends_at?: string | null
+          highlight_text?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
