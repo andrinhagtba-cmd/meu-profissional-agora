@@ -1,109 +1,165 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Facebook, Instagram, Linkedin, Mail, Youtube } from "lucide-react";
 import { Logo } from "./Header";
+import { getSettings, type FooterColumn } from "@/services/settingsService";
 
-const columns = [
+const DEFAULT_COLUMNS: FooterColumn[] = [
   {
     title: "Plataforma",
     links: [
-      { label: "Como funciona", to: "/sobre" },
-      { label: "Categorias", to: "/categorias" },
-      { label: "Profissionais", to: "/profissionais" },
-      { label: "Pedir orçamento", to: "/pedir-orcamento" },
-      { label: "Blog", to: "/blog" },
+      { label: "Como funciona", href: "/sobre" },
+      { label: "Categorias", href: "/categorias" },
+      { label: "Profissionais", href: "/profissionais" },
+      { label: "Pedir orçamento", href: "/pedir-orcamento" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {
     title: "Profissionais",
     links: [
-      { label: "Criar perfil", to: "/cadastro/profissional" },
-      { label: "Entrar", to: "/entrar" },
-      { label: "Planos", to: "/planos" },
-      { label: "Central de ajuda", to: "/contato" },
+      { label: "Criar perfil", href: "/cadastro/profissional" },
+      { label: "Entrar", href: "/entrar" },
+      { label: "Planos", href: "/planos" },
+      { label: "Central de ajuda", href: "/contato" },
     ],
   },
   {
     title: "Empresa",
     links: [
-      { label: "Sobre", to: "/sobre" },
-      { label: "Contato", to: "/contato" },
-      { label: "Trabalhe conosco", to: "/contato" },
-      { label: "Imprensa", to: "/contato" },
+      { label: "Sobre", href: "/sobre" },
+      { label: "Contato", href: "/contato" },
+      { label: "Trabalhe conosco", href: "/contato" },
+      { label: "Imprensa", href: "/contato" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Termos de uso", to: "/sobre" },
-      { label: "Privacidade", to: "/sobre" },
-      { label: "Cookies", to: "/sobre" },
-      { label: "Diretrizes de avaliação", to: "/sobre" },
+      { label: "Termos de uso", href: "/sobre" },
+      { label: "Privacidade", href: "/sobre" },
+      { label: "Cookies", href: "/sobre" },
+      { label: "Diretrizes de avaliação", href: "/sobre" },
     ],
   },
 ];
 
-const socials = [
-  { icon: Instagram, label: "Instagram" },
-  { icon: Facebook, label: "Facebook" },
-  { icon: Youtube, label: "YouTube" },
-  { icon: Linkedin, label: "LinkedIn" },
-];
+function isExternal(href: string) {
+  return /^(https?:|mailto:|tel:)/i.test(href);
+}
+
+function FooterLinkItem({ href, label }: { href: string; label: string }) {
+  const cls = "text-sm text-muted-foreground transition-colors hover:text-primary";
+  if (isExternal(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+        {label}
+      </a>
+    );
+  }
+  return (
+    <Link to={href} className={cls}>
+      {label}
+    </Link>
+  );
+}
 
 export function Footer() {
+  const { data: settings } = useQuery({
+    queryKey: ["system-settings", "public"],
+    queryFn: () => getSettings(false),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const cfg = settings?.footer_config ?? {};
+  const columns = cfg.columns && cfg.columns.length > 0 ? cfg.columns : DEFAULT_COLUMNS;
+  const description =
+    cfg.description ??
+    "O jeito mais simples de encontrar profissionais de confiança perto de você. Compare, contrate e avalie sem complicação.";
+  const contactEmail = cfg.contact_email ?? settings?.support_email ?? "contato@proconecta.com.br";
+  const copyright = cfg.copyright ?? `${settings?.brand_name ?? "plataforma"}. Todos os direitos reservados.`;
+  const cnpjNote = cfg.cnpj_note ?? "";
+
+  const socials = [
+    settings?.social_instagram && { icon: Instagram, label: "Instagram", href: settings.social_instagram },
+    settings?.social_facebook && { icon: Facebook, label: "Facebook", href: settings.social_facebook },
+    settings?.social_youtube && { icon: Youtube, label: "YouTube", href: settings.social_youtube },
+    settings?.social_linkedin && { icon: Linkedin, label: "LinkedIn", href: settings.social_linkedin },
+  ].filter(Boolean) as { icon: typeof Instagram; label: string; href: string }[];
+
+  const fallbackSocials =
+    socials.length === 0
+      ? [
+          { icon: Instagram, label: "Instagram", href: "#" },
+          { icon: Facebook, label: "Facebook", href: "#" },
+          { icon: Youtube, label: "YouTube", href: "#" },
+          { icon: Linkedin, label: "LinkedIn", href: "#" },
+        ]
+      : socials;
+
   return (
     <footer className="border-t border-border bg-card">
       <div className="container-page py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
-          <div className="lg:col-span-2">
-            <Logo />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              O jeito mais simples de encontrar profissionais de confiança perto de você. Compare,
-              contrate e avalie sem complicação.
-            </p>
-            <div className="mt-5 flex gap-2">
-              {socials.map(({ icon: Icon, label }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  onClick={(e) => e.preventDefault()}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-                >
-                  <Icon size={17} />
-                </a>
-              ))}
-            </div>
-          </div>
-          {columns.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h3 className="text-sm font-bold text-foreground">{col.title}</h3>
-              <ul className="mt-4 space-y-2.5">
-                {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      to={link.to}
-                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
+        <div
+          className="grid gap-10 md:grid-cols-2"
+          style={{ gridTemplateColumns: undefined }}
+        >
+          <div
+            className="grid gap-10 md:grid-cols-2"
+            style={{
+              gridColumn: "1 / -1",
+              gridTemplateColumns: `2fr repeat(${columns.length}, minmax(0, 1fr))`,
+            }}
+          >
+            <div>
+              <Logo />
+              <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                {description}
+              </p>
+              <div className="mt-5 flex gap-2">
+                {fallbackSocials.map(({ icon: Icon, label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target={href === "#" ? undefined : "_blank"}
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    onClick={href === "#" ? (e) => e.preventDefault() : undefined}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <Icon size={17} />
+                  </a>
                 ))}
-              </ul>
-            </nav>
-          ))}
+              </div>
+            </div>
+            {columns.map((col) => (
+              <nav key={col.title} aria-label={col.title}>
+                <h3 className="text-sm font-bold text-foreground">{col.title}</h3>
+                <ul className="mt-4 space-y-2.5">
+                  {col.links.map((link) => (
+                    <li key={link.label}>
+                      <FooterLinkItem href={link.href} label={link.label} />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
           <p>
-            © {new Date().getFullYear()} plataforma. Todos os direitos reservados. · CNPJ
-            00.000.000/0001-00 (demonstração)
+            © {new Date().getFullYear()} {copyright}
+            {cnpjNote ? ` · ${cnpjNote}` : ""}
           </p>
-          <a
-            href="mailto:contato@proconecta.com.br"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
-          >
-            <Mail size={13} aria-hidden="true" />
-            contato@proconecta.com.br
-          </a>
+          {contactEmail && (
+            <a
+              href={`mailto:${contactEmail}`}
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
+            >
+              <Mail size={13} aria-hidden="true" />
+              {contactEmail}
+            </a>
+          )}
         </div>
       </div>
     </footer>
