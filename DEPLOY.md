@@ -67,3 +67,14 @@ PORT=3000 node .output/server/index.mjs
   `build:node` para a VPS.
 - Não use `vite preview` em produção; ele não é um servidor de produção.
 - Requisitos da máquina: Node 22+ e ~2 GB de RAM disponíveis durante o build.
+
+## npm install falhando com ERESOLVE (valibot / @hookform/resolvers)
+
+O resolvedor de peers do npm rejeita um peer opcional (`valibot`) que o Bun ignora.
+O arquivo `.npmrc` na raiz já resolve isso com `legacy-peer-deps=true` — nada a fazer
+no Coolify. Se preferir usar Bun, troque o Install Command por
+`bun install --frozen-lockfile`.
+
+Dica extra do log do Coolify: deixe `NODE_ENV=production` como **runtime only**
+(desmarque "Available at Buildtime"), senão as devDependencies não são instaladas
+e o build falha.
