@@ -206,18 +206,23 @@ function HeroTitle({ title, highlight }: { title: string; highlight: string | nu
   );
 }
 
-function CtaLink({ href, children }: { href: string; children: React.ReactNode }) {
+function CtaLink({
+  href,
+  children,
+  ...rest
+}: { href: string; children: React.ReactNode } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const external = /^https?:\/\//i.test(href);
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
+      <a {...rest} href={href} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );
   }
   return (
-    <Link to={href} search={{} as never}>
+    <Link {...(rest as never)} to={href} search={{} as never}>
       {children}
     </Link>
   );
 }
+
