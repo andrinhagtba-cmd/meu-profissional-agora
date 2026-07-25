@@ -66,6 +66,7 @@ export function Hero() {
   const [index, setIndex] = useState(0);
   const total = banners.length;
   const active = banners[Math.min(index, total - 1)];
+  const activeImage = useResolvedMediaUrl(active.image_url);
 
   useEffect(() => {
     if (total <= 1) return;
@@ -78,7 +79,8 @@ export function Hero() {
       <div className="relative overflow-hidden bg-secondary">
         <img
           key={active.id}
-          src={active.image_url || images.hero}
+          src={activeImage || images.hero}
+
           alt=""
           width={1920}
           height={1088}
