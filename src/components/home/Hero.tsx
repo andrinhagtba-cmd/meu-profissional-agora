@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { images } from "@/data/images";
 import { SearchPanel } from "./SearchPanel";
 import { supabase } from "@/integrations/supabase/client";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
+
 
 const avatars = [
   { initials: "MT", color: "bg-primary" },
@@ -220,9 +222,10 @@ function CtaLink({
     );
   }
   return (
-    <Link {...(rest as never)} to={href} search={{} as never}>
+    <Link {...(rest as Record<string, unknown>)} to={href} search={{} as never}>
       {children}
     </Link>
+
   );
 }
 
