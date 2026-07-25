@@ -57,12 +57,8 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
           const isExternal = /^https?:\/\//.test(to);
           const content = (
             <div className={`group relative w-full overflow-hidden rounded-2xl shadow-md ${isSingle ? "aspect-[32/9]" : "aspect-[21/9]"}`}>
-              <img
-                src={b.image_url}
-                alt={b.title ?? "Banner"}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
+              <BannerImage src={b.image_url} alt={b.title ?? "Banner"} />
+
               {(b.title || b.subtitle) && (
                 <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 text-white">
                   {b.title && <h3 className="text-xl font-bold md:text-2xl">{b.title}</h3>}
