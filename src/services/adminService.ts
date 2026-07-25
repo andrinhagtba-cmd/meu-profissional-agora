@@ -2425,3 +2425,14 @@ export async function deleteB2BCompany(id: string): Promise<void> {
   const { error } = await supabase.from("b2b_companies" as never).delete().eq("id", id);
   if (error) throw error;
 }
+
+export async function deleteProProfile(id: string) {
+  const { error } = await supabase.from("professional_profiles").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function bulkDeleteProProfiles(ids: string[]) {
+  if (ids.length === 0) return;
+  const { error } = await supabase.from("professional_profiles").delete().in("id", ids);
+  if (error) throw error;
+}

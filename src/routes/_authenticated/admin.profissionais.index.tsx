@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
+  Trash2,
   UserPlus,
   UsersRound,
   X,
@@ -31,6 +32,16 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,9 +56,12 @@ import {
   setProVerification,
   bulkVerifyPros,
   bulkFeaturePros,
+  bulkDeleteProProfiles,
+  deleteProProfile,
   setProProfileStatus,
   type AdminProRow,
 } from "@/services/adminService";
+
 
 const VERIF_LABEL: Record<string, string> = {
   pending: "Em análise",
@@ -74,6 +88,8 @@ function AdminPros() {
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [toDelete, setToDelete] = useState<AdminProRow | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const statusFilter = filter === "featured" ? undefined : filter || undefined;
   const featuredOnly = filter === "featured" ? true : undefined;
@@ -119,6 +135,16 @@ function AdminPros() {
   const bulkV = useMutation({
     mutationFn: (v: { ids: string[]; s: "approved" | "rejected" }) => bulkVerifyPros(v.ids, v.s),
     onSuccess: () => { toast.success("Lote aplicado"); setSelected(new Set()); invalidate(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const del = useMutation({
+    mutationFn: (id: string) => deleteProProfile(id),
+    onSuccess: () => { toast.success("Profissional removido"); setToDelete(null); invalidate(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const bulkDel = useMutation({
+    mutationFn: (ids: string[]) => bulkDeleteProProfiles(ids),
+    onSuccess: () => { toast.success("Profissionais removidos"); setBulkDeleteOpen(false); setSelected(new Set()); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
   const bulkF = useMutation({
@@ -232,6 +258,7 @@ function AdminPros() {
               <Button size="sm" className="rounded-full" onClick={() => bulkV.mutate({ ids: [...selected], s: "approved" })} disabled={bulkV.isPending}>Aprovar</Button>
               <Button size="sm" className="rounded-full" variant="outline" onClick={() => bulkV.mutate({ ids: [...selected], s: "rejected" })} disabled={bulkV.isPending}>Rejeitar</Button>
               <Button size="sm" className="rounded-full" variant="outline" onClick={() => bulkF.mutate({ ids: [...selected], f: true })} disabled={bulkF.isPending}>Destacar</Button>
+              <Button size="sm" className="rounded-full" variant="outline" onClick={() => setBulkDeleteOpen(true)} disabled={bulkDel.isPending}><Trash2 size={14} className="mr-1 text-destructive" />Excluir</Button>
               <Button size="sm" className="rounded-full" variant="ghost" onClick={() => setSelected(new Set())}>Limpar</Button>
             </div>
           </div>
@@ -261,6 +288,7 @@ function AdminPros() {
                 onVerify={(s) => verify.mutate({ id: pro.id, s })}
                 onFeature={() => feat.mutate({ id: pro.id, f: !pro.is_featured })}
                 onStatus={(s) => statusMut.mutate({ id: pro.id, s })}
+                onDelete={() => setToDelete(pro)}
               />
             ))}
           </div>
@@ -276,6 +304,47 @@ function AdminPros() {
           <span>{data.length} profissional(is) exibidos</span>
         </div>
       )}
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir profissional?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O perfil de "{toDelete?.professional_name || toDelete?.business_name || "este profissional"}" será
+              removido definitivamente, junto com serviços, portfólio e avaliações vinculados. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => toDelete && del.mutate(toDelete.id)}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir {selected.size} profissional(is)?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Todos os perfis selecionados serão removidos definitivamente. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => bulkDel.mutate([...selected])}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -288,6 +357,7 @@ function ProfessionalCard({
   onVerify,
   onFeature,
   onStatus,
+  onDelete,
 }: {
   pro: AdminProRow;
   selected: boolean;
@@ -296,6 +366,7 @@ function ProfessionalCard({
   onVerify: (s: "approved" | "rejected" | "pending") => void;
   onFeature: () => void;
   onStatus: (s: "published" | "archived") => void;
+  onDelete: () => void;
 }) {
   const name = pro.professional_name || pro.business_name || "Sem nome";
   const location = pro.city ? `${pro.city}/${pro.state ?? ""}` : "Sem localização";
@@ -338,6 +409,8 @@ function ProfessionalCard({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onStatus("archived")} className="text-destructive focus:text-destructive"><PauseCircle size={14} className="mr-2" />Suspender</DropdownMenuItem>
             <DropdownMenuItem onClick={() => onStatus("published")}><PlayCircle size={14} className="mr-2" />Reativar</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive"><Trash2 size={14} className="mr-2" />Excluir definitivamente</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
