@@ -1,6 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
+
+function BannerImage({ src, alt }: { src: string; alt: string }) {
+  const resolved = useResolvedMediaUrl(src);
+  return (
+    <img
+      src={resolved}
+      alt={alt}
+      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+    />
+  );
+}
+
 
 type Banner = {
   id: string;
