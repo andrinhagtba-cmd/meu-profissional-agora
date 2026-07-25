@@ -12,5 +12,8 @@ cmd = "node .output/server/index.mjs"
 
 [variables]
 NITRO_PRESET = "node-server"
-NODE_ENV = "production"
+# NODE_ENV NÃO deve ser "production" aqui: isso faz o install pular as
+# devDependencies (vite, nitro) e o build quebra. Defina NODE_ENV apenas
+# como variável de runtime no Coolify.
+NPM_CONFIG_PRODUCTION = "false"
 PORT = "3000"
