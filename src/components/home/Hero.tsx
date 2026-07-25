@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { images } from "@/data/images";
 import { SearchPanel } from "./SearchPanel";
 import { supabase } from "@/integrations/supabase/client";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
+
 
 const avatars = [
   { initials: "MT", color: "bg-primary" },
@@ -64,6 +66,7 @@ export function Hero() {
   const [index, setIndex] = useState(0);
   const total = banners.length;
   const active = banners[Math.min(index, total - 1)];
+  const activeImage = useResolvedMediaUrl(active.image_url);
 
   useEffect(() => {
     if (total <= 1) return;
@@ -76,7 +79,8 @@ export function Hero() {
       <div className="relative overflow-hidden bg-secondary">
         <img
           key={active.id}
-          src={active.image_url || images.hero}
+          src={activeImage || images.hero}
+
           alt=""
           width={1920}
           height={1088}
@@ -206,18 +210,24 @@ function HeroTitle({ title, highlight }: { title: string; highlight: string | nu
   );
 }
 
-function CtaLink({ href, children }: { href: string; children: React.ReactNode }) {
+function CtaLink({
+  href,
+  children,
+  ...rest
+}: { href: string; children: React.ReactNode } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const external = /^https?:\/\//i.test(href);
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
+      <a {...rest} href={href} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );
   }
   return (
-    <Link to={href} search={{} as never}>
+    <Link {...(rest as Record<string, unknown>)} to={href} search={{} as never}>
       {children}
     </Link>
+
   );
 }
+
