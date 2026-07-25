@@ -16,4 +16,4 @@ NITRO_PRESET = "node-server"
 # devDependencies (vite, nitro) e o build quebra. Defina NODE_ENV apenas
 # como variável de runtime no Coolify.
 NPM_CONFIG_PRODUCTION = "false"
-PORT = "3000"
+PORT = "3026"
