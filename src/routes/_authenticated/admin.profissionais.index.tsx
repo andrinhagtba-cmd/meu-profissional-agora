@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
+  Trash2,
   UserPlus,
   UsersRound,
   X,
@@ -31,6 +32,16 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,9 +56,12 @@ import {
   setProVerification,
   bulkVerifyPros,
   bulkFeaturePros,
+  bulkDeleteProProfiles,
+  deleteProProfile,
   setProProfileStatus,
   type AdminProRow,
 } from "@/services/adminService";
+
 
 const VERIF_LABEL: Record<string, string> = {
   pending: "Em análise",
