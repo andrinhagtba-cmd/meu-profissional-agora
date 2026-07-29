@@ -263,14 +263,18 @@ function PlanDialog({
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
           <Button
-            disabled={submitting || !name || !period}
+            disabled={submitting || !name || !period || (period === "custom" && Number(customDays) < 1)}
             onClick={() =>
               onSubmit({
                 id: initial?.id,
                 name,
                 description,
                 price,
-                billing_period: period,
+                billing_period:
+                  period === "custom" && Number(customDays) > 0
+                    ? `custom:${Number(customDays)}`
+                    : period,
+
                 lead_limit: leadLimit.trim() === "" ? null : Number(leadLimit),
                 featured_profile: featured,
                 active,
