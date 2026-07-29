@@ -194,6 +194,7 @@ export type AdminProProfilePatch = Partial<{
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
+  service_regions: string[];
 }>;
 
 
@@ -244,6 +245,7 @@ export type AdminProDetail = AdminProRow & {
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
+  service_regions: string[];
   initial_view_count: number;
   real_view_count: number;
   counts: { services: number; portfolio: number; leads: number; reviews: number };
@@ -263,6 +265,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       holiday_note, neighborhood, latitude, longitude,
       google_place_id, formatted_address, public_address_visibility,
       service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
+      service_regions,
       initial_view_count, real_view_count
     `)
     .eq("id", id)
@@ -335,6 +338,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     serves_at_business_address: b("serves_at_business_address"),
     serves_at_customer_location: b("serves_at_customer_location"),
     serves_remotely: b("serves_remotely"),
+    service_regions: ((p.service_regions as string[] | null) ?? []),
     initial_view_count: Number((p.initial_view_count as number | null) ?? 0),
     real_view_count: Number((p.real_view_count as number | null) ?? 0),
     counts: {

@@ -21,6 +21,7 @@ import { LocationMap } from "@/components/address/LocationMap";
 import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 import { geocodeAddressFn } from "@/lib/geocode.functions";
+import { DF_REGIONS } from "@/data/dfRegions";
 
 
 type Availability = "available" | "busy" | "unavailable";
@@ -61,6 +62,7 @@ type FormState = {
   public_address_visibility: AddressVisibility;
   // Atendimento
   service_radius_km: string;
+  service_regions: string[];
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
@@ -105,6 +107,7 @@ function toForm(pro: AdminProDetail): FormState {
     formatted_address: pro.formatted_address ?? "",
     public_address_visibility: (pro.public_address_visibility as AddressVisibility) ?? "city_state",
     service_radius_km: pro.service_radius_km != null ? String(pro.service_radius_km) : "",
+    service_regions: pro.service_regions ?? [],
     serves_at_business_address: Boolean(pro.serves_at_business_address),
     serves_at_customer_location: Boolean(pro.serves_at_customer_location),
     serves_remotely: Boolean(pro.serves_remotely),
@@ -196,6 +199,15 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
     patch.serves_at_customer_location = f.serves_at_customer_location;
   if (Boolean(f.serves_remotely) !== Boolean(pro.serves_remotely))
     patch.serves_remotely = f.serves_remotely;
+
+  const currRegions = pro.service_regions ?? [];
+  const nextRegions = f.service_regions;
+  if (
+    nextRegions.length !== currRegions.length ||
+    nextRegions.some((v, i) => v !== currRegions[i])
+  ) {
+    patch.service_regions = nextRegions;
+  }
 
   return patch;
 }
@@ -552,6 +564,41 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                 <Toggle label="Vou até o cliente" checked={form.serves_at_customer_location} onChange={(v) => set("serves_at_customer_location", v)} />
                 <Toggle label="Atendimento remoto/online" checked={form.serves_remotely} onChange={(v) => set("serves_remotely", v)} />
               </div>
+            </div>
+
+            <div className="mt-4">
+              <Field label="Regiões atendidas (exibidas no perfil público)">
+                <div className="flex flex-wrap gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
+                  {DF_REGIONS.map((r) => {
+                    const active = form.service_regions.includes(r.name);
+                    return (
+                      <button
+                        key={r.slug}
+                        type="button"
+                        onClick={() =>
+                          set(
+                            "service_regions",
+                            active
+                              ? form.service_regions.filter((x) => x !== r.name)
+                              : [...form.service_regions, r.name],
+                          )
+                        }
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {r.name}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex gap-3 text-[11px] text-muted-foreground">
+                  <button type="button" className="font-semibold text-primary" onClick={() => set("service_regions", DF_REGIONS.map((r) => r.name))}>Selecionar todas</button>
+                  <button type="button" className="font-semibold text-primary" onClick={() => set("service_regions", [])}>Limpar</button>
+                </div>
+              </Field>
             </div>
           </div>
 

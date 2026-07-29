@@ -53,6 +53,7 @@ type DbRow = {
   serves_at_business_address: boolean;
   serves_at_customer_location: boolean;
   serves_remotely: boolean;
+  service_regions: string[] | null;
   initial_view_count: number | null;
   real_view_count: number | null;
   professional_services: Array<{
@@ -77,6 +78,7 @@ const SELECT = `
   formatted_address, public_address_visibility, holiday_note,
 
   service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
+  service_regions,
   initial_view_count, real_view_count,
   professional_services(
     starting_price,
@@ -158,7 +160,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     experienceYears: row.years_experience ?? mock?.experienceYears ?? 0,
     description: row.description ?? mock?.description ?? "",
     services: (services.length ? services : mock?.services ?? []) as Professional["services"],
-    regions: mock?.regions ?? [],
+    regions: (row.service_regions?.length ? row.service_regions : mock?.regions) ?? [],
     certifications: mock?.certifications ?? [],
     schedule: mock?.schedule ?? "Seg a Sáb, 8h às 18h",
     attendanceTypes: (mock?.attendanceTypes ?? ["residencial"]) as AttendanceType[],
