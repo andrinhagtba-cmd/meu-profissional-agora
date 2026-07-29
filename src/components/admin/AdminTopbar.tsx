@@ -131,9 +131,26 @@ export function AdminTopbar() {
         <Button variant="ghost" size="icon" onClick={() => setCmdOpen(true)} className="sm:hidden">
           <Search size={16} />
         </Button>
+        <Button
+          asChild
+          variant="outline"
+          className="hidden h-10 gap-2 rounded-full border-[oklch(0.93_0.014_258)] px-4 text-[13px] font-semibold text-foreground hover:border-primary/30 hover:text-primary lg:inline-flex"
+        >
+          <a href="/" target="_blank" rel="noopener noreferrer">
+            <Globe size={15} className="text-primary" />
+            Visitar site
+            <ExternalLink size={13} className="text-muted-foreground" />
+          </a>
+        </Button>
+        <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label="Visitar site">
+          <a href="/" target="_blank" rel="noopener noreferrer">
+            <Globe size={16} />
+          </a>
+        </Button>
         <Button variant="ghost" size="icon" asChild>
           <Link to="/painel/notificacoes"><Bell size={16} /></Link>
         </Button>
+
         <Button variant="ghost" size="icon" onClick={toggle} aria-label="Alternar tema">
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </Button>
