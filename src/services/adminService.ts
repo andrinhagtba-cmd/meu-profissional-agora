@@ -2462,3 +2462,55 @@ export async function countPendingPhotoRequests(): Promise<number> {
   if (error) return 0;
   return count ?? 0;
 }
+
+// ---------- Plano/assinatura de um profissional específico ----------
+export type ProSubscription = {
+  id: string;
+  status: string;
+  started_at: string | null;
+  expires_at: string | null;
+  external_reference: string | null;
+  created_at: string;
+  plan: { id: string; name: string; price: number; billing_period: string } | null;
+};
+
+export async function getProSubscriptions(professionalId: string): Promise<ProSubscription[]> {
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("id, status, started_at, expires_at, external_reference, created_at, plan:plan_id(id, name, price, billing_period)")
+    .eq("professional_id", professionalId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as unknown as ProSubscription[];
+}
+
+export async function assignProSubscription(input: {
+  professional_id: string;
+  plan_id: string;
+  status?: "active" | "pending" | "cancelled" | "expired";
+  started_at: string;
+  expires_at?: string | null;
+  external_reference?: string | null;
+  id?: string;
+}) {
+  const payload = {
+    professional_id: input.professional_id,
+    plan_id: input.plan_id,
+    status: (input.status ?? "active") as never,
+    started_at: input.started_at,
+    expires_at: input.expires_at || null,
+    external_reference: input.external_reference || null,
+  };
+  if (input.id) {
+    const { error } = await supabase.from("subscriptions").update(payload).eq("id", input.id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("subscriptions").insert(payload);
+    if (error) throw error;
+  }
+}
+
+export async function deleteProSubscription(id: string) {
+  const { error } = await supabase.from("subscriptions").delete().eq("id", id);
+  if (error) throw error;
+}
