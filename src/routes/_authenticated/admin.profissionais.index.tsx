@@ -101,6 +101,13 @@ function AdminPros() {
     queryFn: () => listPros(statusFilter, search, featuredOnly),
   });
 
+  const { data: pendingPhotos = 0 } = useQuery({
+    queryKey: ["admin-pending-photos"],
+    queryFn: countPendingPhotoRequests,
+  });
+
+
+
   const stats = useMemo(() => {
     const total = data.length;
     const approved = data.filter((p) => p.verification_status === "approved").length;
