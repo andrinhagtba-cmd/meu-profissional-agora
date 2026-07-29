@@ -121,7 +121,7 @@ export function Testimonials() {
           <div className="mt-8 grid w-full min-w-0 max-w-full gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
               <figure
-                key={t.name}
+                key={t.id}
                 className="flex min-w-0 flex-col rounded-3xl border border-border bg-background p-6 shadow-card"
               >
                 <Quote size={22} className="text-primary" aria-hidden="true" />
@@ -133,8 +133,9 @@ export function Testimonials() {
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-foreground">{t.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {t.city} · {t.service}
+                      {[t.city, t.service].filter(Boolean).join(" · ")}
                     </p>
+
                     <RatingStars rating={t.rating} size={12} showValue={false} className="mt-0.5" />
                   </div>
                 </figcaption>
