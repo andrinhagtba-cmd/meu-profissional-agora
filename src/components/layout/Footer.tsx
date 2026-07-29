@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Facebook, Instagram, Linkedin, Mail, Youtube } from "lucide-react";
 import { Logo } from "./Header";
 import { getSettings, type FooterColumn } from "@/services/settingsService";
+import { normalizeExternalUrl } from "@/lib/externalUrl";
 
 const DEFAULT_COLUMNS: FooterColumn[] = [
   {
