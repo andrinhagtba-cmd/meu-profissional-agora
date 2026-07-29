@@ -177,7 +177,10 @@ function PlanDialog({
       setName(initial?.name ?? "");
       setDescription(initial?.description ?? "");
       setPrice(Number(initial?.price ?? 0));
-      setPeriod(initial?.billing_period ?? "monthly");
+      const days = customPeriodDays(initial?.billing_period);
+      setPeriod(days ? "custom" : (initial?.billing_period ?? "monthly"));
+      setCustomDays(days ? String(days) : "");
+
       setLeadLimit(initial?.lead_limit != null ? String(initial.lead_limit) : "");
       setFeatured(initial?.featured_profile ?? false);
       setActive(initial?.active ?? true);
