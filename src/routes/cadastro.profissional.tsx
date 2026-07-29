@@ -684,7 +684,16 @@ function SignupWizard() {
                       value={profile.address_complement ?? ""}
                       maxLength={100}
                       onChange={(e) => updateProfile({ address_complement: e.target.value })}
-                      placeholder="Sala, apto, ponto de referência"
+                      placeholder="Sala 204, Bloco B, Loja 12…"
+                    />
+                  </div>
+                  <div>
+                    <Label>Ponto de referência</Label>
+                    <Input
+                      value={profile.address_reference ?? ""}
+                      maxLength={140}
+                      onChange={(e) => updateProfile({ address_reference: e.target.value })}
+                      placeholder="Em frente à praça, ao lado do mercado…"
                     />
                   </div>
                   <div>
@@ -702,6 +711,22 @@ function SignupWizard() {
                     />
                   </div>
                 </div>
+
+                <div className="rounded-2xl border border-border bg-white p-4">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                    Horário de funcionamento
+                  </h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Horário de Brasília. Aparece no seu perfil com o selo “Aberto agora”.
+                  </p>
+                  <div className="mt-4">
+                    <BusinessHoursSection
+                      professionalId={profile.id}
+                      holidayNote={profile.holiday_note ?? null}
+                    />
+                  </div>
+                </div>
+
 
                 <div>
                   <Label>O que exibir publicamente</Label>
