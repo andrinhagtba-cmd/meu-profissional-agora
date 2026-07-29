@@ -447,7 +447,13 @@ function ProfessionalCard({
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5"><MapPin size={10} />{location}</span>
+          <span
+            title={location}
+            className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted px-2 py-0.5"
+          >
+            <MapPin size={10} className="shrink-0" />
+            <span className="truncate">{location}</span>
+          </span>
           <span className="rounded-full bg-muted px-2 py-0.5">{pro.reviews_count ?? 0} avaliações</span>
         </div>
         <p className="mt-3 line-clamp-2 min-h-[2.25rem] text-xs leading-4 text-muted-foreground">
