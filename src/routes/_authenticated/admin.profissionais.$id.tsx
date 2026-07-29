@@ -38,6 +38,7 @@ import { AdminProPortfolioPanel } from "@/components/admin/AdminProPortfolioPane
 import { AdminProDocumentsPanel } from "@/components/admin/AdminProDocumentsPanel";
 import { AdminProReviewsPanel } from "@/components/admin/AdminProReviewsPanel";
 import { AdminProActivityPanel } from "@/components/admin/AdminProActivityPanel";
+import { AdminProPlanAccessPanel } from "@/components/admin/AdminProPlanAccessPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -318,6 +319,7 @@ function AdminProDetailPage() {
               <Tab value="portfolio" icon={<GalleryHorizontalEnd size={15} />} label="Portfólio" />
               <Tab value="documents" icon={<FileCheck2 size={15} />} label="Documentos" />
               <Tab value="reviews" icon={<Star size={15} />} label="Avaliações" />
+              <Tab value="plan" icon={<WalletCards size={15} />} label="Plano e acesso" />
               <Tab value="activity" icon={<Timer size={15} />} label="Histórico" />
             </TabsList>
           </div>
@@ -360,6 +362,14 @@ function AdminProDetailPage() {
           <TabsContent value="portfolio" className="mt-5"><AdminProPortfolioPanel professionalId={pro.id} professionalUserId={pro.user_id} /></TabsContent>
           <TabsContent value="documents" className="mt-5"><AdminProDocumentsPanel professionalId={pro.id} professionalUserId={pro.user_id} /></TabsContent>
           <TabsContent value="reviews" className="mt-5"><AdminProReviewsPanel professionalId={pro.id} /></TabsContent>
+          <TabsContent value="plan" className="mt-5">
+            <AdminProPlanAccessPanel
+              professionalId={pro.id}
+              userId={pro.user_id ?? null}
+              accountEmail={pro.profile_email}
+              displayName={displayName}
+            />
+          </TabsContent>
           <TabsContent value="activity" className="mt-5"><AdminProActivityPanel professionalId={pro.id} /></TabsContent>
         </Tabs>
 
