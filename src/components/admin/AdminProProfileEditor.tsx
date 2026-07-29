@@ -273,17 +273,12 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             </p>
           </Field>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Cidade">
-              <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
-            </Field>
-            <Field label="UF">
-              <Input maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
-            </Field>
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="WhatsApp">
               <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="55 11 90000-0000" />
             </Field>
           </div>
+
 
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Anos de experiência">
