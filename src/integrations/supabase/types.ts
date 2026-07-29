@@ -1262,6 +1262,7 @@ export type Database = {
           instagram_username: string | null
           is_featured: boolean
           latitude: number | null
+          location_label: string | null
           longitude: number | null
           neighborhood: string | null
           onboarding_completed_at: string | null
@@ -1315,6 +1316,7 @@ export type Database = {
           instagram_username?: string | null
           is_featured?: boolean
           latitude?: number | null
+          location_label?: string | null
           longitude?: number | null
           neighborhood?: string | null
           onboarding_completed_at?: string | null
@@ -1368,6 +1370,7 @@ export type Database = {
           instagram_username?: string | null
           is_featured?: boolean
           latitude?: number | null
+          location_label?: string | null
           longitude?: number | null
           neighborhood?: string | null
           onboarding_completed_at?: string | null

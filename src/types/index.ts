@@ -78,6 +78,7 @@ export interface Professional {
     number: string | null;
     complement?: string | null;
     reference?: string | null;
+    locationLabel?: string | null;
     postalCode: string | null;
     formatted: string | null;
     latitude: number | null;

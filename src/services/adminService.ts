@@ -181,6 +181,7 @@ export type AdminProProfilePatch = Partial<{
   address_number: string | null;
   address_complement: string | null;
   address_reference: string | null;
+  location_label: string | null;
   holiday_note: string | null;
   neighborhood: string | null;
   latitude: number | null;
@@ -230,6 +231,7 @@ export type AdminProDetail = AdminProRow & {
   address_number: string | null;
   address_complement: string | null;
   address_reference: string | null;
+  location_label: string | null;
   holiday_note: string | null;
   neighborhood: string | null;
   latitude: number | null;
@@ -257,7 +259,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
       response_time, profile_status, availability_status, emergency,
       service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source,
       instagram_username, instagram_url, facebook_url, website_url,
-      postal_code, street, address_number, address_complement, address_reference,
+      postal_code, street, address_number, address_complement, address_reference, location_label,
       holiday_note, neighborhood, latitude, longitude,
       google_place_id, formatted_address, public_address_visibility,
       service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
@@ -321,6 +323,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     address_number: s("address_number"),
     address_complement: s("address_complement"),
     address_reference: s("address_reference"),
+    location_label: s("location_label"),
     holiday_note: s("holiday_note"),
     neighborhood: s("neighborhood"),
     latitude: n("latitude"),

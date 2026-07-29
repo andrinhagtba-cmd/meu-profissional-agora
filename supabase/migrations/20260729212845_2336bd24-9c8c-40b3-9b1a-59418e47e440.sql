@@ -1,0 +1,1 @@
+ALTER TABLE public.professional_profiles ADD COLUMN IF NOT EXISTS location_label text;

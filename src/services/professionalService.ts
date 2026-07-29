@@ -37,6 +37,7 @@ type DbRow = {
   address_number: string | null;
   address_complement: string | null;
   address_reference: string | null;
+  location_label: string | null;
   holiday_note: string | null;
   neighborhood: string | null;
 
@@ -71,7 +72,7 @@ const SELECT = `
   search_tags,
   whatsapp,
   instagram_username, instagram_url, facebook_url, website_url,
-  postal_code, street, address_number, address_complement, address_reference,
+  postal_code, street, address_number, address_complement, address_reference, location_label,
   neighborhood, latitude, longitude,
   formatted_address, public_address_visibility, holiday_note,
 
@@ -181,6 +182,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       number: row.address_number,
       complement: row.address_complement,
       reference: row.address_reference,
+      locationLabel: row.location_label,
       postalCode: row.postal_code,
       formatted: row.formatted_address,
       latitude: row.latitude,
