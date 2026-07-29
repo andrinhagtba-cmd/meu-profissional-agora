@@ -12,6 +12,10 @@ export interface OnboardingProfile {
   city: string | null;
   state: string | null;
   years_experience: number | null;
+  starting_price: number | null;
+  response_time: string | null;
+  availability_status: string | null;
+  emergency: boolean | null;
   service_types: string[] | null;
   search_tags: string[] | null;
   onboarding_step: number;
@@ -94,7 +98,12 @@ export async function saveOnboarding(
     "whatsapp",
     "city",
     "state",
+    "slug",
     "years_experience",
+    "starting_price",
+    "response_time",
+    "availability_status",
+    "emergency",
     "service_types",
     "search_tags",
     "onboarding_step",
