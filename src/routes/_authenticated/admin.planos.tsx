@@ -165,6 +165,8 @@ function PlanDialog({
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [period, setPeriod] = useState("monthly");
+  const [customDays, setCustomDays] = useState("");
+
   const [leadLimit, setLeadLimit] = useState<string>("");
   const [featured, setFeatured] = useState(false);
   const [active, setActive] = useState(true);
