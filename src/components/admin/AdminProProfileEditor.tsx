@@ -52,6 +52,7 @@ type FormState = {
   address_number: string;
   address_complement: string;
   address_reference: string;
+  location_label: string;
   neighborhood: string;
   latitude: string;
   longitude: string;
@@ -96,6 +97,7 @@ function toForm(pro: AdminProDetail): FormState {
     address_number: pro.address_number ?? "",
     address_complement: pro.address_complement ?? "",
     address_reference: pro.address_reference ?? "",
+    location_label: pro.location_label ?? "",
     neighborhood: pro.neighborhood ?? "",
     latitude: pro.latitude != null ? String(pro.latitude) : "",
     longitude: pro.longitude != null ? String(pro.longitude) : "",
@@ -170,6 +172,7 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   setIf("address_number", norm(f.address_number), pro.address_number);
   setIf("address_complement", norm(f.address_complement), pro.address_complement);
   setIf("address_reference", norm(f.address_reference), pro.address_reference);
+  setIf("location_label", norm(f.location_label), pro.location_label);
   setIf("neighborhood", norm(f.neighborhood), pro.neighborhood);
   setIf("google_place_id", norm(f.google_place_id), pro.google_place_id);
   setIf("formatted_address", norm(f.formatted_address), pro.formatted_address);
@@ -492,6 +495,18 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                   <Input maxLength={2} value={form.state} onChange={(e) => set("state", e.target.value.toUpperCase())} />
                 </Field>
               </div>
+
+              <Field label="Nome personalizado do local (opcional)">
+                <Input
+                  value={form.location_label}
+                  maxLength={80}
+                  onChange={(e) => set("location_label", e.target.value)}
+                  placeholder="Ex: Feira dos Importados"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Quando preenchido, aparece no lugar do endereço nos cards e no perfil público.
+                </p>
+              </Field>
 
               <Field label="Privacidade do endereço no perfil público">
                 <Select

@@ -75,7 +75,9 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
         </div>
         {(() => {
           const a = pro.address;
-          const label = a
+          const label = a?.locationLabel?.trim()
+            ? a.locationLabel.trim()
+            : a
             ? publicAddressLabel({
                 visibility: a.visibility,
                 city: a.city,
