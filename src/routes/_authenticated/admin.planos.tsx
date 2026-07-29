@@ -215,6 +215,22 @@ function PlanDialog({
               </Select>
             </div>
           </div>
+          {period === "custom" && (
+            <div>
+              <Label>Duração personalizada (dias)</Label>
+              <Input
+                type="number"
+                min={1}
+                value={customDays}
+                onChange={(e) => setCustomDays(e.target.value)}
+                placeholder="Ex.: 45"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Define por quantos dias a assinatura fica válida (o vencimento é calculado automaticamente).
+              </p>
+            </div>
+          )}
+
           <div>
             <Label>Leads por mês (vazio = ilimitado)</Label>
             <Input type="number" value={leadLimit} onChange={(e) => setLeadLimit(e.target.value)} placeholder="Ilimitado" />
