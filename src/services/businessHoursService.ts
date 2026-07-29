@@ -14,7 +14,12 @@ type Row = {
 
 function toWeek(rows: Row[]): BusinessHourDay[] {
   if (!rows.length) return [];
-  const base = emptyWeek().map((d) => ({ ...d, is_closed: true, open_time: null, close_time: null }));
+  const base: BusinessHourDay[] = emptyWeek().map((d) => ({
+    ...d,
+    is_closed: true,
+    open_time: null as string | null,
+    close_time: null as string | null,
+  }));
   rows.forEach((r) => {
     base[r.weekday] = {
       weekday: r.weekday,
