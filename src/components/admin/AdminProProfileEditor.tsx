@@ -511,12 +511,9 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                 latitude={form.latitude ? Number(form.latitude) : null}
                 longitude={form.longitude ? Number(form.longitude) : null}
                 radiusKm={form.service_radius_km ? Number(form.service_radius_km) : null}
-                query={
-                  [form.street, form.address_number, form.neighborhood, form.city, form.state, form.postal_code]
-                    .filter(Boolean)
-                    .join(", ") || form.formatted_address
-                }
+                query={addressQuery}
               />
+
 
             </div>
           </div>
