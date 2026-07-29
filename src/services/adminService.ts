@@ -1,3 +1,4 @@
+import { adminActionLabel, adminActionDetails } from "@/lib/adminLogLabels";
 // Camada de acesso para o Painel Administrativo.
 // Todas as consultas dependem das policies de admin_* criadas na Etapa 7.
 
@@ -1621,8 +1622,8 @@ export async function listProActivity(professionalId: string): Promise<AdminProA
   }>)) {
     items.push({
       id: `l-${l.id}`, kind: "log",
-      title: `Ação admin: ${l.action}`,
-      description: l.metadata ? JSON.stringify(l.metadata) : null,
+      title: adminActionLabel(l.action),
+      description: adminActionDetails(l.metadata),
       status: null, created_at: l.created_at,
     });
   }

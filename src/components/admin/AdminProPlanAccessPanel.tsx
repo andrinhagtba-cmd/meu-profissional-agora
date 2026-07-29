@@ -15,21 +15,17 @@ import {
   listPlansAdmin, getProSubscriptions, assignProSubscription, deleteProSubscription,
 } from "@/services/adminService";
 import { createProAccessFn, resetProPasswordFn } from "@/lib/proAccess.functions";
+import { addPlanPeriod, planPeriodLabel, planPeriodSuffix } from "@/lib/planPeriod";
 
 const brl = (n: number) => Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString("pt-BR") : "—");
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
-function addPeriod(start: string, billing: string) {
-  const d = new Date(`${start}T12:00:00`);
-  const p = (billing || "").toLowerCase();
-  if (p.includes("ano") || p.includes("year")) d.setFullYear(d.getFullYear() + 1);
-  else if (p.includes("trimes") || p.includes("quarter")) d.setMonth(d.getMonth() + 3);
-  else if (p.includes("semes")) d.setMonth(d.getMonth() + 6);
-  else if (p.includes("semana") || p.includes("week")) d.setDate(d.getDate() + 7);
-  else d.setMonth(d.getMonth() + 1);
-  return d.toISOString().slice(0, 10);
-}
+const addPeriod = (start: string, billing: string) => addPlanPeriod(start, billing);
+
+const SUB_STATUS_LABEL: Record<string, string> = {
+  active: "Ativa", pending: "Pendente", cancelled: "Cancelada", expired: "Expirada",
+};
 
 const STATUS_TONE: Record<string, "success" | "warning" | "danger" | "neutral"> = {
   active: "success", pending: "warning", cancelled: "danger", expired: "neutral",
@@ -139,13 +135,13 @@ export function AdminProPlanAccessPanel({
                     {current.plan?.name ?? "Plano removido"}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {current.plan ? `${brl(current.plan.price)} · ${current.plan.billing_period}` : "—"}
+                    {current.plan ? `${brl(current.plan.price)} · ${planPeriodLabel(current.plan.billing_period)}` : "—"}
                   </div>
                   <div className="mt-1 inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                     <CalendarClock size={14} /> Período: {day(current.started_at)} → {day(current.expires_at) === "—" ? "sem vencimento" : day(current.expires_at)}
                   </div>
                 </div>
-                <StatusPill tone={STATUS_TONE[current.status] ?? "neutral"}>{current.status}</StatusPill>
+                <StatusPill tone={STATUS_TONE[current.status] ?? "neutral"}>{SUB_STATUS_LABEL[current.status] ?? current.status}</StatusPill>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Nenhum plano atribuído a este profissional.</p>
@@ -166,7 +162,7 @@ export function AdminProPlanAccessPanel({
                 <SelectTrigger><SelectValue placeholder="Selecione o plano" /></SelectTrigger>
                 <SelectContent>
                   {(plans ?? []).map((p) => (
-                    <SelectItem key={p.id} value={p.id}>{p.name} · {brl(p.price)}/{p.billing_period}</SelectItem>
+                    <SelectItem key={p.id} value={p.id}>{p.name} · {brl(p.price)}{planPeriodSuffix(p.billing_period)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

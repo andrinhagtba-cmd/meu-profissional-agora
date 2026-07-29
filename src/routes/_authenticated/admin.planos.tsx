@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PLAN_PERIOD_OPTIONS, planPeriodLabel } from "@/lib/planPeriod";
 import { Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTable, type Column } from "@/components/admin/AdminTable";
@@ -91,7 +92,7 @@ function Page() {
         <div>
           <div className="font-semibold text-foreground">{brl(Number(r.price))}</div>
           <div className="text-xs text-muted-foreground">
-            {r.billing_period === "yearly" ? "por ano" : r.billing_period === "monthly" ? "por mês" : r.billing_period}
+            {planPeriodLabel(r.billing_period)}
           </div>
         </div>
       ), className: "w-40",
@@ -207,9 +208,9 @@ function PlanDialog({
               <Select value={period} onValueChange={setPeriod}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="monthly">Mensal</SelectItem>
-                  <SelectItem value="yearly">Anual</SelectItem>
-                  <SelectItem value="one_time">Único</SelectItem>
+                  {PLAN_PERIOD_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
