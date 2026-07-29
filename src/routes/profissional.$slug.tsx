@@ -582,7 +582,7 @@ function ProfilePage() {
             )}
           </section>
 
-          {pro.address && pro.address.visibility !== "hidden" && pro.address.latitude != null && pro.address.longitude != null && (
+          {pro.address && pro.address.visibility !== "hidden" && (
             <section aria-labelledby="localizacao">
               <h2 id="localizacao" className="font-display text-xl font-bold text-foreground">
                 Localização
@@ -593,7 +593,18 @@ function ProfilePage() {
                   longitude={pro.address.longitude}
                   radiusKm={pro.address.serviceRadiusKm}
                   height={280}
+                  query={publicAddressLabel({
+                    visibility: pro.address.visibility,
+                    city: pro.address.city,
+                    state: pro.address.state,
+                    neighborhood: pro.address.neighborhood,
+                    street: pro.address.street,
+                    address_number: pro.address.number,
+                    postal_code: pro.address.postalCode,
+                    formatted_address: pro.address.formatted,
+                  })}
                 />
+
                 {(() => {
                   const a = pro.address!;
                   const url = mapsSearchUrl({
