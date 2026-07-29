@@ -173,6 +173,9 @@ export type AdminProProfilePatch = Partial<{
   postal_code: string | null;
   street: string | null;
   address_number: string | null;
+  address_complement: string | null;
+  address_reference: string | null;
+  holiday_note: string | null;
   neighborhood: string | null;
   latitude: number | null;
   longitude: number | null;
