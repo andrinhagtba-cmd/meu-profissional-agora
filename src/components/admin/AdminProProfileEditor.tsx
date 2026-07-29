@@ -18,6 +18,7 @@ import { InitialsAvatar, StatusPill } from "@/components/admin/AdminTable";
 import { updateProProfile, type AdminProDetail, type AdminProProfilePatch } from "@/services/adminService";
 import { AddressAutocomplete, type ResolvedAddress } from "@/components/address/AddressAutocomplete";
 import { LocationMap } from "@/components/address/LocationMap";
+import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 
 
@@ -48,6 +49,8 @@ type FormState = {
   postal_code: string;
   street: string;
   address_number: string;
+  address_complement: string;
+  address_reference: string;
   neighborhood: string;
   latitude: string;
   longitude: string;
@@ -90,6 +93,8 @@ function toForm(pro: AdminProDetail): FormState {
     postal_code: pro.postal_code ?? "",
     street: pro.street ?? "",
     address_number: pro.address_number ?? "",
+    address_complement: pro.address_complement ?? "",
+    address_reference: pro.address_reference ?? "",
     neighborhood: pro.neighborhood ?? "",
     latitude: pro.latitude != null ? String(pro.latitude) : "",
     longitude: pro.longitude != null ? String(pro.longitude) : "",
@@ -162,6 +167,8 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   setIf("postal_code", norm(f.postal_code), pro.postal_code);
   setIf("street", norm(f.street), pro.street);
   setIf("address_number", norm(f.address_number), pro.address_number);
+  setIf("address_complement", norm(f.address_complement), pro.address_complement);
+  setIf("address_reference", norm(f.address_reference), pro.address_reference);
   setIf("neighborhood", norm(f.neighborhood), pro.neighborhood);
   setIf("google_place_id", norm(f.google_place_id), pro.google_place_id);
   setIf("formatted_address", norm(f.formatted_address), pro.formatted_address);
@@ -348,6 +355,21 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
           <Separator />
 
+          {/* Horário de funcionamento */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">
+              Horário de funcionamento
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Horários no fuso de Brasília. Aparecem no perfil público com o selo “Aberto agora”.
+            </p>
+            <div className="mt-4">
+              <BusinessHoursSection professionalId={pro.id} holidayNote={pro.holiday_note} />
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Presença digital */}
           <div>
             <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Presença digital</h3>
@@ -423,6 +445,24 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                 </Field>
                 <Field label="CEP">
                   <Input value={form.postal_code} onChange={(e) => set("postal_code", e.target.value)} />
+                </Field>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Complemento">
+                  <Input
+                    value={form.address_complement}
+                    maxLength={100}
+                    onChange={(e) => set("address_complement", e.target.value)}
+                    placeholder="Sala 204, Bloco B, Loja 12…"
+                  />
+                </Field>
+                <Field label="Ponto de referência">
+                  <Input
+                    value={form.address_reference}
+                    maxLength={140}
+                    onChange={(e) => set("address_reference", e.target.value)}
+                    placeholder="Próximo ao mercado, em frente à praça…"
+                  />
                 </Field>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">

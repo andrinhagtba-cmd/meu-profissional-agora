@@ -35,7 +35,11 @@ type DbRow = {
   postal_code: string | null;
   street: string | null;
   address_number: string | null;
+  address_complement: string | null;
+  address_reference: string | null;
+  holiday_note: string | null;
   neighborhood: string | null;
+
   latitude: number | null;
   longitude: number | null;
   formatted_address: string | null;
@@ -67,8 +71,10 @@ const SELECT = `
   search_tags,
   whatsapp,
   instagram_username, instagram_url, facebook_url, website_url,
-  postal_code, street, address_number, neighborhood, latitude, longitude,
-  formatted_address, public_address_visibility,
+  postal_code, street, address_number, address_complement, address_reference,
+  neighborhood, latitude, longitude,
+  formatted_address, public_address_visibility, holiday_note,
+
   service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
   initial_view_count, real_view_count,
   professional_services(
@@ -173,6 +179,8 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       neighborhood: row.neighborhood,
       street: row.street,
       number: row.address_number,
+      complement: row.address_complement,
+      reference: row.address_reference,
       postalCode: row.postal_code,
       formatted: row.formatted_address,
       latitude: row.latitude,
@@ -182,6 +190,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       servesAtCustomer: Boolean(row.serves_at_customer_location),
       servesRemotely: Boolean(row.serves_remotely),
     },
+    holidayNote: row.holiday_note,
     viewsTotal: Number(row.initial_view_count ?? 0) + Number(row.real_view_count ?? 0),
   };
 }

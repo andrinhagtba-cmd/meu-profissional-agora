@@ -76,6 +76,8 @@ export interface Professional {
     neighborhood: string | null;
     street: string | null;
     number: string | null;
+    complement?: string | null;
+    reference?: string | null;
     postalCode: string | null;
     formatted: string | null;
     latitude: number | null;
@@ -85,6 +87,7 @@ export interface Professional {
     servesAtCustomer: boolean;
     servesRemotely: boolean;
   };
+  holidayNote?: string | null;
   viewsTotal?: number;
 }
 

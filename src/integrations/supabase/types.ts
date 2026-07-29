@@ -1087,6 +1087,56 @@ export type Database = {
           },
         ]
       }
+      professional_business_hours: {
+        Row: {
+          break_end: string | null
+          break_start: string | null
+          close_time: string | null
+          created_at: string
+          id: string
+          is_24h: boolean
+          is_closed: boolean
+          open_time: string | null
+          professional_id: string
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          break_end?: string | null
+          break_start?: string | null
+          close_time?: string | null
+          created_at?: string
+          id?: string
+          is_24h?: boolean
+          is_closed?: boolean
+          open_time?: string | null
+          professional_id: string
+          updated_at?: string
+          weekday: number
+        }
+        Update: {
+          break_end?: string | null
+          break_start?: string | null
+          close_time?: string | null
+          created_at?: string
+          id?: string
+          is_24h?: boolean
+          is_closed?: boolean
+          open_time?: string | null
+          professional_id?: string
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_business_hours_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_profile_views: {
         Row: {
           anonymous_visitor_id: string | null
@@ -1155,6 +1205,7 @@ export type Database = {
           facebook_url: string | null
           formatted_address: string | null
           google_place_id: string | null
+          holiday_note: string | null
           id: string
           initial_view_count: number
           instagram_url: string | null
@@ -1207,6 +1258,7 @@ export type Database = {
           facebook_url?: string | null
           formatted_address?: string | null
           google_place_id?: string | null
+          holiday_note?: string | null
           id?: string
           initial_view_count?: number
           instagram_url?: string | null
@@ -1259,6 +1311,7 @@ export type Database = {
           facebook_url?: string | null
           formatted_address?: string | null
           google_place_id?: string | null
+          holiday_note?: string | null
           id?: string
           initial_view_count?: number
           instagram_url?: string | null
@@ -1581,6 +1634,8 @@ export type Database = {
       }
       quote_requests: {
         Row: {
+          address_complement: string | null
+          address_reference: string | null
           category_id: string | null
           city: string
           client_id: string
@@ -1601,6 +1656,8 @@ export type Database = {
           urgency: Database["public"]["Enums"]["urgency_level"]
         }
         Insert: {
+          address_complement?: string | null
+          address_reference?: string | null
           category_id?: string | null
           city: string
           client_id: string
@@ -1621,6 +1678,8 @@ export type Database = {
           urgency?: Database["public"]["Enums"]["urgency_level"]
         }
         Update: {
+          address_complement?: string | null
+          address_reference?: string | null
           category_id?: string | null
           city?: string
           client_id?: string

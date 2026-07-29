@@ -17,6 +17,9 @@ import {
   Zap,
 } from "lucide-react";
 import { publicAddressLabel, mapsSearchUrl } from "@/lib/proAddress";
+import { BusinessHoursCard, OpenNowBadge } from "@/components/professional/BusinessHoursCard";
+import { getPublicBusinessHours } from "@/services/businessHoursService";
+import { hasAnyHours } from "@/lib/businessHours";
 import { LocationMap } from "@/components/address/LocationMap";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
@@ -100,6 +103,13 @@ function ProfilePage() {
     queryKey: ["reviews-db", pro.slug],
     queryFn: () => listApprovedReviewsBySlug(pro.slug),
   });
+  const { data: hours } = useQuery({
+    queryKey: ["pro-hours", pro.id],
+    queryFn: () => getPublicBusinessHours(pro.id),
+    enabled: Boolean(pro.id),
+  });
+  const showHours = hasAnyHours(hours);
+
   const { data: related } = useQuery({
     queryKey: ["related", pro.slug],
     queryFn: () => getRelatedProfessionals(pro.slug),
@@ -333,6 +343,7 @@ function ProfilePage() {
                             neighborhood: a.neighborhood,
                             street: a.street,
                             address_number: a.number,
+                            address_complement: a.complement,
                             postal_code: a.postalCode,
                             formatted_address: a.formatted,
                           })
@@ -344,6 +355,7 @@ function ProfilePage() {
                         </span>
                       ) : null;
                     })()}
+                    {showHours && hours && <OpenNowBadge week={hours} />}
                     {pro.experienceYears > 0 && (
                       <span className="inline-flex items-center gap-1">
                         <Award size={14} aria-hidden="true" />
@@ -599,15 +611,21 @@ function ProfilePage() {
                     neighborhood: a.neighborhood,
                     street: a.street,
                     address_number: a.number,
+                    address_complement: a.complement,
                     postal_code: a.postalCode,
                     formatted_address: a.formatted,
                   });
                   return (
                     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
-                      <span className="inline-flex items-center gap-2 text-muted-foreground">
-                        <MapPin size={15} className="text-primary" />
-                        {label}
-                        {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                      <span className="inline-flex flex-col gap-1 text-muted-foreground">
+                        <span className="inline-flex items-center gap-2">
+                          <MapPin size={15} className="text-primary" />
+                          {label}
+                          {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                        </span>
+                        {a.visibility === "full_address" && a.reference && (
+                          <span className="pl-6 text-xs">Referência: {a.reference}</span>
+                        )}
                       </span>
                       {url && (
                         <Button asChild size="sm" variant="outline">
@@ -620,6 +638,12 @@ function ProfilePage() {
               </div>
             </section>
           )}
+
+          {showHours && hours && (
+            <BusinessHoursCard week={hours} holidayNote={pro.holidayNote} />
+          )}
+
+
 
 
           {reviews && reviews.length > 0 && (
