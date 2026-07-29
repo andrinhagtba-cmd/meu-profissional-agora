@@ -1137,6 +1137,56 @@ export type Database = {
           },
         ]
       }
+      professional_photo_requests: {
+        Row: {
+          created_at: string
+          id: string
+          media_id: string | null
+          previous_media_id: string | null
+          professional_profile_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          usage_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          media_id?: string | null
+          previous_media_id?: string | null
+          professional_profile_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          usage_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          media_id?: string | null
+          previous_media_id?: string | null
+          professional_profile_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          usage_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_photo_requests_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_profile_views: {
         Row: {
           anonymous_visitor_id: string | null
