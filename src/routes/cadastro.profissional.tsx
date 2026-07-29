@@ -622,6 +622,19 @@ function SignupWizard() {
                     })}
                   </div>
                 </div>
+
+                <div>
+                  <Label>Hashtags / palavras-chave</Label>
+                  <Input
+                    value={customTagsText}
+                    onChange={(e) => setCustomTags(e.target.value)}
+                    placeholder="ex: trafego pago, marketing digital, gestao de anuncios"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Separe por vírgula. Essas palavras ajudam clientes a te encontrarem na busca.
+                  </p>
+                </div>
+
               </div>
             )}
 
