@@ -71,8 +71,10 @@ const SELECT = `
   search_tags,
   whatsapp,
   instagram_username, instagram_url, facebook_url, website_url,
-  postal_code, street, address_number, neighborhood, latitude, longitude,
-  formatted_address, public_address_visibility,
+  postal_code, street, address_number, address_complement, address_reference,
+  neighborhood, latitude, longitude,
+  formatted_address, public_address_visibility, holiday_note,
+
   service_radius_km, serves_at_business_address, serves_at_customer_location, serves_remotely,
   initial_view_count, real_view_count,
   professional_services(
