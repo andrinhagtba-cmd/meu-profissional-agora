@@ -68,6 +68,31 @@ export function Testimonials() {
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
 
+  const { data: testimonials = fallbackTestimonials } = useQuery({
+    queryKey: ["home-testimonials"],
+    queryFn: async (): Promise<HomeTestimonial[]> => {
+      const { data, error: err } = await supabase
+        .from("testimonials")
+        .select("id, author, role, company, content, rating, display_order")
+        .eq("is_published", true)
+        .order("display_order")
+        .limit(6);
+      if (err) throw err;
+      if (!data?.length) return fallbackTestimonials;
+      return data.map((t, i) => ({
+        id: t.id,
+        name: t.author,
+        city: t.company ?? "Brasília/DF",
+        initials: initialsOf(t.author),
+        color: COLORS[i % COLORS.length],
+        text: t.content,
+        rating: t.rating ?? 5,
+        service: t.role ?? "",
+      }));
+    },
+  });
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
