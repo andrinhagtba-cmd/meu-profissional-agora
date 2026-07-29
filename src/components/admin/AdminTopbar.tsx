@@ -20,6 +20,9 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProfile } from "@/services/clientService";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
 
 const QUICK_NAV: { to: string; label: string; group: string }[] = [
   { to: "/admin", label: "Dashboard", group: "Visão geral" },
@@ -73,6 +76,17 @@ export function AdminTopbar() {
   const [cmdOpen, setCmdOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = toCrumbs(pathname);
+
+  const { data: myProfile } = useQuery({
+    queryKey: ["my-profile-admin-topbar", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
+  const avatarUrl = useResolvedMediaUrl(myProfile?.avatar_url ?? null);
+  const displayName = myProfile?.full_name || user?.email || "Admin";
+  const initial = (displayName || "A").charAt(0).toUpperCase();
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -156,15 +170,32 @@ export function AdminTopbar() {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                {(user?.email ?? "A").charAt(0).toUpperCase()}
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <div className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-primary text-xs font-bold text-primary-foreground ring-2 ring-primary/15">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="truncate">{user?.email ?? "Admin"}</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-60">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <div className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
+              </div>
+              <span className="min-w-0">
+                <span className="block truncate text-[13px] font-semibold">{myProfile?.full_name ?? "Admin"}</span>
+                <span className="block truncate text-[11px] font-normal text-muted-foreground">{user?.email}</span>
+              </span>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
             <DropdownMenuItem asChild>
               <Link to="/painel"><UserIcon size={14} className="mr-2" /> Meu painel</Link>
             </DropdownMenuItem>
