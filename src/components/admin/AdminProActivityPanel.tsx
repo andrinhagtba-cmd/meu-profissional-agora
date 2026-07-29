@@ -11,6 +11,13 @@ const kindLabel: Record<AdminProActivityItem["kind"], string> = {
   quote: "Pedido", proposal: "Proposta", review: "Avaliação", log: "Admin",
 };
 
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Pendente", approved: "Aprovada", rejected: "Recusada",
+  accepted: "Aceita", declined: "Recusada", sent: "Enviada",
+  open: "Aberto", closed: "Encerrado", cancelled: "Cancelado",
+  published: "Publicada", draft: "Rascunho", active: "Ativo", expired: "Expirado",
+};
+
 export function AdminProActivityPanel({ professionalId }: { professionalId: string }) {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-pro-activity", professionalId],
@@ -37,9 +44,9 @@ export function AdminProActivityPanel({ professionalId }: { professionalId: stri
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium">{it.title}</span>
                     <Badge variant="outline" className="text-[10px] uppercase">{kindLabel[it.kind]}</Badge>
-                    {it.status && <Badge variant="secondary" className="text-[10px]">{it.status}</Badge>}
+                    {it.status && <Badge variant="secondary" className="text-[10px]">{STATUS_LABEL[it.status] ?? it.status}</Badge>}
                     <span className="text-xs text-muted-foreground">
-                      {new Date(it.created_at).toLocaleString("pt-BR")}
+                      {new Date(it.created_at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
                     </span>
                   </div>
                   {it.description && (
