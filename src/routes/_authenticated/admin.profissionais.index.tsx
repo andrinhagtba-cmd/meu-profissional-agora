@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   listPros,
+  countPendingPhotoRequests,
   setProFeatured,
   setProVerification,
   bulkVerifyPros,
