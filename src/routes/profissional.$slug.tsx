@@ -506,20 +506,42 @@ function ProfilePage() {
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <MapPin size={15} className="text-primary" aria-hidden="true" /> Regiões atendidas
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {pro.regions.join(" · ")}
-                </p>
+                {pro.regions.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {pro.regions.map((r: string) => (
+                      <span key={r} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground">
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Não informado</p>
+                )}
               </div>
               <div className="rounded-2xl border border-border bg-card p-5">
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <CalendarClock size={15} className="text-primary" aria-hidden="true" /> Horários
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{pro.schedule}</p>
-                <p className="mt-2 text-xs font-medium capitalize text-muted-foreground">
-                  {pro.attendanceTypes.join(" · ")}
-                </p>
+                {showHours && hours ? (
+                  <ul className="mt-3 space-y-1">
+                    {hours.map((d) => (
+                      <li key={d.weekday} className="flex items-center justify-between gap-3 text-xs">
+                        <span className="text-muted-foreground">{WEEKDAY_SHORT[d.weekday]}</span>
+                        <span className={d.is_closed ? "text-muted-foreground" : "font-semibold text-foreground"}>
+                          {dayLabel(d)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Horário não informado</p>
+                )}
+                {pro.holidayNote && (
+                  <p className="mt-2 text-xs text-muted-foreground">{pro.holidayNote}</p>
+                )}
               </div>
             </div>
+
           </section>
 
           <section aria-labelledby="avaliacoes">
