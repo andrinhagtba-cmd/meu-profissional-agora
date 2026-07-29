@@ -33,6 +33,8 @@ export interface OnboardingProfile {
   street: string | null;
   address_number: string | null;
   address_complement: string | null;
+  address_reference: string | null;
+  holiday_note: string | null;
   neighborhood: string | null;
   country: string | null;
   latitude: number | null;
@@ -105,6 +107,7 @@ export async function saveOnboarding(
     "street",
     "address_number",
     "address_complement",
+    "address_reference",
     "neighborhood",
     "country",
     "latitude",

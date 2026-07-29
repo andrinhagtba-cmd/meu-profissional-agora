@@ -43,6 +43,7 @@ import {
   AddressAutocomplete,
   type ResolvedAddress,
 } from "@/components/address/AddressAutocomplete";
+import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { LocationMap } from "@/components/address/LocationMap";
 import { DfRegionCombobox } from "@/components/shared/DfRegionCombobox";
 import { isValidDfRegionName } from "@/data/dfRegions";
