@@ -11,7 +11,7 @@ import { getFeaturedProfessionals } from "@/services/mockApi";
 import type { Professional } from "@/types";
 
 const VISIBLE = 4;
-const ROTATE_MS = 6000;
+const ROTATE_MS = 15000;
 
 export function FeaturedPros() {
   const { data: pros, isLoading } = useQuery({

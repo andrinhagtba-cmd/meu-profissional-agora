@@ -8,7 +8,7 @@ import { ProfessionalCard } from "@/components/shared/ProfessionalCard";
 import { getProfessionals } from "@/services/mockApi";
 
 const VISIBLE = 8;
-const ROTATE_MS = 6000;
+const ROTATE_MS = 15000;
 
 export function NearbyPros() {
   const { data, isLoading } = useQuery({
