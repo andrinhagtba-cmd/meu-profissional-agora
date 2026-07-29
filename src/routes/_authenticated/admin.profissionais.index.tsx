@@ -369,7 +369,7 @@ function ProfessionalCard({
   onDelete: () => void;
 }) {
   const name = pro.professional_name || pro.business_name || "Sem nome";
-  const location = pro.city ? `${pro.city}/${pro.state ?? ""}` : "Sem localização";
+  const location = adminProLocationLabel(pro);
   return (
     <article className="group relative overflow-hidden rounded-[1.5rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
       <div
