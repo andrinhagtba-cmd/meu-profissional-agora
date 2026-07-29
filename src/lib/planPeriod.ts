@@ -39,15 +39,25 @@ const SUFFIXES: Record<string, string> = {
   custom: " (personalizado)",
 };
 
-/** "Mensal", "Semestral", ... */
+/** Extrai a quantidade de dias de um período personalizado ("custom:90"). */
+export function customPeriodDays(period?: string | null): number | null {
+  const m = /^custom:(\d+)$/.exec((period ?? "").toLowerCase().trim());
+  return m ? Number(m[1]) : null;
+}
+
+/** "Mensal", "Semestral", "Personalizado (90 dias)"... */
 export function planPeriodLabel(period?: string | null) {
   const p = (period ?? "").toLowerCase();
+  const days = customPeriodDays(p);
+  if (days) return `Personalizado (${days} ${days === 1 ? "dia" : "dias"})`;
   return NAMES[p] ?? (p ? p.replace(/_/g, " ") : "—");
 }
 
 /** "/mês", "/semestre", ... */
 export function planPeriodSuffix(period?: string | null) {
   const p = (period ?? "").toLowerCase();
+  const days = customPeriodDays(p);
+  if (days) return `/${days} ${days === 1 ? "dia" : "dias"}`;
   return SUFFIXES[p] ?? (p ? `/${p.replace(/_/g, " ")}` : "");
 }
 
@@ -58,10 +68,13 @@ export function addPlanPeriod(start: string, period?: string | null): string {
   if (p === "one_time" || p === "custom") return "";
   const d = new Date(`${start}T12:00:00`);
   if (Number.isNaN(d.getTime())) return "";
-  if (p.includes("year") || p.includes("annual") || p.includes("anual")) d.setFullYear(d.getFullYear() + 1);
+  const days = customPeriodDays(p);
+  if (days) d.setDate(d.getDate() + days);
+  else if (p.includes("year") || p.includes("annual") || p.includes("anual")) d.setFullYear(d.getFullYear() + 1);
   else if (p.includes("semi") || p.includes("semes")) d.setMonth(d.getMonth() + 6);
   else if (p.includes("quarter") || p.includes("trimes")) d.setMonth(d.getMonth() + 3);
   else if (p.includes("week") || p.includes("semana")) d.setDate(d.getDate() + 7);
   else d.setMonth(d.getMonth() + 1);
   return d.toISOString().slice(0, 10);
 }
+

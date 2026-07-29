@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PLAN_PERIOD_OPTIONS, planPeriodLabel } from "@/lib/planPeriod";
+import { PLAN_PERIOD_OPTIONS, planPeriodLabel, customPeriodDays } from "@/lib/planPeriod";
 import { Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTable, type Column } from "@/components/admin/AdminTable";
@@ -165,6 +165,8 @@ function PlanDialog({
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [period, setPeriod] = useState("monthly");
+  const [customDays, setCustomDays] = useState("");
+
   const [leadLimit, setLeadLimit] = useState<string>("");
   const [featured, setFeatured] = useState(false);
   const [active, setActive] = useState(true);
@@ -175,7 +177,10 @@ function PlanDialog({
       setName(initial?.name ?? "");
       setDescription(initial?.description ?? "");
       setPrice(Number(initial?.price ?? 0));
-      setPeriod(initial?.billing_period ?? "monthly");
+      const days = customPeriodDays(initial?.billing_period);
+      setPeriod(days ? "custom" : (initial?.billing_period ?? "monthly"));
+      setCustomDays(days ? String(days) : "");
+
       setLeadLimit(initial?.lead_limit != null ? String(initial.lead_limit) : "");
       setFeatured(initial?.featured_profile ?? false);
       setActive(initial?.active ?? true);
@@ -215,6 +220,22 @@ function PlanDialog({
               </Select>
             </div>
           </div>
+          {period === "custom" && (
+            <div>
+              <Label>Duração personalizada (dias)</Label>
+              <Input
+                type="number"
+                min={1}
+                value={customDays}
+                onChange={(e) => setCustomDays(e.target.value)}
+                placeholder="Ex.: 45"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Define por quantos dias a assinatura fica válida (o vencimento é calculado automaticamente).
+              </p>
+            </div>
+          )}
+
           <div>
             <Label>Leads por mês (vazio = ilimitado)</Label>
             <Input type="number" value={leadLimit} onChange={(e) => setLeadLimit(e.target.value)} placeholder="Ilimitado" />
@@ -242,14 +263,18 @@ function PlanDialog({
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
           <Button
-            disabled={submitting || !name || !period}
+            disabled={submitting || !name || !period || (period === "custom" && Number(customDays) < 1)}
             onClick={() =>
               onSubmit({
                 id: initial?.id,
                 name,
                 description,
                 price,
-                billing_period: period,
+                billing_period:
+                  period === "custom" && Number(customDays) > 0
+                    ? `custom:${Number(customDays)}`
+                    : period,
+
                 lead_limit: leadLimit.trim() === "" ? null : Number(leadLimit),
                 featured_profile: featured,
                 active,
