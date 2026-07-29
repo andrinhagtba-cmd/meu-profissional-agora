@@ -829,13 +829,17 @@ function SignupWizard() {
                   </p>
                 </div>
 
-                {profile.latitude && profile.longitude && (
-                  <LocationMap
-                    latitude={Number(profile.latitude)}
-                    longitude={Number(profile.longitude)}
-                    radiusKm={profile.service_radius_km ?? undefined}
-                  />
-                )}
+                <LocationMap
+                  latitude={profile.latitude ? Number(profile.latitude) : null}
+                  longitude={profile.longitude ? Number(profile.longitude) : null}
+                  radiusKm={profile.service_radius_km ?? undefined}
+                  query={
+                    [profile.street, profile.address_number, profile.neighborhood, profile.city, profile.state, profile.postal_code]
+                      .filter(Boolean)
+                      .join(", ") || profile.formatted_address
+                  }
+                />
+
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>

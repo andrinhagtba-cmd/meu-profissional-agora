@@ -280,13 +280,17 @@ function AdminProNew() {
                 />
               </Field>
 
-              {form.latitude !== null && form.longitude !== null && (
-                <LocationMap
-                  latitude={Number(form.latitude)}
-                  longitude={Number(form.longitude)}
-                  radiusKm={form.service_radius_km ? Number(form.service_radius_km) : undefined}
-                />
-              )}
+              <LocationMap
+                latitude={form.latitude !== null ? Number(form.latitude) : null}
+                longitude={form.longitude !== null ? Number(form.longitude) : null}
+                radiusKm={form.service_radius_km ? Number(form.service_radius_km) : undefined}
+                query={
+                  [form.street, form.address_number, form.neighborhood, form.city, form.state, form.postal_code]
+                    .filter(Boolean)
+                    .join(", ") || form.formatted_address
+                }
+              />
+
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field label="Complemento">
