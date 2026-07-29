@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PLAN_PERIOD_OPTIONS, planPeriodLabel } from "@/lib/planPeriod";
+import { PLAN_PERIOD_OPTIONS, planPeriodLabel, customPeriodDays } from "@/lib/planPeriod";
 import { Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTable, type Column } from "@/components/admin/AdminTable";
