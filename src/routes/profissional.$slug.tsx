@@ -639,6 +639,12 @@ function ProfilePage() {
             </section>
           )}
 
+          {showHours && hours && (
+            <BusinessHoursCard week={hours} holidayNote={pro.holidayNote} />
+          )}
+
+
+
 
           {reviews && reviews.length > 0 && (
             <section aria-labelledby="historico">
