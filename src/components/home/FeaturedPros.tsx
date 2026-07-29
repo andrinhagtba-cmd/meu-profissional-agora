@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, MapPin, Sparkles, Star, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -9,11 +10,45 @@ import { ProAvatar } from "@/components/shared/ProAvatar";
 import { getFeaturedProfessionals } from "@/services/mockApi";
 import type { Professional } from "@/types";
 
+const VISIBLE = 4;
+const ROTATE_MS = 6000;
+
 export function FeaturedPros() {
   const { data: pros, isLoading } = useQuery({
-    queryKey: ["featured-pros"],
-    queryFn: getFeaturedProfessionals,
+    queryKey: ["featured-pros", "pool"],
+    queryFn: () => getFeaturedProfessionals(24),
   });
+
+  const pool = useMemo(() => pros ?? [], [pros]);
+  const [offset, setOffset] = useState(0);
+  const [fading, setFading] = useState(false);
+  const [paused, setPaused] = useState(false);
+
+  const canRotate = pool.length > VISIBLE;
+
+  useEffect(() => {
+    if (!canRotate || paused) return;
+    const id = window.setInterval(() => {
+      setFading(true);
+      window.setTimeout(() => {
+        setOffset((o) => (o + VISIBLE) % pool.length);
+        setFading(false);
+      }, 260);
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [canRotate, paused, pool.length]);
+
+  const visible = useMemo(() => {
+    if (pool.length === 0) return [];
+    return Array.from({ length: Math.min(VISIBLE, pool.length) }, (_, i) => {
+      const item = pool[(offset + i) % pool.length];
+      return { pro: item, rank: ((offset + i) % pool.length) + 1 };
+    });
+  }, [pool, offset]);
+
+  const pages = canRotate ? Math.ceil(pool.length / VISIBLE) : 1;
+  const activePage = canRotate ? Math.floor(offset / VISIBLE) % pages : 0;
+
 
   return (
     <section
@@ -58,15 +93,49 @@ export function FeaturedPros() {
           </Button>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-[420px] rounded-3xl" />
-              ))
-            : pros?.map((pro, idx) => (
-                <PremiumProCard key={pro.slug} pro={pro} rank={idx + 1} />
+        <div
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div
+            className={`grid gap-6 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-4 ${
+              fading ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
+            }`}
+          >
+            {isLoading
+              ? Array.from({ length: VISIBLE }).map((_, i) => (
+                  <Skeleton key={i} className="h-[420px] rounded-3xl" />
+                ))
+              : visible.map(({ pro, rank }) => (
+                  <PremiumProCard key={pro.slug} pro={pro} rank={rank} />
+                ))}
+          </div>
+
+          {canRotate && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              {Array.from({ length: pages }).map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Ver destaques ${i + 1}`}
+                  onClick={() => {
+                    setFading(true);
+                    window.setTimeout(() => {
+                      setOffset(i * VISIBLE);
+                      setFading(false);
+                    }, 200);
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    i === activePage
+                      ? "w-7 bg-primary"
+                      : "w-2 bg-border hover:bg-primary/40"
+                  }`}
+                />
               ))}
+            </div>
+          )}
         </div>
+
       </div>
     </section>
   );

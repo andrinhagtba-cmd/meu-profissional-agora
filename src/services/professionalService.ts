@@ -221,10 +221,11 @@ export async function listProfessionals(): Promise<Professional[]> {
   return fetchAll();
 }
 
-export async function listFeaturedProfessionals(): Promise<Professional[]> {
+export async function listFeaturedProfessionals(limit = 4): Promise<Professional[]> {
   const all = await fetchAll();
-  return all.filter((p) => p.featured).slice(0, 4);
+  return all.filter((p) => p.featured).slice(0, limit);
 }
+
 
 export async function getProfessionalBySlug(
   slug: string,
