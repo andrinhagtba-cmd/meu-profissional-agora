@@ -96,7 +96,7 @@ export function LocationMap({ latitude, longitude, radiusKm, height = 220, query
       >
         <iframe
           title="Mapa de localização"
-          src={buildOsmUrl(latitude, longitude)}
+          src={buildOsmUrl(lat, lng)}
           className="h-full w-full"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
