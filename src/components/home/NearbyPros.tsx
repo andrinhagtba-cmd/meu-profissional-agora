@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Compass } from "lucide-react";
@@ -6,15 +7,44 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProfessionalCard } from "@/components/shared/ProfessionalCard";
 import { getProfessionals } from "@/services/mockApi";
 
+const VISIBLE = 4;
+const ROTATE_MS = 6000;
+
 export function NearbyPros() {
   const { data, isLoading } = useQuery({
     queryKey: ["home-nearby-pros"],
     queryFn: getProfessionals,
   });
 
-  const pros = (data ?? []).filter((p) => !p.featured).slice(0, 8);
+  const pool = useMemo(() => (data ?? []).filter((p) => !p.featured), [data]);
+  const [offset, setOffset] = useState(0);
+  const [fading, setFading] = useState(false);
+  const [paused, setPaused] = useState(false);
 
-  if (!isLoading && pros.length === 0) return null;
+  const canRotate = pool.length > VISIBLE;
+
+  useEffect(() => {
+    if (!canRotate || paused) return;
+    const id = window.setInterval(() => {
+      setFading(true);
+      window.setTimeout(() => {
+        setOffset((o) => (o + VISIBLE) % pool.length);
+        setFading(false);
+      }, 260);
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [canRotate, paused, pool.length]);
+
+  const visible = useMemo(() => {
+    if (pool.length === 0) return [];
+    return Array.from({ length: Math.min(VISIBLE, pool.length) }, (_, i) => pool[(offset + i) % pool.length]);
+  }, [pool, offset]);
+
+  const pages = canRotate ? Math.ceil(pool.length / VISIBLE) : 1;
+  const activePage = canRotate ? Math.floor(offset / VISIBLE) % pages : 0;
+
+  if (!isLoading && pool.length === 0) return null;
+
 
   return (
     <section className="container-page py-16 sm:py-20" aria-labelledby="profissionais-proximos">
