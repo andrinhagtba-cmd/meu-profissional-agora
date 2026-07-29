@@ -1279,6 +1279,7 @@ export type Database = {
           serves_at_customer_location: boolean
           serves_remotely: boolean
           service_radius_km: number | null
+          service_regions: string[]
           service_types: Database["public"]["Enums"]["service_type"][]
           slug: string | null
           source: string
@@ -1333,6 +1334,7 @@ export type Database = {
           serves_at_customer_location?: boolean
           serves_remotely?: boolean
           service_radius_km?: number | null
+          service_regions?: string[]
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
@@ -1387,6 +1389,7 @@ export type Database = {
           serves_at_customer_location?: boolean
           serves_remotely?: boolean
           service_radius_km?: number | null
+          service_regions?: string[]
           service_types?: Database["public"]["Enums"]["service_type"][]
           slug?: string | null
           source?: string
