@@ -7,6 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getProfessionals } from "@/services/mockApi";
 
 export const Route = createFileRoute("/profissionais")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    destaque: search.destaque === true || search.destaque === "true" ? true : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Profissionais avaliados perto de você" },
@@ -20,10 +23,13 @@ export const Route = createFileRoute("/profissionais")({
 });
 
 function ProfissionaisPage() {
+  const { destaque } = Route.useSearch();
   const { data: pros, isLoading } = useQuery({
     queryKey: ["all-pros"],
     queryFn: getProfessionals,
   });
+
+  const list = destaque ? (pros ?? []).filter((p) => p.featured) : (pros ?? []);
 
   return (
     <SiteLayout>
@@ -31,17 +37,28 @@ function ProfissionaisPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="font-display text-3xl font-extrabold text-foreground sm:text-4xl">
-              Profissionais
+              {destaque ? "Profissionais em destaque" : "Profissionais"}
             </h1>
             <p className="mt-2 max-w-lg text-muted-foreground">
-              Todos os profissionais da plataforma, com avaliações reais e tempo de resposta.
+              {destaque
+                ? "Os profissionais mais bem avaliados da semana, verificados pela nossa equipe."
+                : "Todos os profissionais da plataforma, com avaliações reais e tempo de resposta."}
             </p>
           </div>
-          <Button asChild variant="outline" className="h-11 rounded-xl border-border font-semibold">
-            <Link to="/buscar" search={{} as never}>
-              Buscar com filtros
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {destaque && (
+              <Button asChild variant="outline" className="h-11 rounded-xl border-border font-semibold">
+                <Link to="/profissionais" search={{ destaque: undefined }}>
+                  Ver todos
+                </Link>
+              </Button>
+            )}
+            <Button asChild variant="outline" className="h-11 rounded-xl border-border font-semibold">
+              <Link to="/buscar" search={{} as never}>
+                Buscar com filtros
+              </Link>
+            </Button>
+          </div>
         </div>
         {isLoading ? (
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -49,13 +66,18 @@ function ProfissionaisPage() {
               <Skeleton key={i} className="h-72 rounded-3xl" />
             ))}
           </div>
+        ) : list.length === 0 ? (
+          <p className="mt-10 rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">
+            Nenhum profissional em destaque no momento.
+          </p>
         ) : (
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {pros?.map((pro) => (
+            {list.map((pro) => (
               <ProfessionalCard key={pro.slug} pro={pro} />
             ))}
           </div>
         )}
+
       </div>
     </SiteLayout>
   );
