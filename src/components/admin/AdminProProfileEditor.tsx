@@ -417,13 +417,13 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                 onSelect={(r: ResolvedAddress) => {
                   setForm((prev) => ({
                     ...prev,
-                    formatted_address: r.formatted_address ?? "",
-                    street: r.street ?? "",
-                    address_number: r.address_number ?? "",
-                    neighborhood: r.neighborhood ?? "",
+                    formatted_address: r.formatted_address ?? prev.formatted_address,
+                    street: r.street ?? prev.street,
+                    address_number: r.address_number ?? prev.address_number,
+                    neighborhood: r.neighborhood ?? prev.neighborhood,
                     city: r.city ?? prev.city,
                     state: r.state ?? prev.state,
-                    postal_code: r.postal_code ?? "",
+                    postal_code: r.postal_code ?? prev.postal_code,
                     latitude: r.latitude != null ? String(r.latitude) : "",
                     longitude: r.longitude != null ? String(r.longitude) : "",
                     google_place_id: r.google_place_id ?? "",
