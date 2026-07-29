@@ -28,9 +28,10 @@ export function getProfessionals(): Promise<Professional[]> {
   return proSvc.listProfessionals();
 }
 
-export function getFeaturedProfessionals(): Promise<Professional[]> {
-  return proSvc.listFeaturedProfessionals();
+export function getFeaturedProfessionals(limit?: number): Promise<Professional[]> {
+  return proSvc.listFeaturedProfessionals(limit);
 }
+
 
 export function getProfessionalBySlug(slug: string): Promise<Professional | undefined> {
   return proSvc.getProfessionalBySlug(slug);
