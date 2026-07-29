@@ -1,14 +1,39 @@
 import { Quote, Send } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { RatingStars } from "@/components/shared/RatingStars";
 import { ProAvatar } from "@/components/shared/ProAvatar";
+import { supabase } from "@/integrations/supabase/client";
 
-const testimonials = [
+type HomeTestimonial = {
+  id: string;
+  name: string;
+  city: string;
+  initials: string;
+  color: string;
+  text: string;
+  rating: number;
+  service: string;
+};
+
+const COLORS = ["bg-primary", "bg-orange", "bg-success"];
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+const fallbackTestimonials: HomeTestimonial[] = [
   {
+    id: "f1",
     name: "Renata Silveira",
-    city: "São Paulo, SP",
+    city: "Asa Norte, Brasília/DF",
     initials: "RS",
     color: "bg-primary",
     text: "Encontrei uma diarista incrível em menos de uma hora. As avaliações me deram total segurança para contratar.",
@@ -16,8 +41,9 @@ const testimonials = [
     service: "Diarista",
   },
   {
+    id: "f2",
     name: "Eduardo Prado",
-    city: "Curitiba, PR",
+    city: "Taguatinga, Brasília/DF",
     initials: "EP",
     color: "bg-orange",
     text: "Pedi três orçamentos de eletricista e fechei com o melhor custo-benefício. Processo rápido e transparente.",
@@ -25,8 +51,9 @@ const testimonials = [
     service: "Eletricista",
   },
   {
+    id: "f3",
     name: "Tatiane Barros",
-    city: "Belo Horizonte, MG",
+    city: "Águas Claras, Brasília/DF",
     initials: "TB",
     color: "bg-success",
     text: "O pedreiro que contratei pela plataforma reformou nosso banheiro com um capricho impressionante. Recomendo!",
@@ -34,6 +61,7 @@ const testimonials = [
     service: "Pedreiro",
   },
 ];
+
 
 export function Testimonials() {
   const [email, setEmail] = useState("");
