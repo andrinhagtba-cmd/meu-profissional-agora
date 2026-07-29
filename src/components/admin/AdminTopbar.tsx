@@ -20,6 +20,9 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProfile } from "@/services/clientService";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
 
 const QUICK_NAV: { to: string; label: string; group: string }[] = [
   { to: "/admin", label: "Dashboard", group: "Visão geral" },
