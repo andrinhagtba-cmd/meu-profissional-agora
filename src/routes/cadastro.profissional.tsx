@@ -563,6 +563,15 @@ function SignupWizard() {
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
+                    <Label>WhatsApp</Label>
+                    <Input
+                      value={profile.whatsapp ?? ""}
+                      maxLength={20}
+                      onChange={(e) => updateProfile({ whatsapp: e.target.value })}
+                      placeholder="(61) 99999-9999"
+                    />
+                  </div>
+                  <div>
                     <Label>Anos de experiência</Label>
                     <Input
                       type="number"
@@ -576,6 +585,31 @@ function SignupWizard() {
                       }
                     />
                   </div>
+                  <div>
+                    <Label>Preço inicial (R$)</Label>
+                    <Input
+                      inputMode="decimal"
+                      value={profile.starting_price ?? ""}
+                      onChange={(e) =>
+                        updateProfile({
+                          starting_price: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      placeholder="150"
+                    />
+                  </div>
+                  <div>
+                    <Label>Tempo de resposta</Label>
+                    <Input
+                      value={profile.response_time ?? ""}
+                      maxLength={40}
+                      onChange={(e) => updateProfile({ response_time: e.target.value || null })}
+                      placeholder="Até 1h"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label>Modalidade de atendimento</Label>
                     <div className="mt-1.5 flex flex-wrap gap-2">
@@ -598,7 +632,37 @@ function SignupWizard() {
                       })}
                     </div>
                   </div>
+                  <div>
+                    <Label>Disponibilidade</Label>
+                    <div className="mt-1.5 flex flex-wrap gap-2">
+                      {AVAILABILITY_OPTIONS.map((o) => {
+                        const active = (profile.availability_status ?? "available") === o.value;
+                        return (
+                          <button
+                            key={o.value}
+                            type="button"
+                            onClick={() => updateProfile({ availability_status: o.value })}
+                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                              active
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border bg-white text-foreground hover:border-primary/40"
+                            }`}
+                          >
+                            {o.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-3">
+                      <BoolChip
+                        label="Aceito atendimento de emergência"
+                        value={!!profile.emergency}
+                        onChange={(v) => updateProfile({ emergency: v })}
+                      />
+                    </div>
+                  </div>
                 </div>
+
 
                 <div>
                   <Label>Categorias (até 3)</Label>
