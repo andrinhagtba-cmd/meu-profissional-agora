@@ -343,6 +343,7 @@ function ProfilePage() {
                             neighborhood: a.neighborhood,
                             street: a.street,
                             address_number: a.number,
+                            address_complement: a.complement,
                             postal_code: a.postalCode,
                             formatted_address: a.formatted,
                           })
@@ -354,6 +355,7 @@ function ProfilePage() {
                         </span>
                       ) : null;
                     })()}
+                    {showHours && hours && <OpenNowBadge week={hours} />}
                     {pro.experienceYears > 0 && (
                       <span className="inline-flex items-center gap-1">
                         <Award size={14} aria-hidden="true" />
