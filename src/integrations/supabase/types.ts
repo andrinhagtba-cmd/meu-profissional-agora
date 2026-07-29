@@ -2020,6 +2020,54 @@ export type Database = {
           },
         ]
       }
+      showcase_requests: {
+        Row: {
+          category: string
+          category_slug: string | null
+          city: string
+          created_at: string
+          description: string
+          display_order: number
+          id: string
+          is_published: boolean
+          proposals_count: number
+          request_date: string
+          state: string
+          updated_at: string
+          urgency: string
+        }
+        Insert: {
+          category: string
+          category_slug?: string | null
+          city?: string
+          created_at?: string
+          description: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          proposals_count?: number
+          request_date?: string
+          state?: string
+          updated_at?: string
+          urgency?: string
+        }
+        Update: {
+          category?: string
+          category_slug?: string | null
+          city?: string
+          created_at?: string
+          description?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          proposals_count?: number
+          request_date?: string
+          state?: string
+          updated_at?: string
+          urgency?: string
+        }
+        Relationships: []
+      }
       site_pages: {
         Row: {
           content: string | null
