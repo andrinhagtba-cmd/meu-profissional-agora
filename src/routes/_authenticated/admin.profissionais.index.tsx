@@ -217,6 +217,7 @@ function AdminPros() {
               <QueueRow label="Aguardando verificação" value={stats.pending} tone="warning" />
               <QueueRow label="Prontos para venda" value={stats.approved} tone="success" />
               <QueueRow label="Em destaque" value={stats.featured} tone="primary" />
+              <QueueRow label="Fotos aguardando aprovação" value={pendingPhotos} tone="warning" />
             </div>
           </div>
         </div>
