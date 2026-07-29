@@ -2451,3 +2451,14 @@ export async function bulkDeleteProProfiles(ids: string[]) {
   const { error } = await supabase.from("professional_profiles").delete().in("id", ids);
   if (error) throw error;
 }
+
+/* ---------- Fotos aguardando aprovação ---------- */
+
+export async function countPendingPhotoRequests(): Promise<number> {
+  const { count, error } = await supabase
+    .from("professional_photo_requests" as never)
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+  if (error) return 0;
+  return count ?? 0;
+}
