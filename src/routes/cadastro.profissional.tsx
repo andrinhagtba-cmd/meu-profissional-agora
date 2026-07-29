@@ -640,13 +640,13 @@ function SignupWizard() {
                     initialQuery={profile.formatted_address ?? ""}
                     onSelect={(a: ResolvedAddress) =>
                       updateProfile({
-                        formatted_address: a.formatted_address,
-                        street: a.street,
-                        address_number: a.address_number,
-                        neighborhood: a.neighborhood,
+                        formatted_address: a.formatted_address ?? profile.formatted_address,
+                        street: a.street ?? profile.street,
+                        address_number: a.address_number ?? profile.address_number,
+                        neighborhood: a.neighborhood ?? profile.neighborhood,
                         city: isValidDfRegionName(a.city ?? "") ? a.city : profile.city,
                         state: "DF",
-                        postal_code: a.postal_code,
+                        postal_code: a.postal_code ?? profile.postal_code,
                         country: "Brasil",
                         latitude: a.latitude,
                         longitude: a.longitude,
@@ -655,7 +655,46 @@ function SignupWizard() {
                     }
                     placeholder="Digite rua, número, cidade…"
                   />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Confira e complete os campos abaixo — eles aparecem no seu perfil.
+                  </p>
                 </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <Label>Logradouro</Label>
+                    <Input
+                      value={profile.street ?? ""}
+                      onChange={(e) => updateProfile({ street: e.target.value })}
+                      placeholder="Rua, avenida, quadra…"
+                    />
+                  </div>
+                  <div>
+                    <Label>Número</Label>
+                    <Input
+                      value={profile.address_number ?? ""}
+                      onChange={(e) => updateProfile({ address_number: e.target.value })}
+                      placeholder="123"
+                    />
+                  </div>
+                  <div>
+                    <Label>CEP</Label>
+                    <Input
+                      value={profile.postal_code ?? ""}
+                      onChange={(e) => updateProfile({ postal_code: e.target.value })}
+                      placeholder="70000-000"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Bairro</Label>
+                    <Input
+                      value={profile.neighborhood ?? ""}
+                      onChange={(e) => updateProfile({ neighborhood: e.target.value })}
+                      placeholder="Zona Industrial, Asa Sul…"
+                    />
+                  </div>
+                </div>
+
 
                 <div>
                   <Label>Região Administrativa (DF)</Label>
