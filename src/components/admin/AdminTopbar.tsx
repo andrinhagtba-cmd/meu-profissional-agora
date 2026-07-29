@@ -170,15 +170,32 @@ export function AdminTopbar() {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                {(user?.email ?? "A").charAt(0).toUpperCase()}
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <div className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-primary text-xs font-bold text-primary-foreground ring-2 ring-primary/15">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="truncate">{user?.email ?? "Admin"}</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-60">
+            <DropdownMenuLabel className="flex items-center gap-2">
+              <div className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
+              </div>
+              <span className="min-w-0">
+                <span className="block truncate text-[13px] font-semibold">{myProfile?.full_name ?? "Admin"}</span>
+                <span className="block truncate text-[11px] font-normal text-muted-foreground">{user?.email}</span>
+              </span>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
             <DropdownMenuItem asChild>
               <Link to="/painel"><UserIcon size={14} className="mr-2" /> Meu painel</Link>
             </DropdownMenuItem>
