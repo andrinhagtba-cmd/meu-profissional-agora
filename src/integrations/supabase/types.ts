@@ -2387,6 +2387,10 @@ export type Database = {
         Args: { _id: string; _notes?: string; _status: string }
         Returns: undefined
       }
+      professional_slug_available: {
+        Args: { _profile_id?: string; _slug: string }
+        Returns: boolean
+      }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
       register_professional_profile_view: {
         Args: {
@@ -2408,10 +2412,18 @@ export type Database = {
         Args: { _ordered_ids: string[]; _professional_id: string }
         Returns: undefined
       }
+      slugify_text: { Args: { _input: string }; Returns: string }
       submit_review: {
         Args: { _comment: string; _quote_id: string; _rating: number }
         Returns: string
       }
+      suggest_professional_slugs: {
+        Args: { _base: string; _limit?: number; _profile_id?: string }
+        Returns: {
+          slug: string
+        }[]
+      }
+      unaccent_fallback: { Args: { _input: string }; Returns: string }
       update_quote_status: {
         Args: { _new_status: string; _note?: string; _quote_id: string }
         Returns: undefined
