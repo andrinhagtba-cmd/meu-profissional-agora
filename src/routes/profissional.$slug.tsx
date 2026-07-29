@@ -611,15 +611,21 @@ function ProfilePage() {
                     neighborhood: a.neighborhood,
                     street: a.street,
                     address_number: a.number,
+                    address_complement: a.complement,
                     postal_code: a.postalCode,
                     formatted_address: a.formatted,
                   });
                   return (
                     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm">
-                      <span className="inline-flex items-center gap-2 text-muted-foreground">
-                        <MapPin size={15} className="text-primary" />
-                        {label}
-                        {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                      <span className="inline-flex flex-col gap-1 text-muted-foreground">
+                        <span className="inline-flex items-center gap-2">
+                          <MapPin size={15} className="text-primary" />
+                          {label}
+                          {a.serviceRadiusKm ? ` · Raio de ${a.serviceRadiusKm} km` : ""}
+                        </span>
+                        {a.visibility === "full_address" && a.reference && (
+                          <span className="pl-6 text-xs">Referência: {a.reference}</span>
+                        )}
                       </span>
                       {url && (
                         <Button asChild size="sm" variant="outline">
