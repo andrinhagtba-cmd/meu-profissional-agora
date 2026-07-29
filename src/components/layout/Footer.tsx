@@ -81,11 +81,11 @@ export function Footer() {
   const cnpjNote = cfg.cnpj_note ?? "";
 
   const socials = [
-    settings?.social_instagram && { icon: Instagram, label: "Instagram", href: settings.social_instagram },
-    settings?.social_facebook && { icon: Facebook, label: "Facebook", href: settings.social_facebook },
-    settings?.social_youtube && { icon: Youtube, label: "YouTube", href: settings.social_youtube },
-    settings?.social_linkedin && { icon: Linkedin, label: "LinkedIn", href: settings.social_linkedin },
-  ].filter(Boolean) as { icon: typeof Instagram; label: string; href: string }[];
+    settings?.social_instagram && { icon: Instagram, label: "Instagram", href: normalizeExternalUrl(settings.social_instagram, "instagram") },
+    settings?.social_facebook && { icon: Facebook, label: "Facebook", href: normalizeExternalUrl(settings.social_facebook, "facebook") },
+    settings?.social_youtube && { icon: Youtube, label: "YouTube", href: normalizeExternalUrl(settings.social_youtube, "youtube") },
+    settings?.social_linkedin && { icon: Linkedin, label: "LinkedIn", href: normalizeExternalUrl(settings.social_linkedin, "linkedin") },
+  ].filter((s): s is { icon: typeof Instagram; label: string; href: string } => Boolean(s && s.href));
 
   const fallbackSocials =
     socials.length === 0
