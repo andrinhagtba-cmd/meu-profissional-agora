@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Moon, Sun, LogOut, User as UserIcon, Search, Bell } from "lucide-react";
+import { Moon, Sun, LogOut, User as UserIcon, Search, Bell, Globe, ExternalLink } from "lucide-react";
 import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
