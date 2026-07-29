@@ -55,6 +55,7 @@ import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
 import { Route as AuthenticatedAdminPermissoesRouteImport } from './routes/_authenticated/admin.permissoes'
+import { Route as AuthenticatedAdminPedidosRecentesRouteImport } from './routes/_authenticated/admin.pedidos-recentes'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
 import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
 import { Route as AuthenticatedAdminNotificacoesRouteImport } from './routes/_authenticated/admin.notificacoes'
@@ -345,6 +346,12 @@ const AuthenticatedAdminPermissoesRoute =
     path: '/permissoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPedidosRecentesRoute =
+  AuthenticatedAdminPedidosRecentesRouteImport.update({
+    id: '/pedidos-recentes',
+    path: '/pedidos-recentes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPedidosRoute =
   AuthenticatedAdminPedidosRouteImport.update({
     id: '/pedidos',
@@ -606,6 +613,7 @@ export interface FileRoutesByFullPath {
   '/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/admin/pedidos-recentes': typeof AuthenticatedAdminPedidosRecentesRoute
   '/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
@@ -687,6 +695,7 @@ export interface FileRoutesByTo {
   '/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/admin/pedidos-recentes': typeof AuthenticatedAdminPedidosRecentesRoute
   '/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/propostas': typeof AuthenticatedAdminPropostasRoute
@@ -768,6 +777,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/_authenticated/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
+  '/_authenticated/admin/pedidos-recentes': typeof AuthenticatedAdminPedidosRecentesRoute
   '/_authenticated/admin/permissoes': typeof AuthenticatedAdminPermissoesRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/profissionais': typeof AuthenticatedAdminProfissionaisRouteWithChildren
@@ -853,6 +863,7 @@ export interface FileRouteTypes {
     | '/admin/notificacoes'
     | '/admin/paginas'
     | '/admin/pedidos'
+    | '/admin/pedidos-recentes'
     | '/admin/permissoes'
     | '/admin/planos'
     | '/admin/profissionais'
@@ -934,6 +945,7 @@ export interface FileRouteTypes {
     | '/admin/notificacoes'
     | '/admin/paginas'
     | '/admin/pedidos'
+    | '/admin/pedidos-recentes'
     | '/admin/permissoes'
     | '/admin/planos'
     | '/admin/propostas'
@@ -1014,6 +1026,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/notificacoes'
     | '/_authenticated/admin/paginas'
     | '/_authenticated/admin/pedidos'
+    | '/_authenticated/admin/pedidos-recentes'
     | '/_authenticated/admin/permissoes'
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/profissionais'
@@ -1395,6 +1408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPermissoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/pedidos-recentes': {
+      id: '/_authenticated/admin/pedidos-recentes'
+      path: '/pedidos-recentes'
+      fullPath: '/admin/pedidos-recentes'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRecentesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/pedidos': {
       id: '/_authenticated/admin/pedidos'
       path: '/pedidos'
@@ -1699,6 +1719,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminNotificacoesRoute: typeof AuthenticatedAdminNotificacoesRoute
   AuthenticatedAdminPaginasRoute: typeof AuthenticatedAdminPaginasRoute
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
+  AuthenticatedAdminPedidosRecentesRoute: typeof AuthenticatedAdminPedidosRecentesRoute
   AuthenticatedAdminPermissoesRoute: typeof AuthenticatedAdminPermissoesRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminProfissionaisRoute: typeof AuthenticatedAdminProfissionaisRouteWithChildren
@@ -1744,6 +1765,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminNotificacoesRoute: AuthenticatedAdminNotificacoesRoute,
   AuthenticatedAdminPaginasRoute: AuthenticatedAdminPaginasRoute,
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
+  AuthenticatedAdminPedidosRecentesRoute:
+    AuthenticatedAdminPedidosRecentesRoute,
   AuthenticatedAdminPermissoesRoute: AuthenticatedAdminPermissoesRoute,
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminProfissionaisRoute:
