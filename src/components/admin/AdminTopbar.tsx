@@ -77,6 +77,17 @@ export function AdminTopbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = toCrumbs(pathname);
 
+  const { data: myProfile } = useQuery({
+    queryKey: ["my-profile-admin-topbar", user?.id],
+    queryFn: () => getMyProfile(user!.id),
+    enabled: !!user?.id,
+    staleTime: 60_000,
+  });
+  const avatarUrl = useResolvedMediaUrl(myProfile?.avatar_url ?? null);
+  const displayName = myProfile?.full_name || user?.email || "Admin";
+  const initial = (displayName || "A").charAt(0).toUpperCase();
+
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
