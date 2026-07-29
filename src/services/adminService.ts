@@ -79,6 +79,11 @@ export type AdminProRow = {
   business_name: string | null;
   city: string | null;
   state: string | null;
+  neighborhood: string | null;
+  street: string | null;
+  address_number: string | null;
+  address_complement: string | null;
+  formatted_address: string | null;
   verification_status: string;
   is_featured: boolean;
   average_rating: number | null;
@@ -96,7 +101,7 @@ export type AdminProRow = {
 export async function listPros(status?: string, search?: string, featured?: boolean): Promise<AdminProRow[]> {
   let q = supabase
     .from("professional_profiles")
-    .select("id, slug, professional_name, business_name, city, state, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id, search_tags")
+    .select("id, slug, professional_name, business_name, city, state, neighborhood, street, address_number, address_complement, formatted_address, verification_status, is_featured, average_rating, reviews_count, created_at, whatsapp, description, avatar_media_id, cover_media_id, search_tags")
     .order("created_at", { ascending: false })
     .limit(200);
   if (status) q = q.eq("verification_status", status as never);
