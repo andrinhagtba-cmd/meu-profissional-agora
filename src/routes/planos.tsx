@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { planPeriodSuffix } from "@/lib/planPeriod";
 import { Check, Crown, Sparkles, Star, Zap, TrendingUp, Shield, Rocket, ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Button } from "@/components/ui/button";
@@ -61,15 +62,7 @@ function getWhatsAppLink(planName: string) {
   return `https://wa.me/${phone}?text=${message}`;
 }
 
-function periodLabel(p: string) {
-  const map: Record<string, string> = {
-    monthly: "/mês",
-    yearly: "/ano",
-    quarterly: "/trimestre",
-    weekly: "/semana",
-  };
-  return map[p] ?? `/${p}`;
-}
+const periodLabel = (p: string) => planPeriodSuffix(p);
 
 function PlansPage() {
   const { data, isLoading } = useQuery({ queryKey: ["public-plans"], queryFn: listPublicPlans });

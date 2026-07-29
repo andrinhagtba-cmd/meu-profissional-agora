@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { planPeriodLabel } from "@/lib/planPeriod";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { AdminTable, StatusPill, type Column } from "@/components/admin/AdminTable";
@@ -60,7 +61,7 @@ function Page() {
         <div>
           <div className="font-medium text-foreground">{r.plan?.name ?? "—"}</div>
           <div className="text-xs text-muted-foreground">
-            {r.plan ? `${brl(Number(r.plan.price))} · ${r.plan.billing_period}` : "—"}
+            {r.plan ? `${brl(Number(r.plan.price))} · ${planPeriodLabel(r.plan.billing_period)}` : "—"}
           </div>
         </div>
       ),
