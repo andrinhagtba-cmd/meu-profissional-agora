@@ -33,12 +33,12 @@ export function AdminProActivityPanel({ professionalId }: { professionalId: stri
         ) : items.length === 0 ? (
           <div className="p-8 text-center text-sm text-muted-foreground">Sem histórico de atividade.</div>
         ) : (
-          <ol className="relative border-l ml-6 py-4">
+          <ol className="ml-6 border-l py-4 pr-4">
             {items.map((it) => {
               const Icon = kindIcon[it.kind];
               return (
-                <li key={it.id} className="ml-6 mb-4 last:mb-0">
-                  <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-background border">
+                <li key={it.id} className="relative ml-6 mb-5 last:mb-0">
+                  <span className="absolute -left-[36px] top-0 flex h-6 w-6 items-center justify-center rounded-full bg-background border">
                     <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                   </span>
                   <div className="flex items-center gap-2 flex-wrap">
