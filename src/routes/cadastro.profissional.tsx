@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { SlugField } from "@/components/professional/SlugField";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
@@ -61,6 +62,12 @@ const SERVICE_TYPES: { value: string; label: string }[] = [
   { value: "online", label: "Online" },
 ];
 
+const AVAILABILITY_OPTIONS: { value: string; label: string }[] = [
+  { value: "available", label: "Disponível" },
+  { value: "busy", label: "Ocupado" },
+  { value: "unavailable", label: "Indisponível" },
+];
+
 const VISIBILITY_OPTIONS: { value: string; label: string }[] = [
   { value: "city_state", label: "Cidade/Estado" },
   { value: "neighborhood_city_state", label: "Bairro, cidade/estado" },
@@ -104,6 +111,7 @@ function SignupWizard() {
   const [busy, setBusy] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [customTagsText, setCustomTagsText] = useState("");
   const patchRef = useRef<Partial<OnboardingProfile>>({});
   const timerRef = useRef<number | null>(null);
 
@@ -155,6 +163,11 @@ function SignupWizard() {
             // derive selectedCategories from search_tags
             const tags = new Set((p.search_tags ?? []).map((t) => t.toLowerCase()));
             setSelectedCategories(cats.filter((c) => tags.has(c.slug)).map((c) => c.id));
+            setCustomTagsText(
+              (p.search_tags ?? [])
+                .filter((t) => !cats.some((c) => c.slug === t))
+                .join(", "),
+            );
           }
         } catch (e) {
           console.error(e);
@@ -362,6 +375,16 @@ function SignupWizard() {
     }
   }
 
+  function setCustomTags(text: string) {
+    setCustomTagsText(text);
+    const custom = text
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+    const catSlugs = categories.filter((c) => selectedCategories.includes(c.id)).map((c) => c.slug);
+    updateProfile({ search_tags: [...custom, ...catSlugs] });
+  }
+
   function toggleCategory(id: string, slug: string) {
     setSelectedCategories((prev) => {
       const has = prev.includes(id);
@@ -543,6 +566,26 @@ function SignupWizard() {
                       value={profile.professional_name ?? ""}
                       maxLength={100}
                       onChange={(e) => updateProfile({ professional_name: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Nome da empresa / marca</Label>
+                    <Input
+                      value={profile.business_name ?? ""}
+                      maxLength={120}
+                      onChange={(e) => updateProfile({ business_name: e.target.value })}
+                      placeholder="Ex: Guia Elétrica Brasília"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <SlugField
+                      baseName={profile.business_name || profile.professional_name || ""}
+                      value={profile.slug ?? ""}
+                      profileId={profile.id}
+                      onChange={(slug) => updateProfile({ slug })}
                     />
                   </div>
                 </div>
