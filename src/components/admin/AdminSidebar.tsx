@@ -72,6 +72,7 @@ const GROUPS: Group[] = [
       { to: "/admin/paginas", label: "Páginas", icon: FileText },
       { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
       { to: "/admin/depoimentos", label: "Depoimentos", icon: Quote },
+      { to: "/admin/pedidos-recentes", label: "Pedidos recentes", icon: MessageSquare },
     ],
   },
   {
