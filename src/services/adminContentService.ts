@@ -220,3 +220,54 @@ export function slugify(s: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+// ---------- SHOWCASE REQUESTS (Pedidos recentes da home) ----------
+export type AdminShowcaseRequest = {
+  id: string;
+  category: string;
+  category_slug: string | null;
+  description: string;
+  city: string;
+  state: string;
+  request_date: string;
+  urgency: string;
+  proposals_count: number;
+  is_published: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+};
+export type UpsertShowcaseRequest = Partial<AdminShowcaseRequest> & {
+  category: string;
+  description: string;
+};
+
+export async function listShowcaseRequests(search?: string) {
+  let q = supabase
+    .from("showcase_requests")
+    .select("*")
+    .order("display_order")
+    .order("created_at", { ascending: false });
+  if (search) q = q.or(`category.ilike.%${search}%,description.ilike.%${search}%,city.ilike.%${search}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return data as AdminShowcaseRequest[];
+}
+
+export async function upsertShowcaseRequest(input: UpsertShowcaseRequest) {
+  const payload = { ...input, category_slug: input.category_slug || slugify(input.category) };
+  const { error } = input.id
+    ? await supabase.from("showcase_requests").update(payload).eq("id", input.id)
+    : await supabase.from("showcase_requests").insert(payload);
+  if (error) throw error;
+}
+
+export async function deleteShowcaseRequest(id: string) {
+  const { error } = await supabase.from("showcase_requests").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function toggleShowcaseRequestPublish(id: string, v: boolean) {
+  const { error } = await supabase.from("showcase_requests").update({ is_published: v }).eq("id", id);
+  if (error) throw error;
+}
