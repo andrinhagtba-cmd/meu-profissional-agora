@@ -77,13 +77,42 @@ export function NearbyPros() {
         </Button>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-[420px] rounded-3xl" />
-            ))
-          : pros.map((pro) => <ProfessionalCard key={pro.slug} pro={pro} />)}
+      <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+        <div
+          className={`grid gap-6 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-4 ${
+            fading ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
+          }`}
+        >
+          {isLoading
+            ? Array.from({ length: VISIBLE }).map((_, i) => (
+                <Skeleton key={i} className="h-[420px] rounded-3xl" />
+              ))
+            : visible.map((pro) => <ProfessionalCard key={pro.slug} pro={pro} />)}
+        </div>
+
+        {canRotate && (
+          <div className="mt-8 flex items-center justify-center gap-2">
+            {Array.from({ length: pages }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Ver recomendados ${i + 1}`}
+                onClick={() => {
+                  setFading(true);
+                  window.setTimeout(() => {
+                    setOffset(i * VISIBLE);
+                    setFading(false);
+                  }, 200);
+                }}
+                className={`h-2 rounded-full transition-all ${
+                  i === activePage ? "w-7 bg-primary" : "w-2 bg-border hover:bg-primary/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
     </section>
   );
 }
