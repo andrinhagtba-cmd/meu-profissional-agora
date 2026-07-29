@@ -355,6 +355,21 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
           <Separator />
 
+          {/* Horário de funcionamento */}
+          <div>
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">
+              Horário de funcionamento
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Horários no fuso de Brasília. Aparecem no perfil público com o selo “Aberto agora”.
+            </p>
+            <div className="mt-4">
+              <BusinessHoursSection professionalId={pro.id} holidayNote={pro.holiday_note} />
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Presença digital */}
           <div>
             <h3 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Presença digital</h3>
