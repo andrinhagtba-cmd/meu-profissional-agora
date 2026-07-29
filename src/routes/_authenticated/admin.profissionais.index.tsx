@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   listPros,
+  countPendingPhotoRequests,
   setProFeatured,
   setProVerification,
   bulkVerifyPros,
@@ -99,6 +100,13 @@ function AdminPros() {
     queryKey: ["admin-pros", filter, search],
     queryFn: () => listPros(statusFilter, search, featuredOnly),
   });
+
+  const { data: pendingPhotos = 0 } = useQuery({
+    queryKey: ["admin-pending-photos"],
+    queryFn: countPendingPhotoRequests,
+  });
+
+
 
   const stats = useMemo(() => {
     const total = data.length;
@@ -217,6 +225,7 @@ function AdminPros() {
               <QueueRow label="Aguardando verificação" value={stats.pending} tone="warning" />
               <QueueRow label="Prontos para venda" value={stats.approved} tone="success" />
               <QueueRow label="Em destaque" value={stats.featured} tone="primary" />
+              <QueueRow label="Fotos aguardando aprovação" value={pendingPhotos} tone="warning" />
             </div>
           </div>
         </div>
