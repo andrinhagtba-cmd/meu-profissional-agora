@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { MapPin, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { geocodeAddressFn } from "@/lib/geocode.functions";
 
 interface Props {
   latitude: number | null;
@@ -16,21 +17,15 @@ const geocodeCache = new Map<string, { lat: number; lng: number } | null>();
 async function geocodeAddress(q: string) {
   if (geocodeCache.has(q)) return geocodeCache.get(q) ?? null;
   try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=${encodeURIComponent(q)}`,
-      { headers: { Accept: "application/json" } },
-    );
-    if (!res.ok) throw new Error("geocode failed");
-    const json = (await res.json()) as Array<{ lat: string; lon: string }>;
-    const hit = json?.[0];
-    const value = hit ? { lat: Number(hit.lat), lng: Number(hit.lon) } : null;
-    geocodeCache.set(q, value);
-    return value;
+    const value = await geocodeAddressFn({ data: { q } });
+    geocodeCache.set(q, value ?? null);
+    return value ?? null;
   } catch {
     geocodeCache.set(q, null);
     return null;
   }
 }
+
 
 function buildOsmUrl(lat: number, lng: number) {
   // OpenStreetMap embed: free, no API key, works everywhere
