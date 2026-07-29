@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, MapPin, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProposalModal } from "@/components/shared/ProposalModal";
 import { quoteRequests } from "@/data/quoteRequests";
-import type { QuoteRequest } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import type { QuoteRequest, Urgency } from "@/types";
 
 const urgencyLabel: Record<string, { label: string; className: string }> = {
   hoje: { label: "Urgente · Hoje", className: "bg-orange/10 text-orange" },
@@ -18,9 +20,43 @@ function formatDate(date: string) {
   return new Date(`${date}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
+function slugify(s: string) {
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+async function fetchShowcaseRequests(): Promise<QuoteRequest[]> {
+  const { data, error } = await supabase
+    .from("showcase_requests")
+    .select("*")
+    .eq("is_published", true)
+    .order("display_order")
+    .order("created_at", { ascending: false })
+    .limit(6);
+  if (error || !data || data.length === 0) return quoteRequests.slice(0, 6);
+  return data.map((r) => ({
+    id: r.id,
+    category: r.category,
+    categorySlug: r.category_slug ?? slugify(r.category),
+    city: r.city,
+    state: r.state,
+    date: r.request_date,
+    urgency: (r.urgency as Urgency) ?? "esta-semana",
+    description: r.description,
+    proposals: r.proposals_count ?? 0,
+    status: "aberta",
+  }));
+}
+
 export function RecentRequests() {
   const [selected, setSelected] = useState<QuoteRequest | null>(null);
   const [open, setOpen] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["home-showcase-requests"],
+    queryFn: fetchShowcaseRequests,
+  });
+
+  const items = data ?? quoteRequests.slice(0, 6);
 
   return (
     <section className="container-page py-16 sm:py-20" aria-labelledby="pedidos-recentes">
@@ -43,8 +79,8 @@ export function RecentRequests() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {quoteRequests.slice(0, 6).map((req) => {
-          const urgency = urgencyLabel[req.urgency];
+        {items.map((req) => {
+          const urgency = urgencyLabel[req.urgency] ?? urgencyLabel["esta-semana"];
           return (
             <article
               key={req.id}
