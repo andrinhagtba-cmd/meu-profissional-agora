@@ -1,14 +1,39 @@
 import { Quote, Send } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { RatingStars } from "@/components/shared/RatingStars";
 import { ProAvatar } from "@/components/shared/ProAvatar";
+import { supabase } from "@/integrations/supabase/client";
 
-const testimonials = [
+type HomeTestimonial = {
+  id: string;
+  name: string;
+  city: string;
+  initials: string;
+  color: string;
+  text: string;
+  rating: number;
+  service: string;
+};
+
+const COLORS = ["bg-primary", "bg-orange", "bg-success"];
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+const fallbackTestimonials: HomeTestimonial[] = [
   {
+    id: "f1",
     name: "Renata Silveira",
-    city: "São Paulo, SP",
+    city: "Asa Norte, Brasília/DF",
     initials: "RS",
     color: "bg-primary",
     text: "Encontrei uma diarista incrível em menos de uma hora. As avaliações me deram total segurança para contratar.",
@@ -16,8 +41,9 @@ const testimonials = [
     service: "Diarista",
   },
   {
+    id: "f2",
     name: "Eduardo Prado",
-    city: "Curitiba, PR",
+    city: "Taguatinga, Brasília/DF",
     initials: "EP",
     color: "bg-orange",
     text: "Pedi três orçamentos de eletricista e fechei com o melhor custo-benefício. Processo rápido e transparente.",
@@ -25,8 +51,9 @@ const testimonials = [
     service: "Eletricista",
   },
   {
+    id: "f3",
     name: "Tatiane Barros",
-    city: "Belo Horizonte, MG",
+    city: "Águas Claras, Brasília/DF",
     initials: "TB",
     color: "bg-success",
     text: "O pedreiro que contratei pela plataforma reformou nosso banheiro com um capricho impressionante. Recomendo!",
@@ -35,10 +62,36 @@ const testimonials = [
   },
 ];
 
+
 export function Testimonials() {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
+
+  const { data: testimonials = fallbackTestimonials } = useQuery({
+    queryKey: ["home-testimonials"],
+    queryFn: async (): Promise<HomeTestimonial[]> => {
+      const { data, error: err } = await supabase
+        .from("testimonials")
+        .select("id, author, role, company, content, rating, display_order")
+        .eq("is_published", true)
+        .order("display_order")
+        .limit(6);
+      if (err) throw err;
+      if (!data?.length) return fallbackTestimonials;
+      return data.map((t, i) => ({
+        id: t.id,
+        name: t.author,
+        city: t.company ?? "Brasília/DF",
+        initials: initialsOf(t.author),
+        color: COLORS[i % COLORS.length],
+        text: t.content,
+        rating: t.rating ?? 5,
+        service: t.role ?? "",
+      }));
+    },
+  });
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +121,7 @@ export function Testimonials() {
           <div className="mt-8 grid w-full min-w-0 max-w-full gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t) => (
               <figure
-                key={t.name}
+                key={t.id}
                 className="flex min-w-0 flex-col rounded-3xl border border-border bg-background p-6 shadow-card"
               >
                 <Quote size={22} className="text-primary" aria-hidden="true" />
@@ -80,8 +133,9 @@ export function Testimonials() {
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-foreground">{t.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {t.city} · {t.service}
+                      {[t.city, t.service].filter(Boolean).join(" · ")}
                     </p>
+
                     <RatingStars rating={t.rating} size={12} showValue={false} className="mt-0.5" />
                   </div>
                 </figcaption>

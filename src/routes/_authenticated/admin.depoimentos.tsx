@@ -81,7 +81,7 @@ function Page() {
         description="Depoimentos exibidos na home e páginas institucionais."
         actions={<Button onClick={() => setCreating(true)}><Plus size={16} className="mr-1" />Novo</Button>}
       />
-      <AdminToolbar search={search} onSearch={setSearch} placeholder="Buscar autor, empresa ou trecho…" />
+      <AdminToolbar search={search} onSearch={setSearch} placeholder="Buscar autor, localização ou trecho…" />
       <AdminTable columns={columns} rows={data} isLoading={isLoading} rowKey={(r) => r.id} emptyText="Nenhum depoimento." />
 
       <TestimonialDialog
@@ -133,9 +133,9 @@ function TestimonialDialog({ open, initial, onClose, onSubmit, submitting }: {
         <div className="grid gap-3">
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Autor</Label><Input value={author} onChange={(e) => setAuthor(e.target.value)} /></div>
-            <div><Label>Cargo</Label><Input value={role} onChange={(e) => setRole(e.target.value)} /></div>
+            <div><Label>Serviço contratado</Label><Input value={role} onChange={(e) => setRole(e.target.value)} /></div>
           </div>
-          <div><Label>Empresa</Label><Input value={company} onChange={(e) => setCompany(e.target.value)} /></div>
+          <div><Label>Localização (ex: Asa Norte, Brasília/DF)</Label><Input value={company} placeholder="Asa Norte, Brasília/DF" onChange={(e) => setCompany(e.target.value)} /></div>
           <div><Label>Depoimento</Label><Textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Nota (1-5)</Label><Input type="number" min={1} max={5} value={rating} onChange={(e) => setRating(Number(e.target.value))} /></div>
