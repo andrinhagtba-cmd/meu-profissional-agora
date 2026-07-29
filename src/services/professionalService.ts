@@ -179,6 +179,8 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       neighborhood: row.neighborhood,
       street: row.street,
       number: row.address_number,
+      complement: row.address_complement,
+      reference: row.address_reference,
       postalCode: row.postal_code,
       formatted: row.formatted_address,
       latitude: row.latitude,
@@ -188,6 +190,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
       servesAtCustomer: Boolean(row.serves_at_customer_location),
       servesRemotely: Boolean(row.serves_remotely),
     },
+    holidayNote: row.holiday_note,
     viewsTotal: Number(row.initial_view_count ?? 0) + Number(row.real_view_count ?? 0),
   };
 }
