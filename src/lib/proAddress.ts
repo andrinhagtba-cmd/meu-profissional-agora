@@ -58,8 +58,18 @@ export interface PublicAddressInput {
   neighborhood: string | null | undefined;
   street: string | null | undefined;
   address_number: string | null | undefined;
+  address_complement?: string | null | undefined;
+  address_reference?: string | null | undefined;
   postal_code: string | null | undefined;
   formatted_address: string | null | undefined;
+}
+
+/** Monta o endereço completo estruturado: Logradouro, Nº, Complemento — Bairro — RA/UF — CEP. */
+export function fullAddressLine(a: PublicAddressInput): string | null {
+  const line = [a.street, a.address_number, a.address_complement].filter(Boolean).join(", ");
+  const cityState = [a.city, a.state].filter(Boolean).join(", ");
+  const cep = a.postal_code ? `CEP ${a.postal_code}` : null;
+  return [line, a.neighborhood, cityState, cep].filter(Boolean).join(" · ") || null;
 }
 
 export function publicAddressLabel(a: PublicAddressInput): string | null {
@@ -70,11 +80,10 @@ export function publicAddressLabel(a: PublicAddressInput): string | null {
   if (vis === "neighborhood_city_state") {
     return [a.neighborhood, cityState].filter(Boolean).join(" · ") || null;
   }
-  // full_address
-  if (a.formatted_address) return a.formatted_address;
-  const line = [a.street, a.address_number].filter(Boolean).join(", ");
-  return [line, a.neighborhood, cityState, a.postal_code].filter(Boolean).join(" · ") || null;
+  // full_address — prioriza os campos estruturados para não perder o complemento
+  return fullAddressLine(a) ?? a.formatted_address ?? null;
 }
+
 
 export function mapsSearchUrl(a: PublicAddressInput): string | null {
   const label = publicAddressLabel({ ...a, visibility: "full_address" });
