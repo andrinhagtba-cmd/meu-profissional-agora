@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import { adminProLocationLabel } from "@/lib/proAddress";
 import {
   ArrowRight,
   BadgeCheck,
@@ -369,7 +370,7 @@ function ProfessionalCard({
   onDelete: () => void;
 }) {
   const name = pro.professional_name || pro.business_name || "Sem nome";
-  const location = pro.city ? `${pro.city}/${pro.state ?? ""}` : "Sem localização";
+  const location = adminProLocationLabel(pro);
   return (
     <article className="group relative overflow-hidden rounded-[1.5rem] border border-border/70 bg-card shadow-card transition hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float">
       <div
@@ -446,7 +447,13 @@ function ProfessionalCard({
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5"><MapPin size={10} />{location}</span>
+          <span
+            title={location}
+            className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted px-2 py-0.5"
+          >
+            <MapPin size={10} className="shrink-0" />
+            <span className="truncate">{location}</span>
+          </span>
           <span className="rounded-full bg-muted px-2 py-0.5">{pro.reviews_count ?? 0} avaliações</span>
         </div>
         <p className="mt-3 line-clamp-2 min-h-[2.25rem] text-xs leading-4 text-muted-foreground">

@@ -90,3 +90,25 @@ export function mapsSearchUrl(a: PublicAddressInput): string | null {
   if (!label) return null;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(label)}`;
 }
+
+/** Endereço completo (uso interno/admin): rua, nº, complemento, bairro, RA/UF. */
+export function adminProLocationLabel(p: {
+  street?: string | null;
+  address_number?: string | null;
+  address_complement?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?: string | null;
+  formatted_address?: string | null;
+}): string {
+  const line1 = [p.street, p.address_number].filter(Boolean).join(", ");
+  const parts = [
+    line1 || null,
+    p.address_complement || null,
+    p.neighborhood || null,
+    p.city ? `${p.city}${p.state ? `/${p.state}` : ""}` : null,
+  ].filter(Boolean) as string[];
+  if (parts.length) return parts.join(" · ");
+  if (p.formatted_address) return p.formatted_address;
+  return "Sem localização";
+}
