@@ -20,6 +20,7 @@ import { AddressAutocomplete, type ResolvedAddress } from "@/components/address/
 import { LocationMap } from "@/components/address/LocationMap";
 import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
+import { geocodeAddressFn } from "@/lib/geocode.functions";
 
 
 type Availability = "available" | "busy" | "unavailable";
@@ -208,10 +209,30 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
   }, [pro, form]);
   const dirty = patch === null || Object.keys(patch).length > 0;
 
+  const addressQuery = useMemo(
+    () =>
+      [form.street, form.address_number, form.neighborhood, form.city, form.state, form.postal_code]
+        .filter(Boolean)
+        .join(", ") || form.formatted_address,
+    [form.street, form.address_number, form.neighborhood, form.city, form.state, form.postal_code, form.formatted_address],
+  );
+
   const save = useMutation({
     mutationFn: async (nextStatus?: ProfileStatus) => {
       const p = diffPatch(pro, form);
       if (nextStatus && nextStatus !== pro.profile_status) p.profile_status = nextStatus;
+
+      // Persiste as coordenadas do endereço para o mapa funcionar em qualquer domínio.
+      const noCoords = form.latitude.trim() === "" || form.longitude.trim() === "";
+      if (noCoords && addressQuery.trim().length >= 6) {
+        const hit = await geocodeAddressFn({ data: { q: addressQuery } });
+        if (hit) {
+          p.latitude = hit.lat;
+          p.longitude = hit.lng;
+          if (!form.formatted_address.trim()) p.formatted_address = addressQuery;
+        }
+      }
+
       if (Object.keys(p).length === 0) return;
       await updateProProfile(pro.id, p);
     },
@@ -490,12 +511,9 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
                 latitude={form.latitude ? Number(form.latitude) : null}
                 longitude={form.longitude ? Number(form.longitude) : null}
                 radiusKm={form.service_radius_km ? Number(form.service_radius_km) : null}
-                query={
-                  [form.street, form.address_number, form.neighborhood, form.city, form.state, form.postal_code]
-                    .filter(Boolean)
-                    .join(", ") || form.formatted_address
-                }
+                query={addressQuery}
               />
+
 
             </div>
           </div>
