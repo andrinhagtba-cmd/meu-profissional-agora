@@ -20,6 +20,7 @@ import { AddressAutocomplete, type ResolvedAddress } from "@/components/address/
 import { LocationMap } from "@/components/address/LocationMap";
 import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
+import { geocodeAddressFn } from "@/lib/geocode.functions";
 
 
 type Availability = "available" | "busy" | "unavailable";
