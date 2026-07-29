@@ -17,6 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { publicAddressLabel, mapsSearchUrl } from "@/lib/proAddress";
+import { normalizeExternalUrl } from "@/lib/externalUrl";
 import { BusinessHoursCard, OpenNowBadge } from "@/components/professional/BusinessHoursCard";
 import { getPublicBusinessHours } from "@/services/businessHoursService";
 import { hasAnyHours } from "@/lib/businessHours";
@@ -377,9 +378,9 @@ function ProfilePage() {
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                       {pro.social?.instagramUrl && (
                         <a
-                          href={pro.social.instagramUrl}
+                          href={normalizeExternalUrl(pro.social.instagramUrl, "instagram") ?? "#"}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
                         >
                           <Instagram size={13} />@{pro.social.instagram}
@@ -387,9 +388,9 @@ function ProfilePage() {
                       )}
                       {pro.social?.facebook && (
                         <a
-                          href={pro.social.facebook}
+                          href={normalizeExternalUrl(pro.social.facebook, "facebook") ?? "#"}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
                         >
                           <Facebook size={13} /> Facebook
@@ -397,14 +398,15 @@ function ProfilePage() {
                       )}
                       {pro.social?.website && (
                         <a
-                          href={pro.social.website}
+                          href={normalizeExternalUrl(pro.social.website) ?? "#"}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5"
                         >
                           <Globe size={13} /> Website
                         </a>
                       )}
+
                     </div>
                   )}
                 </div>

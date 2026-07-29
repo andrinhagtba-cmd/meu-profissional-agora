@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Facebook, Instagram, Linkedin, Mail, Youtube } from "lucide-react";
 import { Logo } from "./Header";
 import { getSettings, type FooterColumn } from "@/services/settingsService";
+import { normalizeExternalUrl } from "@/lib/externalUrl";
 
 const DEFAULT_COLUMNS: FooterColumn[] = [
   {
@@ -81,11 +82,11 @@ export function Footer() {
   const cnpjNote = cfg.cnpj_note ?? "";
 
   const socials = [
-    settings?.social_instagram && { icon: Instagram, label: "Instagram", href: settings.social_instagram },
-    settings?.social_facebook && { icon: Facebook, label: "Facebook", href: settings.social_facebook },
-    settings?.social_youtube && { icon: Youtube, label: "YouTube", href: settings.social_youtube },
-    settings?.social_linkedin && { icon: Linkedin, label: "LinkedIn", href: settings.social_linkedin },
-  ].filter(Boolean) as { icon: typeof Instagram; label: string; href: string }[];
+    settings?.social_instagram && { icon: Instagram, label: "Instagram", href: normalizeExternalUrl(settings.social_instagram, "instagram") },
+    settings?.social_facebook && { icon: Facebook, label: "Facebook", href: normalizeExternalUrl(settings.social_facebook, "facebook") },
+    settings?.social_youtube && { icon: Youtube, label: "YouTube", href: normalizeExternalUrl(settings.social_youtube, "youtube") },
+    settings?.social_linkedin && { icon: Linkedin, label: "LinkedIn", href: normalizeExternalUrl(settings.social_linkedin, "linkedin") },
+  ].filter((s): s is { icon: typeof Instagram; label: string; href: string } => Boolean(s && s.href));
 
   const fallbackSocials =
     socials.length === 0
