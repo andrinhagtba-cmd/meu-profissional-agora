@@ -17,6 +17,9 @@ import {
   Zap,
 } from "lucide-react";
 import { publicAddressLabel, mapsSearchUrl } from "@/lib/proAddress";
+import { BusinessHoursCard, OpenNowBadge } from "@/components/professional/BusinessHoursCard";
+import { getPublicBusinessHours } from "@/services/businessHoursService";
+import { hasAnyHours } from "@/lib/businessHours";
 import { LocationMap } from "@/components/address/LocationMap";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
