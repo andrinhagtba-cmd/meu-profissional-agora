@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, MapPin, Sparkles, Star, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -9,11 +10,45 @@ import { ProAvatar } from "@/components/shared/ProAvatar";
 import { getFeaturedProfessionals } from "@/services/mockApi";
 import type { Professional } from "@/types";
 
+const VISIBLE = 4;
+const ROTATE_MS = 6000;
+
 export function FeaturedPros() {
   const { data: pros, isLoading } = useQuery({
-    queryKey: ["featured-pros"],
-    queryFn: getFeaturedProfessionals,
+    queryKey: ["featured-pros", "pool"],
+    queryFn: () => getFeaturedProfessionals(24),
   });
+
+  const pool = useMemo(() => pros ?? [], [pros]);
+  const [offset, setOffset] = useState(0);
+  const [fading, setFading] = useState(false);
+  const [paused, setPaused] = useState(false);
+
+  const canRotate = pool.length > VISIBLE;
+
+  useEffect(() => {
+    if (!canRotate || paused) return;
+    const id = window.setInterval(() => {
+      setFading(true);
+      window.setTimeout(() => {
+        setOffset((o) => (o + VISIBLE) % pool.length);
+        setFading(false);
+      }, 260);
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [canRotate, paused, pool.length]);
+
+  const visible = useMemo(() => {
+    if (pool.length === 0) return [];
+    return Array.from({ length: Math.min(VISIBLE, pool.length) }, (_, i) => {
+      const item = pool[(offset + i) % pool.length];
+      return { pro: item, rank: ((offset + i) % pool.length) + 1 };
+    });
+  }, [pool, offset]);
+
+  const pages = canRotate ? Math.ceil(pool.length / VISIBLE) : 1;
+  const activePage = canRotate ? Math.floor(offset / VISIBLE) % pages : 0;
+
 
   return (
     <section
