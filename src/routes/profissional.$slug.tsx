@@ -103,6 +103,13 @@ function ProfilePage() {
     queryKey: ["reviews-db", pro.slug],
     queryFn: () => listApprovedReviewsBySlug(pro.slug),
   });
+  const { data: hours } = useQuery({
+    queryKey: ["pro-hours", pro.id],
+    queryFn: () => getPublicBusinessHours(pro.id),
+    enabled: Boolean(pro.id),
+  });
+  const showHours = hasAnyHours(hours);
+
   const { data: related } = useQuery({
     queryKey: ["related", pro.slug],
     queryFn: () => getRelatedProfessionals(pro.slug),
