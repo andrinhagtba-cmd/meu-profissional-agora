@@ -140,11 +140,19 @@ function AdminUsers() {
                 </DropdownMenuItem>
               );
             })}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setToDelete(u)}
+            >
+              <Trash2 size={14} className="mr-2" />Remover usuário
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
     },
   ], [roleMut, statusMut]);
+
 
   return (
     <div>
