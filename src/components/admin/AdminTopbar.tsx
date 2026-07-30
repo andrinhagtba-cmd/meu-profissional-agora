@@ -110,8 +110,13 @@ export function AdminTopbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-[oklch(0.93_0.014_258)] bg-white px-4 shadow-[0_1px_0_0_oklch(0.93_0.014_258)]">
-      <SidebarTrigger className="text-muted-foreground hover:text-primary" />
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-[oklch(0.93_0.014_258)] bg-white/85 px-2 pt-[env(safe-area-inset-top)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 sm:h-16 sm:gap-3 sm:px-4">
+      <SidebarTrigger className="shrink-0 text-muted-foreground hover:text-primary" />
+      <div className="min-w-0 flex-1 md:hidden">
+        <span className="block truncate font-display text-[15px] font-extrabold text-foreground">
+          {crumbs[crumbs.length - 1]?.label ?? "Admin"}
+        </span>
+      </div>
       <div className="hidden min-w-0 flex-1 md:block">
         <Breadcrumb>
           <BreadcrumbList className="text-[13px]">
@@ -132,7 +137,7 @@ export function AdminTopbar() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
         <button
           type="button"
           onClick={() => setCmdOpen(true)}
@@ -142,8 +147,8 @@ export function AdminTopbar() {
           <span>Buscar no painel…</span>
           <kbd className="ml-8 rounded-md border border-border bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">⌘K</kbd>
         </button>
-        <Button variant="ghost" size="icon" onClick={() => setCmdOpen(true)} className="sm:hidden">
-          <Search size={16} />
+        <Button variant="ghost" size="icon" onClick={() => setCmdOpen(true)} className="sm:hidden" aria-label="Buscar">
+          <Search size={18} />
         </Button>
         <Button
           asChild
@@ -156,18 +161,19 @@ export function AdminTopbar() {
             <ExternalLink size={13} className="text-muted-foreground" />
           </a>
         </Button>
-        <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label="Visitar site">
+        <Button asChild variant="ghost" size="icon" className="hidden lg:hidden sm:inline-flex" aria-label="Visitar site">
           <a href="/" target="_blank" rel="noopener noreferrer">
             <Globe size={16} />
           </a>
         </Button>
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/painel/notificacoes"><Bell size={16} /></Link>
+        <Button variant="ghost" size="icon" asChild aria-label="Notificações">
+          <Link to="/painel/notificacoes"><Bell size={18} /></Link>
         </Button>
 
-        <Button variant="ghost" size="icon" onClick={toggle} aria-label="Alternar tema">
+        <Button variant="ghost" size="icon" onClick={toggle} aria-label="Alternar tema" className="hidden sm:inline-flex">
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
