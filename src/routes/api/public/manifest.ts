@@ -58,22 +58,26 @@ export const Route = createFileRoute("/api/public/manifest")({
         }
 
         const brandName = (branding.brand_name as string) || fallback.name;
-        const icons: Array<Record<string, string>> = [
+        const staticIcons: Array<Record<string, string>> = [
           { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
           { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
           { src: "/icons/maskable-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
           { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ];
+
+        let icons = staticIcons;
         if (iconUrl) {
-          // Servido pela mesma origem (proxy) — navegadores ignoram ícones
-          // remotos com URL assinada no diálogo de instalação.
+          // Ícone do admin servido pela MESMA origem. Quando existe, ele é o
+          // único do manifest — senão o navegador prefere os ícones estáticos
+          // por casarem exatamente com os tamanhos declarados.
           const version = String((branding.pwa_icon_media_id as string) ?? "brand").slice(0, 8);
           const localIcon = `/api/public/pwa-icon?v=${version}`;
-          icons.unshift(
+          icons = [
+            { src: localIcon, sizes: "any", type: "image/png", purpose: "any" },
             { src: localIcon, sizes: "512x512", type: "image/png", purpose: "any" },
             { src: localIcon, sizes: "192x192", type: "image/png", purpose: "any" },
-            { src: localIcon, sizes: "512x512", type: "image/png", purpose: "maskable" },
-          );
+            { src: localIcon, sizes: "any", type: "image/png", purpose: "maskable" },
+          ];
         }
 
         const manifest = {
