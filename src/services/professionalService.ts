@@ -250,7 +250,11 @@ export async function listProfessionalsByCategory(
   categorySlug: string,
 ): Promise<Professional[]> {
   const all = await fetchAll();
-  return all.filter((p) => p.categorySlug === categorySlug);
+  return all.filter(
+    (p) =>
+      p.categorySlug === categorySlug ||
+      p.services?.some((s) => s.categorySlug === categorySlug),
+  );
 }
 
 export async function listRelatedProfessionals(slug: string): Promise<Professional[]> {
@@ -258,7 +262,12 @@ export async function listRelatedProfessionals(slug: string): Promise<Profession
   if (!current) return [];
   const all = await fetchAll();
   return all
-    .filter((p) => p.categorySlug === current.categorySlug && p.slug !== slug)
+    .filter(
+      (p) =>
+        p.slug !== slug &&
+        (p.categorySlug === current.categorySlug ||
+          p.services?.some((s) => s.categorySlug === current.categorySlug)),
+    )
     .slice(0, 3);
 }
 
@@ -289,7 +298,11 @@ export async function searchProfessionals(
     result = result.filter((p) => norm(p.city).includes(q) || norm(p.state).includes(q));
   }
   if (filters.categoria && filters.categoria !== "todas") {
-    result = result.filter((p) => p.categorySlug === filters.categoria);
+    result = result.filter(
+      (p) =>
+        p.categorySlug === filters.categoria ||
+        p.services?.some((s) => s.categorySlug === filters.categoria),
+    );
   }
   if (filters.notaMinima) {
     result = result.filter((p) => p.rating >= filters.notaMinima!);
