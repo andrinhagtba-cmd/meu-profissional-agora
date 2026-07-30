@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, CheckCheck } from "lucide-react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PushNotificationsCard } from "@/components/pwa/PushNotificationsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+
 import { useAuth } from "@/hooks/use-auth";
 import {
   listNotifications,
