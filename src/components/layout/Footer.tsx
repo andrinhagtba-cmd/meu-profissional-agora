@@ -133,11 +133,11 @@ export function Footer() {
               </div>
             </div>
             {columns.map((col) => (
-              <nav key={col.title} aria-label={col.title}>
+              <nav key={col.title} className="min-w-0" aria-label={col.title}>
                 <h3 className="text-sm font-bold text-foreground">{col.title}</h3>
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.label} className="min-w-0 break-words">
                       <FooterLinkItem href={link.href} label={link.label} />
                     </li>
                   ))}
@@ -146,11 +146,12 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
-          <p>
+        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:mt-12 sm:flex-row sm:items-center sm:gap-4">
+          <p className="min-w-0 break-words">
             © {new Date().getFullYear()} {copyright}
             {cnpjNote ? ` · ${cnpjNote}` : ""}
           </p>
+
           {contactEmail && (
             <a
               href={`mailto:${contactEmail}`}
