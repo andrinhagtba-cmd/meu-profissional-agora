@@ -27,6 +27,7 @@ export default defineConfig({
         filename: "sw.js",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
+        outDir: "dist/client",
         workbox: {
           // Custom push / notificationclick handlers live in public/push-handler.js
           importScripts: ["/push-handler.js"],
