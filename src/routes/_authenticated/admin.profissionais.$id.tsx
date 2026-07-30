@@ -205,7 +205,7 @@ function AdminProDetailPage() {
 
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-float">
         {/* Capa limpa: sem texto, gradiente sutil apenas para profundidade */}
-        <div className="relative h-52 w-full overflow-hidden sm:h-60">
+        <div className="relative h-36 w-full overflow-hidden sm:h-60">
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-[1.02]"
             style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
