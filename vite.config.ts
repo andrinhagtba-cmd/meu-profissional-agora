@@ -31,7 +31,7 @@ export default defineConfig({
         workbox: {
           // Custom push / notificationclick handlers live in public/push-handler.js
           importScripts: ["/push-handler.js"],
-          globDirectory: ".output/public",
+          globDirectory: "dist/client",
           globPatterns: ["**/*.{js,css,woff,woff2,svg,png,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
           navigateFallback: null,
