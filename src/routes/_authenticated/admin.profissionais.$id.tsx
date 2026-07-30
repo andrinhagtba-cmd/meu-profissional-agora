@@ -263,7 +263,7 @@ function AdminProDetailPage() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-extrabold tracking-normal text-foreground sm:text-3xl">{displayName}</h1>
+                  <h1 className="min-w-0 break-words font-display text-xl font-extrabold tracking-normal text-foreground sm:text-3xl">{displayName}</h1>
                   {pro.verification_status === "approved" && <BadgeCheck size={22} className="text-primary" />}
                 </div>
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
