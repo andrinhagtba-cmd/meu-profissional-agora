@@ -73,6 +73,18 @@ const PROFILE_LABEL: Record<string, string> = {
 
 type AdminProSearch = { tab: string };
 
+const TAB_ITEMS: { value: string; label: string; icon: ReactNode }[] = [
+  { value: "overview", label: "Visão geral", icon: <Eye size={15} /> },
+  { value: "profile", label: "Perfil", icon: <Pencil size={15} /> },
+  { value: "services", label: "Serviços", icon: <BriefcaseBusiness size={15} /> },
+  { value: "portfolio", label: "Portfólio", icon: <GalleryHorizontalEnd size={15} /> },
+  { value: "documents", label: "Documentos", icon: <FileCheck2 size={15} /> },
+  { value: "reviews", label: "Avaliações", icon: <Star size={15} /> },
+  { value: "plan", label: "Plano e acesso", icon: <WalletCards size={15} /> },
+  { value: "activity", label: "Histórico", icon: <Timer size={15} /> },
+];
+
+
 export const Route = createFileRoute("/_authenticated/admin/profissionais/$id")({
   head: () => ({ meta: [{ title: "Profissional · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   validateSearch: (raw: Record<string, unknown>): AdminProSearch => ({
