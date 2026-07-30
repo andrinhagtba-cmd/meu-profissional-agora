@@ -434,19 +434,20 @@ function AdminProNew() {
           </div>
         )}
 
-        <div className="mt-8 flex items-center justify-between border-t pt-5">
-          <Button variant="ghost" onClick={prev} disabled={step === 0}>
+        <div className="mt-8 flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <Button variant="ghost" onClick={prev} disabled={step === 0} className="w-full sm:w-auto">
             <ArrowLeft size={16} className="mr-2" />Anterior
           </Button>
           {step < 2 ? (
-            <Button onClick={next}>Próxima<ArrowRight size={16} className="ml-2" /></Button>
+            <Button onClick={next} className="w-full sm:w-auto">Próxima<ArrowRight size={16} className="ml-2" /></Button>
           ) : (
-            <Button onClick={handleSubmit} disabled={!canSubmit}>
+            <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full sm:w-auto">
               {mut.isPending ? <Loader2 size={16} className="mr-2 animate-spin" /> : <UserPlus size={16} className="mr-2" />}
               Criar profissional
             </Button>
           )}
         </div>
+
       </div>
     </div>
   );
