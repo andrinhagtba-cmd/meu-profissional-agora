@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { geocodeQuery } from "./geocode.server";
+import { geocodeQuery, searchAddresses } from "./geocode.server";
 
 /**
  * Geocodificação server-side (Nominatim + fallback Photon).
@@ -9,3 +9,8 @@ import { geocodeQuery } from "./geocode.server";
 export const geocodeAddressFn = createServerFn({ method: "GET" })
   .inputValidator((data: { q: string }) => ({ q: String(data?.q ?? "").slice(0, 300) }))
   .handler(async ({ data }) => geocodeQuery(data.q));
+
+/** Sugestões de endereço (fallback server-side quando o Google Places falha). */
+export const searchAddressesFn = createServerFn({ method: "GET" })
+  .inputValidator((data: { q: string }) => ({ q: String(data?.q ?? "").slice(0, 200) }))
+  .handler(async ({ data }) => searchAddresses(data.q));

@@ -4,10 +4,14 @@
 export interface DfRegion {
   slug: string;
   name: string;
+  /** RA oficial (DF) ou UF do município (Entorno) */
   raNumber: string;
   /** termos alternativos de busca (bairros/quadras conhecidas), ignoram acento/caixa */
   aliases: string[];
+  /** grupo de exibição */
+  group?: "DF" | "Entorno";
 }
+
 
 export const DF_REGIONS: DfRegion[] = [
   { slug: "agua-quente", name: "Água Quente", raNumber: "RA XXXII", aliases: [] },
@@ -55,7 +59,48 @@ export const DF_REGIONS: DfRegion[] = [
   { slug: "taguatinga", name: "Taguatinga", raNumber: "RA III", aliases: [] },
   { slug: "varjao", name: "Varjão", raNumber: "RA XXIII", aliases: [] },
   { slug: "vicente-pires", name: "Vicente Pires", raNumber: "RA XXX", aliases: [] },
-].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+].map((r) => ({ ...r, group: "DF" as const })).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+
+// Municípios do Entorno do DF (RIDE) — Goiás e Minas Gerais.
+export const ENTORNO_REGIONS: DfRegion[] = [
+  { slug: "abadiania-go", name: "Abadiânia (GO)", raNumber: "GO", aliases: ["abadiania"] },
+  { slug: "agua-fria-de-goias-go", name: "Água Fria de Goiás (GO)", raNumber: "GO", aliases: ["agua fria"] },
+  { slug: "aguas-lindas-de-goias-go", name: "Águas Lindas de Goiás (GO)", raNumber: "GO", aliases: ["aguas lindas"] },
+  { slug: "alexania-go", name: "Alexânia (GO)", raNumber: "GO", aliases: ["alexania"] },
+  { slug: "alto-paraiso-de-goias-go", name: "Alto Paraíso de Goiás (GO)", raNumber: "GO", aliases: ["alto paraiso"] },
+  { slug: "alvorada-do-norte-go", name: "Alvorada do Norte (GO)", raNumber: "GO", aliases: [] },
+  { slug: "arinos-mg", name: "Arinos (MG)", raNumber: "MG", aliases: [] },
+  { slug: "barro-alto-go", name: "Barro Alto (GO)", raNumber: "GO", aliases: [] },
+  { slug: "buritis-mg", name: "Buritis (MG)", raNumber: "MG", aliases: [] },
+  { slug: "cabeceira-grande-mg", name: "Cabeceira Grande (MG)", raNumber: "MG", aliases: [] },
+  { slug: "cabeceiras-go", name: "Cabeceiras (GO)", raNumber: "GO", aliases: [] },
+  { slug: "cavalcante-go", name: "Cavalcante (GO)", raNumber: "GO", aliases: [] },
+  { slug: "cidade-ocidental-go", name: "Cidade Ocidental (GO)", raNumber: "GO", aliases: ["ocidental"] },
+  { slug: "cocalzinho-de-goias-go", name: "Cocalzinho de Goiás (GO)", raNumber: "GO", aliases: ["cocalzinho"] },
+  { slug: "corumba-de-goias-go", name: "Corumbá de Goiás (GO)", raNumber: "GO", aliases: ["corumba"] },
+  { slug: "cristalina-go", name: "Cristalina (GO)", raNumber: "GO", aliases: [] },
+  { slug: "flores-de-goias-go", name: "Flores de Goiás (GO)", raNumber: "GO", aliases: [] },
+  { slug: "formosa-go", name: "Formosa (GO)", raNumber: "GO", aliases: [] },
+  { slug: "luziania-go", name: "Luziânia (GO)", raNumber: "GO", aliases: ["luziania"] },
+  { slug: "mimoso-de-goias-go", name: "Mimoso de Goiás (GO)", raNumber: "GO", aliases: [] },
+  { slug: "niquelandia-go", name: "Niquelândia (GO)", raNumber: "GO", aliases: [] },
+  { slug: "novo-gama-go", name: "Novo Gama (GO)", raNumber: "GO", aliases: ["pedregal"] },
+  { slug: "padre-bernardo-go", name: "Padre Bernardo (GO)", raNumber: "GO", aliases: [] },
+  { slug: "pirenopolis-go", name: "Pirenópolis (GO)", raNumber: "GO", aliases: ["pirenopolis"] },
+  { slug: "planaltina-de-goias-go", name: "Planaltina de Goiás (GO)", raNumber: "GO", aliases: ["brasilinha"] },
+  { slug: "santo-antonio-do-descoberto-go", name: "Santo Antônio do Descoberto (GO)", raNumber: "GO", aliases: ["descoberto"] },
+  { slug: "sao-joao-dalianca-go", name: "São João d'Aliança (GO)", raNumber: "GO", aliases: ["sao joao alianca"] },
+  { slug: "simolandia-go", name: "Simolândia (GO)", raNumber: "GO", aliases: [] },
+  { slug: "unai-mg", name: "Unaí (MG)", raNumber: "MG", aliases: ["unai"] },
+  { slug: "valparaiso-de-goias-go", name: "Valparaíso de Goiás (GO)", raNumber: "GO", aliases: ["valparaiso"] },
+  { slug: "vila-boa-go", name: "Vila Boa (GO)", raNumber: "GO", aliases: [] },
+  { slug: "vila-propicio-go", name: "Vila Propício (GO)", raNumber: "GO", aliases: [] },
+]
+  .map((r) => ({ ...r, group: "Entorno" as const }))
+  .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+
+/** DF + Entorno — usada em selects, busca e validação. */
+export const ALL_REGIONS: DfRegion[] = [...DF_REGIONS, ...ENTORNO_REGIONS];
 
 const norm = (s: string) =>
   s
@@ -66,8 +111,8 @@ const norm = (s: string) =>
 
 export function searchDfRegions(query: string): DfRegion[] {
   const q = norm(query);
-  if (!q) return DF_REGIONS;
-  return DF_REGIONS.filter((r) => {
+  if (!q) return ALL_REGIONS;
+  return ALL_REGIONS.filter((r) => {
     if (norm(r.name).includes(q)) return true;
     if (norm(r.slug).includes(q)) return true;
     return r.aliases.some((a) => norm(a).includes(q));
@@ -78,9 +123,9 @@ export function findDfRegionByName(name: string | null | undefined): DfRegion | 
   if (!name) return undefined;
   const q = norm(name);
   return (
-    DF_REGIONS.find((r) => norm(r.name) === q) ??
-    DF_REGIONS.find((r) => norm(r.slug) === q) ??
-    DF_REGIONS.find((r) => r.aliases.some((a) => norm(a) === q))
+    ALL_REGIONS.find((r) => norm(r.name) === q) ??
+    ALL_REGIONS.find((r) => norm(r.slug) === q) ??
+    ALL_REGIONS.find((r) => r.aliases.some((a) => norm(a) === q))
   );
 }
 
@@ -88,4 +133,5 @@ export function isValidDfRegionName(name: string | null | undefined): boolean {
   return Boolean(findDfRegionByName(name));
 }
 
-export const DF_REGION_NAMES = DF_REGIONS.map((r) => r.name);
+export const DF_REGION_NAMES = ALL_REGIONS.map((r) => r.name);
+

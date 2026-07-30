@@ -21,7 +21,7 @@ import { LocationMap } from "@/components/address/LocationMap";
 import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 import { geocodeAddressFn } from "@/lib/geocode.functions";
-import { DF_REGIONS } from "@/data/dfRegions";
+import { ALL_REGIONS as DF_REGIONS } from "@/data/dfRegions";
 
 
 type Availability = "available" | "busy" | "unavailable";

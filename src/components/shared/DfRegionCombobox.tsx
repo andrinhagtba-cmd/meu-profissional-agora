@@ -11,7 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { DF_REGIONS, searchDfRegions } from "@/data/dfRegions";
+import { ALL_REGIONS, searchDfRegions } from "@/data/dfRegions";
 
 interface Props {
   value: string;
@@ -25,13 +25,15 @@ export function DfRegionCombobox({
   value,
   onChange,
   id,
-  placeholder = "Selecione sua região no DF",
+  placeholder = "Selecione sua região (DF e Entorno)",
   ariaInvalid,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const results = searchDfRegions(query);
-  const selected = DF_REGIONS.find((r) => r.name === value);
+  const dfResults = results.filter((r) => r.group !== "Entorno");
+  const entornoResults = results.filter((r) => r.group === "Entorno");
+  const selected = ALL_REGIONS.find((r) => r.name === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,34 +64,41 @@ export function DfRegionCombobox({
       >
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Buscar região... (ex: Brasília, Águas)"
+            placeholder="Buscar região... (ex: Taguatinga, Valparaíso)"
             value={query}
             onValueChange={setQuery}
           />
           <CommandList className="max-h-[min(60vh,320px)]">
             <CommandEmpty>Nenhuma região encontrada.</CommandEmpty>
-            <CommandGroup>
-              {results.map((r) => (
-                <CommandItem
-                  key={r.slug}
-                  value={r.slug}
-                  onSelect={() => {
-                    onChange(r.name);
-                    setOpen(false);
-                    setQuery("");
-                  }}
-                >
-                  <Check
-                    size={16}
-                    className={cn("mr-2", value === r.name ? "opacity-100" : "opacity-0")}
-                  />
-                  <span className="flex-1">{r.name}</span>
-                  <span className="ml-2 text-[10px] font-medium text-muted-foreground">
-                    {r.raNumber}
-                  </span>
-                </CommandItem>
+            {[
+              { label: "Distrito Federal", list: dfResults },
+              { label: "Entorno do DF (RIDE)", list: entornoResults },
+            ]
+              .filter((g) => g.list.length > 0)
+              .map((g) => (
+                <CommandGroup key={g.label} heading={g.label}>
+                  {g.list.map((r) => (
+                    <CommandItem
+                      key={r.slug}
+                      value={r.slug}
+                      onSelect={() => {
+                        onChange(r.name);
+                        setOpen(false);
+                        setQuery("");
+                      }}
+                    >
+                      <Check
+                        size={16}
+                        className={cn("mr-2", value === r.name ? "opacity-100" : "opacity-0")}
+                      />
+                      <span className="flex-1">{r.name}</span>
+                      <span className="ml-2 text-[10px] font-medium text-muted-foreground">
+                        {r.raNumber}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
               ))}
-            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>
