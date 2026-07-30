@@ -2980,6 +2980,22 @@ export type Database = {
         Returns: boolean
       }
       recalc_pro_rating: { Args: { _pro_id: string }; Returns: undefined }
+      register_my_push_subscription: {
+        Args: {
+          p_auth: string
+          p_browser: string
+          p_device_label: string
+          p_endpoint: string
+          p_p256dh: string
+          p_platform: string
+          p_user_agent: string
+        }
+        Returns: {
+          endpoint: string
+          id: string
+          status: string
+        }[]
+      }
       register_professional_profile_view: {
         Args: {
           p_anonymous_visitor_id?: string
