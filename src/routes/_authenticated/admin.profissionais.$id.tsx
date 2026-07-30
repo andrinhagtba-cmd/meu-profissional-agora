@@ -226,11 +226,12 @@ function AdminProDetailPage() {
         </div>
 
         {/* Card de perfil premium abaixo da capa, sem sobrepor a imagem */}
-        <div className="relative px-5 pb-6 sm:px-7">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-              <div className="group relative -mt-14 h-28 w-28 shrink-0 sm:-mt-16 sm:h-32 sm:w-32">
-                <div className="h-28 w-28 rounded-full border-4 border-card bg-card p-1 shadow-float sm:h-32 sm:w-32">
+        <div className="relative min-w-0 px-4 pb-6 sm:px-7">
+          <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start">
+              <div className="group relative -mt-12 h-24 w-24 shrink-0 sm:-mt-16 sm:h-32 sm:w-32">
+                <div className="h-24 w-24 rounded-full border-4 border-card bg-card p-1 shadow-float sm:h-32 sm:w-32">
+
                   {pro.avatar_url ? (
                     <img src={pro.avatar_url} alt={displayName} className="h-full w-full rounded-full object-cover" />
                   ) : (
