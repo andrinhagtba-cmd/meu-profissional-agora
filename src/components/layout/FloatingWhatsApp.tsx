@@ -5,6 +5,7 @@ import { getSettings } from "@/services/settingsService";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const FALLBACK_PHONE = "5561998662261";
+const SEEN_KEY = "gdf:whatsapp-bubble-seen";
 const MESSAGE =
   "Olá! Quero divulgar minha empresa no Guia DF na Mídia. Pode me enviar os planos e valores?";
 
@@ -15,8 +16,12 @@ export function FloatingWhatsApp() {
 
   useEffect(() => {
     setMounted(true);
-    const t = setTimeout(() => setOpen(true), 2500);
-    return () => clearTimeout(t);
+    if (window.sessionStorage.getItem(SEEN_KEY) === "1") return;
+    const t = window.setTimeout(() => {
+      window.sessionStorage.setItem(SEEN_KEY, "1");
+      setOpen(true);
+    }, 2500);
+    return () => window.clearTimeout(t);
   }, []);
 
   const { data: settings } = useQuery({
