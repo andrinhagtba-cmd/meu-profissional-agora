@@ -60,9 +60,13 @@ export function describeDevice() {
 
 export async function getExistingSubscription() {
   if (!isPushSupported()) return null;
-  const registration = await navigator.serviceWorker.getRegistration("/");
-  if (!registration) return null;
-  return registration.pushManager.getSubscription();
+  try {
+    const registration = await ensureAppServiceWorker();
+    return registration.pushManager.getSubscription();
+  } catch {
+    // Dev, preview e navegadores bloqueados não registram o worker.
+    return null;
+  }
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
