@@ -270,14 +270,15 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
     setForm((prev) => ({ ...prev, [k]: v }));
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr),390px]">
+    <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr),390px]">
       {/* Editor */}
-      <Card className="overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
-        <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
-          <div>
-            <CardTitle className="font-display text-xl font-extrabold tracking-normal">Perfil público</CardTitle>
+      <Card className="min-w-0 overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+        <CardHeader className="flex flex-col items-start gap-2 border-b bg-background/70 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <CardTitle className="font-display text-lg font-extrabold tracking-normal sm:text-xl">Perfil público</CardTitle>
             <p className="text-xs text-muted-foreground">Dados exibidos na busca e na página pública.</p>
           </div>
+
           <StatusPill tone={pro.profile_status === "published" ? "success" : pro.profile_status === "archived" ? "danger" : "warning"}>
             {pro.profile_status === "published" ? "Publicado" : pro.profile_status === "archived" ? "Suspenso" : "Rascunho"}
           </StatusPill>
