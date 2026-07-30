@@ -73,15 +73,12 @@ function Notificacoes() {
           >
             <CheckCheck size={16} /> Marcar todas como lidas
           </Button>
-          {browserPermission === "default" && (
-            <Button
-              className="h-11 rounded-xl px-5 font-semibold"
-              onClick={requestBrowserAlerts}
-            >
-              <Bell size={16} /> Ativar alertas
-            </Button>
-          )}
         </div>
+
+        <div className="mb-6">
+          <PushNotificationsCard />
+        </div>
+
 
         {isLoading ? (
           <div className="space-y-3">
