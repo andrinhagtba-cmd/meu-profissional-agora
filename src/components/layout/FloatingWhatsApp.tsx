@@ -32,7 +32,7 @@ export function FloatingWhatsApp() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed bottom-5 right-4 z-50 flex items-end gap-2 sm:bottom-7 sm:right-6">
+    <div className="fixed bottom-20 right-4 z-50 flex items-end gap-2 sm:bottom-7 sm:right-6">
       {open && (
         <div className="relative max-w-[15rem] animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-border bg-card p-4 pr-8 shadow-xl">
           <button
