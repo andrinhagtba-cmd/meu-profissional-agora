@@ -9,12 +9,18 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ShieldCheck, ShieldOff, UserCog, Ban, CheckCircle2 } from "lucide-react";
+import { MoreHorizontal, ShieldCheck, ShieldOff, UserCog, Ban, CheckCircle2, Trash2 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { deleteUserFn } from "@/lib/adminUsers.functions";
 import {
   listUsersFull, updateAccountStatus, bulkUpdateAccountStatus, grantRole, revokeRole,
   type AdminUserFull, type AccountStatus,
 } from "@/services/adminService";
 import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
+
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   head: () => ({ meta: [{ title: "Usuários · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
