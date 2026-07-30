@@ -56,7 +56,8 @@ async function fetchCategoryStats(
   const { data: services } = await supabasePublic
     .from("services")
     .select("id, category_id")
-    .in("category_id", categoryIds);
+    .in("category_id", categoryIds)
+    .eq("active", true);
   const serviceToCategory = new Map<string, string>();
   for (const s of (services ?? []) as { id: string; category_id: string }[]) {
     serviceToCategory.set(s.id, s.category_id);
@@ -66,7 +67,8 @@ async function fetchCategoryStats(
   const { data: links } = await supabasePublic
     .from("professional_services")
     .select("service_id, professional_id")
-    .in("service_id", serviceIds);
+    .in("service_id", serviceIds)
+    .eq("active", true);
   const proIds = new Set<string>();
   const catToPros = new Map<string, Set<string>>();
   for (const link of (links ?? []) as {
@@ -84,7 +86,8 @@ async function fetchCategoryStats(
   const { data: pros } = await supabasePublic
     .from("professional_profiles")
     .select("id, starting_price, average_rating")
-    .in("id", Array.from(proIds));
+    .in("id", Array.from(proIds))
+    .eq("profile_status", "published");
   const proMap = new Map<
     string,
     { starting_price: number | null; average_rating: number | null }
@@ -100,9 +103,11 @@ async function fetchCategoryStats(
     let minPrice = Infinity;
     let ratingSum = 0;
     let ratingCount = 0;
+    let published = 0;
     for (const pid of set) {
       const p = proMap.get(pid);
       if (!p) continue;
+      published += 1;
       if (p.starting_price && p.starting_price > 0)
         minPrice = Math.min(minPrice, Number(p.starting_price));
       if (p.average_rating && p.average_rating > 0) {
@@ -111,9 +116,9 @@ async function fetchCategoryStats(
       }
     }
     out.set(catId, {
-      count: set.size,
+      count: published,
       priceFrom: Number.isFinite(minPrice) ? minPrice : 0,
-      rating: ratingCount > 0 ? ratingSum / ratingCount : 5,
+      rating: ratingCount > 0 ? ratingSum / ratingCount : 0,
     });
   }
   return out;
