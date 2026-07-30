@@ -336,7 +336,7 @@ function AdminOverview() {
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-5">
           <h2 className="font-display text-lg font-bold text-foreground">Top categorias</h2>
-          <p className="text-xs text-muted-foreground">Pedidos por categoria.</p>
+          <p className="text-xs text-muted-foreground">Profissionais e pedidos por categoria.</p>
           {topCats.isLoading ? (
             <div className="mt-4 space-y-3"><Skeleton className="h-6" /><Skeleton className="h-6" /><Skeleton className="h-6" /></div>
           ) : (
