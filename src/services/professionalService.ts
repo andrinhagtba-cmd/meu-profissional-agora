@@ -250,7 +250,11 @@ export async function listProfessionalsByCategory(
   categorySlug: string,
 ): Promise<Professional[]> {
   const all = await fetchAll();
-  return all.filter((p) => p.categorySlug === categorySlug);
+  return all.filter(
+    (p) =>
+      p.categorySlug === categorySlug ||
+      p.services?.some((s) => s.categorySlug === categorySlug),
+  );
 }
 
 export async function listRelatedProfessionals(slug: string): Promise<Professional[]> {
@@ -258,7 +262,12 @@ export async function listRelatedProfessionals(slug: string): Promise<Profession
   if (!current) return [];
   const all = await fetchAll();
   return all
-    .filter((p) => p.categorySlug === current.categorySlug && p.slug !== slug)
+    .filter(
+      (p) =>
+        p.slug !== slug &&
+        (p.categorySlug === current.categorySlug ||
+          p.services?.some((s) => s.categorySlug === current.categorySlug)),
+    )
     .slice(0, 3);
 }
 
