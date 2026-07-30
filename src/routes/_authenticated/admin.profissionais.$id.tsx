@@ -248,7 +248,7 @@ function AdminProDetailPage() {
                   {uploading === "avatar" ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
                 </button>
               </div>
-              <div className="pt-1 sm:pt-3">
+              <div className="min-w-0 pt-1 sm:pt-3">
                 <div className="mb-2.5 flex flex-wrap items-center gap-2">
                   <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
                     {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
