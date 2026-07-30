@@ -50,7 +50,7 @@ function isExternal(href: string) {
 }
 
 function FooterLinkItem({ href, label }: { href: string; label: string }) {
-  const cls = "text-sm text-muted-foreground transition-colors hover:text-primary";
+  const cls = "inline-block text-sm leading-snug text-muted-foreground transition-colors hover:text-primary";
   if (isExternal(href)) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
@@ -100,19 +100,17 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-card">
-      <div className="container-page py-14">
-        <div
-          className="grid gap-10 md:grid-cols-2"
-          style={{ gridTemplateColumns: undefined }}
-        >
+      <div className="container-page py-10 sm:py-14">
+        <div className="grid gap-10">
           <div
-            className="grid gap-10 md:grid-cols-2"
-            style={{
-              gridColumn: "1 / -1",
-              gridTemplateColumns: `2fr repeat(${columns.length}, minmax(0, 1fr))`,
-            }}
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10 md:[grid-template-columns:var(--footer-cols)]"
+            style={
+              {
+                "--footer-cols": `2fr repeat(${columns.length}, minmax(0, 1fr))`,
+              } as React.CSSProperties
+            }
           >
-            <div>
+            <div className="min-w-0 sm:col-span-2 md:col-span-1">
               <Logo />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
                 {description}
@@ -134,11 +132,11 @@ export function Footer() {
               </div>
             </div>
             {columns.map((col) => (
-              <nav key={col.title} aria-label={col.title}>
+              <nav key={col.title} className="min-w-0" aria-label={col.title}>
                 <h3 className="text-sm font-bold text-foreground">{col.title}</h3>
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.label} className="min-w-0 break-words">
                       <FooterLinkItem href={link.href} label={link.label} />
                     </li>
                   ))}
@@ -147,11 +145,12 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
-          <p>
+        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:mt-12 sm:flex-row sm:items-center sm:gap-4">
+          <p className="min-w-0 break-words">
             © {new Date().getFullYear()} {copyright}
             {cnpjNote ? ` · ${cnpjNote}` : ""}
           </p>
+
           {contactEmail && (
             <a
               href={`mailto:${contactEmail}`}
