@@ -36,9 +36,9 @@ const SERVICE_TYPES = [
 
 const VISIBILITY_OPTIONS = [
   { value: "hidden", label: "Não exibir" },
-  { value: "city_only", label: "Apenas RA" },
+  { value: "city_state", label: "Apenas RA" },
   { value: "neighborhood_city_state", label: "Bairro + RA + DF" },
-  { value: "full", label: "Endereço completo" },
+  { value: "full_address", label: "Endereço completo" },
 ] as const;
 
 const digits = (s: string) => s.replace(/\D/g, "");
