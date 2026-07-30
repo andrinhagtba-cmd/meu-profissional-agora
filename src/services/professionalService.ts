@@ -20,6 +20,7 @@ type DbRow = {
   reviews_count: number;
   response_time: string | null;
   starting_price: number | null;
+  price_label: string | null;
   years_experience: number | null;
   is_featured: boolean;
   emergency: boolean;
@@ -68,7 +69,7 @@ type DbRow = {
 
 const SELECT = `
   id, slug, professional_name, business_name, description, city, state,
-  average_rating, reviews_count, response_time, starting_price, years_experience,
+  average_rating, reviews_count, response_time, starting_price, price_label, years_experience,
   is_featured, emergency, verification_status, avatar_media_id, cover_media_id,
   search_tags,
   whatsapp,
@@ -157,6 +158,7 @@ function mapRow(row: DbRow, urlMap?: Map<string, string>): Professional {
     responseTime: row.response_time ?? mock?.responseTime ?? "—",
     responseMinutes: mock?.responseMinutes ?? 60,
     priceFrom: Number(row.starting_price ?? mock?.priceFrom ?? 0),
+    priceLabel: row.price_label ?? null,
     experienceYears: row.years_experience ?? mock?.experienceYears ?? 0,
     description: row.description ?? mock?.description ?? "",
     services: (services.length ? services : mock?.services ?? []) as Professional["services"],

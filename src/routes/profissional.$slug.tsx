@@ -178,7 +178,7 @@ function ProfilePage() {
   const contactCard = (
     <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Serviços a partir de
+        {pro.priceLabel?.trim() || "Serviços a partir de"}
       </p>
       <p className="mt-1 font-display text-3xl font-extrabold text-foreground">
         {pro.priceFrom > 0 ? `R$ ${pro.priceFrom}` : "Sob consulta"}
