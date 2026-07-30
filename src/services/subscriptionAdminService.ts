@@ -162,9 +162,9 @@ export async function activateSubscription(input: {
   const { data, error } = await supabase.rpc("admin_activate_subscription", {
     _subscription_id: input.id,
     _activation_at: input.activationAt ?? new Date().toISOString(),
-    _expires_at: input.expiresAt ?? null,
+    _expires_at: input.expiresAt ?? undefined,
     _publish_profile: input.publishProfile ?? true,
-    _note: input.note ?? null,
+    _note: input.note ?? undefined,
   });
   if (error) throw error;
   return data;
@@ -172,7 +172,7 @@ export async function activateSubscription(input: {
 
 export async function setSubscriptionStatus(id: string, status: "active" | "pending" | "suspended" | "cancelled" | "expired", note?: string) {
   const { error } = await supabase.rpc("admin_set_subscription_status", {
-    _subscription_id: id, _status: status, _note: note ?? null,
+    _subscription_id: id, _status: status, _note: note ?? undefined,
   });
   if (error) throw error;
 }
@@ -190,13 +190,13 @@ export async function renewSubscription(input: {
 }) {
   const { error } = await supabase.rpc("admin_renew_subscription", {
     _subscription_id: input.id,
-    _plan_id: input.planId ?? null,
-    _start_date: input.startDate ?? null,
-    _expires_at: input.expiresAt ?? null,
-    _amount: input.amount ?? null,
-    _payment_method: input.paymentMethod ?? null,
-    _payment_status: input.paymentStatus ?? null,
-    _note: input.note ?? null,
+    _plan_id: input.planId ?? undefined,
+    _start_date: input.startDate ?? undefined,
+    _expires_at: input.expiresAt ?? undefined,
+    _amount: input.amount ?? undefined,
+    _payment_method: input.paymentMethod ?? undefined,
+    _payment_status: input.paymentStatus ?? undefined,
+    _note: input.note ?? undefined,
     _reactivate: input.reactivate ?? true,
   });
   if (error) throw error;
@@ -206,12 +206,13 @@ export async function updateSubscriptionFields(id: string, patch: {
   expires_at?: string | null;
   amount?: number | null;
   payment_method?: string | null;
-  payment_status?: string | null;
+  payment_status?: string;
   auto_renew?: boolean;
   notes?: string | null;
   plan_id?: string;
 }) {
   const { error } = await supabase.from("subscriptions").update(patch).eq("id", id);
+
   if (error) throw error;
 }
 
