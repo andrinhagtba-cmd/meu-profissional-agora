@@ -64,19 +64,69 @@ export async function getExistingSubscription() {
   return registration.pushManager.getSubscription();
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return Promise.race([
+    promise,
+    new Promise<null>((resolve) => window.setTimeout(() => resolve(null), ms)),
+  ]);
+}
+
+/**
+ * Garante um service worker ativo para receber push.
+ * `navigator.serviceWorker.ready` nunca resolve quando não há registro,
+ * o que travava o botão em "Ativando…" — por isso registramos sob demanda
+ * e usamos timeout em todas as esperas.
+ */
+export async function ensurePushRegistration(): Promise<ServiceWorkerRegistration> {
+  let registration = await navigator.serviceWorker.getRegistration();
+
+  if (!registration) {
+    try {
+      registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    } catch {
+      throw new Error(
+        "Não foi possível registrar o serviço de notificações. Abra o app publicado (não a prévia) e tente novamente.",
+      );
+    }
+  }
+
+  if (!registration.active) {
+    const ready = await withTimeout(navigator.serviceWorker.ready, 12_000);
+    if (ready) registration = ready;
+  }
+
+  if (!registration?.pushManager) {
+    throw new Error("O serviço de notificações não ficou disponível. Recarregue a página e tente de novo.");
+  }
+
+  return registration;
+}
+
 export async function subscribeCurrentDevice(userId: string) {
   if (!isPushSupported()) throw new Error("Este navegador não suporta notificações push.");
 
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") throw new Error("Permissão de notificações negada.");
+  const permission = await withTimeout(Notification.requestPermission(), 60_000);
+  if (permission !== "granted") {
+    throw new Error(
+      permission === null
+        ? "Tempo esgotado aguardando a permissão do navegador."
+        : "Permissão de notificações negada.",
+    );
+  }
 
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await ensurePushRegistration();
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-    });
+    subscription = await withTimeout(
+      registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      }),
+      20_000,
+    );
+  }
+  if (!subscription) {
+    throw new Error("O navegador não concluiu a inscrição de push. Tente novamente em alguns segundos.");
   }
 
   const device = describeDevice();

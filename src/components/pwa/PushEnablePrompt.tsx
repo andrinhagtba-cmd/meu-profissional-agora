@@ -13,7 +13,7 @@ const DISMISS_DAYS = 7;
 /** Convite para ativar notificações, exibido ao abrir o app instalado (PWA). */
 export function PushEnablePrompt() {
   const { user } = useAuth();
-  const { supported, permission, subscribedHere, loading, working, enable } = usePushNotifications();
+  const { supported, permission, subscribedHere, loading, working, error, enable } = usePushNotifications();
   const [standalone, setStandalone] = useState(false);
   const [dismissed, setDismissed] = useState(true);
   const [visible, setVisible] = useState(false);
@@ -59,7 +59,7 @@ export function PushEnablePrompt() {
       window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
       setVisible(false);
     } else {
-      toast.error("Não foi possível ativar. Verifique as permissões do navegador.");
+      toast.error(error ?? "Não foi possível ativar. Verifique as permissões do navegador.");
     }
   };
 
