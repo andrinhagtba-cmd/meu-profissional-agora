@@ -159,10 +159,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrandDocumentSync />
-      <SystemNotificationBridge />
-      <Outlet />
-      <Toaster position="top-center" richColors />
+      <PwaProvider>
+        <BrandDocumentSync />
+        <SystemNotificationBridge />
+        <OfflineBanner />
+        <Outlet />
+        <PwaUpdatePrompt />
+        <PwaInstallPrompt />
+        <Toaster position="top-center" richColors />
+      </PwaProvider>
     </QueryClientProvider>
   );
 }
