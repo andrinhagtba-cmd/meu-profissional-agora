@@ -2107,38 +2107,218 @@ export type Database = {
         }
         Relationships: []
       }
-      subscriptions: {
+      subscription_events: {
         Row: {
+          actor_user_id: string | null
           created_at: string
-          expires_at: string | null
-          external_reference: string | null
+          event_type: string
+          from_status: string | null
           id: string
-          plan_id: string
-          professional_id: string
-          started_at: string | null
-          status: Database["public"]["Enums"]["subscription_status"]
+          metadata: Json
+          note: string | null
+          professional_id: string | null
+          subscription_id: string
+          to_status: string | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          note?: string | null
+          professional_id?: string | null
+          subscription_id: string
+          to_status?: string | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          event_type?: string
+          from_status?: string | null
+          id?: string
+          metadata?: Json
+          note?: string | null
+          professional_id?: string | null
+          subscription_id?: string
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_events_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_events_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_notifications: {
+        Row: {
+          channel: string
+          created_at: string
+          error: string | null
+          expires_at_snapshot: string | null
+          id: string
+          message: string | null
+          offset_days: number
+          professional_id: string | null
+          recipient: string | null
+          status: string
+          subscription_id: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          error?: string | null
+          expires_at_snapshot?: string | null
+          id?: string
+          message?: string | null
+          offset_days: number
+          professional_id?: string | null
+          recipient?: string | null
+          status?: string
+          subscription_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          error?: string | null
+          expires_at_snapshot?: string | null
+          id?: string
+          message?: string | null
+          offset_days?: number
+          professional_id?: string | null
+          recipient?: string | null
+          status?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_notifications_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_notifications_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_settings: {
+        Row: {
+          alert_offsets: number[]
+          created_at: string
+          expiry_behavior: string
+          grace_days: number
+          id: string
+          notify_admins: boolean
+          notify_clients: boolean
+          singleton: boolean
           updated_at: string
         }
         Insert: {
+          alert_offsets?: number[]
           created_at?: string
-          expires_at?: string | null
-          external_reference?: string | null
+          expiry_behavior?: string
+          grace_days?: number
           id?: string
-          plan_id: string
-          professional_id: string
-          started_at?: string | null
-          status?: Database["public"]["Enums"]["subscription_status"]
+          notify_admins?: boolean
+          notify_clients?: boolean
+          singleton?: boolean
           updated_at?: string
         }
         Update: {
+          alert_offsets?: number[]
+          created_at?: string
+          expiry_behavior?: string
+          grace_days?: number
+          id?: string
+          notify_admins?: boolean
+          notify_clients?: boolean
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          activated_at: string | null
+          activated_by: string | null
+          amount: number | null
+          auto_renew: boolean
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          external_reference: string | null
+          grace_period_end: string | null
+          id: string
+          notes: string | null
+          payment_method: string | null
+          payment_status: string
+          plan_id: string
+          professional_id: string
+          renewed_at: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          suspended_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          activated_by?: string | null
+          amount?: number | null
+          auto_renew?: boolean
+          cancelled_at?: string | null
           created_at?: string
           expires_at?: string | null
           external_reference?: string | null
+          grace_period_end?: string | null
           id?: string
-          plan_id?: string
-          professional_id?: string
+          notes?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          plan_id: string
+          professional_id: string
+          renewed_at?: string | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          suspended_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          activated_by?: string | null
+          amount?: number | null
+          auto_renew?: boolean
+          cancelled_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          external_reference?: string | null
+          grace_period_end?: string | null
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          plan_id?: string
+          professional_id?: string
+          renewed_at?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          suspended_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2342,9 +2522,118 @@ export type Database = {
     }
     Functions: {
       accept_proposal: { Args: { _proposal_id: string }; Returns: undefined }
+      admin_activate_subscription: {
+        Args: {
+          _activation_at?: string
+          _expires_at?: string
+          _note?: string
+          _publish_profile?: boolean
+          _subscription_id: string
+        }
+        Returns: {
+          activated_at: string | null
+          activated_by: string | null
+          amount: number | null
+          auto_renew: boolean
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          external_reference: string | null
+          grace_period_end: string | null
+          id: string
+          notes: string | null
+          payment_method: string | null
+          payment_status: string
+          plan_id: string
+          professional_id: string
+          renewed_at: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          suspended_at: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_renew_subscription: {
+        Args: {
+          _amount?: number
+          _expires_at?: string
+          _note?: string
+          _payment_method?: string
+          _payment_status?: string
+          _plan_id?: string
+          _reactivate?: boolean
+          _start_date?: string
+          _subscription_id: string
+        }
+        Returns: {
+          activated_at: string | null
+          activated_by: string | null
+          amount: number | null
+          auto_renew: boolean
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          external_reference: string | null
+          grace_period_end: string | null
+          id: string
+          notes: string | null
+          payment_method: string | null
+          payment_status: string
+          plan_id: string
+          professional_id: string
+          renewed_at: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          suspended_at: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       admin_set_initial_view_count: {
         Args: { p_professional_id: string; p_reason?: string; p_value: number }
         Returns: number
+      }
+      admin_set_subscription_status: {
+        Args: { _note?: string; _status: string; _subscription_id: string }
+        Returns: {
+          activated_at: string | null
+          activated_by: string | null
+          amount: number | null
+          auto_renew: boolean
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          external_reference: string | null
+          grace_period_end: string | null
+          id: string
+          notes: string | null
+          payment_method: string | null
+          payment_status: string
+          plan_id: string
+          professional_id: string
+          renewed_at: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          suspended_at: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       count_pro_unread_direct_quotes: { Args: never; Returns: number }
       get_or_create_conversation: {
@@ -2441,6 +2730,11 @@ export type Database = {
         Args: { _id: string; _notes?: string; _status: string }
         Returns: undefined
       }
+      plan_expiry_from: {
+        Args: { _billing_period: string; _start: string }
+        Returns: string
+      }
+      process_subscription_lifecycle: { Args: never; Returns: Json }
       professional_slug_available: {
         Args: { _profile_id?: string; _slug: string }
         Returns: boolean
@@ -2520,7 +2814,12 @@ export type Database = {
       report_status: "open" | "reviewing" | "resolved" | "dismissed"
       review_status: "pending" | "approved" | "rejected" | "flagged"
       service_type: "residencial" | "empresarial" | "online"
-      subscription_status: "active" | "cancelled" | "expired" | "pending"
+      subscription_status:
+        | "active"
+        | "cancelled"
+        | "expired"
+        | "pending"
+        | "suspended"
       urgency_level: "hoje" | "esta-semana" | "data" | "sem-urgencia"
       verification_status: "pending" | "approved" | "rejected"
     }
@@ -2689,7 +2988,13 @@ export const Constants = {
       report_status: ["open", "reviewing", "resolved", "dismissed"],
       review_status: ["pending", "approved", "rejected", "flagged"],
       service_type: ["residencial", "empresarial", "online"],
-      subscription_status: ["active", "cancelled", "expired", "pending"],
+      subscription_status: [
+        "active",
+        "cancelled",
+        "expired",
+        "pending",
+        "suspended",
+      ],
       urgency_level: ["hoje", "esta-semana", "data", "sem-urgencia"],
       verification_status: ["pending", "approved", "rejected"],
     },
