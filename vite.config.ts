@@ -17,7 +17,17 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  ...(preset ? { nitro: { preset } } : {}),
+  nitro: {
+    ...(preset ? { preset } : {}),
+    routeRules: {
+      "/sw.js": {
+        headers: {
+          "cache-control": "no-cache, no-store, must-revalidate",
+          "service-worker-allowed": "/",
+        },
+      },
+    },
+  },
   vite: {
     plugins: [
       VitePWA({
@@ -35,6 +45,7 @@ export default defineConfig({
         // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
         outDir: ".output/public",
         injectManifest: {
+          rollupFormat: "iife",
           globDirectory: ".output/public",
           globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
