@@ -3,13 +3,21 @@ import { Bell, Home, MessageSquare, ClipboardList, UserRound } from "lucide-reac
 import { useAuth } from "@/hooks/use-auth";
 import { useNotificationCenter } from "@/hooks/use-notification-center";
 
-const items = [
+type TabItem = {
+  to: string;
+  label: string;
+  icon: typeof Home;
+  exact?: boolean;
+  badge?: boolean;
+};
+
+const items: TabItem[] = [
   { to: "/painel", label: "Painel", icon: Home, exact: true },
   { to: "/painel/pedidos", label: "Pedidos", icon: ClipboardList },
   { to: "/painel/mensagens", label: "Chat", icon: MessageSquare },
   { to: "/painel/notificacoes", label: "Alertas", icon: Bell, badge: true },
   { to: "/painel/perfil", label: "Perfil", icon: UserRound },
-] as const;
+];
 
 /** Barra de navegação inferior estilo app nativo (somente mobile e usuário logado). */
 export function MobileTabBar() {
@@ -29,7 +37,7 @@ export function MobileTabBar() {
         {items.map((item) => {
           const Icon = item.icon;
           const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-          const showBadge = "badge" in item && item.badge && unreadCount > 0;
+          const showBadge = item.badge && unreadCount > 0;
           return (
             <li key={item.to}>
               <Link
