@@ -59,7 +59,7 @@ export function PushEnablePrompt() {
       window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
       setVisible(false);
     } else {
-      toast.error("Não foi possível ativar. Verifique as permissões do navegador.");
+      toast.error(error ?? "Não foi possível ativar. Verifique as permissões do navegador.");
     }
   };
 
