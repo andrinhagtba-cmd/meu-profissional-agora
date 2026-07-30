@@ -173,6 +173,8 @@ export type NotificationPreferences = {
   push_subscription: boolean;
   push_moderation: boolean;
   push_system: boolean;
+  quiet_hours_start: number | null;
+  quiet_hours_end: number | null;
 };
 
 export async function getPreferences(userId: string): Promise<NotificationPreferences> {
@@ -194,6 +196,8 @@ export async function getPreferences(userId: string): Promise<NotificationPrefer
       push_subscription: true,
       push_moderation: true,
       push_system: true,
+      quiet_hours_start: null,
+      quiet_hours_end: null,
     }
   );
 }

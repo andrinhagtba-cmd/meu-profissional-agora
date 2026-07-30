@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BellRing, Laptop, Loader2, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
+import { BellRing, Laptop, Loader2, Moon, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -49,6 +49,18 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
     } catch (e) {
       toast.error((e as Error).message);
       setPrefs(prefs);
+    }
+  };
+
+  const saveQuiet = async (patch: Partial<NotificationPreferences>) => {
+    if (!user?.id || !prefs) return;
+    const previous = prefs;
+    setPrefs({ ...prefs, ...patch } as NotificationPreferences);
+    try {
+      await savePreferences(user.id, patch);
+    } catch (e) {
+      toast.error((e as Error).message);
+      setPrefs(previous);
     }
   };
 
@@ -183,6 +195,44 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
               </div>
             ))}
           </div>
+
+          <div className="mt-4 rounded-2xl border border-border/60 bg-background p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label htmlFor="quiet_hours" className="flex items-center gap-2 text-sm font-semibold">
+                  <Moon size={14} className="text-primary" /> Horário silencioso
+                </Label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Nesse período só avisos urgentes chegam no celular (horário de Brasília).
+                </p>
+              </div>
+              <Switch
+                id="quiet_hours"
+                checked={prefs.quiet_hours_start !== null && prefs.quiet_hours_end !== null}
+                onCheckedChange={(v) =>
+                  saveQuiet(
+                    v
+                      ? { quiet_hours_start: 22, quiet_hours_end: 7 }
+                      : { quiet_hours_start: null, quiet_hours_end: null },
+                  )
+                }
+              />
+            </div>
+            {prefs.quiet_hours_start !== null && prefs.quiet_hours_end !== null && (
+              <div className="mt-3 flex flex-wrap items-end gap-3">
+                <HourSelect
+                  label="Início"
+                  value={prefs.quiet_hours_start}
+                  onChange={(h) => saveQuiet({ quiet_hours_start: h })}
+                />
+                <HourSelect
+                  label="Fim"
+                  value={prefs.quiet_hours_end}
+                  onChange={(h) => saveQuiet({ quiet_hours_end: h })}
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </section>
@@ -195,5 +245,32 @@ function Alert({ children }: { children: React.ReactNode }) {
       <TriangleAlert size={14} className="mt-0.5 shrink-0 text-orange" />
       <span>{children}</span>
     </p>
+  );
+}
+
+function HourSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (hour: number) => void;
+}) {
+  return (
+    <label className="flex flex-col gap-1 text-xs font-semibold text-muted-foreground">
+      {label}
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground"
+      >
+        {Array.from({ length: 24 }, (_, h) => (
+          <option key={h} value={h}>
+            {String(h).padStart(2, "0")}:00
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
