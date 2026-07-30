@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
-import { publicAddressLabel } from "@/lib/proAddress";
+import { professionalPublicLocationLabel } from "@/lib/proAddress";
 import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
@@ -74,21 +74,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
           )}
         </div>
         {(() => {
-          const a = pro.address;
-          const label = a?.locationLabel?.trim()
-            ? a.locationLabel.trim()
-            : a
-            ? publicAddressLabel({
-                visibility: a.visibility,
-                city: a.city,
-                state: a.state,
-                neighborhood: a.neighborhood,
-                street: a.street,
-                address_number: a.number,
-                postal_code: a.postalCode,
-                formatted_address: a.formatted,
-              })
-            : [pro.city, pro.state].filter(Boolean).join(", ");
+          const label = professionalPublicLocationLabel(pro);
           if (!label) return null;
           return (
             <p className="flex items-center gap-1.5">
