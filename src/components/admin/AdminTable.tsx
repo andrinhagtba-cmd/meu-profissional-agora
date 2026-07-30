@@ -151,9 +151,10 @@ export function AdminTable<T>({ columns, rows, isLoading, emptyText = "Nada aqui
               })
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
