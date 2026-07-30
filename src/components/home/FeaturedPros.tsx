@@ -147,12 +147,12 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float">
       {/* Cover */}
-      <div className="relative h-28 overflow-hidden">
+      <ZoomableImageArea src={pro.coverUrl} alt={pro.name} className="relative h-28 overflow-hidden">
         <div
           className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
           style={pro.coverUrl ? { backgroundImage: `url(${pro.coverUrl})` } : undefined}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
 
         {/* Top row: rank + favorite */}
         <div className="absolute inset-x-3 top-3 z-10 flex items-start justify-between">
@@ -161,19 +161,22 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           </span>
           <FavoriteButton slug={pro.slug} name={pro.name} />
         </div>
-      </div>
+      </ZoomableImageArea>
 
       {/* Body */}
       <div className="relative flex flex-1 flex-col px-5 pb-5 pt-0">
         <div className="-mt-9 flex items-end justify-between gap-3">
-          <ProAvatar
-            initials={pro.initials}
-            color={pro.avatarColor}
-            imageUrl={pro.avatarUrl ?? undefined}
-            alt={pro.name}
-            size="lg"
-            className="border-4 border-card shadow-card"
-          />
+          <ZoomableThumb src={pro.avatarUrl} alt={pro.name}>
+            <ProAvatar
+              initials={pro.initials}
+              color={pro.avatarColor}
+              imageUrl={pro.avatarUrl ?? undefined}
+              alt={pro.name}
+              size="lg"
+              className="border-4 border-card shadow-card"
+            />
+          </ZoomableThumb>
+
           <div className="mb-1 flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs font-bold text-foreground">
             <Star size={13} className="fill-orange text-orange" aria-hidden="true" />
             {pro.rating.toFixed(1)}
