@@ -343,18 +343,21 @@ function AdminOverview() {
             <ul className="mt-4 space-y-3">
               {(topCats.data ?? []).map((c) => (
                 <li key={c.category_id}>
-                  <div className="mb-1 flex items-center justify-between text-xs">
+                  <div className="mb-1 flex items-center justify-between gap-2 text-xs">
                     <span className="truncate font-medium text-foreground">{c.name}</span>
-                    <span className="text-muted-foreground">{c.quotes}</span>
+                    <span className="shrink-0 text-muted-foreground">
+                      {c.pros} prof. · {c.quotes} ped.
+                    </span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
                     <div
                       className="h-full rounded-full bg-primary"
-                      style={{ width: `${(c.quotes / maxCat) * 100}%` }}
+                      style={{ width: `${(c.pros / maxCat) * 100}%` }}
                     />
                   </div>
                 </li>
               ))}
+
             </ul>
           )}
         </div>
