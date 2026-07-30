@@ -171,6 +171,7 @@ function RootComponent() {
         <Outlet />
         <PwaUpdatePrompt />
         <PwaInstallPrompt />
+        <PushEnablePrompt />
         <Toaster position="top-center" richColors />
       </PwaProvider>
     </QueryClientProvider>
