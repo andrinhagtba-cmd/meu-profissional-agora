@@ -642,7 +642,7 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
       {/* Preview */}
       <aside className="space-y-3">
-        <Card className="sticky top-24 overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+        <Card className="overflow-hidden rounded-[1.7rem] border-border/70 shadow-card xl:sticky xl:top-24">
           <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
             <div className="flex items-center gap-1.5">
               <Eye size={14} className="text-muted-foreground" />

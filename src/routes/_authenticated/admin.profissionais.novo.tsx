@@ -199,7 +199,7 @@ function AdminProNew() {
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full min-w-0 max-w-4xl overflow-x-clip">
       <AdminPageHeader
         title="Novo profissional"
         description="Cadastro assistido para curadoria administrativa. O usuário poderá ser vinculado depois."
@@ -210,13 +210,13 @@ function AdminProNew() {
         }
       />
 
-      <div className="mb-6 rounded-2xl border bg-card p-4">
+      <div className="mb-6 min-w-0 rounded-2xl border bg-card p-4">
         <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
           <span>Etapa {step + 1} de {STEPS.length}</span>
           <span className="font-medium">{STEPS[step].title}</span>
         </div>
         <Progress value={((step + 1) / STEPS.length) * 100} className="h-1.5" />
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
           {STEPS.map((s, i) => (
             <button
               key={s.title}
@@ -238,7 +238,7 @@ function AdminProNew() {
         </div>
       </div>
 
-      <div className="rounded-2xl border bg-card p-6">
+      <div className="min-w-0 rounded-2xl border bg-card p-4 sm:p-6">
         {step === 0 && (
           <div className="space-y-6">
             <div className="grid gap-5 sm:grid-cols-2">

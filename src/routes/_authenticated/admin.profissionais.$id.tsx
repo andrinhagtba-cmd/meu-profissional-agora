@@ -406,7 +406,7 @@ function AdminProDetailPage() {
         </Tabs>
 
         <aside className="space-y-5">
-          <Card className="sticky top-24 overflow-hidden rounded-[1.7rem] shadow-card">
+          <Card className="overflow-hidden rounded-[1.7rem] shadow-card xl:sticky xl:top-24">
             <CardHeader className="border-b bg-background/70 pb-4">
               <CardTitle className="flex items-center gap-2 font-display text-lg font-extrabold tracking-normal"><ShieldCheck size={18} className="text-primary" /> Comando rápido</CardTitle>
             </CardHeader>
