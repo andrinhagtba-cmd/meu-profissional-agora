@@ -128,11 +128,12 @@ export function professionalPublicLocationLabel(pro: ProfessionalLocationInput):
     formatted_address: a.formatted,
   };
 
+  const cityState = [pro.city, pro.state].filter(Boolean).join(", ");
   return (
     fullAddressLine({ ...input, visibility: "full_address" }) ??
     input.formatted_address ??
     publicAddressLabel(input) ??
-    [pro.city, pro.state].filter(Boolean).join(", ") ||
+    cityState ||
     null
   );
 }
