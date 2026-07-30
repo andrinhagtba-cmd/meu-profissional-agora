@@ -124,7 +124,11 @@ function Painel() {
   return (
     <SiteLayout>
       <div className="container-page py-8 lg:py-12">
+        {isProfissional && data?.pro?.id && (
+          <MySubscriptionBanner professionalId={data.pro.id} />
+        )}
         {/* HERO PREMIUM */}
+
         <section className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary via-primary to-[#0a4bd8] p-8 text-primary-foreground shadow-card lg:p-10">
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
           <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-orange/30 blur-3xl" aria-hidden="true" />
