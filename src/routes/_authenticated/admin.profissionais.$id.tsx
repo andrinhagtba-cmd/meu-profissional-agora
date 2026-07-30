@@ -284,15 +284,16 @@ function AdminProDetailPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1 lg:pt-3">
+            <div className="flex w-full flex-wrap gap-2 pt-1 lg:w-auto lg:pt-3">
               {publicPath && (
-                <Button variant="outline" className="rounded-full bg-card" onClick={copyPublicLink}>
+                <Button variant="outline" className="flex-1 rounded-full bg-card lg:flex-none" onClick={copyPublicLink}>
                   <Copy size={15} /> Copiar link
                 </Button>
               )}
-              <Button className="rounded-full shadow-float" onClick={() => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: "profile" }), resetScroll: false })}>
+              <Button className="flex-1 rounded-full shadow-float lg:flex-none" onClick={() => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: "profile" }), resetScroll: false })}>
                 <Pencil size={15} /> Editar perfil
               </Button>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="rounded-full bg-card"><MoreHorizontal size={16} /></Button>
