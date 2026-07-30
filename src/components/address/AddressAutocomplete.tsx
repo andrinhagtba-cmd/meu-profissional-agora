@@ -203,7 +203,7 @@ export function AddressAutocomplete({ initialQuery = "", onSelect, placeholder }
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => pick(it.placeId)}
+                onClick={() => pick(it)}
                 className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm hover:bg-muted"
               >
                 <span className="font-medium text-foreground">{it.primary}</span>
