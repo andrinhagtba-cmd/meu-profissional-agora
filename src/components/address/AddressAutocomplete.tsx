@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Loader2, MapPin } from "lucide-react";
 import { loadGoogleMaps, hasGoogleMapsKey } from "@/lib/googleMapsLoader";
+import { searchAddressesFn } from "@/lib/geocode.functions";
+
 
 export interface ResolvedAddress {
   formatted_address: string | null;
