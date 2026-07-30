@@ -2013,43 +2013,17 @@ export async function broadcastNotification(input: {
   link?: string;
   type?: string;
 }): Promise<{ inserted: number }> {
-  let userIds: string[] = [];
-  if (input.audience === "all") {
-    const { data, error } = await supabase.from("profiles").select("user_id").limit(5000);
-    if (error) throw error;
-    userIds = (data ?? []).map((r: { user_id: string }) => r.user_id);
-  } else {
-    const roleMap: Record<Exclude<BroadcastAudience, "all">, string> = {
-      clientes: "cliente",
-      profissionais: "profissional",
-      admins: "admin",
-    };
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("user_id")
-      .eq("role", roleMap[input.audience] as never)
-      .limit(5000);
-    if (error) throw error;
-    userIds = (data ?? []).map((r: { user_id: string }) => r.user_id);
-  }
-  if (!userIds.length) return { inserted: 0 };
-  const rows = userIds.map((uid) => ({
-    user_id: uid,
-    title: input.title,
-    message: input.message,
-    link: input.link ?? null,
-    type: (input.type ?? "system") as never,
-  }));
-  // Insert in chunks of 500 to avoid payload limits
-  let inserted = 0;
-  for (let i = 0; i < rows.length; i += 500) {
-    const chunk = rows.slice(i, i + 500);
-    const { error } = await supabase.from("notifications").insert(chunk as never);
-    if (error) throw error;
-    inserted += chunk.length;
-  }
-  return { inserted };
+  const { data, error } = await supabase.rpc("admin_broadcast_notification" as never, {
+    _audience: input.audience,
+    _title: input.title,
+    _message: input.message,
+    _link: input.link ?? null,
+    _type: input.type ?? "system",
+  } as never);
+  if (error) throw error;
+  return { inserted: Number(data ?? 0) };
 }
+
 
 export async function deleteNotification(id: string) {
   const { error } = await supabase.from("notifications").delete().eq("id", id);
