@@ -1409,6 +1409,7 @@ export type Database = {
           onboarding_completed_at: string | null
           onboarding_step: number
           postal_code: string | null
+          price_label: string | null
           professional_name: string | null
           profile_status: Database["public"]["Enums"]["profile_status"]
           public_address_visibility: Database["public"]["Enums"]["address_visibility"]
@@ -1464,6 +1465,7 @@ export type Database = {
           onboarding_completed_at?: string | null
           onboarding_step?: number
           postal_code?: string | null
+          price_label?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
           public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
@@ -1519,6 +1521,7 @@ export type Database = {
           onboarding_completed_at?: string | null
           onboarding_step?: number
           postal_code?: string | null
+          price_label?: string | null
           professional_name?: string | null
           profile_status?: Database["public"]["Enums"]["profile_status"]
           public_address_visibility?: Database["public"]["Enums"]["address_visibility"]
