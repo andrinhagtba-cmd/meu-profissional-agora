@@ -4,10 +4,14 @@
 export interface DfRegion {
   slug: string;
   name: string;
+  /** RA oficial (DF) ou UF do município (Entorno) */
   raNumber: string;
   /** termos alternativos de busca (bairros/quadras conhecidas), ignoram acento/caixa */
   aliases: string[];
+  /** grupo de exibição */
+  group?: "DF" | "Entorno";
 }
+
 
 export const DF_REGIONS: DfRegion[] = [
   { slug: "agua-quente", name: "Água Quente", raNumber: "RA XXXII", aliases: [] },
