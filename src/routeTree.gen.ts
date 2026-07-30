@@ -32,6 +32,7 @@ import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
 import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
@@ -207,6 +208,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPainelTrabalhosRoute =
   AuthenticatedPainelTrabalhosRouteImport.update({
@@ -637,6 +643,7 @@ export interface FileRoutesByFullPath {
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -715,6 +722,7 @@ export interface FileRoutesByTo {
   '/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -801,6 +809,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/propostas': typeof AuthenticatedPainelPropostasRoute
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/_authenticated/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -887,6 +896,7 @@ export interface FileRouteTypes {
     | '/painel/propostas'
     | '/painel/servicos'
     | '/painel/trabalhos'
+    | '/api/public/manifest'
     | '/admin/'
     | '/painel/'
     | '/admin/profissionais/$id'
@@ -965,6 +975,7 @@ export interface FileRouteTypes {
     | '/painel/propostas'
     | '/painel/servicos'
     | '/painel/trabalhos'
+    | '/api/public/manifest'
     | '/admin'
     | '/painel'
     | '/admin/profissionais/$id'
@@ -1050,6 +1061,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/propostas'
     | '/_authenticated/painel/servicos'
     | '/_authenticated/painel/trabalhos'
+    | '/api/public/manifest'
     | '/_authenticated/admin/'
     | '/_authenticated/painel/'
     | '/_authenticated/admin/profissionais/$id'
@@ -1082,6 +1094,7 @@ export interface RootRouteChildren {
   CadastroProfissionalRoute: typeof CadastroProfissionalRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProfissionalSlugRoute: typeof ProfissionalSlugRoute
+  ApiPublicManifestRoute: typeof ApiPublicManifestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1246,6 +1259,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/painel/trabalhos': {
       id: '/_authenticated/painel/trabalhos'
@@ -1904,6 +1924,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroProfissionalRoute: CadastroProfissionalRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProfissionalSlugRoute: ProfissionalSlugRoute,
+  ApiPublicManifestRoute: ApiPublicManifestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

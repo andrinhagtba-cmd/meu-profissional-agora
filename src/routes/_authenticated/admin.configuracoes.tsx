@@ -119,7 +119,10 @@ function Page() {
             <PrefsTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
           </TabsContent>
           <TabsContent value="app">
-            <PwaDiagnosticPanel />
+            <div className="space-y-5">
+              <AppTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
+              <PwaDiagnosticPanel />
+            </div>
           </TabsContent>
           <TabsContent value="me">
             <MyProfileTab />
@@ -128,6 +131,133 @@ function Page() {
 
       )}
     </>
+  );
+}
+
+// ------------------------- APLICATIVO (PWA) -------------------------
+
+function AppTab({
+  settings,
+  save,
+  saving,
+}: {
+  settings: Awaited<ReturnType<typeof getSettings>>;
+  save: (patch: UpdateSettingsInput) => void;
+  saving: boolean;
+}) {
+  const [name, setName] = useState(settings.pwa_name ?? settings.brand_name ?? "");
+  const [shortName, setShortName] = useState(settings.pwa_short_name ?? "");
+  const [description, setDescription] = useState(settings.pwa_description ?? settings.tagline ?? "");
+  const [theme, setTheme] = useState(settings.pwa_theme_color ?? settings.primary_color ?? "#0759F8");
+  const [background, setBackground] = useState(settings.pwa_background_color ?? "#F7F9FD");
+
+  const iconUrl = settings.pwa_icon_url ?? settings.favicon_url ?? settings.logo_light_url;
+
+  return (
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="space-y-5">
+        <Card title="Identidade do aplicativo" icon={<Smartphone size={16} />}>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Estes dados aparecem na instalação do app (tela inicial do celular, splash screen e loja de atalhos).
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Nome do aplicativo">
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Guia DF na Mídia" />
+            </Field>
+            <Field label="Nome curto (ícone)">
+              <Input
+                value={shortName}
+                onChange={(e) => setShortName(e.target.value)}
+                maxLength={12}
+                placeholder="Guia DF"
+              />
+            </Field>
+            <div className="sm:col-span-2">
+              <Field label="Descrição">
+                <Textarea
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="O que o usuário encontra no app"
+                />
+              </Field>
+            </div>
+            <Field label="Cor do tema (barra do sistema)">
+              <ColorField value={theme} onChange={setTheme} />
+            </Field>
+            <Field label="Cor de fundo (splash)">
+              <ColorField value={background} onChange={setBackground} />
+            </Field>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <Button
+              onClick={() =>
+                save({
+                  pwa_name: name || null,
+                  pwa_short_name: shortName || null,
+                  pwa_description: description || null,
+                  pwa_theme_color: theme || null,
+                  pwa_background_color: background || null,
+                })
+              }
+              disabled={saving}
+              className="rounded-xl bg-primary shadow-lg shadow-primary/25 hover:bg-primary/90"
+            >
+              <Save size={14} className="mr-1.5" /> Salvar aplicativo
+            </Button>
+          </div>
+        </Card>
+
+        <Card title="Ícone do aplicativo" icon={<ImageIcon size={16} />}>
+          <div className="grid gap-4 sm:grid-cols-[200px_minmax(0,1fr)]">
+            <LogoUploader
+              label="Ícone (PNG quadrado, 512x512)"
+              currentUrl={settings.pwa_icon_url}
+              onChange={(id) => save({ pwa_icon_media_id: id })}
+              onRemove={() => save({ pwa_icon_media_id: null })}
+              aspect="square"
+            />
+            <div className="text-xs leading-6 text-muted-foreground">
+              <p className="font-semibold text-foreground">Recomendações</p>
+              <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                <li>PNG quadrado de 512x512 px, fundo sólido.</li>
+                <li>Evite textos pequenos — o ícone é exibido reduzido.</li>
+                <li>Deixe margem de segurança nas bordas (recorte circular no Android).</li>
+                <li>Se nenhum ícone for enviado, usamos o favicon da marca.</li>
+              </ul>
+              <p className="mt-3">
+                Usuários que já instalaram o app podem precisar reinstalar para ver o novo ícone.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card title="Prévia na tela inicial" icon={<Sparkles size={16} />}>
+        <div className="rounded-2xl bg-gradient-to-br from-[oklch(0.97_0.02_258)] to-white p-6 ring-1 ring-[oklch(0.93_0.014_258)]">
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="grid h-20 w-20 place-items-center overflow-hidden rounded-[22px] shadow-lg ring-1 ring-black/5"
+              style={{ background: background }}
+            >
+              {iconUrl ? (
+                <img src={iconUrl} alt="Ícone do app" className="h-full w-full object-contain p-2" />
+              ) : (
+                <Smartphone size={28} style={{ color: theme }} />
+              )}
+            </div>
+            <span className="max-w-[110px] truncate text-center text-xs font-semibold text-foreground">
+              {shortName || name || settings.brand_name}
+            </span>
+          </div>
+          <div className="mt-5 rounded-xl p-3 text-white" style={{ background: `linear-gradient(135deg, ${theme}, ${settings.accent_color ?? "#FF642E"})` }}>
+            <p className="text-[11px] font-bold uppercase tracking-wide opacity-90">Convite de instalação</p>
+            <p className="mt-1 text-sm font-extrabold leading-tight">Instale o {name || settings.brand_name}</p>
+            <p className="mt-1 text-[11px] leading-4 opacity-85">{description || "Acesso rápido em tela cheia e alertas no seu dispositivo."}</p>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
 

@@ -1678,6 +1678,12 @@ export type Database = {
           logo_dark_media_id: string | null
           logo_light_media_id: string | null
           primary_color: string | null
+          pwa_background_color: string | null
+          pwa_description: string | null
+          pwa_icon_media_id: string | null
+          pwa_name: string | null
+          pwa_short_name: string | null
+          pwa_theme_color: string | null
           singleton: boolean
           social_facebook: string | null
           social_instagram: string | null
@@ -1704,6 +1710,12 @@ export type Database = {
           logo_dark_media_id?: string | null
           logo_light_media_id?: string | null
           primary_color?: string | null
+          pwa_background_color?: string | null
+          pwa_description?: string | null
+          pwa_icon_media_id?: string | null
+          pwa_name?: string | null
+          pwa_short_name?: string | null
+          pwa_theme_color?: string | null
           singleton?: boolean
           social_facebook?: string | null
           social_instagram?: string | null
@@ -1730,6 +1742,12 @@ export type Database = {
           logo_dark_media_id?: string | null
           logo_light_media_id?: string | null
           primary_color?: string | null
+          pwa_background_color?: string | null
+          pwa_description?: string | null
+          pwa_icon_media_id?: string | null
+          pwa_name?: string | null
+          pwa_short_name?: string | null
+          pwa_theme_color?: string | null
           singleton?: boolean
           social_facebook?: string | null
           social_instagram?: string | null
@@ -2553,6 +2571,12 @@ export type Database = {
           logo_dark_media_id: string | null
           logo_light_media_id: string | null
           primary_color: string | null
+          pwa_background_color: string | null
+          pwa_description: string | null
+          pwa_icon_media_id: string | null
+          pwa_name: string | null
+          pwa_short_name: string | null
+          pwa_theme_color: string | null
           singleton: boolean
           social_facebook: string | null
           social_instagram: string | null
@@ -2583,6 +2607,12 @@ export type Database = {
           logo_dark_media_id?: string | null
           logo_light_media_id?: string | null
           primary_color?: string | null
+          pwa_background_color?: string | null
+          pwa_description?: string | null
+          pwa_icon_media_id?: string | null
+          pwa_name?: string | null
+          pwa_short_name?: string | null
+          pwa_theme_color?: string | null
           singleton?: boolean
           social_facebook?: string | null
           social_instagram?: string | null
@@ -2613,6 +2643,12 @@ export type Database = {
           logo_dark_media_id?: string | null
           logo_light_media_id?: string | null
           primary_color?: string | null
+          pwa_background_color?: string | null
+          pwa_description?: string | null
+          pwa_icon_media_id?: string | null
+          pwa_name?: string | null
+          pwa_short_name?: string | null
+          pwa_theme_color?: string | null
           singleton?: boolean
           social_facebook?: string | null
           social_instagram?: string | null
