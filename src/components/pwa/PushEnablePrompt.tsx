@@ -31,7 +31,8 @@ export function PushEnablePrompt() {
     !dismissed &&
     !loading &&
     supported &&
-    permission === "default" &&
+    permission !== "denied" &&
+    permission !== "unsupported" &&
     !subscribedHere &&
     Boolean(user?.id);
 
@@ -100,7 +101,7 @@ export function PushEnablePrompt() {
               disabled={working}
               className="h-11 flex-1 rounded-xl bg-white font-semibold text-primary hover:bg-white/90"
             >
-              {working ? "Ativando…" : "Ativar agora"}
+              {working ? "Ativando…" : permission === "granted" ? "Concluir ativação" : "Ativar agora"}
             </Button>
             <Button
               variant="ghost"
