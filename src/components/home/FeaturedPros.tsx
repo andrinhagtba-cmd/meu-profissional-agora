@@ -9,6 +9,7 @@ import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { getFeaturedProfessionals } from "@/services/mockApi";
 import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
+import { ZoomableImageArea, ZoomableThumb } from "@/components/shared/ImageLightbox";
 import type { Professional } from "@/types";
 
 const VISIBLE = 4;
