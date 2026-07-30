@@ -2793,6 +2793,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      admin_broadcast_notification: {
+        Args: {
+          _audience: string
+          _link?: string
+          _message: string
+          _title: string
+          _type?: string
+        }
+        Returns: number
+      }
       admin_renew_subscription: {
         Args: {
           _amount?: number
