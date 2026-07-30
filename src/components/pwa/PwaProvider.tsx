@@ -7,7 +7,7 @@ import {
   registerAppServiceWorker,
 } from "@/lib/pwa/serviceWorker";
 
-export const PWA_VERSION = __PWA_VERSION__;
+export const PWA_VERSION = (import.meta.env.VITE_PWA_VERSION as string | undefined) ?? "1.0.0";
 
 type PwaContextValue = {
   supported: boolean;
