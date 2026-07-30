@@ -25,13 +25,15 @@ export function DfRegionCombobox({
   value,
   onChange,
   id,
-  placeholder = "Selecione sua região no DF",
+  placeholder = "Selecione sua região (DF e Entorno)",
   ariaInvalid,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const results = searchDfRegions(query);
-  const selected = DF_REGIONS.find((r) => r.name === value);
+  const dfResults = results.filter((r) => r.group !== "Entorno");
+  const entornoResults = results.filter((r) => r.group === "Entorno");
+  const selected = ALL_REGIONS.find((r) => r.name === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
