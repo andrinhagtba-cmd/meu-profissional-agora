@@ -24,6 +24,16 @@ function isAppWorkerUrl(scriptUrl: string | undefined) {
   }
 }
 
+function isStableAppWorkerUrl(scriptUrl: string | undefined) {
+  if (!scriptUrl || typeof window === "undefined") return false;
+  try {
+    const url = new URL(scriptUrl, window.location.origin);
+    return url.pathname === SW_PATH && url.search === "";
+  } catch {
+    return scriptUrl === SW_PATH;
+  }
+}
+
 export function isPreviewContext(): boolean {
   if (typeof window === "undefined") return true;
   const host = window.location.hostname;
@@ -121,6 +131,11 @@ export async function ensureAppServiceWorker(): Promise<ServiceWorkerRegistratio
     registrationPromise = (async () => {
       const registrations = await navigator.serviceWorker.getRegistrations();
       let registration = registrations.find(isAppRegistration);
+      const currentWorker = registration?.active ?? registration?.waiting ?? registration?.installing;
+      if (registration && !isStableAppWorkerUrl(currentWorker?.scriptURL)) {
+        await registration.unregister();
+        registration = undefined;
+      }
       if (!registration) {
         registration = await navigator.serviceWorker.register(SW_PATH, {
           scope: "/",
