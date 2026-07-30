@@ -26,7 +26,8 @@ export default defineConfig({
         // Generate the worker first or `/sw.js` is missing from the final server output.
         integration: { closeBundleOrder: "pre" },
         registerType: "autoUpdate",
-        injectRegister: null,
+        // Registration is centralized in src/lib/pwa/serviceWorker.ts.
+        injectRegister: false,
         srcDir: "src",
         filename: "sw.ts",
         devOptions: { enabled: false },
