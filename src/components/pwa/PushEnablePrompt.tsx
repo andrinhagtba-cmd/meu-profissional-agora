@@ -53,13 +53,13 @@ export function PushEnablePrompt() {
   };
 
   const handleEnable = async () => {
-    await enable();
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    const activated = await enable();
+    if (activated) {
       toast.success("Notificações ativadas neste dispositivo!");
       window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
       setVisible(false);
     } else {
-      toast.error(error ?? "Não foi possível ativar. Verifique as permissões do navegador.");
+      toast.error("A permissão foi concedida, mas não foi possível registrar este aparelho. Tente novamente.");
     }
   };
 

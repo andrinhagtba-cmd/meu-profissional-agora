@@ -27,11 +27,13 @@ export default defineConfig({
         filename: "sw.js",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
-        outDir: "dist/client",
+        // TanStack Start/Nitro serves static production files from .output/public.
+        // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
+        outDir: ".output/public",
         workbox: {
           // Custom push / notificationclick handlers live in public/push-handler.js
           importScripts: ["/push-handler.js"],
-          globDirectory: "dist/client",
+          globDirectory: ".output/public",
           // Keep installation small and reliable. Built assets are cached on demand
           // by runtimeCaching; precaching every route chunk delayed SW activation.
           globPatterns: ["push-handler.js", "favicon.ico", "icons/*.{png,svg,ico}"],

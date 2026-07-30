@@ -50,15 +50,18 @@ export function usePushNotifications() {
   }, [refresh]);
 
   const enable = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) return false;
     setWorking(true);
     setError(null);
     try {
       await subscribeCurrentDevice(user.id);
       await refresh();
+      return true;
     } catch (e) {
-      setError((e as Error).message);
+      const message = e instanceof Error ? e.message : "Não foi possível ativar as notificações.";
+      setError(message);
       setPermission(isPushSupported() ? (Notification.permission as PushPermission) : "unsupported");
+      return false;
     } finally {
       setWorking(false);
     }
