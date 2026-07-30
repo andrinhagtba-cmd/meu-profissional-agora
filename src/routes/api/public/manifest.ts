@@ -65,9 +65,14 @@ export const Route = createFileRoute("/api/public/manifest")({
           { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ];
         if (iconUrl) {
+          // Servido pela mesma origem (proxy) — navegadores ignoram ícones
+          // remotos com URL assinada no diálogo de instalação.
+          const version = String((branding.pwa_icon_media_id as string) ?? "brand").slice(0, 8);
+          const localIcon = `/api/public/pwa-icon?v=${version}`;
           icons.unshift(
-            { src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any" },
-            { src: iconUrl, sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: localIcon, sizes: "512x512", type: "image/png", purpose: "any" },
+            { src: localIcon, sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: localIcon, sizes: "512x512", type: "image/png", purpose: "maskable" },
           );
         }
 
