@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Bell, CheckCheck, Inbox, RotateCcw } from "lucide-react";
+import { PullToRefresh } from "@/components/mobile/PullToRefresh";
+import { SwipeableRow } from "@/components/mobile/SwipeableRow";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PushNotificationsCard } from "@/components/pwa/PushNotificationsCard";
@@ -38,7 +40,7 @@ function Notificacoes() {
   const [group, setGroup] = useState<NotificationGroup>("all");
   const [onlyUnread, setOnlyUnread] = useState(false);
 
-  const { items, isLoading, counters, unreadCount, markRead, markUnread, markAll } =
+  const { items, isLoading, counters, unreadCount, markRead, markUnread, markAll, refetch } =
     useNotificationCenter({ group, onlyUnread });
 
   const groupsWithCount = NOTIFICATION_GROUPS.map((g) => ({
@@ -48,7 +50,7 @@ function Notificacoes() {
 
   return (
     <SiteLayout>
-      <div className="container-page py-10 lg:py-14">
+      <div className="container-page py-6 lg:py-14">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -65,7 +67,7 @@ function Notificacoes() {
           </div>
           <Button
             variant="outline"
-            className="h-11 rounded-xl px-5 font-semibold"
+            className="h-12 w-full rounded-xl px-5 font-semibold sm:w-auto"
             disabled={markAll.isPending || unreadCount === 0}
             onClick={() =>
               markAll.mutate(group, {
@@ -81,7 +83,7 @@ function Notificacoes() {
           <PushNotificationsCard />
         </div>
 
-        <div className="mb-5 flex flex-wrap items-center gap-2">
+        <div className="mb-5 -mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           {groupsWithCount.map((g) => {
             const active = group === g.value;
             return (
@@ -89,7 +91,7 @@ function Notificacoes() {
                 key={g.value}
                 type="button"
                 onClick={() => setGroup(g.value)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                   active
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-muted-foreground hover:text-primary"
@@ -108,7 +110,7 @@ function Notificacoes() {
               </button>
             );
           })}
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <Switch id="only-unread" checked={onlyUnread} onCheckedChange={setOnlyUnread} />
             <Label htmlFor="only-unread" className="text-sm text-muted-foreground">
               Somente não lidas
@@ -116,6 +118,7 @@ function Notificacoes() {
           </div>
         </div>
 
+        <PullToRefresh onRefresh={refetch}>
         {isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -135,13 +138,20 @@ function Notificacoes() {
         ) : (
           <ul className="space-y-3">
             {items.map((n) => (
-              <li
-                key={n.id}
-                className={`rounded-2xl border p-5 transition-colors ${
-                  n.read ? "border-border bg-card" : "border-primary/30 bg-secondary/50"
-                }`}
-              >
-                <div className="flex items-start gap-4">
+              <li key={n.id}>
+                <SwipeableRow
+                  left={
+                    n.read
+                      ? { label: "Não lida", icon: <RotateCcw size={16} />, tone: "muted", onAction: () => markUnread.mutate(n.id) }
+                      : { label: "Marcar lida", icon: <CheckCheck size={16} />, tone: "primary", onAction: () => markRead.mutate([n.id]) }
+                  }
+                >
+                <div
+                  className={`rounded-2xl border p-4 transition-colors sm:p-5 ${
+                    n.read ? "border-border bg-card" : "border-primary/30 bg-secondary/50"
+                  }`}
+                >
+                <div className="flex items-start gap-3 sm:gap-4">
                   <NotificationIcon type={n.type} />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -173,7 +183,7 @@ function Notificacoes() {
                       <button
                         type="button"
                         onClick={() => markUnread.mutate(n.id)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary"
+                        className="inline-flex min-h-11 items-center gap-1 px-2 text-xs font-semibold text-muted-foreground hover:text-primary"
                       >
                         <RotateCcw size={13} /> Não lida
                       </button>
@@ -181,17 +191,20 @@ function Notificacoes() {
                       <button
                         type="button"
                         onClick={() => markRead.mutate([n.id])}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                        className="inline-flex min-h-11 items-center gap-1 px-2 text-xs font-semibold text-primary hover:underline"
                       >
                         <Bell size={13} /> Marcar lida
                       </button>
                     )}
                   </div>
                 </div>
+                </div>
+                </SwipeableRow>
               </li>
             ))}
           </ul>
         )}
+        </PullToRefresh>
       </div>
     </SiteLayout>
   );
