@@ -11,7 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { DF_REGIONS, searchDfRegions } from "@/data/dfRegions";
+import { ALL_REGIONS, searchDfRegions } from "@/data/dfRegions";
 
 interface Props {
   value: string;
