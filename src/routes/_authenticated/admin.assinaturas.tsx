@@ -22,7 +22,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { planPeriodLabel } from "@/lib/planPeriod";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { DF_REGIONS } from "@/data/dfRegions";
+import { ALL_REGIONS as DF_REGIONS } from "@/data/dfRegions";
 import {
   DERIVED_CLASS, DERIVED_LABEL, daysLabel, daysUntil, whatsappTemplate,
   type DerivedStatus,
