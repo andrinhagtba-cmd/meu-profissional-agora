@@ -205,6 +205,16 @@ export function AdminTopbar() {
             <DropdownMenuItem asChild>
               <Link to="/painel"><UserIcon size={14} className="mr-2" /> Meu painel</Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild className="sm:hidden">
+              <a href="/" target="_blank" rel="noopener noreferrer">
+                <Globe size={14} className="mr-2" /> Visitar site
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={toggle} className="sm:hidden">
+              {theme === "dark" ? <Sun size={14} className="mr-2" /> : <Moon size={14} className="mr-2" />}
+              {theme === "dark" ? "Tema claro" : "Tema escuro"}
+            </DropdownMenuItem>
+
             <DropdownMenuItem onClick={signOut}>
               <LogOut size={14} className="mr-2" /> Sair
             </DropdownMenuItem>
