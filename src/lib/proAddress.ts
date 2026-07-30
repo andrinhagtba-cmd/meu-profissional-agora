@@ -161,3 +161,28 @@ export function adminProLocationLabel(p: {
   if (p.formatted_address) return p.formatted_address;
   return "Sem localização";
 }
+
+/** Partes do endereço público para exibição premium em cards: linha principal + complementar. */
+export function professionalPublicLocationParts(pro: ProfessionalLocationInput): {
+  primary: string;
+  secondary: string | null;
+} | null {
+  const a = pro.address;
+  if (a?.visibility === "hidden") return null;
+  const cityState = [a?.city ?? pro.city, a?.state ?? pro.state].filter(Boolean).join(", ");
+  const custom = a?.locationLabel?.trim();
+  if (custom) {
+    const rest = [a?.street && [a.street, a.number].filter(Boolean).join(", "), a?.neighborhood, cityState]
+      .filter(Boolean)
+      .join(" · ");
+    return { primary: custom, secondary: rest || null };
+  }
+  const street = [a?.street, a?.number].filter(Boolean).join(", ");
+  const primary = street || a?.neighborhood || a?.formatted || cityState;
+  if (!primary) return null;
+  const secondary =
+    [street ? a?.complement : null, street ? a?.neighborhood : null, cityState]
+      .filter(Boolean)
+      .join(" · ") || null;
+  return { primary, secondary: secondary === primary ? null : secondary };
+}
