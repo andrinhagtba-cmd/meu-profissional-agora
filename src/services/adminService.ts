@@ -744,25 +744,56 @@ export type AdminTopCategory = {
   name: string;
   slug: string;
   quotes: number;
+  pros: number;
 };
 
 export async function getAdminTopCategories(limit = 6): Promise<AdminTopCategory[]> {
-  const { data: cats, error: catErr } = await supabase
-    .from("categories").select("id, name, slug").limit(200);
-  if (catErr) throw catErr;
-  const { data: quotes, error: qErr } = await supabase
-    .from("quote_requests").select("category_id").limit(5000);
-  if (qErr) throw qErr;
+  const [catsRes, quotesRes, servicesRes, proServicesRes] = await Promise.all([
+    supabase.from("categories").select("id, name, slug").limit(200),
+    supabase.from("quote_requests").select("category_id").limit(5000),
+    supabase.from("services").select("id, category_id").limit(2000),
+    supabase.from("professional_services").select("professional_id, service_id, active").limit(10000),
+  ]);
+  if (catsRes.error) throw catsRes.error;
+  if (quotesRes.error) throw quotesRes.error;
+  if (servicesRes.error) throw servicesRes.error;
+  if (proServicesRes.error) throw proServicesRes.error;
+
   const counts = new Map<string, number>();
-  for (const q of (quotes ?? []) as Array<{ category_id: string | null }>) {
+  for (const q of (quotesRes.data ?? []) as Array<{ category_id: string | null }>) {
     if (!q.category_id) continue;
     counts.set(q.category_id, (counts.get(q.category_id) ?? 0) + 1);
   }
-  return ((cats ?? []) as Array<{ id: string; name: string; slug: string }>)
-    .map((c) => ({ category_id: c.id, name: c.name, slug: c.slug, quotes: counts.get(c.id) ?? 0 }))
-    .sort((a, b) => b.quotes - a.quotes)
+
+  const serviceToCat = new Map<string, string>();
+  for (const s of (servicesRes.data ?? []) as Array<{ id: string; category_id: string | null }>) {
+    if (s.category_id) serviceToCat.set(s.id, s.category_id);
+  }
+  const prosByCat = new Map<string, Set<string>>();
+  for (const ps of (proServicesRes.data ?? []) as Array<{
+    professional_id: string;
+    service_id: string;
+    active: boolean | null;
+  }>) {
+    if (ps.active === false) continue;
+    const catId = serviceToCat.get(ps.service_id);
+    if (!catId) continue;
+    if (!prosByCat.has(catId)) prosByCat.set(catId, new Set());
+    prosByCat.get(catId)!.add(ps.professional_id);
+  }
+
+  return ((catsRes.data ?? []) as Array<{ id: string; name: string; slug: string }>)
+    .map((c) => ({
+      category_id: c.id,
+      name: c.name,
+      slug: c.slug,
+      quotes: counts.get(c.id) ?? 0,
+      pros: prosByCat.get(c.id)?.size ?? 0,
+    }))
+    .sort((a, b) => b.pros - a.pros || b.quotes - a.quotes)
     .slice(0, limit);
 }
+
 
 export type AdminFunnel = {
   quotes: number;

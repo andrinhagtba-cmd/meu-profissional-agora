@@ -73,7 +73,7 @@ function AdminOverview() {
   const proposalsPrev7 = sumLast(ts.data?.proposals.slice(0, -7), 7);
 
   const f = funnel.data;
-  const maxCat = Math.max(1, ...(topCats.data ?? []).map((c) => c.quotes));
+  const maxCat = Math.max(1, ...(topCats.data ?? []).map((c) => c.pros));
   const s = subs.data;
 
   return (
@@ -336,25 +336,28 @@ function AdminOverview() {
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-5">
           <h2 className="font-display text-lg font-bold text-foreground">Top categorias</h2>
-          <p className="text-xs text-muted-foreground">Pedidos por categoria.</p>
+          <p className="text-xs text-muted-foreground">Profissionais e pedidos por categoria.</p>
           {topCats.isLoading ? (
             <div className="mt-4 space-y-3"><Skeleton className="h-6" /><Skeleton className="h-6" /><Skeleton className="h-6" /></div>
           ) : (
             <ul className="mt-4 space-y-3">
               {(topCats.data ?? []).map((c) => (
                 <li key={c.category_id}>
-                  <div className="mb-1 flex items-center justify-between text-xs">
+                  <div className="mb-1 flex items-center justify-between gap-2 text-xs">
                     <span className="truncate font-medium text-foreground">{c.name}</span>
-                    <span className="text-muted-foreground">{c.quotes}</span>
+                    <span className="shrink-0 text-muted-foreground">
+                      {c.pros} prof. · {c.quotes} ped.
+                    </span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
                     <div
                       className="h-full rounded-full bg-primary"
-                      style={{ width: `${(c.quotes / maxCat) * 100}%` }}
+                      style={{ width: `${(c.pros / maxCat) * 100}%` }}
                     />
                   </div>
                 </li>
               ))}
+
             </ul>
           )}
         </div>
