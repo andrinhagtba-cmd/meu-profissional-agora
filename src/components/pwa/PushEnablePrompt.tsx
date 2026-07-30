@@ -13,7 +13,7 @@ const DISMISS_DAYS = 7;
 /** Convite para ativar notificações, exibido ao abrir o app instalado (PWA). */
 export function PushEnablePrompt() {
   const { user } = useAuth();
-  const { supported, permission, subscribedHere, loading, working, error, enable } = usePushNotifications();
+  const { supported, permission, subscribedHere, loading, working, enable } = usePushNotifications();
   const [standalone, setStandalone] = useState(false);
   const [dismissed, setDismissed] = useState(true);
   const [visible, setVisible] = useState(false);
@@ -28,10 +28,11 @@ export function PushEnablePrompt() {
 
   const eligible =
     standalone &&
-    !dismissed &&
+    (!dismissed || permission === "granted") &&
     !loading &&
     supported &&
-    permission === "default" &&
+    permission !== "denied" &&
+    permission !== "unsupported" &&
     !subscribedHere &&
     Boolean(user?.id);
 
@@ -53,13 +54,13 @@ export function PushEnablePrompt() {
   };
 
   const handleEnable = async () => {
-    await enable();
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    const activated = await enable();
+    if (activated) {
       toast.success("Notificações ativadas neste dispositivo!");
       window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
       setVisible(false);
     } else {
-      toast.error(error ?? "Não foi possível ativar. Verifique as permissões do navegador.");
+      toast.error("A permissão foi concedida, mas não foi possível registrar este aparelho. Tente novamente.");
     }
   };
 
@@ -100,7 +101,7 @@ export function PushEnablePrompt() {
               disabled={working}
               className="h-11 flex-1 rounded-xl bg-white font-semibold text-primary hover:bg-white/90"
             >
-              {working ? "Ativando…" : "Ativar agora"}
+              {working ? "Ativando…" : permission === "granted" ? "Concluir ativação" : "Ativar agora"}
             </Button>
             <Button
               variant="ghost"
