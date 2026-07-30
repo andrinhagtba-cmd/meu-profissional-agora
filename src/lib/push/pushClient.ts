@@ -114,12 +114,17 @@ export async function subscribeCurrentDevice(userId: string) {
   }
 
   const device = describeDevice();
+  const p256dh = arrayBufferToBase64(subscription.getKey("p256dh"));
+  const auth = arrayBufferToBase64(subscription.getKey("auth"));
+  if (!p256dh || !auth) {
+    throw new Error("O navegador criou uma assinatura incompleta. Remova a permissão do site e tente novamente.");
+  }
   const { data: saved, error } = await supabase.from("push_subscriptions").upsert(
     {
       user_id: userId,
       endpoint: subscription.endpoint,
-      p256dh: arrayBufferToBase64(subscription.getKey("p256dh")),
-      auth: arrayBufferToBase64(subscription.getKey("auth")),
+      p256dh,
+      auth,
       device_label: device.label,
       platform: device.platform,
       browser: device.browser,

@@ -61,7 +61,10 @@ export function PwaProvider({ children }: { children: ReactNode }) {
         if (reason) setBlockedReason(reason);
         setLastCheckedAt(new Date().toISOString());
       })
-      .catch(() => setBlockedReason("unsupported"));
+      .catch(() => {
+        setRegistration(null);
+        setLastCheckedAt(new Date().toISOString());
+      });
   }, []);
 
   // Deep link vindo do clique em uma notificação push.

@@ -96,7 +96,10 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
             <Button
               size="sm"
               className="rounded-full"
-              onClick={push.enable}
+              onClick={async () => {
+                const activated = await push.enable();
+                if (activated) toast.success("Notificações ativadas e aparelho confirmado.");
+              }}
               disabled={push.working || !push.supported || push.permission === "denied" || !user}
             >
               {push.working ? <Loader2 size={14} className="animate-spin" /> : <BellRing size={14} />} Ativar notificações

@@ -70,21 +70,32 @@ function waitForActivation(registration: ServiceWorkerRegistration, timeoutMs = 
       reject(new Error("O serviço de notificações demorou para iniciar. Atualize o aplicativo e tente novamente."));
     }, timeoutMs);
 
+    let settled = false;
     const finish = () => {
+      if (settled) return;
+      settled = true;
       window.clearTimeout(timer);
       resolve(registration);
     };
 
+    const fail = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      reject(error);
+    };
+
     if (!worker) {
-      navigator.serviceWorker.ready.then(finish).catch(reject);
+      navigator.serviceWorker.ready.then(finish).catch(() => {
+        fail(new Error("O navegador não conseguiu concluir a ativação do serviço de notificações."));
+      });
       return;
     }
 
     worker.addEventListener("statechange", () => {
       if (worker.state === "activated" || registration.active) finish();
       if (worker.state === "redundant") {
-        window.clearTimeout(timer);
-        reject(new Error("O serviço de notificações foi interrompido durante a ativação."));
+        fail(new Error("O serviço de notificações foi interrompido durante a ativação."));
       }
     });
   });
