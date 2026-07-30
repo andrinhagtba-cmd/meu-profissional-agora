@@ -22,7 +22,7 @@ export default defineConfig({
     plugins: [
       VitePWA({
         strategies: "generateSW",
-        registerType: "prompt",
+        registerType: "autoUpdate",
         injectRegister: null,
         filename: "sw.js",
         devOptions: { enabled: false },
@@ -32,12 +32,14 @@ export default defineConfig({
           // Custom push / notificationclick handlers live in public/push-handler.js
           importScripts: ["/push-handler.js"],
           globDirectory: "dist/client",
-          globPatterns: ["**/*.{js,css,woff,woff2,svg,png,ico}"],
+          // Keep installation small and reliable. Built assets are cached on demand
+          // by runtimeCaching; precaching every route chunk delayed SW activation.
+          globPatterns: ["push-handler.js", "favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
           navigateFallback: null,
           cleanupOutdatedCaches: true,
-          skipWaiting: false,
-          clientsClaim: false,
+          skipWaiting: true,
+          clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           runtimeCaching: [
             {
