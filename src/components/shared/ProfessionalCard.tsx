@@ -73,16 +73,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
             </span>
           )}
         </div>
-        {(() => {
-          const label = professionalPublicLocationLabel(pro);
-          if (!label) return null;
-          return (
-            <p className="flex items-center gap-1.5">
-              <MapPin size={14} className="shrink-0 text-primary" aria-hidden="true" />
-              <span className="truncate">{label}</span>
-            </p>
-          );
-        })()}
+        <ProLocationBlock pro={pro} />
         {pro.responseTime && pro.responseTime !== "—" && (
           <p className="flex items-center gap-1.5">
             <Clock size={14} className="shrink-0 text-primary" aria-hidden="true" />
