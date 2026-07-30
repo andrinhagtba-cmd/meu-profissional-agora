@@ -1,4 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type NotificationType = Database["public"]["Enums"]["notification_type"];
 
 export type NotificationRecord = {
   id: string;
@@ -32,7 +35,7 @@ export const NOTIFICATION_GROUPS: { value: NotificationGroup; label: string }[] 
   { value: "system", label: "Sistema" },
 ];
 
-const GROUP_TYPES: Record<Exclude<NotificationGroup, "all">, string[]> = {
+const GROUP_TYPES: Record<Exclude<NotificationGroup, "all">, NotificationType[]> = {
   messages: ["message", "message_new"],
   quotes: ["quote_status", "opportunity"],
   proposals: ["proposal", "proposal_accepted", "proposal_rejected"],
