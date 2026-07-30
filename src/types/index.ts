@@ -51,6 +51,7 @@ export interface Professional {
   responseMinutes: number;
   responseTime: string;
   priceFrom: number;
+  priceLabel?: string | null;
   experienceYears: number;
   description: string;
   services: ProfessionalService[];

@@ -90,7 +90,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
 
       <div className="mt-4 flex items-end justify-between gap-3 border-t border-border pt-4">
         <div>
-          <p className="text-xs text-muted-foreground">a partir de</p>
+          <p className="text-xs text-muted-foreground">{pro.priceLabel?.trim() || "a partir de"}</p>
           <p className="font-display text-lg font-extrabold text-foreground">
             R$ {pro.priceFrom.toLocaleString("pt-BR")}
           </p>

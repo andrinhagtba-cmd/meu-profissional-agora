@@ -237,7 +237,7 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
         <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4">
           <div>
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-              a partir de
+              {pro.priceLabel?.trim() || "a partir de"}
             </p>
             <p className="font-display text-xl font-extrabold text-foreground">
               R$ {pro.priceFrom.toLocaleString("pt-BR")}
