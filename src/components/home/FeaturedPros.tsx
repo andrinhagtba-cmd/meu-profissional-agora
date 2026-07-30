@@ -198,13 +198,15 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           <p className="mt-0.5 truncate text-sm font-medium text-primary">
             {pro.specialty}
           </p>
-          <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin size={12} aria-hidden="true" />
-            <span className="truncate">
-              {locationLabel ? `${locationLabel} · ` : ""}responde em {pro.responseTime}
-            </span>
-          </p>
         </div>
+
+        <ProLocationBlock pro={pro} size="sm" className="mt-2.5" />
+        {pro.responseTime && pro.responseTime !== "—" && (
+          <p className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Clock size={11} aria-hidden="true" />
+            Responde em {pro.responseTime}
+          </p>
+        )}
 
         {/* Chips: emergency + services */}
         {(pro.emergency || topServices.length > 0) && (
