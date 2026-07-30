@@ -17,17 +17,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: {
-    ...(preset ? { preset } : {}),
-    routeRules: {
-      "/sw.js": {
-        headers: {
-          "cache-control": "no-cache, no-store, must-revalidate",
-          "service-worker-allowed": "/",
-        },
-      },
-    },
-  },
+  ...(preset ? { nitro: { preset } } : {}),
   vite: {
     plugins: [
       VitePWA({
