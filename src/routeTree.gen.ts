@@ -32,6 +32,7 @@ import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ApiPublicPwaIconRouteImport } from './routes/api/public/pwa-icon'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
 import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
@@ -208,6 +209,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const ApiPublicPwaIconRoute = ApiPublicPwaIconRouteImport.update({
+  id: '/api/public/pwa-icon',
+  path: '/api/public/pwa-icon',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
@@ -644,6 +650,7 @@ export interface FileRoutesByFullPath {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/pwa-icon': typeof ApiPublicPwaIconRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/painel/': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -723,6 +730,7 @@ export interface FileRoutesByTo {
   '/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/pwa-icon': typeof ApiPublicPwaIconRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/painel': typeof AuthenticatedPainelIndexRoute
   '/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -810,6 +818,7 @@ export interface FileRoutesById {
   '/_authenticated/painel/servicos': typeof AuthenticatedPainelServicosRoute
   '/_authenticated/painel/trabalhos': typeof AuthenticatedPainelTrabalhosRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/pwa-icon': typeof ApiPublicPwaIconRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/painel/': typeof AuthenticatedPainelIndexRoute
   '/_authenticated/admin/profissionais/$id': typeof AuthenticatedAdminProfissionaisIdRoute
@@ -897,6 +906,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/painel/trabalhos'
     | '/api/public/manifest'
+    | '/api/public/pwa-icon'
     | '/admin/'
     | '/painel/'
     | '/admin/profissionais/$id'
@@ -976,6 +986,7 @@ export interface FileRouteTypes {
     | '/painel/servicos'
     | '/painel/trabalhos'
     | '/api/public/manifest'
+    | '/api/public/pwa-icon'
     | '/admin'
     | '/painel'
     | '/admin/profissionais/$id'
@@ -1062,6 +1073,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel/servicos'
     | '/_authenticated/painel/trabalhos'
     | '/api/public/manifest'
+    | '/api/public/pwa-icon'
     | '/_authenticated/admin/'
     | '/_authenticated/painel/'
     | '/_authenticated/admin/profissionais/$id'
@@ -1095,6 +1107,7 @@ export interface RootRouteChildren {
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProfissionalSlugRoute: typeof ProfissionalSlugRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
+  ApiPublicPwaIconRoute: typeof ApiPublicPwaIconRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1259,6 +1272,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/pwa-icon': {
+      id: '/api/public/pwa-icon'
+      path: '/api/public/pwa-icon'
+      fullPath: '/api/public/pwa-icon'
+      preLoaderRoute: typeof ApiPublicPwaIconRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/manifest': {
       id: '/api/public/manifest'
@@ -1925,7 +1945,18 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProfissionalSlugRoute: ProfissionalSlugRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
+  ApiPublicPwaIconRoute: ApiPublicPwaIconRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

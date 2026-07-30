@@ -58,7 +58,7 @@ export const Route = createFileRoute("/api/public/pwa-icon")({
           });
         } catch {
           // Fallback: ícone estático do projeto
-          return Response.redirect(new URL("/icons/icon-512.png", "http://localhost"), 302);
+          return new Response(null, { status: 302, headers: { location: "/icons/icon-512.png" } });
         }
       },
     },
