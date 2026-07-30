@@ -309,20 +309,35 @@ function AdminProDetailPage() {
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr),360px]">
-        <Tabs value={tab} onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}>
-          <div className="overflow-hidden rounded-[1.7rem] border bg-card p-2 shadow-card">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr),360px]">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}
+          className="min-w-0"
+        >
+          {/* Mobile: seletor de seção */}
+          <div className="md:hidden">
+            <Select value={tab} onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}>
+              <SelectTrigger className="h-12 w-full rounded-2xl border-border/70 bg-card text-sm font-semibold shadow-card">
+                <SelectValue placeholder="Selecione a seção" />
+              </SelectTrigger>
+              <SelectContent>
+                {TAB_ITEMS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Desktop: pills */}
+          <div className="hidden min-w-0 overflow-hidden rounded-[1.7rem] border bg-card p-2 shadow-card md:block">
             <TabsList className="flex h-auto w-full justify-start gap-2 overflow-x-auto rounded-[1.25rem] bg-background p-2">
-              <Tab value="overview" icon={<Eye size={15} />} label="Visão geral" />
-              <Tab value="profile" icon={<Pencil size={15} />} label="Perfil" />
-              <Tab value="services" icon={<BriefcaseBusiness size={15} />} label="Serviços" />
-              <Tab value="portfolio" icon={<GalleryHorizontalEnd size={15} />} label="Portfólio" />
-              <Tab value="documents" icon={<FileCheck2 size={15} />} label="Documentos" />
-              <Tab value="reviews" icon={<Star size={15} />} label="Avaliações" />
-              <Tab value="plan" icon={<WalletCards size={15} />} label="Plano e acesso" />
-              <Tab value="activity" icon={<Timer size={15} />} label="Histórico" />
+              {TAB_ITEMS.map((t) => (
+                <Tab key={t.value} value={t.value} icon={t.icon} label={t.label} />
+              ))}
             </TabsList>
           </div>
+
 
           <TabsContent value="overview" className="mt-5 space-y-5">
             <div className="grid gap-5 lg:grid-cols-2">
