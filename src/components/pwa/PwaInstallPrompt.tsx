@@ -32,7 +32,7 @@ export function PwaInstallPrompt() {
   return (
     <>
       <div
-        className="fixed inset-x-3 bottom-3 z-[60] sm:left-auto sm:right-4 sm:w-[360px]"
+        className="fixed inset-x-3 bottom-20 z-[60] sm:bottom-3 sm:left-auto sm:right-4 sm:w-[360px]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="rounded-2xl border border-primary/15 bg-card p-4 shadow-float">
