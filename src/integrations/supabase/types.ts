@@ -77,6 +77,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_private_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       b2b_companies: {
         Row: {
           address: string | null
@@ -919,33 +937,156 @@ export type Database = {
           },
         ]
       }
+      notification_deliveries: {
+        Row: {
+          attempt: number
+          created_at: string
+          endpoint: string | null
+          error: string | null
+          http_status: number | null
+          id: string
+          notification_id: string | null
+          status: string
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt?: number
+          created_at?: string
+          endpoint?: string | null
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          notification_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          endpoint?: string | null
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          notification_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_deliveries_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "push_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          inapp_enabled: boolean
+          push_enabled: boolean
+          push_messages: boolean
+          push_moderation: boolean
+          push_proposals: boolean
+          push_quotes: boolean
+          push_reviews: boolean
+          push_subscription: boolean
+          push_system: boolean
+          quiet_hours_end: number | null
+          quiet_hours_start: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          inapp_enabled?: boolean
+          push_enabled?: boolean
+          push_messages?: boolean
+          push_moderation?: boolean
+          push_proposals?: boolean
+          push_quotes?: boolean
+          push_reviews?: boolean
+          push_subscription?: boolean
+          push_system?: boolean
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          inapp_enabled?: boolean
+          push_enabled?: boolean
+          push_messages?: boolean
+          push_moderation?: boolean
+          push_proposals?: boolean
+          push_quotes?: boolean
+          push_reviews?: boolean
+          push_subscription?: boolean
+          push_system?: boolean
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
+          dedupe_key: string | null
+          entity_id: string | null
+          entity_type: string | null
           id: string
           link: string | null
           message: string | null
+          priority: string
+          push_status: string
           read: boolean
+          read_at: string | null
           title: string
           type: Database["public"]["Enums"]["notification_type"]
           user_id: string
         }
         Insert: {
           created_at?: string
+          dedupe_key?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
           id?: string
           link?: string | null
           message?: string | null
+          priority?: string
+          push_status?: string
           read?: boolean
+          read_at?: string | null
           title: string
           type?: Database["public"]["Enums"]["notification_type"]
           user_id: string
         }
         Update: {
           created_at?: string
+          dedupe_key?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
           id?: string
           link?: string | null
           message?: string | null
+          priority?: string
+          push_status?: string
           read?: boolean
+          read_at?: string | null
           title?: string
           type?: Database["public"]["Enums"]["notification_type"]
           user_id?: string
@@ -1599,6 +1740,60 @@ export type Database = {
           tagline?: string | null
           updated_at?: string
           whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          browser: string | null
+          created_at: string
+          device_label: string | null
+          endpoint: string
+          failure_count: number
+          id: string
+          last_error: string | null
+          last_used_at: string | null
+          p256dh: string
+          platform: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          browser?: string | null
+          created_at?: string
+          device_label?: string | null
+          endpoint: string
+          failure_count?: number
+          id?: string
+          last_error?: string | null
+          last_used_at?: string | null
+          p256dh: string
+          platform?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          browser?: string | null
+          created_at?: string
+          device_label?: string | null
+          endpoint?: string
+          failure_count?: number
+          id?: string
+          last_error?: string | null
+          last_used_at?: string | null
+          p256dh?: string
+          platform?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2729,6 +2924,10 @@ export type Database = {
       moderate_portfolio_item: {
         Args: { _id: string; _notes?: string; _status: string }
         Returns: undefined
+      }
+      notification_push_allowed: {
+        Args: { _type: string; _user_id: string }
+        Returns: boolean
       }
       plan_expiry_from: {
         Args: { _billing_period: string; _start: string }
