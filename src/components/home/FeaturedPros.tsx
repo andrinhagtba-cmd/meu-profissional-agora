@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, MapPin, Sparkles, Star, Zap } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, Sparkles, Star, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -144,7 +144,6 @@ export function FeaturedPros() {
 
 function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
   const topServices = pro.services.slice(0, 2);
-  const locationLabel = professionalPublicLocationLabel(pro);
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float">
       {/* Cover */}
