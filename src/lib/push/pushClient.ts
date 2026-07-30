@@ -117,10 +117,16 @@ export async function subscribeCurrentDevice(userId: string) {
   const registration = await ensurePushRegistration();
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-    });
+    subscription = await withTimeout(
+      registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      }),
+      20_000,
+    );
+  }
+  if (!subscription) {
+    throw new Error("O navegador não concluiu a inscrição de push. Tente novamente em alguns segundos.");
   }
 
   const device = describeDevice();
