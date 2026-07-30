@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BellRing, Laptop, Loader2, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
+import { BellRing, Laptop, Loader2, Moon, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -245,5 +245,32 @@ function Alert({ children }: { children: React.ReactNode }) {
       <TriangleAlert size={14} className="mt-0.5 shrink-0 text-orange" />
       <span>{children}</span>
     </p>
+  );
+}
+
+function HourSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (hour: number) => void;
+}) {
+  return (
+    <label className="flex flex-col gap-1 text-xs font-semibold text-muted-foreground">
+      {label}
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="rounded-xl border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground"
+      >
+        {Array.from({ length: 24 }, (_, h) => (
+          <option key={h} value={h}>
+            {String(h).padStart(2, "0")}:00
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
