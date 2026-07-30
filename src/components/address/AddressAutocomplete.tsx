@@ -126,12 +126,20 @@ export function AddressAutocomplete({ initialQuery = "", onSelect, placeholder }
   }, [query, ready, googleFailed]);
 
 
-  async function pick(placeId: string) {
+  async function pick(item: Suggestion) {
+    if (item.resolved) {
+      onSelect(item.resolved);
+      setQuery(item.resolved.formatted_address ?? "");
+      lastPickedRef.current = item.resolved.formatted_address ?? "";
+      setItems([]);
+      setOpen(false);
+      return;
+    }
     try {
       setBusy(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const Place = (placesLibRef.current as any).Place;
-      const place = new Place({ id: placeId });
+      const place = new Place({ id: item.placeId });
       await place.fetchFields({
         fields: ["addressComponents", "formattedAddress", "location", "id"],
       });
@@ -155,10 +163,12 @@ export function AddressAutocomplete({ initialQuery = "", onSelect, placeholder }
         country: get("country", true),
         latitude: place.location?.lat() ?? null,
         longitude: place.location?.lng() ?? null,
-        google_place_id: place.id ?? placeId,
+        google_place_id: place.id ?? item.placeId,
       };
       onSelect(resolved);
       setQuery(resolved.formatted_address ?? "");
+      lastPickedRef.current = resolved.formatted_address ?? "";
+      setItems([]);
       setOpen(false);
       // renova o token de sessão após uma seleção
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -170,13 +180,7 @@ export function AddressAutocomplete({ initialQuery = "", onSelect, placeholder }
     }
   }
 
-  if (!hasGoogleMapsKey) {
-    return (
-      <div className="rounded-xl border border-dashed border-border/70 bg-muted/40 p-3 text-xs text-muted-foreground">
-        Google Maps não configurado. Preencha o endereço manualmente abaixo.
-      </div>
-    );
-  }
+
 
   return (
     <div className="relative">
