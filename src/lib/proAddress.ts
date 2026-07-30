@@ -64,6 +64,24 @@ export interface PublicAddressInput {
   formatted_address: string | null | undefined;
 }
 
+export interface ProfessionalLocationInput {
+  city?: string | null;
+  state?: string | null;
+  address?: {
+    visibility: AddressVisibility | null | undefined;
+    city: string | null | undefined;
+    state: string | null | undefined;
+    neighborhood: string | null | undefined;
+    street: string | null | undefined;
+    number: string | null | undefined;
+    complement?: string | null | undefined;
+    reference?: string | null | undefined;
+    locationLabel?: string | null | undefined;
+    postalCode: string | null | undefined;
+    formatted: string | null | undefined;
+  };
+}
+
 /** Monta o endereço completo estruturado: Logradouro, Nº, Complemento — Bairro — RA/UF — CEP. */
 export function fullAddressLine(a: PublicAddressInput): string | null {
   const line = [a.street, a.address_number, a.address_complement].filter(Boolean).join(", ");
@@ -87,6 +105,31 @@ export function publicAddressLabel(a: PublicAddressInput): string | null {
   }
   // full_address — prioriza os campos estruturados para não perder o complemento
   return fullAddressLine(a) ?? a.formatted_address ?? null;
+}
+
+/** Rótulo público único para cards e detalhe: local personalizado > endereço completo > visibilidade > cidade/UF. */
+export function professionalPublicLocationLabel(pro: ProfessionalLocationInput): string | null {
+  const a = pro.address;
+  if (!a) return [pro.city, pro.state].filter(Boolean).join(", ") || null;
+  if (a.visibility === "hidden") return null;
+  const customLabel = a.locationLabel?.trim();
+  if (customLabel) return customLabel;
+
+  const input: PublicAddressInput = {
+    visibility: a.visibility,
+    city: a.city ?? pro.city ?? null,
+    state: a.state ?? pro.state ?? null,
+    neighborhood: a.neighborhood,
+    street: a.street,
+    address_number: a.number,
+    address_complement: a.complement,
+    address_reference: a.reference,
+    postal_code: a.postalCode,
+    formatted_address: a.formatted,
+  };
+
+  const cityState = [pro.city, pro.state].filter(Boolean).join(", ");
+  return fullAddressLine({ ...input, visibility: "full_address" }) ?? input.formatted_address ?? publicAddressLabel(input) ?? (cityState || null);
 }
 
 
