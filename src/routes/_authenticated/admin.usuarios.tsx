@@ -64,6 +64,17 @@ function AdminUsers() {
     onSuccess: () => { toast.success("Papel atualizado"); qc.invalidateQueries({ queryKey: ["admin-users-full"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => deleteUserFn({ data: { userId: id } }),
+    onSuccess: () => {
+      toast.success("Usuário removido");
+      setToDelete(null);
+      qc.invalidateQueries({ queryKey: ["admin-users-full"] });
+      qc.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const toggle = (id: string) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const toggleAll = (ids: string[]) => setSelected((s) => (ids.every((i) => s.has(i)) ? new Set() : new Set(ids)));
