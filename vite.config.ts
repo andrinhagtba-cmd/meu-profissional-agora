@@ -22,6 +22,9 @@ export default defineConfig({
     plugins: [
       VitePWA({
         strategies: "generateSW",
+        // TanStack Start/Nitro collects public assets during its own closeBundle.
+        // Generate the worker first or `/sw.js` is missing from the final server output.
+        integration: { closeBundleOrder: "pre" },
         registerType: "autoUpdate",
         injectRegister: null,
         filename: "sw.js",

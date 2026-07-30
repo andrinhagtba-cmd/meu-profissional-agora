@@ -5,6 +5,7 @@ import { detectPlatform, isStandalone, usePwaInstall } from "@/hooks/use-pwa-ins
 import { InstallPwaButton } from "@/components/pwa/InstallPwaButton";
 import { Button } from "@/components/ui/button";
 import { useOnlineStatus } from "@/hooks/use-online-status";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 function browserName(ua: string) {
   if (/Edg\//.test(ua)) return "Microsoft Edge";
@@ -26,6 +27,7 @@ export function PwaDiagnosticPanel() {
   const { registered, blockedReason, version, lastCheckedAt, updateAvailable, applyUpdate, registration } = usePwa();
   const { installed } = usePwaInstall();
   const { online } = useOnlineStatus();
+  const push = usePushNotifications();
   const [env, setEnv] = useState({ browser: "—", platform: "—", standalone: false, permission: "default" as string });
 
   useEffect(() => {
@@ -48,8 +50,10 @@ export function PwaDiagnosticPanel() {
           : "Registrando…";
 
   const pushStatus =
-    env.permission === "granted"
-      ? "Permitido"
+    push.subscribedHere
+      ? "Ativo neste aparelho"
+      : env.permission === "granted"
+      ? "Permissão concedida, aparelho não registrado"
       : env.permission === "denied"
         ? "Bloqueado pelo navegador"
         : env.permission === "unsupported"
@@ -96,7 +100,7 @@ export function PwaDiagnosticPanel() {
           icon={<Wifi size={16} />}
           label="Notificações push"
           value={pushStatus}
-          tone={env.permission === "granted" ? "ok" : env.permission === "denied" ? "warn" : "neutral"}
+          tone={push.subscribedHere ? "ok" : env.permission === "denied" || env.permission === "granted" ? "warn" : "neutral"}
         />
         <Item icon={<Monitor size={16} />} label="Navegador atual" value={env.browser} />
         <Item icon={<Smartphone size={16} />} label="Dispositivo atual" value={env.platform} />

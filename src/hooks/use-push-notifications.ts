@@ -49,6 +49,12 @@ export function usePushNotifications() {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    const sync = () => void refresh();
+    window.addEventListener("gdf:push-subscription-changed", sync);
+    return () => window.removeEventListener("gdf:push-subscription-changed", sync);
+  }, [refresh]);
+
   const enable = useCallback(async () => {
     if (!user?.id) return false;
     setWorking(true);
