@@ -50,7 +50,7 @@ function isExternal(href: string) {
 }
 
 function FooterLinkItem({ href, label }: { href: string; label: string }) {
-  const cls = "text-sm text-muted-foreground transition-colors hover:text-primary";
+  const cls = "inline-block text-sm leading-snug text-muted-foreground transition-colors hover:text-primary";
   if (isExternal(href)) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
@@ -111,7 +111,6 @@ export function Footer() {
             }
           >
             <div className="min-w-0 sm:col-span-2 md:col-span-1">
-
               <Logo />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
                 {description}
