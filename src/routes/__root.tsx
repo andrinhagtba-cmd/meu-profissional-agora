@@ -17,6 +17,7 @@ import { SystemNotificationBridge } from "@/components/layout/SystemNotification
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import { PwaUpdatePrompt } from "@/components/pwa/PwaUpdatePrompt";
 import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { PushEnablePrompt } from "@/components/pwa/PushEnablePrompt";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 
 
