@@ -10,16 +10,20 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+    <header className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
       <div className="min-w-0">
-        <h1 className="truncate font-display text-2xl font-extrabold text-foreground sm:text-3xl">
+        <h1 className="font-display text-xl font-extrabold leading-tight text-foreground sm:truncate sm:text-3xl">
           {title}
         </h1>
         {description && (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-1 text-[13px] text-muted-foreground sm:text-sm">{description}</p>
         )}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="-mx-3 flex w-[calc(100%+1.5rem)] items-center gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-auto sm:shrink-0 sm:overflow-visible sm:px-0 sm:pb-0">
+          {actions}
+        </div>
+      )}
     </header>
   );
 }
