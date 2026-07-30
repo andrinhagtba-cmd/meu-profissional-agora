@@ -100,7 +100,6 @@ export function DfRegionCombobox({
                 </CommandGroup>
               ))}
           </CommandList>
-          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
