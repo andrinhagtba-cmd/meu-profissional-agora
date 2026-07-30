@@ -6,6 +6,7 @@ import { ShieldAlert } from "lucide-react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
