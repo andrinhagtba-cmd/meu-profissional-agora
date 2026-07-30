@@ -73,7 +73,7 @@ function AdminOverview() {
   const proposalsPrev7 = sumLast(ts.data?.proposals.slice(0, -7), 7);
 
   const f = funnel.data;
-  const maxCat = Math.max(1, ...(topCats.data ?? []).map((c) => c.quotes));
+  const maxCat = Math.max(1, ...(topCats.data ?? []).map((c) => c.pros));
   const s = subs.data;
 
   return (
