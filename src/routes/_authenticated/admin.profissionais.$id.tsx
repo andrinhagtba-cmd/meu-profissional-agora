@@ -183,7 +183,8 @@ function AdminProDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full min-w-0 space-y-5 overflow-x-clip sm:space-y-6">
+
       <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("avatar", e.target.files?.[0]); e.target.value = ""; }} />
       <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("cover", e.target.files?.[0]); e.target.value = ""; }} />
       <div className="flex flex-wrap items-center justify-between gap-3">
