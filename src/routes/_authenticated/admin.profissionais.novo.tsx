@@ -56,6 +56,7 @@ const step1Schema = z.object({
 const step2Schema = z.object({
   description: z.string().trim().min(20, "Descrição precisa de pelo menos 20 caracteres").max(2000),
   starting_price: z.coerce.number().min(0).optional(),
+  price_label: z.string().trim().max(40).optional().or(z.literal("")),
   response_time: z.string().trim().max(60).optional().or(z.literal("")),
   availability_status: z.enum(["available", "busy", "unavailable"]),
   emergency: z.boolean(),
@@ -81,7 +82,7 @@ type Form = {
   address_complement: string;
   service_radius_km: string;
   public_address_visibility: Visibility;
-  description: string; starting_price: string; response_time: string;
+  description: string; starting_price: string; price_label: string; response_time: string;
   availability_status: "available" | "busy" | "unavailable";
   emergency: boolean;
   service_types: ("residencial" | "empresarial" | "online")[];
@@ -98,7 +99,7 @@ const INITIAL: Form = {
   postal_code: "", latitude: null, longitude: null, google_place_id: "",
   address_complement: "", service_radius_km: "",
   public_address_visibility: "neighborhood_city_state",
-  description: "", starting_price: "", response_time: "Até 24h",
+  description: "", starting_price: "", price_label: "", response_time: "Até 24h",
   availability_status: "available", emergency: false, service_types: [],
   verification_status: "pending", profile_status: "draft", is_featured: false,
 };
@@ -173,6 +174,7 @@ function AdminProNew() {
       state: "DF",
       years_experience: form.years_experience ? Number(form.years_experience) : null,
       starting_price: form.starting_price ? Number(form.starting_price) : null,
+      price_label: form.price_label.trim() || null,
       response_time: form.response_time || null,
       availability_status: form.availability_status,
       emergency: form.emergency,
@@ -346,6 +348,9 @@ function AdminProNew() {
               <Field label="Preço inicial (R$)" error={errors.starting_price}>
                 <Input type="number" min={0} step="0.01" value={form.starting_price} onChange={(e) => set("starting_price", e.target.value)} placeholder="150,00" />
               </Field>
+              <Field label="Rótulo do preço" error={errors.price_label} hint='Texto exibido antes do valor (ex: "A partir de", "Preço fixo", "Diária").'>
+                <Input value={form.price_label} onChange={(e) => set("price_label", e.target.value)} maxLength={40} placeholder="A partir de" />
+              </Field>
               <Field label="Tempo de resposta">
                 <Input value={form.response_time} onChange={(e) => set("response_time", e.target.value)} placeholder="Até 24h" />
               </Field>
@@ -425,7 +430,7 @@ function AdminProNew() {
                 <Row label="Endereço" value={form.formatted_address || "—"} />
                 <Row label="WhatsApp" value={form.whatsapp || "—"} />
                 <Row label="Experiência" value={form.years_experience ? `${form.years_experience} anos` : "—"} />
-                <Row label="Preço inicial" value={form.starting_price ? `R$ ${form.starting_price}` : "—"} />
+                <Row label="Preço inicial" value={form.starting_price ? `${form.price_label.trim() || "A partir de"} R$ ${form.starting_price}` : "—"} />
                 <Row label="Raio (km)" value={form.service_radius_km || "—"} />
                 <Row label="Atendimento" value={form.service_types.join(", ") || "—"} />
                 <Row label="Emergência" value={form.emergency ? "Sim" : "Não"} />

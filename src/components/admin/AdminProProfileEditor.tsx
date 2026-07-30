@@ -37,6 +37,7 @@ type FormState = {
   whatsapp: string;
   years_experience: string;
   starting_price: string;
+  price_label: string;
   response_time: string;
   availability_status: Availability;
   emergency: boolean;
@@ -85,6 +86,7 @@ function toForm(pro: AdminProDetail): FormState {
     whatsapp: pro.whatsapp ?? "",
     years_experience: pro.years_experience?.toString() ?? "",
     starting_price: pro.starting_price != null ? String(pro.starting_price) : "",
+    price_label: pro.price_label ?? "",
     response_time: pro.response_time ?? "",
     availability_status: (pro.availability_status as Availability) ?? "available",
     emergency: Boolean(pro.emergency),
@@ -137,6 +139,7 @@ function diffPatch(pro: AdminProDetail, f: FormState): AdminProProfilePatch {
   const price = f.starting_price.trim() === "" ? null : Number(f.starting_price);
   if (price !== null && !Number.isFinite(price)) throw new Error("Preço inicial inválido.");
   setIf("starting_price", price, pro.starting_price);
+  setIf("price_label", f.price_label.trim() || null, pro.price_label);
 
   if (f.availability_status !== pro.availability_status) patch.availability_status = f.availability_status;
   if (Boolean(f.emergency) !== Boolean(pro.emergency)) patch.emergency = f.emergency;
@@ -323,6 +326,14 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             </Field>
             <Field label="Preço inicial (R$)">
               <Input inputMode="decimal" value={form.starting_price} onChange={(e) => set("starting_price", e.target.value)} />
+            </Field>
+            <Field label="Rótulo do preço">
+              <Input
+                value={form.price_label}
+                onChange={(e) => set("price_label", e.target.value)}
+                maxLength={40}
+                placeholder="A partir de"
+              />
             </Field>
             <Field label="Tempo de resposta">
               <Input value={form.response_time} onChange={(e) => set("response_time", e.target.value)} placeholder="Até 1h" />
@@ -700,7 +711,9 @@ function PreviewCard({ pro, form }: { pro: AdminProDetail; form: FormState }) {
         )}
         <div className="mt-3 flex items-center justify-between text-xs">
           <span className="font-semibold">
-            {form.starting_price ? `A partir de R$ ${Number(form.starting_price).toFixed(2)}` : "Sob orçamento"}
+            {form.starting_price
+              ? `${form.price_label.trim() || "A partir de"} R$ ${Number(form.starting_price).toFixed(2)}`
+              : "Sob orçamento"}
           </span>
           {form.whatsapp && (
             <span className="inline-flex items-center gap-1 text-primary"><MessageCircle size={12} /> WhatsApp</span>

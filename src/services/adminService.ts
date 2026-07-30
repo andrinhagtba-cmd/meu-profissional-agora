@@ -160,6 +160,7 @@ export type AdminProProfilePatch = Partial<{
   whatsapp: string | null;
   years_experience: number | null;
   starting_price: number | null;
+  price_label: string | null;
   response_time: string | null;
   availability_status: "available" | "busy" | "unavailable";
   emergency: boolean;
@@ -210,6 +211,7 @@ export type AdminProDetail = AdminProRow & {
   user_id: string;
   years_experience: number | null;
   starting_price: number | null;
+  price_label: string | null;
   response_time: string | null;
   profile_status: string;
   availability_status: string;
@@ -257,7 +259,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     .select(`
       id, user_id, slug, professional_name, business_name, city, state,
       verification_status, is_featured, average_rating, reviews_count,
-      created_at, whatsapp, description, years_experience, starting_price,
+      created_at, whatsapp, description, years_experience, starting_price, price_label,
       response_time, profile_status, availability_status, emergency,
       service_types, search_tags, updated_at, avatar_media_id, cover_media_id, source,
       instagram_username, instagram_url, facebook_url, website_url,
@@ -306,6 +308,7 @@ export async function getProDetail(id: string): Promise<AdminProDetail> {
     user_id: userId,
     years_experience: n("years_experience"),
     starting_price: n("starting_price"),
+    price_label: s("price_label"),
     response_time: s("response_time"),
     profile_status: p.profile_status as string,
     availability_status: p.availability_status as string,
@@ -1692,6 +1695,7 @@ export type CreateProInput = {
   state?: string | null;
   years_experience?: number | null;
   starting_price?: number | null;
+  price_label?: string | null;
   response_time?: string | null;
   availability_status?: "available" | "busy" | "unavailable";
   emergency?: boolean;
@@ -1737,6 +1741,7 @@ export async function createProProfile(input: CreateProInput): Promise<{ id: str
       state: input.state ?? null,
       years_experience: input.years_experience ?? null,
       starting_price: input.starting_price ?? null,
+      price_label: input.price_label ?? null,
       response_time: input.response_time ?? null,
       availability_status: input.availability_status ?? "available",
       emergency: input.emergency ?? false,
