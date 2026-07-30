@@ -2,8 +2,9 @@ import { access, readFile, readdir, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import { join } from "node:path";
 
-const outputDirectory = "dist/client";
-const serverEntry = "dist/server/index.mjs";
+const isNodeBuild = process.env.NITRO_PRESET === "node-server";
+const outputDirectory = isNodeBuild ? ".output/public" : "dist/client";
+const serverEntry = isNodeBuild ? ".output/server/index.mjs" : "dist/server/index.mjs";
 const workerPath = join(outputDirectory, "sw.js");
 
 function fail(message) {

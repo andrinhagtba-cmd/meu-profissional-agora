@@ -10,18 +10,8 @@ import { VitePWA } from "vite-plugin-pwa";
 // Self-hosting (VPS / Docker / Nixpacks): set NITRO_PRESET=node-server before `vite build`.
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
-const nitroConfig = {
-  ...(preset ? { preset } : {}),
-  routeRules: {
-    "/sw.js": {
-      headers: {
-        "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
-        "service-worker-allowed": "/",
-        "content-type": "text/javascript; charset=utf-8",
-      },
-    },
-  },
-} as unknown as { preset?: string };
+const isLovableSandbox = process.env.LOVABLE_SANDBOX === "1" || Boolean(process.env.SANDBOX);
+const publicOutputDirectory = isLovableSandbox ? "dist/client" : ".output/public";
 
 export default defineConfig({
   tanstackStart: {
@@ -29,7 +19,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: nitroConfig,
+  nitro: preset ? { preset } : true,
   vite: {
     plugins: [
       VitePWA({
@@ -43,14 +33,14 @@ export default defineConfig({
         filename: "sw.ts",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
-        // O pacote final deste preset é dist/client + dist/server. Escrever em
-        // .output/public cria uma saída paralela incompleta e apaga assets.
-        outDir: "dist/client",
+        // A Lovable força dist/client; o preset node-server da VPS usa
+        // .output/public. Cada ambiente gera o worker no seu pacote real.
+        outDir: publicOutputDirectory,
         injectManifest: {
           // Um único IIFE autossuficiente: nenhum define(), importScripts(),
           // chunk workbox-*.js ou push-handler.js é necessário em produção.
           rollupFormat: "iife",
-          globDirectory: "dist/client",
+          globDirectory: publicOutputDirectory,
           globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
