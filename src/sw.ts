@@ -57,7 +57,7 @@ self.addEventListener("push", (event) => {
   const priority = typeof payload.priority === "string" ? payload.priority : "normal";
   const notificationId = typeof payload.notificationId === "string" ? payload.notificationId : null;
   const actionUrl = typeof payload.actionUrl === "string" ? payload.actionUrl : "/notificacoes";
-  const options: NotificationOptions & { image?: string } = {
+  const options: NotificationOptions & { image?: string; renotify?: boolean } = {
     body:
       typeof payload.body === "string"
         ? payload.body
