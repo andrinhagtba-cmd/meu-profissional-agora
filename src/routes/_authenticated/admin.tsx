@@ -66,9 +66,10 @@ function AdminLayout() {
         <AdminSidebar />
         <SidebarInset className="flex min-w-0 flex-1 flex-col">
           <AdminTopbar />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <main className="flex-1 px-3 pb-[calc(72px+env(safe-area-inset-bottom))] pt-4 sm:p-6 md:pb-8 lg:p-8">
             <Outlet />
           </main>
+          <AdminMobileNav />
         </SidebarInset>
       </div>
     </SidebarProvider>
