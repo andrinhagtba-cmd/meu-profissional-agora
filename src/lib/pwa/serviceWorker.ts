@@ -12,8 +12,29 @@ export type SwState = {
   lastUpdatedAt: string | null;
 };
 
-const SW_URL = "/sw.js";
+const SW_PATH = "/sw.js";
+// A query versionada evita que CDNs devolvam uma geração antiga do worker.
+// Troque este valor sempre que a estrutura do worker mudar de forma incompatível.
+const SW_URL = `${SW_PATH}?v=workbox-inline-20260730`;
 let registrationPromise: Promise<ServiceWorkerRegistration> | null = null;
+
+function isAppWorkerUrl(scriptUrl: string | undefined) {
+  if (!scriptUrl) return false;
+  try {
+    return new URL(scriptUrl).pathname === SW_PATH;
+  } catch {
+    return scriptUrl.includes(SW_PATH);
+  }
+}
+
+function isCurrentAppWorkerUrl(scriptUrl: string | undefined) {
+  if (!scriptUrl || typeof window === "undefined") return false;
+  try {
+    return new URL(scriptUrl).href === new URL(SW_URL, window.location.origin).href;
+  } catch {
+    return scriptUrl.endsWith(SW_URL);
+  }
+}
 
 export function isPreviewContext(): boolean {
   if (typeof window === "undefined") return true;
@@ -46,7 +67,7 @@ async function unregisterAppServiceWorkers() {
   const regs = await navigator.serviceWorker.getRegistrations();
   await Promise.allSettled(
     regs
-      .filter((r) => (r.active?.scriptURL ?? r.waiting?.scriptURL ?? "").endsWith(SW_URL))
+      .filter((r) => isAppWorkerUrl((r.active ?? r.waiting ?? r.installing)?.scriptURL))
       .map((r) => r.unregister()),
   );
 }
@@ -54,11 +75,7 @@ async function unregisterAppServiceWorkers() {
 function isAppRegistration(registration: ServiceWorkerRegistration) {
   const worker = registration.active ?? registration.waiting ?? registration.installing;
   if (!worker) return false;
-  try {
-    return new URL(worker.scriptURL).pathname === SW_URL;
-  } catch {
-    return worker.scriptURL.endsWith(SW_URL);
-  }
+  return isAppWorkerUrl(worker.scriptURL);
 }
 
 function waitForActivation(registration: ServiceWorkerRegistration, timeoutMs = 20_000) {
@@ -116,7 +133,12 @@ export async function ensureAppServiceWorker(): Promise<ServiceWorkerRegistratio
     registrationPromise = (async () => {
       const registrations = await navigator.serviceWorker.getRegistrations();
       let registration = registrations.find(isAppRegistration);
-      if (!registration) {
+      const worker = registration?.active ?? registration?.waiting ?? registration?.installing;
+
+      // Um registro antigo pode estar ativo, mas continuar apontando para um
+      // sw.js quebrado mantido pelo cache da CDN. Registrar a URL versionada
+      // força o navegador a buscar e avaliar a geração atual.
+      if (!registration || !isCurrentAppWorkerUrl(worker?.scriptURL)) {
         registration = await navigator.serviceWorker.register(SW_URL, {
           scope: "/",
           updateViaCache: "none",
