@@ -34,10 +34,13 @@ export function usePushNotifications() {
       setNeedsInstall(iOS && !isStandalone());
 
       const sub = isSupported ? await getExistingSubscription() : null;
-      setSubscribedHere(Boolean(sub));
-
-      if (user?.id) setDevices(await listMyDevices(user.id));
-      else setDevices([]);
+      const nextDevices = user?.id ? await listMyDevices(user.id) : [];
+      setDevices(nextDevices);
+      // Permissão e PushSubscription locais não bastam: banner e Central só
+      // confirmam ativação quando o mesmo endpoint também está ativo no servidor.
+      setSubscribedHere(
+        Boolean(sub) && nextDevices.some((device) => device.status === "active" && device.endpoint === sub?.endpoint),
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {

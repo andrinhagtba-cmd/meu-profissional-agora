@@ -10,6 +10,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // Self-hosting (VPS / Docker / Nixpacks): set NITRO_PRESET=node-server before `vite build`.
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
+const pwaBuildDirectory = "dist/client";
 
 export default defineConfig({
   tanstackStart: {
@@ -17,13 +18,12 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  ...(preset ? { nitro: { preset } } : {}),
+  nitro: preset ? { preset } : true,
   vite: {
     plugins: [
       VitePWA({
         strategies: "injectManifest",
-        // TanStack Start/Nitro collects public assets during its own closeBundle.
-        // Generate the worker first or `/sw.js` is missing from the final server output.
+        // Generate the worker before the server bundle is finalized.
         integration: { closeBundleOrder: "pre" },
         registerType: "autoUpdate",
         // Registration is centralized in src/lib/pwa/serviceWorker.ts.
@@ -32,12 +32,14 @@ export default defineConfig({
         filename: "sw.ts",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
-        // TanStack Start/Nitro serves static production files from .output/public.
-        // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
-        outDir: ".output/public",
+        // O worker nasce no bundle cliente antes do Nitro. No preset Node, o
+        // Nitro copia/incorpora exatamente esse arquivo em .output/public.
+        outDir: pwaBuildDirectory,
         injectManifest: {
+          // Um único IIFE autossuficiente: nenhum define(), importScripts(),
+          // chunk workbox-*.js ou push-handler.js é necessário em produção.
           rollupFormat: "iife",
-          globDirectory: ".output/public",
+          globDirectory: pwaBuildDirectory,
           globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
