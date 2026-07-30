@@ -71,6 +71,35 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
   ]);
 }
 
+function waitForActiveWorker(
+  registration: ServiceWorkerRegistration,
+  timeoutMs: number,
+): Promise<ServiceWorkerRegistration | null> {
+  if (registration.active) return Promise.resolve(registration);
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (result: ServiceWorkerRegistration | null) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      resolve(result);
+    };
+    const worker = registration.installing ?? registration.waiting;
+    const timer = window.setTimeout(() => finish(null), timeoutMs);
+
+    if (!worker) {
+      void navigator.serviceWorker.ready.then((ready) => finish(ready)).catch(() => finish(null));
+      return;
+    }
+
+    worker.addEventListener("statechange", () => {
+      if (registration.active || worker.state === "activated") finish(registration);
+      if (worker.state === "redundant") finish(null);
+    });
+  });
+}
+
 /**
  * Garante um service worker ativo para receber push.
  * `navigator.serviceWorker.ready` nunca resolve quando não há registro,
@@ -82,17 +111,40 @@ export async function ensurePushRegistration(): Promise<ServiceWorkerRegistratio
 
   if (!registration) {
     try {
-      registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-    } catch {
+      registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+        updateViaCache: "none",
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? ` (${error.message})` : "";
       throw new Error(
-        "Não foi possível registrar o serviço de notificações. Abra o app publicado (não a prévia) e tente novamente.",
+        `Não foi possível registrar o serviço de notificações${detail}. Atualize a página e tente novamente.`,
       );
     }
   }
 
   if (!registration.active) {
-    const ready = await withTimeout(navigator.serviceWorker.ready, 12_000);
-    if (ready) registration = ready;
+    let active = await waitForActiveWorker(registration, 20_000);
+
+    // Recover from an old deployment whose worker became stuck or redundant.
+    if (!active) {
+      await registration.unregister().catch(() => false);
+      try {
+        registration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/",
+          updateViaCache: "none",
+        });
+        active = await waitForActiveWorker(registration, 20_000);
+      } catch (error) {
+        const detail = error instanceof Error ? `: ${error.message}` : ".";
+        throw new Error(`Falha ao reiniciar o serviço de notificações${detail}`);
+      }
+    }
+
+    if (!active) {
+      throw new Error("O serviço de notificações não conseguiu iniciar. Atualize a página e tente novamente.");
+    }
+    registration = active;
   }
 
   if (!registration?.pushManager) {
