@@ -606,11 +606,12 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
           <Separator />
 
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="text-xs text-muted-foreground">
               {dirty ? "Você tem alterações não salvas." : "Tudo salvo."}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center">
+
               <Button
                 variant="ghost"
                 size="sm"
