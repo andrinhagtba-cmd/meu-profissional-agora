@@ -89,6 +89,8 @@ export async function ensurePushRegistration(): Promise<ServiceWorkerRegistratio
 export async function subscribeCurrentDevice(userId: string) {
   if (!isPushSupported()) throw new Error("Este navegador não suporta notificações push.");
 
+  // Confirma que o worker existe antes de pedir uma permissão persistente ao usuário.
+  const registration = await ensurePushRegistration();
   const permission = await withTimeout(Notification.requestPermission(), 60_000);
   if (permission !== "granted") {
     throw new Error(
@@ -98,7 +100,6 @@ export async function subscribeCurrentDevice(userId: string) {
     );
   }
 
-  const registration = await ensurePushRegistration();
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
     subscription = await withTimeout(
@@ -119,24 +120,22 @@ export async function subscribeCurrentDevice(userId: string) {
   if (!p256dh || !auth) {
     throw new Error("O navegador criou uma assinatura incompleta. Remova a permissão do site e tente novamente.");
   }
-  const { data: saved, error } = await supabase.from("push_subscriptions").upsert(
-    {
-      user_id: userId,
-      endpoint: subscription.endpoint,
-      p256dh,
-      auth,
-      device_label: device.label,
-      platform: device.platform,
-      browser: device.browser,
-      user_agent: device.userAgent,
-      status: "active",
-      failure_count: 0,
-      last_error: null,
-      last_used_at: new Date().toISOString(),
-    },
-    { onConflict: "endpoint" },
-  ).select("id, status, endpoint").single();
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !sessionData.session || sessionData.session.user.id !== userId) {
+    throw new Error("Sua sessão expirou. Entre novamente antes de ativar as notificações.");
+  }
+
+  const { data: savedRows, error } = await supabase.rpc("register_my_push_subscription", {
+    p_endpoint: subscription.endpoint,
+    p_p256dh: p256dh,
+    p_auth: auth,
+    p_device_label: device.label,
+    p_platform: device.platform,
+    p_browser: device.browser,
+    p_user_agent: device.userAgent,
+  });
   if (error) throw error;
+  const saved = savedRows?.[0];
   if (!saved || saved.status !== "active" || saved.endpoint !== subscription.endpoint) {
     throw new Error("A assinatura foi criada, mas o aparelho não foi confirmado no servidor.");
   }
