@@ -196,6 +196,8 @@ export async function getPreferences(userId: string): Promise<NotificationPrefer
       push_subscription: true,
       push_moderation: true,
       push_system: true,
+      quiet_hours_start: null,
+      quiet_hours_end: null,
     }
   );
 }
