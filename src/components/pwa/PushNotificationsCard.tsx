@@ -52,6 +52,18 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
     }
   };
 
+  const saveQuiet = async (patch: Partial<NotificationPreferences>) => {
+    if (!user?.id || !prefs) return;
+    const previous = prefs;
+    setPrefs({ ...prefs, ...patch } as NotificationPreferences);
+    try {
+      await savePreferences(user.id, patch);
+    } catch (e) {
+      toast.error((e as Error).message);
+      setPrefs(previous);
+    }
+  };
+
   const handleTest = async () => {
     setTesting(true);
     try {
