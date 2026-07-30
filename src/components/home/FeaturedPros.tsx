@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { getFeaturedProfessionals } from "@/services/mockApi";
-import { professionalPublicLocationLabel } from "@/lib/proAddress";
+import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
 import type { Professional } from "@/types";
 
 const VISIBLE = 4;
