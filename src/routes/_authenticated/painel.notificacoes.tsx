@@ -48,6 +48,8 @@ function Notificacoes() {
       qc.invalidateQueries({ queryKey: ["painel"] });
       toast.success("Todas marcadas como lidas.");
     },
+  });
+
 
 
 
