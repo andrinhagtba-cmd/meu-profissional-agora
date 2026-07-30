@@ -81,6 +81,9 @@ export function useNotificationCenter(options: {
   return {
     items,
     isLoading: listQuery.isLoading,
+    refetch: async () => {
+      await Promise.all([listQuery.refetch(), countersQuery.refetch()]);
+    },
     counters: countersQuery.data,
     unreadCount,
     markRead,
