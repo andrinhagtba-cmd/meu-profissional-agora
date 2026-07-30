@@ -193,6 +193,28 @@ function AdminUsers() {
         open={!!selectedUserId}
         onOpenChange={(o) => !o && setSelectedUserId(null)}
       />
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover usuário?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {toDelete?.full_name || toDelete?.email || "Este usuário"} será excluído permanentemente,
+              junto com o perfil e os papéis de acesso. Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteMut.isPending}
+              onClick={(e) => { e.preventDefault(); if (toDelete) deleteMut.mutate(toDelete.user_id); }}
+            >
+              {deleteMut.isPending ? "Removendo…" : "Remover"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+
   );
 }
