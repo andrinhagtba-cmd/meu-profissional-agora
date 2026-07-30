@@ -28,7 +28,7 @@ export function PushEnablePrompt() {
 
   const eligible =
     standalone &&
-    !dismissed &&
+    (!dismissed || permission === "granted") &&
     !loading &&
     supported &&
     permission !== "denied" &&
