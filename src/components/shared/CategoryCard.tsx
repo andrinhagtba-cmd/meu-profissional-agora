@@ -52,16 +52,22 @@ export function CategoryCard({ category }: { category: CategoryLike }) {
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-navy-foreground/90">
           <span className="inline-flex items-center gap-1">
             <Users size={12} aria-hidden="true" />
-            {category.professionalsCount} profissionais
+            {category.professionalsCount === 1
+              ? "1 profissional"
+              : `${category.professionalsCount} profissionais`}
           </span>
-          <span className="inline-flex items-center gap-1">
-            <Star size={12} className="fill-rating text-rating" aria-hidden="true" />
-            {category.rating.toFixed(1).replace(".", ",")}
-          </span>
+          {category.rating > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <Star size={12} className="fill-rating text-rating" aria-hidden="true" />
+              {category.rating.toFixed(1).replace(".", ",")}
+            </span>
+          )}
         </div>
-        <p className="mt-1 text-xs text-navy-foreground/80">
-          a partir de <span className="font-bold text-navy-foreground">R$ {category.priceFrom}</span>
-        </p>
+        {category.priceFrom > 0 && (
+          <p className="mt-1 text-xs text-navy-foreground/80">
+            a partir de <span className="font-bold text-navy-foreground">R$ {category.priceFrom}</span>
+          </p>
+        )}
       </div>
     </Link>
   );
