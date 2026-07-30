@@ -21,61 +21,26 @@ export default defineConfig({
   vite: {
     plugins: [
       VitePWA({
-        strategies: "generateSW",
+        strategies: "injectManifest",
         // TanStack Start/Nitro collects public assets during its own closeBundle.
         // Generate the worker first or `/sw.js` is missing from the final server output.
         integration: { closeBundleOrder: "pre" },
         registerType: "autoUpdate",
-        injectRegister: null,
-        filename: "sw.js",
+        // Registration is centralized in src/lib/pwa/serviceWorker.ts.
+        injectRegister: false,
+        srcDir: "src",
+        filename: "sw.ts",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
         // TanStack Start/Nitro serves static production files from .output/public.
         // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
         outDir: ".output/public",
-        workbox: {
-          // Inline the Workbox runtime inside sw.js. The separate workbox-*.js chunk
-          // was not surviving into .output/public, so the worker 404'd on import and
-          // the browser reported "ServiceWorker script evaluation failed".
-          inlineWorkboxRuntime: true,
-          // Custom push / notificationclick handlers live in public/push-handler.js
-          importScripts: ["/push-handler.js"],
-
+        injectManifest: {
+          rollupFormat: "iife",
           globDirectory: ".output/public",
-          // Keep installation small and reliable. Built assets are cached on demand
-          // by runtimeCaching; precaching every route chunk delayed SW activation.
-          globPatterns: ["push-handler.js", "favicon.ico", "icons/*.{png,svg,ico}"],
+          globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
-          navigateFallback: null,
-          cleanupOutdatedCaches: true,
-          skipWaiting: true,
-          clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-          runtimeCaching: [
-            {
-              // HTML navigations: always try the network first so deploys land immediately.
-              urlPattern: ({ request, url }) =>
-                request.mode === "navigate" &&
-                !url.pathname.startsWith("/~oauth") &&
-                !url.pathname.startsWith("/api/") &&
-                !url.pathname.startsWith("/_serverFn"),
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "gdf-html",
-                networkTimeoutSeconds: 5,
-                expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 },
-              },
-            },
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin && /\.(?:js|css|woff2?|png|svg|ico|webp|jpg|jpeg)$/.test(url.pathname),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "gdf-assets",
-                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              },
-            },
-          ],
         },
       }),
     ],

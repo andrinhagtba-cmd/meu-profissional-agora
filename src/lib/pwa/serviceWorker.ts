@@ -13,9 +13,6 @@ export type SwState = {
 };
 
 const SW_PATH = "/sw.js";
-// A query versionada evita que CDNs devolvam uma geração antiga do worker.
-// Troque este valor sempre que a estrutura do worker mudar de forma incompatível.
-const SW_URL = `${SW_PATH}?v=workbox-inline-20260730`;
 let registrationPromise: Promise<ServiceWorkerRegistration> | null = null;
 
 function isAppWorkerUrl(scriptUrl: string | undefined) {
@@ -27,12 +24,13 @@ function isAppWorkerUrl(scriptUrl: string | undefined) {
   }
 }
 
-function isCurrentAppWorkerUrl(scriptUrl: string | undefined) {
+function isStableAppWorkerUrl(scriptUrl: string | undefined) {
   if (!scriptUrl || typeof window === "undefined") return false;
   try {
-    return new URL(scriptUrl).href === new URL(SW_URL, window.location.origin).href;
+    const url = new URL(scriptUrl, window.location.origin);
+    return url.pathname === SW_PATH && url.search === "";
   } catch {
-    return scriptUrl.endsWith(SW_URL);
+    return scriptUrl === SW_PATH;
   }
 }
 
@@ -133,16 +131,18 @@ export async function ensureAppServiceWorker(): Promise<ServiceWorkerRegistratio
     registrationPromise = (async () => {
       const registrations = await navigator.serviceWorker.getRegistrations();
       let registration = registrations.find(isAppRegistration);
-      const worker = registration?.active ?? registration?.waiting ?? registration?.installing;
-
-      // Um registro antigo pode estar ativo, mas continuar apontando para um
-      // sw.js quebrado mantido pelo cache da CDN. Registrar a URL versionada
-      // força o navegador a buscar e avaliar a geração atual.
-      if (!registration || !isCurrentAppWorkerUrl(worker?.scriptURL)) {
-        registration = await navigator.serviceWorker.register(SW_URL, {
+      const currentWorker = registration?.active ?? registration?.waiting ?? registration?.installing;
+      if (registration && !isStableAppWorkerUrl(currentWorker?.scriptURL)) {
+        await registration.unregister();
+        registration = undefined;
+      }
+      if (!registration) {
+        registration = await navigator.serviceWorker.register(SW_PATH, {
           scope: "/",
           updateViaCache: "none",
         });
+      } else {
+        await registration.update();
       }
       return waitForActivation(registration);
     })().catch((error) => {
