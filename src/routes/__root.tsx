@@ -14,6 +14,10 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BrandDocumentSync } from "@/components/BrandDocumentSync";
 import { SystemNotificationBridge } from "@/components/layout/SystemNotificationBridge";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
+import { PwaUpdatePrompt } from "@/components/pwa/PwaUpdatePrompt";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 
 
 function NotFoundComponent() {
@@ -100,6 +104,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Compare profissionais, veja avaliações reais e solicite orçamentos de eletricistas, encanadores, pintores e mais, perto de você." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/660dd17f-0544-435a-9c5a-67b7ae9905e2/id-preview-2393d2cb--be7738f9-7633-4210-abdc-068eefea087f.lovable.app-1783726490989.png" },
+      { name: "theme-color", content: "#0759F8" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Guia DF" },
+      { name: "application-name", content: "Guia DF na Mídia" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -110,6 +120,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icons/favicon-64.png", type: "image/png", sizes: "64x64" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png", sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
@@ -150,10 +163,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrandDocumentSync />
-      <SystemNotificationBridge />
-      <Outlet />
-      <Toaster position="top-center" richColors />
+      <PwaProvider>
+        <BrandDocumentSync />
+        <SystemNotificationBridge />
+        <OfflineBanner />
+        <Outlet />
+        <PwaUpdatePrompt />
+        <PwaInstallPrompt />
+        <Toaster position="top-center" richColors />
+      </PwaProvider>
     </QueryClientProvider>
   );
 }

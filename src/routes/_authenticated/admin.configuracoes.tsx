@@ -26,6 +26,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Smartphone } from "lucide-react";
+import { PwaDiagnosticPanel } from "@/components/pwa/PwaDiagnosticPanel";
 import { getSettings, updateSettings, type UpdateSettingsInput, type FooterColumn, type FooterConfig } from "@/services/settingsService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,6 +98,9 @@ function Page() {
             <TabsTrigger value="prefs" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Settings2 size={15} /> Preferências
             </TabsTrigger>
+            <TabsTrigger value="app" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Smartphone size={15} /> Aplicativo
+            </TabsTrigger>
             <TabsTrigger value="me" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <User size={15} /> Meu perfil
             </TabsTrigger>
@@ -112,6 +117,9 @@ function Page() {
           </TabsContent>
           <TabsContent value="prefs">
             <PrefsTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
+          </TabsContent>
+          <TabsContent value="app">
+            <PwaDiagnosticPanel />
           </TabsContent>
           <TabsContent value="me">
             <MyProfileTab />
