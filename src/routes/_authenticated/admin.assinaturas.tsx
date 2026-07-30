@@ -257,7 +257,7 @@ function Page() {
               <SelectTrigger className="w-48"><SelectValue placeholder="Região" /></SelectTrigger>
               <SelectContent className="max-h-72">
                 <SelectItem value="all">Todas as regiões</SelectItem>
-                {DF_REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                {DF_REGIONS.map((r) => <SelectItem key={r.slug} value={r.name}>{r.name}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
