@@ -78,11 +78,17 @@ export function publicAddressLabel(a: PublicAddressInput): string | null {
   const cityState = [a.city, a.state].filter(Boolean).join(", ");
   if (vis === "city_state") return cityState || null;
   if (vis === "neighborhood_city_state") {
-    return [a.neighborhood, cityState].filter(Boolean).join(" · ") || null;
+    // Quando o bairro não foi preenchido, usa o logradouro/número como detalhe
+    const detail =
+      a.neighborhood?.trim() ||
+      [a.street, a.address_number].filter(Boolean).join(", ") ||
+      null;
+    return [detail, cityState].filter(Boolean).join(" · ") || null;
   }
   // full_address — prioriza os campos estruturados para não perder o complemento
   return fullAddressLine(a) ?? a.formatted_address ?? null;
 }
+
 
 
 export function mapsSearchUrl(a: PublicAddressInput): string | null {
