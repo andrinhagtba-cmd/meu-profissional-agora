@@ -4,7 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { images } from "@/data/images";
 import type { Category } from "@/types";
 
-type CategoryLike = Category & { imageUrl?: string; imageAlt?: string };
+type CategoryLike = Category & {
+  imageUrl?: string;
+  imageAlt?: string;
+  badgeVariant?: string | null;
+};
+
+const BADGE_TONES: Record<string, string> = {
+  orange: "bg-orange text-orange-foreground hover:bg-orange",
+  primary: "bg-primary text-primary-foreground hover:bg-primary",
+  emerald: "bg-emerald-600 text-white hover:bg-emerald-600",
+  navy: "bg-navy text-navy-foreground hover:bg-navy",
+};
 
 export function CategoryCard({ category }: { category: CategoryLike }) {
   const hasImage =
@@ -43,7 +54,11 @@ export function CategoryCard({ category }: { category: CategoryLike }) {
       )}
       <div className="absolute inset-0 bg-linear-to-t from-navy/90 via-navy/25 to-transparent" aria-hidden="true" />
       {category.badge && (
-        <Badge className="absolute left-4 top-4 rounded-full bg-orange px-3 py-1 text-[11px] font-bold text-orange-foreground hover:bg-orange">
+        <Badge
+          className={`absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-bold ${
+            BADGE_TONES[category.badgeVariant ?? "orange"] ?? BADGE_TONES.orange
+          }`}
+        >
           {category.badge}
         </Badge>
       )}

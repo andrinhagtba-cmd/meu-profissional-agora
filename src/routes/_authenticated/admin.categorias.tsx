@@ -386,6 +386,9 @@ function CategoryDialog({
   const [coverMediaId, setCoverMediaId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageAlt, setImageAlt] = useState("");
+  const [badgeText, setBadgeText] = useState("");
+  const [badgeVariant, setBadgeVariant] = useState("orange");
+  const [badgeActive, setBadgeActive] = useState(true);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -401,6 +404,9 @@ function CategoryDialog({
     setCoverMediaId(initial?.cover_media_id ?? null);
     setImageUrl(initial?.image_url ?? null);
     setImageAlt(initial?.image_alt ?? "");
+    setBadgeText(initial?.badge_text ?? "");
+    setBadgeVariant(initial?.badge_variant ?? "orange");
+    setBadgeActive(initial?.badge_active !== false);
     setPreviewUrl(initial?.cover_url ?? "");
   }, [open, initial]);
 
@@ -564,6 +570,51 @@ function CategoryDialog({
                 />
               </div>
             </div>
+            <div className="rounded-2xl bg-[oklch(0.98_0.008_258)] p-3 ring-1 ring-[oklch(0.94_0.014_258)]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <Label className="mb-0">Selo de destaque</Label>
+                  <p className="text-[11px] text-muted-foreground">
+                    Aparece no canto do card (ex.: Mais procurado).
+                  </p>
+                </div>
+                <Switch checked={badgeActive} onCheckedChange={setBadgeActive} />
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_140px]">
+                <Input
+                  value={badgeText}
+                  onChange={(e) => setBadgeText(e.target.value)}
+                  placeholder="Ex.: Mais procurado"
+                  className="h-9 rounded-xl text-sm"
+                />
+                <select
+                  value={badgeVariant}
+                  onChange={(e) => setBadgeVariant(e.target.value)}
+                  className="h-9 rounded-xl border border-input bg-background px-2 text-sm"
+                  aria-label="Cor do selo"
+                >
+                  <option value="orange">Laranja</option>
+                  <option value="primary">Azul</option>
+                  <option value="emerald">Verde</option>
+                  <option value="navy">Escuro</option>
+                </select>
+              </div>
+              {badgeActive && badgeText && (
+                <span
+                  className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-bold ${
+                    badgeVariant === "primary"
+                      ? "bg-primary text-primary-foreground"
+                      : badgeVariant === "emerald"
+                        ? "bg-emerald-600 text-white"
+                        : badgeVariant === "navy"
+                          ? "bg-navy text-navy-foreground"
+                          : "bg-orange text-orange-foreground"
+                  }`}
+                >
+                  {badgeText}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2 rounded-2xl bg-[oklch(0.98_0.008_258)] px-3 py-2 ring-1 ring-[oklch(0.94_0.014_258)]">
               <Switch checked={active} onCheckedChange={setActive} />
               <div>
@@ -594,6 +645,9 @@ function CategoryDialog({
                 cover_media_id: coverMediaId,
                 image_url: imageUrl,
                 image_alt: imageAlt || null,
+                badge_text: badgeText.trim() || null,
+                badge_variant: badgeVariant,
+                badge_active: badgeActive && !!badgeText.trim(),
               })
             }
             className="rounded-xl bg-primary shadow-lg shadow-primary/25 hover:bg-primary/90"
