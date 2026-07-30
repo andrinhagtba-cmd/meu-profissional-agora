@@ -66,11 +66,12 @@ function waitForActivation(registration: ServiceWorkerRegistration, timeoutMs = 
 
   return new Promise<ServiceWorkerRegistration>((resolve, reject) => {
     const worker = registration.installing ?? registration.waiting;
+    let settled = false;
     const timer = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
       reject(new Error("O serviço de notificações demorou para iniciar. Atualize o aplicativo e tente novamente."));
     }, timeoutMs);
-
-    let settled = false;
     const finish = () => {
       if (settled) return;
       settled = true;
