@@ -2925,10 +2925,12 @@ export type Database = {
         Args: { _id: string; _notes?: string; _status: string }
         Returns: undefined
       }
-      notification_push_allowed: {
-        Args: { _type: string; _user_id: string }
-        Returns: boolean
-      }
+      notification_push_allowed:
+        | { Args: { _type: string; _user_id: string }; Returns: boolean }
+        | {
+            Args: { _priority?: string; _type: string; _user_id: string }
+            Returns: boolean
+          }
       plan_expiry_from: {
         Args: { _billing_period: string; _start: string }
         Returns: string
