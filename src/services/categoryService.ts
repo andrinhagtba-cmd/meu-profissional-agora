@@ -6,6 +6,7 @@ import type { Category, CategoryFaq } from "@/types";
 export interface CategoryVM extends Category {
   imageUrl: string;
   imageAlt: string;
+  badgeVariant: string | null;
 }
 
 interface CategoryRow {
@@ -14,6 +15,7 @@ interface CategoryRow {
   name: string;
   description: string | null;
   badge_text: string | null;
+  badge_variant: string | null;
   badge_active: boolean | null;
   image_alt: string | null;
   image_url: string | null;
@@ -145,6 +147,7 @@ function toVM(
         : row.name,
     description: row.description ?? staticMatch?.description ?? "",
     badge: badgeActive && row.badge_text ? row.badge_text : undefined,
+    badgeVariant: row.badge_variant ?? "orange",
     professionalsCount: stats?.count ?? 0,
     rating: stats?.rating ?? 0,
     priceFrom: stats?.priceFrom ?? 0,
@@ -157,7 +160,7 @@ export async function listCategories(): Promise<CategoryVM[]> {
   const { data, error } = await supabasePublic
     .from("categories")
     .select(
-      "id, slug, name, description, badge_text, badge_active, image_alt, image_url, display_order, card_media:card_media_id(bucket_name, object_path), cover_media:cover_media_id(bucket_name, object_path)",
+      "id, slug, name, description, badge_text, badge_variant, badge_active, image_alt, image_url, display_order, card_media:card_media_id(bucket_name, object_path), cover_media:cover_media_id(bucket_name, object_path)",
     )
     .eq("active", true)
     .order("display_order", { ascending: true, nullsFirst: false });

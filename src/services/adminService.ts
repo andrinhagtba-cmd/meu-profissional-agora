@@ -1094,6 +1094,9 @@ export type AdminCategory = {
   cover_media_id: string | null;
   image_url: string | null;
   image_alt: string | null;
+  badge_text: string | null;
+  badge_variant: string | null;
+  badge_active: boolean | null;
   cover_url: string; // resolved
   services_count?: number;
 };
@@ -1102,7 +1105,7 @@ export async function listCategoriesAdmin(search = ""): Promise<AdminCategory[]>
   let q = supabase
     .from("categories")
     .select(
-      "id, name, slug, description, icon, active, display_order, created_at, cover_media_id, image_url, image_alt",
+      "id, name, slug, description, icon, active, display_order, created_at, cover_media_id, image_url, image_alt, badge_text, badge_variant, badge_active",
     )
     .order("display_order", { ascending: true })
     .order("name", { ascending: true })
@@ -1150,6 +1153,9 @@ export type UpsertCategoryInput = {
   cover_media_id?: string | null;
   image_url?: string | null;
   image_alt?: string | null;
+  badge_text?: string | null;
+  badge_variant?: string | null;
+  badge_active?: boolean | null;
 };
 
 export async function upsertCategory(input: UpsertCategoryInput) {
@@ -1164,6 +1170,9 @@ export async function upsertCategory(input: UpsertCategoryInput) {
   if (input.cover_media_id !== undefined) payload.cover_media_id = input.cover_media_id;
   if (input.image_url !== undefined) payload.image_url = input.image_url;
   if (input.image_alt !== undefined) payload.image_alt = input.image_alt;
+  if (input.badge_text !== undefined) payload.badge_text = input.badge_text;
+  if (input.badge_variant !== undefined) payload.badge_variant = input.badge_variant;
+  if (input.badge_active !== undefined) payload.badge_active = input.badge_active ?? false;
 
   if (input.id) {
     const { error } = await supabase.from("categories").update(payload).eq("id", input.id);
@@ -1195,6 +1204,9 @@ export type AdminService = {
   display_order: number | null;
   cover_media_id: string | null;
   image_alt: string | null;
+  badge_text: string | null;
+  badge_variant: string | null;
+  badge_active: boolean | null;
   cover_url: string; // resolved
   category?: { name: string; slug: string; cover_url?: string } | null;
 };
