@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/painel/notificacoes")({
 function Notificacoes() {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [browserPermission, setBrowserPermission] = useState<NotificationPermission | "unsupported">("unsupported");
+  
   const { data, isLoading } = useQuery({
     queryKey: ["notifications", user?.id],
     enabled: !!user?.id,
