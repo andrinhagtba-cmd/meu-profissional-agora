@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, MapPin, Sparkles, Star, Zap } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, Sparkles, Star, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { getFeaturedProfessionals } from "@/services/mockApi";
-import { professionalPublicLocationLabel } from "@/lib/proAddress";
+import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
 import type { Professional } from "@/types";
 
 const VISIBLE = 4;
@@ -144,7 +144,6 @@ export function FeaturedPros() {
 
 function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
   const topServices = pro.services.slice(0, 2);
-  const locationLabel = professionalPublicLocationLabel(pro);
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-float">
       {/* Cover */}
@@ -198,13 +197,15 @@ function PremiumProCard({ pro, rank }: { pro: Professional; rank: number }) {
           <p className="mt-0.5 truncate text-sm font-medium text-primary">
             {pro.specialty}
           </p>
-          <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin size={12} aria-hidden="true" />
-            <span className="truncate">
-              {locationLabel ? `${locationLabel} · ` : ""}responde em {pro.responseTime}
-            </span>
-          </p>
         </div>
+
+        <ProLocationBlock pro={pro} size="sm" className="mt-2.5" />
+        {pro.responseTime && pro.responseTime !== "—" && (
+          <p className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Clock size={11} aria-hidden="true" />
+            Responde em {pro.responseTime}
+          </p>
+        )}
 
         {/* Chips: emergency + services */}
         {(pro.emergency || topServices.length > 0) && (

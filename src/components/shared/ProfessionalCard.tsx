@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Clock, Eye, MapPin } from "lucide-react";
+import { BadgeCheck, Clock, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
-import { professionalPublicLocationLabel } from "@/lib/proAddress";
+import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
 import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
@@ -73,16 +73,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
             </span>
           )}
         </div>
-        {(() => {
-          const label = professionalPublicLocationLabel(pro);
-          if (!label) return null;
-          return (
-            <p className="flex items-center gap-1.5">
-              <MapPin size={14} className="shrink-0 text-primary" aria-hidden="true" />
-              <span className="truncate">{label}</span>
-            </p>
-          );
-        })()}
+        <ProLocationBlock pro={pro} />
         {pro.responseTime && pro.responseTime !== "—" && (
           <p className="flex items-center gap-1.5">
             <Clock size={14} className="shrink-0 text-primary" aria-hidden="true" />
