@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
-import { professionalPublicLocationLabel } from "@/lib/proAddress";
+import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
 import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
