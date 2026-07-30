@@ -17,7 +17,21 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  ...(preset ? { nitro: { preset } } : {}),
+  nitro: {
+    ...(preset ? { preset } : {}),
+    routeRules: {
+      // A Cloudflare estava mantendo uma geração quebrada do worker por 4 horas.
+      // O navegador já usa updateViaCache:"none", e estes headers impedem que
+      // proxies/CDNs reutilizem um sw.js antigo entre deploys.
+      "/sw.js": {
+        headers: {
+          "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+          "service-worker-allowed": "/",
+          "content-type": "text/javascript; charset=utf-8",
+        },
+      },
+    },
+  },
   vite: {
     plugins: [
       VitePWA({
@@ -36,6 +50,8 @@ export default defineConfig({
         // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
         outDir: ".output/public",
         injectManifest: {
+          // Um único IIFE autossuficiente: nenhum define(), importScripts(),
+          // chunk workbox-*.js ou push-handler.js é necessário em produção.
           rollupFormat: "iife",
           globDirectory: ".output/public",
           globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
