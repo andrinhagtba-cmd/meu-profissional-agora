@@ -43,6 +43,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +72,18 @@ const PROFILE_LABEL: Record<string, string> = {
 };
 
 type AdminProSearch = { tab: string };
+
+const TAB_ITEMS: { value: string; label: string; icon: ReactNode }[] = [
+  { value: "overview", label: "Visão geral", icon: <Eye size={15} /> },
+  { value: "profile", label: "Perfil", icon: <Pencil size={15} /> },
+  { value: "services", label: "Serviços", icon: <BriefcaseBusiness size={15} /> },
+  { value: "portfolio", label: "Portfólio", icon: <GalleryHorizontalEnd size={15} /> },
+  { value: "documents", label: "Documentos", icon: <FileCheck2 size={15} /> },
+  { value: "reviews", label: "Avaliações", icon: <Star size={15} /> },
+  { value: "plan", label: "Plano e acesso", icon: <WalletCards size={15} /> },
+  { value: "activity", label: "Histórico", icon: <Timer size={15} /> },
+];
+
 
 export const Route = createFileRoute("/_authenticated/admin/profissionais/$id")({
   head: () => ({ meta: [{ title: "Profissional · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -169,7 +183,8 @@ function AdminProDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full min-w-0 space-y-5 overflow-x-clip sm:space-y-6">
+
       <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("avatar", e.target.files?.[0]); e.target.value = ""; }} />
       <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { handleMediaUpload("cover", e.target.files?.[0]); e.target.value = ""; }} />
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -190,7 +205,7 @@ function AdminProDetailPage() {
 
       <section className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-float">
         {/* Capa limpa: sem texto, gradiente sutil apenas para profundidade */}
-        <div className="relative h-52 w-full overflow-hidden sm:h-60">
+        <div className="relative h-36 w-full overflow-hidden sm:h-60">
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-[1.02]"
             style={pro.cover_url ? { backgroundImage: `url(${pro.cover_url})` } : undefined}
@@ -211,11 +226,12 @@ function AdminProDetailPage() {
         </div>
 
         {/* Card de perfil premium abaixo da capa, sem sobrepor a imagem */}
-        <div className="relative px-5 pb-6 sm:px-7">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-              <div className="group relative -mt-14 h-28 w-28 shrink-0 sm:-mt-16 sm:h-32 sm:w-32">
-                <div className="h-28 w-28 rounded-full border-4 border-card bg-card p-1 shadow-float sm:h-32 sm:w-32">
+        <div className="relative min-w-0 px-4 pb-6 sm:px-7">
+          <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start">
+              <div className="group relative -mt-12 h-24 w-24 shrink-0 sm:-mt-16 sm:h-32 sm:w-32">
+                <div className="h-24 w-24 rounded-full border-4 border-card bg-card p-1 shadow-float sm:h-32 sm:w-32">
+
                   {pro.avatar_url ? (
                     <img src={pro.avatar_url} alt={displayName} className="h-full w-full rounded-full object-cover" />
                   ) : (
@@ -232,7 +248,7 @@ function AdminProDetailPage() {
                   {uploading === "avatar" ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
                 </button>
               </div>
-              <div className="pt-1 sm:pt-3">
+              <div className="min-w-0 pt-1 sm:pt-3">
                 <div className="mb-2.5 flex flex-wrap items-center gap-2">
                   <StatusPill tone={pro.verification_status === "approved" ? "success" : pro.verification_status === "rejected" ? "danger" : "warning"}>
                     {VERIF_LABEL[pro.verification_status] ?? pro.verification_status}
@@ -247,7 +263,7 @@ function AdminProDetailPage() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-display text-2xl font-extrabold tracking-normal text-foreground sm:text-3xl">{displayName}</h1>
+                  <h1 className="min-w-0 break-words font-display text-xl font-extrabold tracking-normal text-foreground sm:text-3xl">{displayName}</h1>
                   {pro.verification_status === "approved" && <BadgeCheck size={22} className="text-primary" />}
                 </div>
                 <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
@@ -268,15 +284,16 @@ function AdminProDetailPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1 lg:pt-3">
+            <div className="flex w-full flex-wrap gap-2 pt-1 lg:w-auto lg:pt-3">
               {publicPath && (
-                <Button variant="outline" className="rounded-full bg-card" onClick={copyPublicLink}>
+                <Button variant="outline" className="flex-1 rounded-full bg-card lg:flex-none" onClick={copyPublicLink}>
                   <Copy size={15} /> Copiar link
                 </Button>
               )}
-              <Button className="rounded-full shadow-float" onClick={() => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: "profile" }), resetScroll: false })}>
+              <Button className="flex-1 rounded-full shadow-float lg:flex-none" onClick={() => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: "profile" }), resetScroll: false })}>
                 <Pencil size={15} /> Editar perfil
               </Button>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="rounded-full bg-card"><MoreHorizontal size={16} /></Button>
@@ -300,7 +317,7 @@ function AdminProDetailPage() {
           </div>
 
           {/* KPIs premium */}
-          <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4">
             <KPI icon={<BriefcaseBusiness size={18} />} label="Serviços" value={pro.counts.services} hint="ofertas vinculadas" />
             <KPI icon={<GalleryHorizontalEnd size={18} />} label="Portfólio" value={pro.counts.portfolio} hint="provas visuais" />
             <KPI icon={<Sparkles size={18} />} label="Leads" value={pro.counts.leads} hint="oportunidades" />
@@ -309,20 +326,35 @@ function AdminProDetailPage() {
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr),360px]">
-        <Tabs value={tab} onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}>
-          <div className="overflow-hidden rounded-[1.7rem] border bg-card p-2 shadow-card">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr),360px]">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}
+          className="min-w-0"
+        >
+          {/* Mobile: seletor de seção */}
+          <div className="md:hidden">
+            <Select value={tab} onValueChange={(v) => navigate({ search: (prev: AdminProSearch) => ({ ...prev, tab: v }), resetScroll: false })}>
+              <SelectTrigger className="h-12 w-full rounded-2xl border-border/70 bg-card text-sm font-semibold shadow-card">
+                <SelectValue placeholder="Selecione a seção" />
+              </SelectTrigger>
+              <SelectContent>
+                {TAB_ITEMS.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Desktop: pills */}
+          <div className="hidden min-w-0 overflow-hidden rounded-[1.7rem] border bg-card p-2 shadow-card md:block">
             <TabsList className="flex h-auto w-full justify-start gap-2 overflow-x-auto rounded-[1.25rem] bg-background p-2">
-              <Tab value="overview" icon={<Eye size={15} />} label="Visão geral" />
-              <Tab value="profile" icon={<Pencil size={15} />} label="Perfil" />
-              <Tab value="services" icon={<BriefcaseBusiness size={15} />} label="Serviços" />
-              <Tab value="portfolio" icon={<GalleryHorizontalEnd size={15} />} label="Portfólio" />
-              <Tab value="documents" icon={<FileCheck2 size={15} />} label="Documentos" />
-              <Tab value="reviews" icon={<Star size={15} />} label="Avaliações" />
-              <Tab value="plan" icon={<WalletCards size={15} />} label="Plano e acesso" />
-              <Tab value="activity" icon={<Timer size={15} />} label="Histórico" />
+              {TAB_ITEMS.map((t) => (
+                <Tab key={t.value} value={t.value} icon={t.icon} label={t.label} />
+              ))}
             </TabsList>
           </div>
+
 
           <TabsContent value="overview" className="mt-5 space-y-5">
             <div className="grid gap-5 lg:grid-cols-2">
@@ -374,7 +406,7 @@ function AdminProDetailPage() {
         </Tabs>
 
         <aside className="space-y-5">
-          <Card className="sticky top-24 overflow-hidden rounded-[1.7rem] shadow-card">
+          <Card className="overflow-hidden rounded-[1.7rem] shadow-card xl:sticky xl:top-24">
             <CardHeader className="border-b bg-background/70 pb-4">
               <CardTitle className="flex items-center gap-2 font-display text-lg font-extrabold tracking-normal"><ShieldCheck size={18} className="text-primary" /> Comando rápido</CardTitle>
             </CardHeader>

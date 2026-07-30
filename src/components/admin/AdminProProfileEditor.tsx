@@ -270,19 +270,20 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
     setForm((prev) => ({ ...prev, [k]: v }));
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr),390px]">
+    <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr),390px]">
       {/* Editor */}
-      <Card className="overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
-        <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
-          <div>
-            <CardTitle className="font-display text-xl font-extrabold tracking-normal">Perfil público</CardTitle>
+      <Card className="min-w-0 overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+        <CardHeader className="flex flex-col items-start gap-2 border-b bg-background/70 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <CardTitle className="font-display text-lg font-extrabold tracking-normal sm:text-xl">Perfil público</CardTitle>
             <p className="text-xs text-muted-foreground">Dados exibidos na busca e na página pública.</p>
           </div>
+
           <StatusPill tone={pro.profile_status === "published" ? "success" : pro.profile_status === "archived" ? "danger" : "warning"}>
             {pro.profile_status === "published" ? "Publicado" : pro.profile_status === "archived" ? "Suspenso" : "Rascunho"}
           </StatusPill>
         </CardHeader>
-        <CardContent className="space-y-5 p-5 sm:p-6">
+        <CardContent className="min-w-0 space-y-5 p-4 sm:p-6">
 
           <div className="grid gap-3 sm:grid-cols-2">
 
@@ -605,11 +606,12 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
           <Separator />
 
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="text-xs text-muted-foreground">
               {dirty ? "Você tem alterações não salvas." : "Tudo salvo."}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center">
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -640,7 +642,7 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
       {/* Preview */}
       <aside className="space-y-3">
-        <Card className="sticky top-24 overflow-hidden rounded-[1.7rem] border-border/70 shadow-card">
+        <Card className="overflow-hidden rounded-[1.7rem] border-border/70 shadow-card xl:sticky xl:top-24">
           <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-background/70 pb-4">
             <div className="flex items-center gap-1.5">
               <Eye size={14} className="text-muted-foreground" />
