@@ -96,6 +96,9 @@ function Page() {
             <TabsTrigger value="prefs" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Settings2 size={15} /> Preferências
             </TabsTrigger>
+            <TabsTrigger value="app" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Smartphone size={15} /> Aplicativo
+            </TabsTrigger>
             <TabsTrigger value="me" className="gap-2 rounded-xl px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <User size={15} /> Meu perfil
             </TabsTrigger>
@@ -112,6 +115,9 @@ function Page() {
           </TabsContent>
           <TabsContent value="prefs">
             <PrefsTab settings={data} save={(patch) => updateM.mutate(patch)} saving={updateM.isPending} />
+          </TabsContent>
+          <TabsContent value="app">
+            <PwaDiagnosticPanel />
           </TabsContent>
           <TabsContent value="me">
             <MyProfileTab />
