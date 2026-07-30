@@ -45,7 +45,7 @@ const GROUP_TYPES: Record<Exclude<NotificationGroup, "all">, NotificationType[]>
 
 export function groupOfType(type: string): Exclude<NotificationGroup, "all"> {
   for (const [group, types] of Object.entries(GROUP_TYPES)) {
-    if (types.includes(type)) return group as Exclude<NotificationGroup, "all">;
+    if ((types as string[]).includes(type)) return group as Exclude<NotificationGroup, "all">;
   }
   return "system";
 }
