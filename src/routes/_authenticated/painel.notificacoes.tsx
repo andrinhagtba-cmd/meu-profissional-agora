@@ -48,18 +48,8 @@ function Notificacoes() {
       qc.invalidateQueries({ queryKey: ["painel"] });
       toast.success("Todas marcadas como lidas.");
     },
-  });
 
-  useEffect(() => {
-    setBrowserPermission(typeof window !== "undefined" && "Notification" in window ? Notification.permission : "unsupported");
-  }, []);
 
-  const requestBrowserAlerts = async () => {
-    if (!("Notification" in window)) return;
-    const permission = await Notification.requestPermission();
-    setBrowserPermission(permission);
-    if (permission === "granted") toast.success("Alertas do navegador ativados.");
-  };
 
   return (
     <SiteLayout>
