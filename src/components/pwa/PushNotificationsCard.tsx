@@ -195,6 +195,44 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
               </div>
             ))}
           </div>
+
+          <div className="mt-4 rounded-2xl border border-border/60 bg-background p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label htmlFor="quiet_hours" className="flex items-center gap-2 text-sm font-semibold">
+                  <Moon size={14} className="text-primary" /> Horário silencioso
+                </Label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Nesse período só avisos urgentes chegam no celular (horário de Brasília).
+                </p>
+              </div>
+              <Switch
+                id="quiet_hours"
+                checked={prefs.quiet_hours_start !== null && prefs.quiet_hours_end !== null}
+                onCheckedChange={(v) =>
+                  saveQuiet(
+                    v
+                      ? { quiet_hours_start: 22, quiet_hours_end: 7 }
+                      : { quiet_hours_start: null, quiet_hours_end: null },
+                  )
+                }
+              />
+            </div>
+            {prefs.quiet_hours_start !== null && prefs.quiet_hours_end !== null && (
+              <div className="mt-3 flex flex-wrap items-end gap-3">
+                <HourSelect
+                  label="Início"
+                  value={prefs.quiet_hours_start}
+                  onChange={(h) => saveQuiet({ quiet_hours_start: h })}
+                />
+                <HourSelect
+                  label="Fim"
+                  value={prefs.quiet_hours_end}
+                  onChange={(h) => saveQuiet({ quiet_hours_end: h })}
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </section>
