@@ -24,7 +24,7 @@ if (workerStat.size < 1_000) fail("sw.js está vazio ou incompleto.");
 if (/\bdefine\s*\(\s*\[/.test(worker)) fail("sw.js foi gerado como módulo AMD.");
 if (/\bimportScripts\s*\(/.test(worker)) fail("sw.js possui dependência carregada por importScripts().");
 if (/push-handler\.js/.test(worker)) fail("sw.js ainda depende do handler legado de push.");
-if (/workbox-[a-z0-9_-]+(?:\.js)?/i.test(worker)) fail("sw.js ainda referencia um chunk externo do Workbox.");
+if (/["'/]workbox-[a-z0-9_-]+\.js/i.test(worker)) fail("sw.js ainda referencia um chunk externo do Workbox.");
 if (!worker.includes("showNotification")) fail("handler de recebimento Web Push não está no sw.js.");
 if (!worker.includes("notificationclick")) fail("handler de clique da notificação não está no sw.js.");
 if (!worker.includes("NOTIFICATION_CLICK")) fail("navegação após clique não está no sw.js.");

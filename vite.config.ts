@@ -17,21 +17,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: {
-    ...(preset ? { preset } : {}),
-    routeRules: {
-      // A Cloudflare estava mantendo uma geração quebrada do worker por 4 horas.
-      // O navegador já usa updateViaCache:"none", e estes headers impedem que
-      // proxies/CDNs reutilizem um sw.js antigo entre deploys.
-      "/sw.js": {
-        headers: {
-          "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
-          "service-worker-allowed": "/",
-          "content-type": "text/javascript; charset=utf-8",
-        },
-      },
-    },
-  },
+  ...(preset ? { nitro: { preset } } : {}),
   vite: {
     plugins: [
       VitePWA({

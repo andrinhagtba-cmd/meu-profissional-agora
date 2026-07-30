@@ -35,6 +35,18 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+function withServiceWorkerHeaders(request: Request, response: Response): Response {
+  if (new URL(request.url).pathname !== "/sw.js" || response.status !== 200) return response;
+
+  const headers = new Headers(response.headers);
+  // Service Workers devem sempre ser revalidados. Isso evita que a CDN mantenha
+  // uma geração antiga depois do deploy e garante o controle do scope raiz.
+  headers.set("cache-control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+  headers.set("service-worker-allowed", "/");
+  headers.set("content-type", "text/javascript; charset=utf-8");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 function isH3SwallowedErrorBody(body: string): boolean {
   try {
     const payload = JSON.parse(body) as { unhandled?: unknown; message?: unknown };
@@ -49,7 +61,7 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withServiceWorkerHeaders(request, await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
