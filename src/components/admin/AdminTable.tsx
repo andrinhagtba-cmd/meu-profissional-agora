@@ -28,9 +28,65 @@ export function AdminTable<T>({ columns, rows, isLoading, emptyText = "Nada aqui
   const allChecked = selectable && allIds.length > 0 && allIds.every((id) => selectable.selected.has(id));
 
   return (
-    <div className="admin-card overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+    <>
+      {/* Mobile: cards empilhados */}
+      <div className="space-y-3 md:hidden">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="admin-card p-4"><Skeleton className="h-20 w-full" /></div>
+          ))
+        ) : !rows || rows.length === 0 ? (
+          <div className="admin-card p-8 text-center text-sm text-muted-foreground">{emptyText}</div>
+        ) : (
+          rows.map((row) => {
+            const id = rowKey(row);
+            const [first, ...rest] = columns;
+            return (
+              <div
+                key={id}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+                className={cn(
+                  "admin-card p-4 transition-transform",
+                  onRowClick && "cursor-pointer active:scale-[0.99]",
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  {selectable && (
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-4 w-4 shrink-0 rounded border-border accent-primary"
+                      checked={selectable.selected.has(id)}
+                      onChange={() => selectable.onToggle(id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  )}
+                  <div className="min-w-0 flex-1 text-sm font-semibold text-foreground">
+                    {first?.cell(row)}
+                  </div>
+                </div>
+                {rest.length > 0 && (
+                  <dl className="mt-3 space-y-2 border-t border-border/50 pt-3">
+                    {rest.map((c) => (
+                      <div key={c.key} className="flex items-start justify-between gap-3">
+                        <dt className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          {c.header}
+                        </dt>
+                        <dd className="min-w-0 flex-1 text-right text-[13px] text-foreground">{c.cell(row)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop: tabela */}
+      <div className="admin-card hidden overflow-hidden md:block">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+
           <thead className="border-b border-border/60 bg-muted/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             <tr>
               {selectable && (
@@ -95,9 +151,10 @@ export function AdminTable<T>({ columns, rows, isLoading, emptyText = "Nada aqui
               })
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

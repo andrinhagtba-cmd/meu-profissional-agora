@@ -311,3 +311,43 @@
 }
 
 
+
+/* =========================================================
+   Admin — Mobile first / responsivo
+   ========================================================= */
+/* Nada dentro do painel pode estourar a largura da tela */
+.admin-shell main {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Alvos de toque confortáveis no menu lateral em telas pequenas */
+@media (max-width: 767px) {
+  .admin-shell [data-sidebar="menu-button"] {
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+  .admin-shell [data-sidebar="group-label"] {
+    padding-top: 1rem;
+  }
+  /* Cabeçalhos de seção e tipografia mais compactos */
+  .admin-shell main h2 {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+  /* Cards com raio levemente menor e respiro ajustado */
+  .admin-shell .admin-card {
+    border-radius: 1rem;
+  }
+  /* Tabelas soltas (fora do AdminTable) rolam horizontalmente sem quebrar layout */
+  .admin-shell main table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  /* Dialogs/sheets ocupam a tela com segurança */
+  .admin-shell [role="dialog"] {
+    max-width: calc(100vw - 1.5rem);
+  }
+}

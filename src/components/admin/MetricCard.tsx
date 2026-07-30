@@ -27,9 +27,9 @@ export function MetricCard({
   } as const;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[oklch(0.93_0.014_258)] bg-card p-5 shadow-[0_1px_2px_oklch(0.51_0.245_262/4%),0_12px_32px_-18px_oklch(0.51_0.245_262/16%)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_oklch(0.51_0.245_262/6%),0_20px_40px_-16px_oklch(0.51_0.245_262/22%)]">
-      <div className="flex items-start justify-between gap-3">
-        <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${toneMap[tone]}`}>
+    <div className="group relative overflow-hidden rounded-2xl border border-[oklch(0.93_0.014_258)] bg-card p-4 shadow-[0_1px_2px_oklch(0.51_0.245_262/4%),0_12px_32px_-18px_oklch(0.51_0.245_262/16%)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_oklch(0.51_0.245_262/6%),0_20px_40px_-16px_oklch(0.51_0.245_262/22%)] sm:p-5">
+      <div className="flex items-start justify-between gap-2 sm:gap-3">
+        <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-12 sm:w-12 sm:rounded-2xl ${toneMap[tone]}`}>
           {icon}
         </span>
         {typeof delta === "number" && !loading && (
@@ -46,15 +46,15 @@ export function MetricCard({
           </span>
         )}
       </div>
-      <div className="mt-5">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+      <div className="mt-3 sm:mt-5">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.09em] text-muted-foreground sm:text-[11px]">
           {label}
         </div>
-        <div className="mt-1.5 font-display text-[2rem] font-extrabold leading-tight tracking-tight text-foreground">
-          {loading ? <Skeleton className="h-9 w-24" /> : (value ?? 0)}
+        <div className="mt-1.5 font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-[2rem]">
+          {loading ? <Skeleton className="h-8 w-20 sm:h-9 sm:w-24" /> : (value ?? 0)}
         </div>
         {hint && !loading && (
-          <div className="mt-1 text-xs text-muted-foreground">{hint}</div>
+          <div className="mt-1 text-[11px] text-muted-foreground sm:text-xs">{hint}</div>
         )}
       </div>
     </div>
