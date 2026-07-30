@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -20,11 +20,12 @@ export function useNotificationCenter(options: {
   const { user } = useAuth();
   const qc = useQueryClient();
   const userId = user?.id;
+  const instanceId = useId().replace(/[^a-zA-Z0-9]/g, "");
 
   useEffect(() => {
     if (!userId) return;
     const channel = supabase
-      .channel(`notification-center-${userId}`)
+      .channel(`notification-center-${userId}-${instanceId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
@@ -37,7 +38,7 @@ export function useNotificationCenter(options: {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [qc, userId]);
+  }, [qc, userId, instanceId]);
 
   const listQuery = useQuery({
     queryKey: ["notification-center", userId, group, onlyUnread],
