@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { ensureAppServiceWorker } from "@/lib/pwa/serviceWorker";
 
 export const VAPID_PUBLIC_KEY =
   (import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined) ??
@@ -59,7 +60,7 @@ export function describeDevice() {
 
 export async function getExistingSubscription() {
   if (!isPushSupported()) return null;
-  const registration = await navigator.serviceWorker.getRegistration();
+  const registration = await navigator.serviceWorker.getRegistration("/");
   if (!registration) return null;
   return registration.pushManager.getSubscription();
 }
@@ -71,83 +72,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
   ]);
 }
 
-function waitForActiveWorker(
-  registration: ServiceWorkerRegistration,
-  timeoutMs: number,
-): Promise<ServiceWorkerRegistration | null> {
-  if (registration.active) return Promise.resolve(registration);
-
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = (result: ServiceWorkerRegistration | null) => {
-      if (settled) return;
-      settled = true;
-      window.clearTimeout(timer);
-      resolve(result);
-    };
-    const worker = registration.installing ?? registration.waiting;
-    const timer = window.setTimeout(() => finish(null), timeoutMs);
-
-    if (!worker) {
-      void navigator.serviceWorker.ready.then((ready) => finish(ready)).catch(() => finish(null));
-      return;
-    }
-
-    worker.addEventListener("statechange", () => {
-      if (registration.active || worker.state === "activated") finish(registration);
-      if (worker.state === "redundant") finish(null);
-    });
-  });
-}
-
 /**
  * Garante um service worker ativo para receber push.
- * `navigator.serviceWorker.ready` nunca resolve quando não há registro,
- * o que travava o botão em "Ativando…" — por isso registramos sob demanda
- * e usamos timeout em todas as esperas.
+ * O PWA e o Push compartilham a mesma promessa de registro para impedir
+ * workers concorrentes e estados divergentes entre o banner e a Central.
  */
 export async function ensurePushRegistration(): Promise<ServiceWorkerRegistration> {
-  let registration = await navigator.serviceWorker.getRegistration();
-
-  if (!registration) {
-    try {
-      registration = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/",
-        updateViaCache: "none",
-      });
-    } catch (error) {
-      const detail = error instanceof Error ? ` (${error.message})` : "";
-      throw new Error(
-        `Não foi possível registrar o serviço de notificações${detail}. Atualize a página e tente novamente.`,
-      );
-    }
-  }
-
-  if (!registration.active) {
-    let active = await waitForActiveWorker(registration, 20_000);
-
-    // Recover from an old deployment whose worker became stuck or redundant.
-    if (!active) {
-      await registration.unregister().catch(() => false);
-      try {
-        registration = await navigator.serviceWorker.register("/sw.js", {
-          scope: "/",
-          updateViaCache: "none",
-        });
-        active = await waitForActiveWorker(registration, 20_000);
-      } catch (error) {
-        const detail = error instanceof Error ? `: ${error.message}` : ".";
-        throw new Error(`Falha ao reiniciar o serviço de notificações${detail}`);
-      }
-    }
-
-    if (!active) {
-      throw new Error("O serviço de notificações não conseguiu iniciar. Atualize a página e tente novamente.");
-    }
-    registration = active;
-  }
-
-  if (!registration?.pushManager) {
+  const registration = await ensureAppServiceWorker();
+  if (!registration.active || !registration.pushManager) {
     throw new Error("O serviço de notificações não ficou disponível. Recarregue a página e tente de novo.");
   }
 
@@ -182,7 +114,7 @@ export async function subscribeCurrentDevice(userId: string) {
   }
 
   const device = describeDevice();
-  const { error } = await supabase.from("push_subscriptions").upsert(
+  const { data: saved, error } = await supabase.from("push_subscriptions").upsert(
     {
       user_id: userId,
       endpoint: subscription.endpoint,
@@ -198,8 +130,18 @@ export async function subscribeCurrentDevice(userId: string) {
       last_used_at: new Date().toISOString(),
     },
     { onConflict: "endpoint" },
-  );
+  ).select("id, status, endpoint").single();
   if (error) throw error;
+  if (!saved || saved.status !== "active" || saved.endpoint !== subscription.endpoint) {
+    throw new Error("A assinatura foi criada, mas o aparelho não foi confirmado no servidor.");
+  }
+
+  const verified = await registration.pushManager.getSubscription();
+  if (!verified || verified.endpoint !== subscription.endpoint) {
+    throw new Error("O navegador não manteve a assinatura de notificações. Tente novamente.");
+  }
+
+  window.dispatchEvent(new CustomEvent("gdf:push-subscription-changed"));
 
   return subscription.endpoint;
 }
@@ -210,6 +152,7 @@ export async function unsubscribeCurrentDevice() {
   const endpoint = subscription.endpoint;
   await subscription.unsubscribe().catch(() => {});
   await supabase.from("push_subscriptions").update({ status: "revoked" }).eq("endpoint", endpoint);
+  window.dispatchEvent(new CustomEvent("gdf:push-subscription-changed"));
 }
 
 export type PushDevice = {
