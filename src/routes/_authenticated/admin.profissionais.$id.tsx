@@ -317,7 +317,7 @@ function AdminProDetailPage() {
           </div>
 
           {/* KPIs premium */}
-          <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4">
             <KPI icon={<BriefcaseBusiness size={18} />} label="Serviços" value={pro.counts.services} hint="ofertas vinculadas" />
             <KPI icon={<GalleryHorizontalEnd size={18} />} label="Portfólio" value={pro.counts.portfolio} hint="provas visuais" />
             <KPI icon={<Sparkles size={18} />} label="Leads" value={pro.counts.leads} hint="oportunidades" />
