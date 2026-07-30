@@ -34,8 +34,13 @@ export default defineConfig({
         // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
         outDir: ".output/public",
         workbox: {
+          // Inline the Workbox runtime inside sw.js. The separate workbox-*.js chunk
+          // was not surviving into .output/public, so the worker 404'd on import and
+          // the browser reported "ServiceWorker script evaluation failed".
+          inlineWorkboxRuntime: true,
           // Custom push / notificationclick handlers live in public/push-handler.js
           importScripts: ["/push-handler.js"],
+
           globDirectory: ".output/public",
           // Keep installation small and reliable. Built assets are cached on demand
           // by runtimeCaching; precaching every route chunk delayed SW activation.
