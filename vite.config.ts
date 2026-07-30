@@ -10,6 +10,18 @@ import { VitePWA } from "vite-plugin-pwa";
 // Self-hosting (VPS / Docker / Nixpacks): set NITRO_PRESET=node-server before `vite build`.
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
+const nitroConfig = {
+  ...(preset ? { preset } : {}),
+  routeRules: {
+    "/sw.js": {
+      headers: {
+        "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "service-worker-allowed": "/",
+        "content-type": "text/javascript; charset=utf-8",
+      },
+    },
+  },
+} as unknown as { preset?: string };
 
 export default defineConfig({
   tanstackStart: {
@@ -17,7 +29,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  ...(preset ? { nitro: { preset } } : {}),
+  nitro: nitroConfig,
   vite: {
     plugins: [
       VitePWA({
