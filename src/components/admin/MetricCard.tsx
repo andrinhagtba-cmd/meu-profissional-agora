@@ -46,15 +46,15 @@ export function MetricCard({
           </span>
         )}
       </div>
-      <div className="mt-5">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+      <div className="mt-3 sm:mt-5">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.09em] text-muted-foreground sm:text-[11px]">
           {label}
         </div>
-        <div className="mt-1.5 font-display text-[2rem] font-extrabold leading-tight tracking-tight text-foreground">
-          {loading ? <Skeleton className="h-9 w-24" /> : (value ?? 0)}
+        <div className="mt-1.5 font-display text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-[2rem]">
+          {loading ? <Skeleton className="h-8 w-20 sm:h-9 sm:w-24" /> : (value ?? 0)}
         </div>
         {hint && !loading && (
-          <div className="mt-1 text-xs text-muted-foreground">{hint}</div>
+          <div className="mt-1 text-[11px] text-muted-foreground sm:text-xs">{hint}</div>
         )}
       </div>
     </div>
