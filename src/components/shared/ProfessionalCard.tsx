@@ -6,13 +6,16 @@ import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
 import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
+import { ZoomableImageArea, ZoomableThumb } from "@/components/shared/ImageLightbox";
 import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
 export function ProfessionalCard({ pro }: { pro: Professional }) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float">
-      <div
+      <ZoomableImageArea
+        src={pro.coverUrl}
+        alt={pro.name}
         className="relative h-24 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_92%,white),color-mix(in_oklab,var(--primary)_54%,var(--orange)))] bg-cover bg-center"
         style={pro.coverUrl ? { backgroundImage: `url(${pro.coverUrl})` } : undefined}
       />
@@ -21,15 +24,18 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
       </div>
       <div className="relative flex flex-1 flex-col p-5 pt-0">
         <div className="-mt-9 flex items-end justify-between gap-3">
-          <ProAvatar
-            initials={pro.initials}
-            color={pro.avatarColor}
-            imageUrl={pro.avatarUrl ?? undefined}
-            alt={pro.name}
-            size="lg"
-            className="border-4 border-card shadow-card"
-          />
+          <ZoomableThumb src={pro.avatarUrl} alt={pro.name}>
+            <ProAvatar
+              initials={pro.initials}
+              color={pro.avatarColor}
+              imageUrl={pro.avatarUrl ?? undefined}
+              alt={pro.name}
+              size="lg"
+              className="border-4 border-card shadow-card"
+            />
+          </ZoomableThumb>
         </div>
+
         <div className="mt-3 min-w-0">
           <h3 className="flex items-center gap-1.5 font-display text-base font-bold text-foreground">
             <span className="truncate">{pro.name}</span>
