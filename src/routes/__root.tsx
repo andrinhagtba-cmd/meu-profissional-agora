@@ -14,6 +14,10 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BrandDocumentSync } from "@/components/BrandDocumentSync";
 import { SystemNotificationBridge } from "@/components/layout/SystemNotificationBridge";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
+import { PwaUpdatePrompt } from "@/components/pwa/PwaUpdatePrompt";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 
 
 function NotFoundComponent() {
