@@ -9,12 +9,18 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ShieldCheck, ShieldOff, UserCog, Ban, CheckCircle2 } from "lucide-react";
+import { MoreHorizontal, ShieldCheck, ShieldOff, UserCog, Ban, CheckCircle2, Trash2 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { deleteUserFn } from "@/lib/adminUsers.functions";
 import {
   listUsersFull, updateAccountStatus, bulkUpdateAccountStatus, grantRole, revokeRole,
   type AdminUserFull, type AccountStatus,
 } from "@/services/adminService";
 import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
+
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   head: () => ({ meta: [{ title: "Usuários · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -34,6 +40,8 @@ function AdminUsers() {
   const [role, setRole] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [toDelete, setToDelete] = useState<AdminUserFull | null>(null);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users-full", search, role],
@@ -56,6 +64,17 @@ function AdminUsers() {
     onSuccess: () => { toast.success("Papel atualizado"); qc.invalidateQueries({ queryKey: ["admin-users-full"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => deleteUserFn({ data: { userId: id } }),
+    onSuccess: () => {
+      toast.success("Usuário removido");
+      setToDelete(null);
+      qc.invalidateQueries({ queryKey: ["admin-users-full"] });
+      qc.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const toggle = (id: string) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const toggleAll = (ids: string[]) => setSelected((s) => (ids.every((i) => s.has(i)) ? new Set() : new Set(ids)));
@@ -121,11 +140,19 @@ function AdminUsers() {
                 </DropdownMenuItem>
               );
             })}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setToDelete(u)}
+            >
+              <Trash2 size={14} className="mr-2" />Remover usuário
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
     },
   ], [roleMut, statusMut]);
+
 
   return (
     <div>
@@ -166,6 +193,28 @@ function AdminUsers() {
         open={!!selectedUserId}
         onOpenChange={(o) => !o && setSelectedUserId(null)}
       />
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover usuário?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {toDelete?.full_name || toDelete?.email || "Este usuário"} será excluído permanentemente,
+              junto com o perfil e os papéis de acesso. Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteMut.isPending}
+              onClick={(e) => { e.preventDefault(); if (toDelete) deleteMut.mutate(toDelete.user_id); }}
+            >
+              {deleteMut.isPending ? "Removendo…" : "Remover"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+
   );
 }
