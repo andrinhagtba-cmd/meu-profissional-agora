@@ -100,19 +100,18 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-card">
-      <div className="container-page py-14">
-        <div
-          className="grid gap-10 md:grid-cols-2"
-          style={{ gridTemplateColumns: undefined }}
-        >
+      <div className="container-page py-10 sm:py-14">
+        <div className="grid gap-10">
           <div
-            className="grid gap-10 md:grid-cols-2"
-            style={{
-              gridColumn: "1 / -1",
-              gridTemplateColumns: `2fr repeat(${columns.length}, minmax(0, 1fr))`,
-            }}
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10 md:[grid-template-columns:var(--footer-cols)]"
+            style={
+              {
+                "--footer-cols": `2fr repeat(${columns.length}, minmax(0, 1fr))`,
+              } as React.CSSProperties
+            }
           >
-            <div>
+            <div className="min-w-0 sm:col-span-2 md:col-span-1">
+
               <Logo />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
                 {description}
