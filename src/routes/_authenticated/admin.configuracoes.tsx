@@ -26,6 +26,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Smartphone } from "lucide-react";
+import { PwaDiagnosticPanel } from "@/components/pwa/PwaDiagnosticPanel";
 import { getSettings, updateSettings, type UpdateSettingsInput, type FooterColumn, type FooterConfig } from "@/services/settingsService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
 import { supabase } from "@/integrations/supabase/client";
