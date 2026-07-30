@@ -8,7 +8,7 @@ cmds = ["bun install --frozen-lockfile"]
 cmds = ["bun run build:node"]
 
 [start]
-cmd = "node .output/server/index.mjs"
+cmd = "node dist/server/index.mjs"
 
 [variables]
 NITRO_PRESET = "node-server"

@@ -34,8 +34,7 @@ export default defineConfig({
     plugins: [
       VitePWA({
         strategies: "injectManifest",
-        // TanStack Start/Nitro collects public assets during its own closeBundle.
-        // Generate the worker first or `/sw.js` is missing from the final server output.
+        // Generate the worker before the server bundle is finalized.
         integration: { closeBundleOrder: "pre" },
         registerType: "autoUpdate",
         // Registration is centralized in src/lib/pwa/serviceWorker.ts.
@@ -44,9 +43,8 @@ export default defineConfig({
         filename: "sw.ts",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
-        // O plugin gera junto ao bundle cliente; depois o Nitro coleta tudo para
-        // .output/public. Escrever diretamente em .output/public apaga a saída
-        // do Nitro na etapa final (servidor, manifest e ícones inclusos).
+        // O pacote final deste preset é dist/client + dist/server. Escrever em
+        // .output/public cria uma saída paralela incompleta e apaga assets.
         outDir: "dist/client",
         injectManifest: {
           // Um único IIFE autossuficiente: nenhum define(), importScripts(),

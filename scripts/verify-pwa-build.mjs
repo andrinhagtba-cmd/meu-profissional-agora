@@ -2,7 +2,8 @@ import { access, readFile, readdir, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import { join } from "node:path";
 
-const outputDirectory = ".output/public";
+const outputDirectory = "dist/client";
+const serverEntry = "dist/server/index.mjs";
 const workerPath = join(outputDirectory, "sw.js");
 
 function fail(message) {
@@ -14,6 +15,19 @@ try {
   await access(workerPath, constants.R_OK);
 } catch {
   fail(`${workerPath} não foi gerado.`);
+}
+try {
+  await access(serverEntry, constants.R_OK);
+} catch {
+  fail(`${serverEntry} não foi gerado; o pacote SSR está incompleto.`);
+}
+
+for (const requiredAsset of ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"]) {
+  try {
+    await access(join(outputDirectory, requiredAsset), constants.R_OK);
+  } catch {
+    fail(`${join(outputDirectory, requiredAsset)} não foi incluído no pacote.`);
+  }
 }
 
 const worker = await readFile(workerPath, "utf8");

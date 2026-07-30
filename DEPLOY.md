@@ -9,7 +9,7 @@ O arquivo `nixpacks.toml` na raiz já define tudo:
 
 - install: `bun install --frozen-lockfile`
 - build: `bun run build:node` (usa `NITRO_PRESET=node-server`)
-- start: `node .output/server/index.mjs`
+- start: `node dist/server/index.mjs`
 - porta: `PORT` (padrão `3026`)
 
 No Coolify, deixe **Install / Build / Start Command vazios** (o `nixpacks.toml` manda),
@@ -21,7 +21,7 @@ Se preferir preencher manualmente:
 | --- | --- |
 | Install Command | `bun install --frozen-lockfile` |
 | Build Command | `bun run build:node` |
-| Start Command | `node .output/server/index.mjs` |
+| Start Command | `node dist/server/index.mjs` |
 | Port | `3026` |
 
 ## Variáveis de ambiente (obrigatórias)
@@ -58,7 +58,7 @@ O `SUPABASE_SERVICE_ROLE_KEY` é usado pelas server functions administrativas
 
 ```bash
 NITRO_PRESET=node-server bun run build   # ou: bun run build:node
-PORT=3026 node .output/server/index.mjs
+PORT=3026 node dist/server/index.mjs
 ```
 
 ## Observações
