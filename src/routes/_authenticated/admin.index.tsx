@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DERIVED_CLASS, DERIVED_LABEL, daysLabel, whatsappTemplate } from "@/lib/subscriptionStatus";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { formatViews } from "@/lib/formatViews";
+import { formatProfileViews } from "@/lib/formatViews";
 import {
   Users, Briefcase, ClipboardList, MessageSquare, Star, ShieldCheck,
   Flag, ArrowRight, TrendingUp, Wallet, CalendarClock, AlertTriangle,
@@ -375,7 +375,7 @@ function AdminOverview() {
                     {i + 1}
                   </span>
                   <span className="min-w-0 flex-1 truncate font-medium text-foreground">{p.name}</span>
-                  <span className="shrink-0 text-xs font-semibold text-muted-foreground">{formatViews(p.views)}</span>
+                  <span className="shrink-0 text-xs font-semibold text-muted-foreground">{formatProfileViews(p.views, { compact: true })}</span>
                 </li>
               ))}
             </ul>
