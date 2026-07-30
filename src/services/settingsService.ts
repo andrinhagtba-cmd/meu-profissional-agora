@@ -28,10 +28,18 @@ export type SystemSettings = {
   integrations: Record<string, IntegrationConfig>;
   email_templates: Record<string, EmailTemplate>;
   footer_config: FooterConfig;
+  // PWA / aplicativo
+  pwa_name: string | null;
+  pwa_short_name: string | null;
+  pwa_description: string | null;
+  pwa_icon_media_id: string | null;
+  pwa_theme_color: string | null;
+  pwa_background_color: string | null;
   // resolved
   logo_light_url: string | null;
   logo_dark_url: string | null;
   favicon_url: string | null;
+  pwa_icon_url: string | null;
 };
 
 export type FooterLink = { label: string; href: string };
@@ -99,6 +107,7 @@ export async function getSettings(admin = false): Promise<SystemSettings> {
     (row.logo_light_media_id as string | null) ?? null,
     (row.logo_dark_media_id as string | null) ?? null,
     (row.favicon_media_id as string | null) ?? null,
+    (row.pwa_icon_media_id as string | null) ?? null,
   ]);
   return {
     id: (row.id as string) ?? "",
@@ -126,6 +135,12 @@ export async function getSettings(admin = false): Promise<SystemSettings> {
     integrations: ((row.integrations as Record<string, IntegrationConfig>) ?? {}),
     email_templates: ((row.email_templates as Record<string, EmailTemplate>) ?? {}),
     footer_config: ((row.footer_config as FooterConfig) ?? {}),
+    pwa_name: (row.pwa_name as string | null) ?? null,
+    pwa_short_name: (row.pwa_short_name as string | null) ?? null,
+    pwa_description: (row.pwa_description as string | null) ?? null,
+    pwa_icon_media_id: (row.pwa_icon_media_id as string | null) ?? null,
+    pwa_theme_color: (row.pwa_theme_color as string | null) ?? null,
+    pwa_background_color: (row.pwa_background_color as string | null) ?? null,
 
     logo_light_url: row.logo_light_media_id
       ? mediaMap.get(row.logo_light_media_id as string) ?? null
@@ -136,13 +151,16 @@ export async function getSettings(admin = false): Promise<SystemSettings> {
     favicon_url: row.favicon_media_id
       ? mediaMap.get(row.favicon_media_id as string) ?? null
       : null,
+    pwa_icon_url: row.pwa_icon_media_id
+      ? mediaMap.get(row.pwa_icon_media_id as string) ?? null
+      : null,
   };
 }
 
 export type UpdateSettingsInput = Partial<
   Omit<
     SystemSettings,
-    "id" | "logo_light_url" | "logo_dark_url" | "favicon_url"
+    "id" | "logo_light_url" | "logo_dark_url" | "favicon_url" | "pwa_icon_url"
   >
 >;
 
