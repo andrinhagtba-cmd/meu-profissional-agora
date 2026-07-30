@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Briefcase, Heart, LogOut, Menu, Search, User } from "lucide-react";
+import { Bell, Briefcase, Heart, LogOut, Menu, Search, User } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBrand } from "@/hooks/use-brand";
 import { getMyProfile } from "@/services/clientService";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -123,6 +124,7 @@ export function Header() {
           >
             <Heart size={19} />
           </Link>
+          <NotificationBell />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -146,6 +148,9 @@ export function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/favoritos"><Heart className="mr-2" size={16} /> Favoritos</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/painel/notificacoes"><Bell className="mr-2" size={16} /> Notificações</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
