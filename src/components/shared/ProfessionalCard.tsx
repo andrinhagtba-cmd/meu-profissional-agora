@@ -6,6 +6,7 @@ import { FavoriteButton } from "@/components/shared/FavoriteButton";
 import { ProAvatar } from "@/components/shared/ProAvatar";
 import { RatingStars } from "@/components/shared/RatingStars";
 import { ProLocationBlock } from "@/components/shared/ProLocationBlock";
+import { ZoomableImageArea, ZoomableThumb } from "@/components/shared/ImageLightbox";
 import { formatProfileViews } from "@/lib/formatViews";
 import type { Professional } from "@/types";
 
