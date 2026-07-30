@@ -283,7 +283,7 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
             {pro.profile_status === "published" ? "Publicado" : pro.profile_status === "archived" ? "Suspenso" : "Rascunho"}
           </StatusPill>
         </CardHeader>
-        <CardContent className="space-y-5 p-5 sm:p-6">
+        <CardContent className="min-w-0 space-y-5 p-4 sm:p-6">
 
           <div className="grid gap-3 sm:grid-cols-2">
 
