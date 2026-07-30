@@ -139,10 +139,10 @@ function toVM(
         ? `Profissional de ${staticMatch?.name ?? row.name} em atendimento`
         : row.name,
     description: row.description ?? staticMatch?.description ?? "",
-    badge: badgeActive && row.badge_text ? row.badge_text : staticMatch?.badge,
-    professionalsCount: stats?.count ?? staticMatch?.professionalsCount ?? 0,
-    rating: stats?.rating ?? staticMatch?.rating ?? 5,
-    priceFrom: stats?.priceFrom ?? staticMatch?.priceFrom ?? 0,
+    badge: badgeActive && row.badge_text ? row.badge_text : undefined,
+    professionalsCount: stats?.count ?? 0,
+    rating: stats?.rating ?? 0,
+    priceFrom: stats?.priceFrom ?? 0,
     services: services.length > 0 ? services : staticMatch?.services ?? [],
     faqs: (staticMatch?.faqs ?? []) as CategoryFaq[],
   };
