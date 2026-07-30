@@ -44,14 +44,15 @@ export default defineConfig({
         filename: "sw.ts",
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
-        // TanStack Start/Nitro serves static production files from .output/public.
-        // Writing to dist/client made /sw.js disappear on the VPS (HTTP 404).
-        outDir: ".output/public",
+        // O plugin gera junto ao bundle cliente; depois o Nitro coleta tudo para
+        // .output/public. Escrever diretamente em .output/public apaga a saída
+        // do Nitro na etapa final (servidor, manifest e ícones inclusos).
+        outDir: "dist/client",
         injectManifest: {
           // Um único IIFE autossuficiente: nenhum define(), importScripts(),
           // chunk workbox-*.js ou push-handler.js é necessário em produção.
           rollupFormat: "iife",
-          globDirectory: ".output/public",
+          globDirectory: "dist/client",
           globPatterns: ["favicon.ico", "icons/*.{png,svg,ico}"],
           globIgnores: ["**/_server/**", "**/_serverFn/**"],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
