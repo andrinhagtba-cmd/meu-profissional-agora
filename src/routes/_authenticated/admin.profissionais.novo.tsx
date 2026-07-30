@@ -36,9 +36,9 @@ const SERVICE_TYPES = [
 
 const VISIBILITY_OPTIONS = [
   { value: "hidden", label: "Não exibir" },
-  { value: "city_only", label: "Apenas RA" },
+  { value: "city_state", label: "Apenas RA" },
   { value: "neighborhood_city_state", label: "Bairro + RA + DF" },
-  { value: "full", label: "Endereço completo" },
+  { value: "full_address", label: "Endereço completo" },
 ] as const;
 
 const digits = (s: string) => s.replace(/\D/g, "");
@@ -62,7 +62,7 @@ const step2Schema = z.object({
   service_types: z.array(z.enum(["residencial", "empresarial", "online"])).min(1, "Selecione ao menos um tipo"),
 });
 
-type Visibility = "hidden" | "city_only" | "neighborhood_city_state" | "full";
+type Visibility = "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
 
 type Form = {
   professional_name: string; business_name: string; whatsapp: string;

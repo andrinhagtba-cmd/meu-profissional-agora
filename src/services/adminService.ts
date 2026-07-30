@@ -1711,7 +1711,7 @@ export type CreateProInput = {
   google_place_id?: string | null;
   address_complement?: string | null;
   service_radius_km?: number | null;
-  public_address_visibility?: "hidden" | "city_only" | "neighborhood_city_state" | "full";
+  public_address_visibility?: "hidden" | "city_state" | "neighborhood_city_state" | "full_address";
 };
 
 function slugify(input: string): string {
