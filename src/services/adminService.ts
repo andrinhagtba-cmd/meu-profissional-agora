@@ -1284,9 +1284,6 @@ export async function upsertService(input: UpsertServiceInput) {
   };
   if (input.cover_media_id !== undefined) payload.cover_media_id = input.cover_media_id;
   if (input.image_alt !== undefined) payload.image_alt = input.image_alt;
-  if (input.badge_text !== undefined) payload.badge_text = input.badge_text;
-  if (input.badge_variant !== undefined) payload.badge_variant = input.badge_variant;
-  if (input.badge_active !== undefined) payload.badge_active = input.badge_active ?? false;
 
   if (input.id) {
     const { error } = await supabase.from("services").update(payload).eq("id", input.id);
