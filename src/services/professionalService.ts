@@ -298,7 +298,11 @@ export async function searchProfessionals(
     result = result.filter((p) => norm(p.city).includes(q) || norm(p.state).includes(q));
   }
   if (filters.categoria && filters.categoria !== "todas") {
-    result = result.filter((p) => p.categorySlug === filters.categoria);
+    result = result.filter(
+      (p) =>
+        p.categorySlug === filters.categoria ||
+        p.services?.some((s) => s.categorySlug === filters.categoria),
+    );
   }
   if (filters.notaMinima) {
     result = result.filter((p) => p.rating >= filters.notaMinima!);
