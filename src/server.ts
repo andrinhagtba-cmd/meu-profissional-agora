@@ -41,17 +41,22 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
-async function serviceWorkerResponse(): Promise<Response | undefined> {
-  const compiledServiceWorker = await loadCompiledServiceWorker();
-  if (!compiledServiceWorker) return undefined;
+function serviceWorkerResponse(): Response {
   const headers = new Headers();
   // Service Workers devem sempre ser revalidados. Isso evita que a CDN mantenha
   // uma geração antiga depois do deploy e garante o controle do scope raiz.
   headers.set("cache-control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
   headers.set("service-worker-allowed", "/");
+  if (!compiledServiceWorker) {
+    // Nunca devolver HTML da SPA aqui: o navegador tentaria avaliar o HTML como
+    // script e falharia com "ServiceWorker script evaluation failed".
+    headers.set("content-type", "text/plain; charset=utf-8");
+    return new Response("Service worker not built", { status: 404, headers });
+  }
   headers.set("content-type", "text/javascript; charset=utf-8");
   return new Response(compiledServiceWorker, { status: 200, headers });
 }
+
 
 function isH3SwallowedErrorBody(body: string): boolean {
   try {
