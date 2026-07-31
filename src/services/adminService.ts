@@ -2024,6 +2024,47 @@ export async function broadcastNotification(input: {
   return { inserted: Number(data ?? 0) };
 }
 
+export type NotifRecipient = {
+  user_id: string;
+  professional_name: string | null;
+  business_name: string | null;
+  city: string | null;
+};
+
+export async function searchProfessionalRecipients(search: string): Promise<NotifRecipient[]> {
+  let q = supabase
+    .from("professional_profiles")
+    .select("user_id, professional_name, business_name, city")
+    .not("user_id", "is", null)
+    .order("professional_name", { ascending: true })
+    .limit(30);
+  const s = (search ?? "").trim().replace(/[%,]/g, "");
+  if (s) q = q.or(`professional_name.ilike.%${s}%,business_name.ilike.%${s}%,city.ilike.%${s}%`);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as NotifRecipient[];
+}
+
+export async function notifyUserDirect(input: {
+  userId: string;
+  title: string;
+  message: string;
+  link?: string;
+  type?: string;
+}): Promise<{ inserted: number }> {
+  const { data, error } = await supabase.rpc("admin_notify_user" as never, {
+    _user_id: input.userId,
+    _title: input.title,
+    _message: input.message,
+    _link: input.link ?? null,
+    _type: input.type ?? "system",
+  } as never);
+  if (error) throw error;
+  return { inserted: Number(data ?? 0) };
+}
+
+
+
 
 export async function deleteNotification(id: string) {
   const { error } = await supabase.from("notifications").delete().eq("id", id);
