@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { CalendarClock, Copy, KeyRound, Loader2, Mail, Trash2, WalletCards } from "lucide-react";
+import { CalendarClock, Copy, Info, KeyRound, Loader2, Mail, Trash2, WalletCards } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
