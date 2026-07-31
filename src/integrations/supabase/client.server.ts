@@ -38,7 +38,7 @@ function createSupabaseAdminClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_SERVICE_ROLE_KEY ? ['SUPABASE_SERVICE_ROLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
+    const message = `Variável(is) de ambiente ausente(s) no servidor: ${missing.join(', ')}. Configure-a(s) nas variáveis de ambiente do deploy (Coolify/VPS), sem o prefixo VITE_, e refaça o deploy.`;
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
