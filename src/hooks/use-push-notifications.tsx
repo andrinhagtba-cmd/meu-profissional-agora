@@ -78,10 +78,12 @@ function usePushNotificationsState() {
       else if (!matching) setStatus("subscribed-not-saved");
       else setStatus("subscribed");
     } catch (e) {
+      pwaLog("error", "Diagnóstico de notificações falhou.", e);
       setError((e as Error).message);
       setStatus("service-worker-error");
       setRegistration(null);
       setSubscription(await getExistingSubscription());
+
     } finally {
       setLoading(false);
     }
