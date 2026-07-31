@@ -75,7 +75,10 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      if (new URL(request.url).pathname === SERVICE_WORKER_PATH) return serviceWorkerResponse();
+      if (new URL(request.url).pathname === SERVICE_WORKER_PATH) {
+        const swResponse = await serviceWorkerResponse();
+        if (swResponse) return swResponse;
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return normalizeCatastrophicSsrResponse(response);
