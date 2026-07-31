@@ -70,6 +70,32 @@ async function unregisterAppServiceWorkers() {
   );
 }
 
+function isPwaCache(name: string) {
+  const normalized = name.toLowerCase();
+  return normalized.startsWith("gdf-") || normalized.includes("workbox") || normalized.includes("precache") || normalized.includes("guia-df");
+}
+
+/** Remove somente workers, inscrições push e caches pertencentes ao PWA deste domínio. */
+export async function repairPwaDevice(onSubscriptionFound?: (endpoint: string) => Promise<void>) {
+  if (typeof window === "undefined") return;
+  registrationPromise = null;
+  if ("serviceWorker" in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const registration of registrations) {
+      const subscription = await registration.pushManager?.getSubscription().catch(() => null);
+      if (subscription) {
+        await onSubscriptionFound?.(subscription.endpoint).catch(() => undefined);
+        await subscription.unsubscribe().catch(() => false);
+      }
+      await registration.unregister().catch(() => false);
+    }
+  }
+  if ("caches" in window) {
+    const names = await caches.keys();
+    await Promise.allSettled(names.filter(isPwaCache).map((name) => caches.delete(name)));
+  }
+}
+
 function isAppRegistration(registration: ServiceWorkerRegistration) {
   const worker = registration.active ?? registration.waiting ?? registration.installing;
   if (!worker) return false;

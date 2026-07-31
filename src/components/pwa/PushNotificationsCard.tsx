@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BellRing, Laptop, Loader2, Moon, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
+import { BellRing, CheckCircle2, Laptop, Loader2, Moon, RotateCcw, Send, Smartphone, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,6 @@ import { usePushNotifications } from "@/hooks/use-push-notifications";
 import {
   getPreferences,
   savePreferences,
-  sendTestPush,
   type NotificationPreferences,
 } from "@/lib/push/pushClient";
 
@@ -67,7 +66,7 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
   const handleTest = async () => {
     setTesting(true);
     try {
-      const result = await sendTestPush();
+      const result = await push.sendTest();
       toast.success(
         result.sent ? `Push de teste enviado para ${result.sent} dispositivo(s).` : "Nenhum dispositivo ativo encontrado.",
       );
@@ -88,7 +87,7 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {push.subscribedHere ? (
+          {push.isFullyEnabled ? (
             <Button variant="outline" size="sm" className="rounded-full" onClick={push.disable} disabled={push.working}>
               Desativar neste aparelho
             </Button>
@@ -102,14 +101,21 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
               }}
               disabled={push.working || !push.supported || push.permission === "denied" || !user}
             >
-              {push.working ? <Loader2 size={14} className="animate-spin" /> : <BellRing size={14} />} Ativar notificações
+              {push.working ? <Loader2 size={14} className="animate-spin" /> : <BellRing size={14} />}
+              {push.permission === "granted" ? "Concluir ativação" : "Ativar notificações"}
             </Button>
           )}
-          <Button size="sm" variant="outline" className="rounded-full" onClick={handleTest} disabled={testing || !user}>
+          <Button size="sm" variant="outline" className="rounded-full" onClick={handleTest} disabled={testing || !user || !push.isFullyEnabled}>
             {testing ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} Enviar teste
           </Button>
         </div>
       </div>
+
+      {push.isFullyEnabled && (
+        <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
+          <CheckCircle2 size={16} /> Notificações ativadas neste dispositivo.
+        </p>
+      )}
 
       {!push.supported && (
         <Alert>Este navegador não suporta notificações push. Use Chrome, Edge, Firefox ou Safari atualizado.</Alert>
@@ -125,7 +131,22 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
           novamente.
         </Alert>
       )}
-      {push.error && <Alert>{push.error}</Alert>}
+      {push.status === "permission-granted-not-subscribed" && (
+        <Alert>Permissão concedida, mas este dispositivo ainda não foi registrado.</Alert>
+      )}
+      {push.status === "subscribed-not-saved" && (
+        <Alert>A inscrição existe no navegador, mas o dispositivo ainda não foi confirmado no sistema.</Alert>
+      )}
+      {push.error && (
+        <Alert>
+          Não foi possível ativar as notificações neste dispositivo.
+          <span className="mt-2 flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => void push.refresh()} disabled={push.working}>
+              <RotateCcw size={13} /> Tentar novamente
+            </Button>
+          </span>
+        </Alert>
+      )}
 
       <div className="mt-5">
         <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Aparelhos registrados</h3>
