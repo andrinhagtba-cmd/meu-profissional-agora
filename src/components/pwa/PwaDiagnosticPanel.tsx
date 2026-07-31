@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, CircleAlert, Download, Monitor, RefreshCw, Smartphone, Wifi } from "lucide-react";
+import { CheckCircle2, CircleAlert, Download, Monitor, RefreshCw, Smartphone, Wrench, Wifi } from "lucide-react";
 import { usePwa } from "@/components/pwa/PwaProvider";
 import { detectPlatform, isStandalone, usePwaInstall } from "@/hooks/use-pwa-install";
 import { InstallPwaButton } from "@/components/pwa/InstallPwaButton";
@@ -85,6 +85,9 @@ export function PwaDiagnosticPanel() {
               Atualizar agora
             </Button>
           )}
+          <Button size="sm" variant="outline" className="rounded-full" onClick={() => void push.repairPwa()} disabled={push.working}>
+            <Wrench size={14} /> Reparar PWA neste dispositivo
+          </Button>
         </div>
       </div>
 
@@ -115,7 +118,20 @@ export function PwaDiagnosticPanel() {
           value={lastCheckedAt ? new Date(lastCheckedAt).toLocaleString("pt-BR") : "—"}
         />
         <Item icon={<Wifi size={16} />} label="Conexão" value={online ? "Online" : "Offline"} tone={online ? "ok" : "warn"} />
+        <Item icon={<Monitor size={16} />} label="URL do Service Worker" value={push.registration?.active?.scriptURL ?? "—"} />
+        <Item icon={<Monitor size={16} />} label="Escopo" value={push.registration?.scope ?? "—"} />
+        <Item icon={<Wifi size={16} />} label="Estado do worker" value={push.registration?.active?.state ?? push.registration?.waiting?.state ?? push.registration?.installing?.state ?? "—"} />
+        <Item icon={<Wifi size={16} />} label="Subscription" value={push.subscription ? "Sim" : "Não"} tone={push.subscription ? "ok" : "warn"} />
+        <Item icon={<Wifi size={16} />} label="Endpoint" value={push.subscription ? `${push.subscription.endpoint.slice(0, 34)}…` : "—"} />
+        <Item icon={<Wifi size={16} />} label="VAPID pública" value={push.vapidLoaded ? "Carregada" : "Ausente"} tone={push.vapidLoaded ? "ok" : "warn"} />
+        <Item icon={<Wifi size={16} />} label="Dispositivo no banco" value={push.registeredDevice ? `Sim · ${push.registeredDevice.id.slice(0, 8)}` : "Não"} tone={push.registeredDevice ? "ok" : "warn"} />
+        <Item icon={<RefreshCw size={16} />} label="Última tentativa" value={push.lastAttemptAt ? new Date(push.lastAttemptAt).toLocaleString("pt-BR") : "—"} />
+        <Item icon={<Download size={16} />} label="Estratégia PWA" value="injectManifest · IIFE incorporado" />
       </div>
+
+      {push.error && (
+        <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-xl border border-orange/30 bg-orange/5 p-3 text-xs text-foreground">{push.error}</pre>
+      )}
 
       {env.permission === "denied" && (
         <p className="mt-4 rounded-xl border border-orange/30 bg-orange/5 p-3 text-xs text-foreground">
