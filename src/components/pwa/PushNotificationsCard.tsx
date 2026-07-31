@@ -28,6 +28,7 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
   const push = usePushNotifications();
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
   const [testing, setTesting] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
 
   useQuery({
     queryKey: ["notif-prefs", user?.id],
