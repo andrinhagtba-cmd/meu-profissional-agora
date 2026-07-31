@@ -206,42 +206,114 @@ function waitForActivation(registration: ServiceWorkerRegistration, timeoutMs = 
   });
 }
 
+/**
+ * Baixa o script do worker antes de registrar para transformar o genérico
+ * "ServiceWorker script evaluation failed" em uma causa legível.
+ */
+async function preflightWorkerScript() {
+  const url = new URL(SW_PATH, window.location.origin).toString();
+  let response: Response;
+  try {
+    response = await fetch(url, { cache: "no-store", credentials: "same-origin" });
+  } catch (e) {
+    pwaLog("error", "Falha de rede ao baixar o script do serviço de notificações.", e);
+    throw new Error(`Não foi possível baixar ${SW_PATH}. Verifique sua conexão e tente novamente.`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "desconhecido";
+  pwaLog("info", `Verificação prévia de ${SW_PATH}`, `status=${response.status} content-type=${contentType}`);
+
+  if (!response.ok) {
+    throw new Error(`O arquivo ${SW_PATH} respondeu ${response.status}. O servidor não está publicando o service worker.`);
+  }
+  if (!/javascript|ecmascript/i.test(contentType)) {
+    throw new Error(`O servidor entregou ${SW_PATH} como "${contentType}" em vez de JavaScript (provável fallback de HTML).`);
+  }
+
+  const source = await response.text();
+  pwaLog("info", "Script do worker baixado.", `${source.length} bytes`);
+  if (/^\s*<!doctype html/i.test(source) || /^\s*<html/i.test(source)) {
+    throw new Error(`${SW_PATH} devolveu uma página HTML. O arquivo não existe na build publicada.`);
+  }
+  if (/\bdefine\s*\(\s*\[/.test(source)) {
+    throw new Error(`${SW_PATH} está em formato AMD (define([...])) e depende de um chunk externo. Publique novamente a build atual e limpe o cache da CDN.`);
+  }
+  const importScripts = source.match(/importScripts\(([^)]*)\)/);
+  if (importScripts) {
+    throw new Error(`${SW_PATH} usa importScripts(${importScripts[1]}), que falha se o arquivo externo não existir.`);
+  }
+  return source.length;
+}
+
 /** Única porta de entrada para obter o worker usado pelo PWA e pelo Web Push. */
 export async function ensureAppServiceWorker(): Promise<ServiceWorkerRegistration> {
   if (!canRegisterServiceWorker()) {
-    throw new Error(
-      isPreviewContext()
-        ? "As notificações só podem ser ativadas no aplicativo publicado."
-        : "Este navegador não permite registrar o serviço de notificações.",
-    );
+    const reason = isPreviewContext()
+      ? "As notificações só podem ser ativadas no aplicativo publicado."
+      : "Este navegador não permite registrar o serviço de notificações.";
+    pwaLog("warn", "Registro do service worker ignorado neste contexto.", reason);
+    throw new Error(reason);
   }
 
   if (!registrationPromise) {
     registrationPromise = (async () => {
+      await preflightWorkerScript();
+
       const registrations = await navigator.serviceWorker.getRegistrations();
+      pwaLog("info", `Registros existentes: ${registrations.length}`,
+        registrations.map((r) => (r.active ?? r.waiting ?? r.installing)?.scriptURL ?? "sem worker").join(", "));
+
       let registration = registrations.find(isAppRegistration);
       const currentWorker = registration?.active ?? registration?.waiting ?? registration?.installing;
       if (registration && !isStableAppWorkerUrl(currentWorker?.scriptURL)) {
+        pwaLog("warn", "Removendo registro antigo/incompatível.", currentWorker?.scriptURL);
         await registration.unregister();
         registration = undefined;
       }
+
       if (!registration) {
-        registration = await navigator.serviceWorker.register(SW_PATH, {
-          scope: "/",
-          updateViaCache: "none",
-        });
+        try {
+          registration = await navigator.serviceWorker.register(SW_PATH, {
+            scope: "/",
+            updateViaCache: "none",
+          });
+          pwaLog("info", "Service worker registrado.", SW_PATH);
+        } catch (e) {
+          pwaLog("error", "navigator.serviceWorker.register falhou.", e);
+          throw new Error(
+            `Não foi possível registrar ${SW_PATH}: ${(e as Error).message}. Use "Reparar aplicativo" e recarregue a página.`,
+          );
+        }
       } else {
-        await registration.update();
+        await registration.update().catch((e) => pwaLog("warn", "Falha ao checar atualização do worker.", e));
+        pwaLog("info", "Reaproveitando registro existente.", currentWorker?.scriptURL);
       }
-      return waitForActivation(registration);
+
+      const active = await waitForActivation(registration);
+      pwaLog("info", "Service worker ativo.", `scope=${active.scope}`);
+      return active;
     })().catch((error) => {
       registrationPromise = null;
+      pwaLog("error", "Ativação do service worker falhou.", error);
       throw error;
     });
   }
 
   return registrationPromise;
 }
+
+/** Força a checagem de nova versão sob demanda (botão na interface). */
+export async function updateAppServiceWorker(): Promise<ServiceWorkerRegistration> {
+  const registration = await ensureAppServiceWorker();
+  try {
+    await registration.update();
+    pwaLog("info", "Checagem de atualização concluída.", registration.waiting ? "nova versão aguardando" : "já está na versão mais recente");
+  } catch (e) {
+    pwaLog("warn", "Não foi possível checar atualização agora.", e);
+  }
+  return registration;
+}
+
 
 export type RegisterResult = {
   registration: ServiceWorkerRegistration | null;
