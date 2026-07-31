@@ -40,6 +40,11 @@ function usePushNotificationsState() {
   const [error, setError] = useState<string | null>(null);
   const [needsInstall, setNeedsInstall] = useState(false);
   const [lastAttemptAt, setLastAttemptAt] = useState<string | null>(null);
+  const [logs, setLogs] = useState<PwaLogEntry[]>([]);
+
+  useEffect(() => subscribePwaLogs(setLogs), []);
+
+
 
   const refresh = useCallback(async () => {
     setLoading(true);
