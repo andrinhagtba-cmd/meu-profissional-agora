@@ -111,11 +111,13 @@ function usePushNotificationsState() {
       return true;
     } catch (e) {
       const message = e instanceof Error ? e.message : "Não foi possível ativar as notificações.";
+      pwaLog("error", "Ativação das notificações falhou.", e);
       setError(message);
       setPermission(isPushSupported() ? Notification.permission : "unsupported");
       setStatus(Notification.permission === "denied" ? "permission-denied" : "database-error");
       return false;
     } finally {
+
       setWorking(false);
     }
   }, [refresh, user?.id]);
