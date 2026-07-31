@@ -51,7 +51,9 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
-function serviceWorkerResponse(): Response {
+async function serviceWorkerResponse(): Promise<Response | undefined> {
+  const compiledServiceWorker = await loadCompiledServiceWorker();
+  if (!compiledServiceWorker) return undefined;
   const headers = new Headers();
   // Service Workers devem sempre ser revalidados. Isso evita que a CDN mantenha
   // uma geração antiga depois do deploy e garante o controle do scope raiz.
