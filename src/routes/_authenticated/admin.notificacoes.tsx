@@ -41,9 +41,12 @@ import {
   listNotificationsAdmin,
   broadcastNotification,
   deleteNotification,
+  searchProfessionalRecipients,
+  notifyUserDirect,
   type AdminNotificationRow,
   type BroadcastAudience,
 } from "@/services/adminService";
+
 
 export const Route = createFileRoute("/_authenticated/admin/notificacoes")({
   head: () => ({ meta: [{ title: "Notificações · Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
