@@ -546,7 +546,7 @@ function ProfileViewsStrip({ professionalId }: { professionalId: string }) {
               {formatProfileViews(data.public_total)}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {formatProfileViews(data.real_count)} reais · +{formatProfileViews(data.views_7d)} nos últimos 7 dias
+              +{formatProfileViews(data.views_7d)} nos últimos 7 dias
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3 text-center">
