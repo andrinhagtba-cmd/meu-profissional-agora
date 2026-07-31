@@ -1,26 +1,41 @@
-import { access, readFile, readdir, stat } from "node:fs/promises";
+import { access, copyFile, readFile, readdir, stat } from "node:fs/promises";
 import { constants } from "node:fs";
 import { join } from "node:path";
-
-const isNodeBuild = process.env.NITRO_PRESET === "node-server";
-const outputDirectory = isNodeBuild ? ".output/public" : "dist/client";
-const serverEntry = isNodeBuild ? ".output/server/index.mjs" : "dist/server/index.mjs";
-const workerPath = join(outputDirectory, "sw.js");
 
 function fail(message) {
   console.error(`\n[PWA] Build inválido: ${message}`);
   process.exit(1);
 }
 
-try {
-  await access(workerPath, constants.R_OK);
-} catch {
-  fail(`${workerPath} não foi gerado.`);
+async function exists(path) {
+  try {
+    await access(path, constants.R_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
-try {
-  await access(serverEntry, constants.R_OK);
-} catch {
-  fail(`${serverEntry} não foi gerado; o pacote SSR está incompleto.`);
+
+async function firstExisting(candidates) {
+  for (const candidate of candidates) {
+    if (await exists(candidate)) return candidate;
+  }
+  return null;
+}
+
+// O plugin PWA sempre grava o worker em dist/client; o Nitro pode publicar o
+// bundle final em .output (preset node-server) ou em dist (preset padrão).
+const workerPath = "dist/client/sw.js";
+const outputDirectory = await firstExisting([".output/public", "dist/client"]);
+const serverEntry = await firstExisting([".output/server/index.mjs", "dist/server/index.mjs"]);
+
+if (!outputDirectory) fail("nenhum diretório público (.output/public ou dist/client) foi gerado.");
+if (!serverEntry) fail("o entrypoint SSR (index.mjs) não foi gerado; o pacote está incompleto.");
+if (!(await exists(workerPath))) fail(`${workerPath} não foi gerado.`);
+
+// Garante que o worker também exista como arquivo estático no bundle publicado.
+if (outputDirectory !== "dist/client" && !(await exists(join(outputDirectory, "sw.js")))) {
+  await copyFile(workerPath, join(outputDirectory, "sw.js"));
 }
 
 for (const requiredAsset of ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"]) {
