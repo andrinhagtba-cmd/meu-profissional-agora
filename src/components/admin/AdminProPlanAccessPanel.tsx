@@ -146,14 +146,18 @@ export function AdminProPlanAccessPanel({
 
   const openWhatsApp = () => {
     if (!generated || !waNumber) return;
-    const msg =
-      `Olá, ${displayName}! 👋\n\n` +
-      `Seus dados de acesso ao painel do Guia DF na Mídia foram criados.\n\n` +
-      `🌐 Site: https://guiadfnamidia.com.br/\n` +
-      `👤 Login: ${generated.email}\n` +
-      `🔑 Senha: ${generated.password}\n\n` +
-      `Acesse com esses dados e recomendamos alterar a senha após o primeiro acesso. ` +
-      `Guarde essas informações em local seguro e não compartilhe com terceiros.`;
+    const msg = [
+      `Ola, ${displayName}!`,
+      "",
+      "Seus dados de acesso ao painel do Guia DF na Midia foram criados.",
+      "",
+      "Site: https://guiadfnamidia.com.br/",
+      `Login: ${generated.email}`,
+      `Senha: ${generated.password}`,
+      "",
+      "Acesse com esses dados e recomendamos alterar a senha apos o primeiro acesso.",
+      "Guarde essas informacoes em local seguro e nao compartilhe com terceiros.",
+    ].join("\n");
     window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
   };
 
