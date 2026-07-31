@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { CalendarClock, Copy, Info, KeyRound, Loader2, Mail, Trash2, WalletCards } from "lucide-react";
+import { CalendarClock, Copy, Info, KeyRound, Loader2, Mail, MessageCircle, RefreshCw, Trash2, WalletCards } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,11 +38,13 @@ export function AdminProPlanAccessPanel({
   userId,
   accountEmail,
   displayName,
+  whatsapp,
 }: {
   professionalId: string;
   userId: string | null;
   accountEmail: string | null;
   displayName: string;
+  whatsapp?: string | null;
 }) {
   const qc = useQueryClient();
 
@@ -129,6 +131,31 @@ export function AdminProPlanAccessPanel({
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const makePassword = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    let out = "";
+    const buf = new Uint32Array(12);
+    (globalThis.crypto ?? window.crypto).getRandomValues(buf);
+    for (const n of buf) out += chars[n % chars.length];
+    return out;
+  };
+
+  const waDigits = (whatsapp ?? "").replace(/\D/g, "");
+  const waNumber = waDigits ? (waDigits.length <= 11 ? `55${waDigits}` : waDigits) : "";
+
+  const openWhatsApp = () => {
+    if (!generated || !waNumber) return;
+    const msg =
+      `Olá, ${displayName}! 👋\n\n` +
+      `Seus dados de acesso ao painel do Guia DF na Mídia foram criados.\n\n` +
+      `🌐 Site: https://guiadfnamidia.com.br/\n` +
+      `👤 Login: ${generated.email}\n` +
+      `🔑 Senha: ${generated.password}\n\n` +
+      `Acesse com esses dados e recomendamos alterar a senha após o primeiro acesso. ` +
+      `Guarde essas informações em local seguro e não compartilhe com terceiros.`;
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
+  };
 
   const copy = (text: string) => {
     if (typeof window === "undefined") return;
@@ -320,7 +347,12 @@ export function AdminProPlanAccessPanel({
             </div>
             <div className="space-y-1.5">
               <Label>Senha (opcional — gerada automaticamente)</Label>
-              <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Deixe vazio para gerar" />
+              <div className="flex gap-2">
+                <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Deixe vazio para gerar" />
+                <Button type="button" variant="outline" className="shrink-0 rounded-full" onClick={() => setPassword(makePassword())}>
+                  <RefreshCw size={14} /> Gerar
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -360,6 +392,13 @@ export function AdminProPlanAccessPanel({
                 <span className="font-mono">{generated.password}</span>
                 <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => copy(generated.password)}><Copy size={14} /></Button>
               </div>
+              {waNumber ? (
+                <Button type="button" className="rounded-full bg-[#25D366] text-white hover:bg-[#1fb457]" onClick={openWhatsApp}>
+                  <MessageCircle size={14} /> Enviar credenciais no WhatsApp
+                </Button>
+              ) : (
+                <p className="text-xs text-muted-foreground">Cadastre o WhatsApp no perfil para enviar as credenciais por lá.</p>
+              )}
               <p className="text-xs text-muted-foreground">A senha não poderá ser exibida novamente.</p>
             </div>
           )}
