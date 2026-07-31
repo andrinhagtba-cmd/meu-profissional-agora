@@ -75,11 +75,20 @@ function NotificacoesPage() {
   const [read, setRead] = useState<"" | "read" | "unread">("");
   const [search, setSearch] = useState("");
   const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [mode, setMode] = useState<"audience" | "professional">("audience");
+  const [proSearch, setProSearch] = useState("");
+  const [proUserId, setProUserId] = useState("");
   const [form, setForm] = useState({ audience: "all" as BroadcastAudience, title: "", message: "", link: "", type: "system" });
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["admin-notifs", type, read, search],
     queryFn: () => listNotificationsAdmin({ type: type || undefined, read: read || undefined, search: search || undefined }),
+  });
+
+  const { data: pros = [], isFetching: prosLoading } = useQuery({
+    queryKey: ["admin-notif-pros", proSearch],
+    queryFn: () => searchProfessionalRecipients(proSearch),
+    enabled: broadcastOpen && mode === "professional",
   });
 
   const stats = useMemo(() => {
@@ -90,12 +99,22 @@ function NotificacoesPage() {
     return { total, unread, last24, types };
   }, [data]);
 
+  const resetForm = () => {
+    setForm({ audience: "all", title: "", message: "", link: "", type: "system" });
+    setMode("audience");
+    setProSearch("");
+    setProUserId("");
+  };
+
   const broadcast = useMutation({
-    mutationFn: () => broadcastNotification(form),
+    mutationFn: () =>
+      mode === "professional"
+        ? notifyUserDirect({ userId: proUserId, title: form.title, message: form.message, link: form.link, type: form.type })
+        : broadcastNotification(form),
     onSuccess: (r) => {
       toast.success(`Notificação enviada a ${r.inserted} usuário(s)`);
       setBroadcastOpen(false);
-      setForm({ audience: "all", title: "", message: "", link: "", type: "system" });
+      resetForm();
       qc.invalidateQueries({ queryKey: ["admin-notifs"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -110,7 +129,11 @@ function NotificacoesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const canSend = form.title.trim().length >= 3 && form.message.trim().length >= 3;
+  const canSend =
+    form.title.trim().length >= 3 &&
+    form.message.trim().length >= 3 &&
+    (mode === "audience" || !!proUserId);
+
 
   return (
     <div className="space-y-6">
