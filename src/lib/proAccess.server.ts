@@ -95,9 +95,10 @@ export async function createProfessionalAccess(input: {
     if (autoErr) throw new Error(autoErr.message);
 
     for (const row of autoRows ?? []) {
-      const isEmptyDraft =
-        row.profile_status === "draft" && !row.slug && !row.business_name && !row.description;
-      if (!isEmptyDraft) {
+      // O gatilho cria o stub com os metadados do signup (nome/telefone/cidade),
+      // então ele conta como "vazio" quando não tem slug, empresa nem descrição.
+      const isAutoStub = !row.slug && !row.business_name && !row.description;
+      if (!isAutoStub) {
         throw new Error("Esta conta já está vinculada a outro perfil profissional.");
       }
       const { error } = await supabaseAdmin
