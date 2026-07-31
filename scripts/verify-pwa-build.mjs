@@ -25,7 +25,8 @@ async function firstExisting(candidates) {
 
 // O plugin PWA sempre grava o worker em dist/client; o Nitro pode publicar o
 // bundle final em .output (preset node-server) ou em dist (preset padrão).
-const workerPath = "dist/client/sw.js";
+const workerFilename = "gdf-push-sw.js";
+const workerPath = join("dist/client", workerFilename);
 const outputDirectory = await firstExisting([".output/public", "dist/client"]);
 const serverEntry = await firstExisting([".output/server/index.mjs", "dist/server/index.mjs"]);
 
@@ -34,8 +35,8 @@ if (!serverEntry) fail("o entrypoint SSR (index.mjs) não foi gerado; o pacote e
 if (!(await exists(workerPath))) fail(`${workerPath} não foi gerado.`);
 
 // Garante que o worker também exista como arquivo estático no bundle publicado.
-if (outputDirectory !== "dist/client" && !(await exists(join(outputDirectory, "sw.js")))) {
-  await copyFile(workerPath, join(outputDirectory, "sw.js"));
+if (outputDirectory !== "dist/client") {
+  await copyFile(workerPath, join(outputDirectory, workerFilename));
 }
 
 for (const requiredAsset of ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"]) {
@@ -50,18 +51,18 @@ const worker = await readFile(workerPath, "utf8");
 const workerStat = await stat(workerPath);
 const outputFiles = await readdir(outputDirectory, { recursive: true });
 
-if (workerStat.size < 1_000) fail("sw.js está vazio ou incompleto.");
-if (/\bdefine\s*\(\s*\[/.test(worker)) fail("sw.js foi gerado como módulo AMD.");
-if (/\bimportScripts\s*\(/.test(worker)) fail("sw.js possui dependência carregada por importScripts().");
-if (/push-handler\.js/.test(worker)) fail("sw.js ainda depende do handler legado de push.");
-if (/["'/]workbox-[a-z0-9_-]+\.js/i.test(worker)) fail("sw.js ainda referencia um chunk externo do Workbox.");
-if (!worker.includes("showNotification")) fail("handler de recebimento Web Push não está no sw.js.");
-if (!worker.includes("notificationclick")) fail("handler de clique da notificação não está no sw.js.");
-if (!worker.includes("NOTIFICATION_CLICK")) fail("navegação após clique não está no sw.js.");
-if (!worker.includes("SKIP_WAITING")) fail("fluxo de atualização não está no sw.js.");
+if (workerStat.size < 1_000) fail(`${workerFilename} está vazio ou incompleto.`);
+if (/\bdefine\s*\(\s*\[/.test(worker)) fail(`${workerFilename} foi gerado como módulo AMD.`);
+if (/\bimportScripts\s*\(/.test(worker)) fail(`${workerFilename} possui dependência carregada por importScripts().`);
+if (/push-handler\.js/.test(worker)) fail(`${workerFilename} ainda depende do handler legado de push.`);
+if (/["'/]workbox-[a-z0-9_-]+\.js/i.test(worker)) fail(`${workerFilename} ainda referencia um chunk externo do Workbox.`);
+if (!worker.includes("showNotification")) fail(`handler de recebimento Web Push não está no ${workerFilename}.`);
+if (!worker.includes("notificationclick")) fail(`handler de clique da notificação não está no ${workerFilename}.`);
+if (!worker.includes("NOTIFICATION_CLICK")) fail(`navegação após clique não está no ${workerFilename}.`);
+if (!worker.includes("SKIP_WAITING")) fail(`fluxo de atualização não está no ${workerFilename}.`);
 
 const forbiddenArtifacts = outputFiles.filter((file) =>
-  /(^|\/)(workbox-[^/]+\.js|push-handler\.js|service-worker\.js)$/i.test(file),
+  /(^|\/)(workbox-[^/]+\.js|push-handler\.js|service-worker\.js|sw\.js)$/i.test(file),
 );
 if (forbiddenArtifacts.length > 0) {
   fail(`artefatos concorrentes encontrados: ${forbiddenArtifacts.join(", ")}`);

@@ -53,12 +53,21 @@ O `SUPABASE_SERVICE_ROLE_KEY` é usado pelas server functions administrativas
 2. Supabase → Storage: os buckets públicos (`avatars`, `portfolio`, `category-icons`,
    `admin-media`) continuam servindo pelo domínio do Supabase — nada a mudar.
 3. Coolify → habilite HTTPS/Let's Encrypt e "Allow www & non-www".
+4. No Cloudflare, crie uma regra de cache para **ignorar cache** em
+   `/gdf-push-sw.js`. O aplicativo não registra mais o caminho legado `/sw.js`.
 
 ## Verificação local do build de produção
 
 ```bash
 NITRO_PRESET=node-server bun run build   # ou: bun run build:node
 PORT=3026 node .output/server/index.mjs
+```
+
+Depois do deploy, esta verificação precisa mostrar o worker novo, sem `HIT`,
+`define(` ou `importScripts(`:
+
+```bash
+curl -i https://guiadfnamidia.com.br/gdf-push-sw.js
 ```
 
 ## Observações
