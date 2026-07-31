@@ -2,22 +2,12 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-// O worker compilado só existe depois do build (dist/client). Em dev o arquivo
-// não existe, então a importação precisa ser preguiçosa e tolerante a falhas.
-let compiledServiceWorkerPromise: Promise<string | undefined> | undefined;
-
-async function loadCompiledServiceWorker(): Promise<string | undefined> {
-  if (!compiledServiceWorkerPromise) {
-    compiledServiceWorkerPromise = import(
-      /* @vite-ignore */ "../dist/client/sw.js?raw"
-    )
-      .then((m) => (m.default ?? m) as string)
-      .catch(() => undefined);
-  }
-  return compiledServiceWorkerPromise;
-}
+// O worker compilado é embutido no bundle do servidor em tempo de build pelo
+// plugin `virtual:app-service-worker` (ver vite.config.ts). Em dev vem vazio.
+import compiledServiceWorker from "virtual:app-service-worker";
 
 const SERVICE_WORKER_PATH = "/sw.js";
+
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
