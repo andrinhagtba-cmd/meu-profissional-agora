@@ -87,6 +87,13 @@ export function AdminProPlanAccessPanel({
   const [email, setEmail] = useState(accountEmail ?? "");
   const [password, setPassword] = useState("");
   const [generated, setGenerated] = useState<{ email: string; password: string } | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+  const details = useQuery({
+    queryKey: ["admin-pro-account", userId],
+    queryFn: () => getProAccountDetailsFn({ data: { userId: userId! } }),
+    enabled: !!userId && showDetails,
+  });
 
   const createAccess = useMutation({
     mutationFn: () =>
@@ -110,11 +117,23 @@ export function AdminProPlanAccessPanel({
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const updateEmail = useMutation({
+    mutationFn: () => updateProEmailFn({ data: { userId: userId!, email } }),
+    onSuccess: (r) => {
+      toast.success("E-mail de acesso atualizado");
+      setEmail(r.email);
+      qc.invalidateQueries({ queryKey: ["admin-pro-detail", professionalId] });
+      qc.invalidateQueries({ queryKey: ["admin-pro-account", userId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const copy = (text: string) => {
     if (typeof window === "undefined") return;
     window.navigator.clipboard.writeText(text);
     toast.success("Copiado");
   };
+
 
   return (
     <div className="space-y-5">
