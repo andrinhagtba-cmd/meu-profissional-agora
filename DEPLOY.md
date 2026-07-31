@@ -54,7 +54,8 @@ O `SUPABASE_SERVICE_ROLE_KEY` é usado pelas server functions administrativas
    `admin-media`) continuam servindo pelo domínio do Supabase — nada a mudar.
 3. Coolify → habilite HTTPS/Let's Encrypt e "Allow www & non-www".
 4. No Cloudflare, crie uma regra de cache para **ignorar cache** em
-   `/gdf-push-sw.js`. O aplicativo não registra mais o caminho legado `/sw.js`.
+   `/sw.js`. O aplicativo remove automaticamente registros antigos de
+   `/gdf-push-sw.js` e `/service-worker.js` para evitar workers concorrentes.
 
 ## Verificação local do build de produção
 
@@ -67,7 +68,7 @@ Depois do deploy, esta verificação precisa mostrar o worker novo, sem `HIT`,
 `define(` ou `importScripts(`:
 
 ```bash
-curl -i https://guiadfnamidia.com.br/gdf-push-sw.js
+curl -i https://guiadfnamidia.com.br/sw.js
 ```
 
 ## Observações
