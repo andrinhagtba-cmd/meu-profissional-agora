@@ -12,7 +12,13 @@ import {
   VAPID_PUBLIC_KEY,
   type PushDevice,
 } from "@/lib/push/pushClient";
-import { ensureAppServiceWorker } from "@/lib/pwa/serviceWorker";
+import {
+  ensureAppServiceWorker,
+  pwaLog,
+  subscribePwaLogs,
+  updateAppServiceWorker,
+  type PwaLogEntry,
+} from "@/lib/pwa/serviceWorker";
 import { isStandalone } from "@/hooks/use-pwa-install";
 
 export type PushNotificationStatus = "loading" | "unsupported" | "permission-default" | "permission-denied" | "service-worker-error" | "permission-granted-not-subscribed" | "subscribing" | "subscribed-not-saved" | "subscribed" | "database-error";
@@ -34,6 +40,11 @@ function usePushNotificationsState() {
   const [error, setError] = useState<string | null>(null);
   const [needsInstall, setNeedsInstall] = useState(false);
   const [lastAttemptAt, setLastAttemptAt] = useState<string | null>(null);
+  const [logs, setLogs] = useState<PwaLogEntry[]>([]);
+
+  useEffect(() => subscribePwaLogs(setLogs), []);
+
+
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -67,10 +78,12 @@ function usePushNotificationsState() {
       else if (!matching) setStatus("subscribed-not-saved");
       else setStatus("subscribed");
     } catch (e) {
+      pwaLog("error", "Diagnóstico de notificações falhou.", e);
       setError((e as Error).message);
       setStatus("service-worker-error");
       setRegistration(null);
       setSubscription(await getExistingSubscription());
+
     } finally {
       setLoading(false);
     }
@@ -98,11 +111,13 @@ function usePushNotificationsState() {
       return true;
     } catch (e) {
       const message = e instanceof Error ? e.message : "Não foi possível ativar as notificações.";
+      pwaLog("error", "Ativação das notificações falhou.", e);
       setError(message);
       setPermission(isPushSupported() ? Notification.permission : "unsupported");
       setStatus(Notification.permission === "denied" ? "permission-denied" : "database-error");
       return false;
     } finally {
+
       setWorking(false);
     }
   }, [refresh, user?.id]);
@@ -148,6 +163,19 @@ function usePushNotificationsState() {
     }
   }, []);
 
+  const checkForUpdate = useCallback(async () => {
+    setWorking(true);
+    setError(null);
+    try {
+      await updateAppServiceWorker();
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }, [refresh]);
+
   const isFullyEnabled = permission === "granted" && Boolean(registration?.active) && Boolean(subscription) && registeredDevice?.status === "active" && registeredDevice.endpoint === subscription?.endpoint;
 
   return {
@@ -163,6 +191,7 @@ function usePushNotificationsState() {
     loading,
     working,
     error,
+    logs,
     needsInstall,
     lastAttemptAt,
     vapidLoaded: Boolean(VAPID_PUBLIC_KEY.trim() && /^[A-Za-z0-9_-]+$/.test(VAPID_PUBLIC_KEY.trim())),
@@ -170,9 +199,11 @@ function usePushNotificationsState() {
     disable,
     removeDevice,
     refresh,
+    checkForUpdate,
     sendTest: sendTestPush,
     repairPwa,
   };
+
 }
 
 export function PushNotificationsProvider({ children }: { children: ReactNode }) {
