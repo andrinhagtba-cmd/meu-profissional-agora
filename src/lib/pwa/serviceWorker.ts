@@ -18,6 +18,65 @@ const SW_PATH = "/sw.js";
 const LEGACY_SW_PATHS = new Set(["/gdf-push-sw.js", "/service-worker.js"]);
 let registrationPromise: Promise<ServiceWorkerRegistration> | null = null;
 
+/* ------------------------------------------------------------------ */
+/* Diagnóstico: registro de eventos legível no cliente                  */
+/* ------------------------------------------------------------------ */
+
+export type PwaLogLevel = "info" | "warn" | "error";
+export type PwaLogEntry = { at: string; level: PwaLogLevel; message: string; detail?: string };
+
+const MAX_LOGS = 60;
+const logs: PwaLogEntry[] = [];
+const logListeners = new Set<(entries: PwaLogEntry[]) => void>();
+
+export function pwaLog(level: PwaLogLevel, message: string, detail?: unknown) {
+  const entry: PwaLogEntry = {
+    at: new Date().toISOString(),
+    level,
+    message,
+    detail:
+      detail === undefined
+        ? undefined
+        : detail instanceof Error
+          ? `${detail.name}: ${detail.message}`
+          : typeof detail === "string"
+            ? detail
+            : (() => {
+                try {
+                  return JSON.stringify(detail);
+                } catch {
+                  return String(detail);
+                }
+              })(),
+  };
+  logs.push(entry);
+  if (logs.length > MAX_LOGS) logs.splice(0, logs.length - MAX_LOGS);
+  const line = `[PWA] ${message}${entry.detail ? ` — ${entry.detail}` : ""}`;
+  if (level === "error") console.error(line);
+  else if (level === "warn") console.warn(line);
+  else console.info(line);
+  const snapshot = [...logs];
+  logListeners.forEach((listener) => listener(snapshot));
+}
+
+export function getPwaLogs(): PwaLogEntry[] {
+  return [...logs];
+}
+
+export function subscribePwaLogs(listener: (entries: PwaLogEntry[]) => void) {
+  logListeners.add(listener);
+  listener([...logs]);
+  return () => {
+    logListeners.delete(listener);
+  };
+}
+
+export function clearPwaLogs() {
+  logs.length = 0;
+  logListeners.forEach((listener) => listener([]));
+}
+
+
 function isAppWorkerUrl(scriptUrl: string | undefined) {
   if (!scriptUrl) return false;
   try {
