@@ -12,7 +12,13 @@ import {
   VAPID_PUBLIC_KEY,
   type PushDevice,
 } from "@/lib/push/pushClient";
-import { ensureAppServiceWorker } from "@/lib/pwa/serviceWorker";
+import {
+  ensureAppServiceWorker,
+  pwaLog,
+  subscribePwaLogs,
+  updateAppServiceWorker,
+  type PwaLogEntry,
+} from "@/lib/pwa/serviceWorker";
 import { isStandalone } from "@/hooks/use-pwa-install";
 
 export type PushNotificationStatus = "loading" | "unsupported" | "permission-default" | "permission-denied" | "service-worker-error" | "permission-granted-not-subscribed" | "subscribing" | "subscribed-not-saved" | "subscribed" | "database-error";
