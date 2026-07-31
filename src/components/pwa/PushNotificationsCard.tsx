@@ -144,9 +144,57 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
             <Button size="sm" variant="outline" onClick={() => void push.refresh()} disabled={push.working}>
               <RotateCcw size={13} /> Tentar novamente
             </Button>
+            <Button size="sm" variant="outline" onClick={() => void push.checkForUpdate()} disabled={push.working}>
+              Atualizar serviço
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setShowLogs((v) => !v)}>
+              {showLogs ? "Ocultar detalhes técnicos" : "Ver detalhes técnicos"}
+            </Button>
           </span>
         </Alert>
       )}
+
+      {showLogs && (
+        <div className="mt-3 rounded-2xl border border-border/60 bg-background p-3">
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Diagnóstico do service worker</h4>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                void navigator.clipboard
+                  ?.writeText(push.logs.map((l) => `${l.at} [${l.level}] ${l.message}${l.detail ? ` — ${l.detail}` : ""}`).join("\n"))
+                  .then(() => toast.success("Diagnóstico copiado."))
+                  .catch(() => toast.error("Não foi possível copiar."));
+              }}
+            >
+              Copiar
+            </Button>
+          </div>
+          {push.logs.length === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">Nenhum evento registrado nesta sessão.</p>
+          ) : (
+            <ul className="mt-2 max-h-56 space-y-1 overflow-auto font-mono text-[11px] leading-relaxed">
+              {push.logs.map((l, i) => (
+                <li
+                  key={`${l.at}-${i}`}
+                  className={
+                    l.level === "error"
+                      ? "text-destructive"
+                      : l.level === "warn"
+                        ? "text-orange"
+                        : "text-muted-foreground"
+                  }
+                >
+                  {new Date(l.at).toLocaleTimeString("pt-BR")} · {l.message}
+                  {l.detail ? ` — ${l.detail}` : ""}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
 
 
       <div className="mt-5">
