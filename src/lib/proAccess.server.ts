@@ -1,7 +1,7 @@
 // Operações privilegiadas de acesso do profissional (service role).
 // Nunca importar este arquivo em código do cliente.
 
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin.server";
 
 export function generatePassword(len = 12) {
   const alphabet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789@#$%";

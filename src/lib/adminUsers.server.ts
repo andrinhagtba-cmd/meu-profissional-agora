@@ -1,7 +1,7 @@
 // Operações privilegiadas de exclusão de usuários (service role).
 // Nunca importar este arquivo em código do cliente.
 
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin.server";
 
 export async function deleteUserAccount(userId: string) {
   // Desvincula o profissional (se houver) para não quebrar FKs
