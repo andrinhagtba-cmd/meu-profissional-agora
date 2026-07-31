@@ -9,7 +9,7 @@ let compiledServiceWorkerPromise: Promise<string | undefined> | undefined;
 async function loadCompiledServiceWorker(): Promise<string | undefined> {
   if (!compiledServiceWorkerPromise) {
     compiledServiceWorkerPromise = import(
-      /* @vite-ignore */ "../dist/client/gdf-push-sw.js?raw"
+      /* @vite-ignore */ "../dist/client/sw.js?raw"
     )
       .then((m) => (m.default ?? m) as string)
       .catch(() => undefined);
@@ -17,7 +17,7 @@ async function loadCompiledServiceWorker(): Promise<string | undefined> {
   return compiledServiceWorkerPromise;
 }
 
-const SERVICE_WORKER_PATH = "/gdf-push-sw.js";
+const SERVICE_WORKER_PATH = "/sw.js";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;

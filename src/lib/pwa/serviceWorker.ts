@@ -12,11 +12,10 @@ export type SwState = {
   lastUpdatedAt: string | null;
 };
 
-// URL exclusiva para romper definitivamente o cache CDN do antigo /sw.js AMD.
-// Não volte a registrar /sw.js: esse caminho pode permanecer contaminado em
-// proxies/CDNs mesmo depois de um deploy correto.
-const SW_PATH = "/gdf-push-sw.js";
-const LEGACY_SW_PATHS = new Set(["/sw.js", "/service-worker.js"]);
+// Caminho único do worker. O build, o servidor e o navegador precisam usar
+// exatamente a mesma URL; na VPS este arquivo é servido sem cache pela origem.
+const SW_PATH = "/sw.js";
+const LEGACY_SW_PATHS = new Set(["/gdf-push-sw.js", "/service-worker.js"]);
 let registrationPromise: Promise<ServiceWorkerRegistration> | null = null;
 
 function isAppWorkerUrl(scriptUrl: string | undefined) {
