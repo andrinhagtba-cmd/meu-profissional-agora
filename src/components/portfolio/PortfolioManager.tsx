@@ -70,6 +70,8 @@ export function PortfolioManager({
   isAdmin?: boolean;
 }) {
   const qc = useQueryClient();
+  const { user } = useAuth();
+  const uploaderId = professionalUserId ?? user?.id ?? null;
   const [tab, setTab] = useState<Tab>("image");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
