@@ -35,7 +35,7 @@ if (!serverEntry) fail("o entrypoint SSR (index.mjs) não foi gerado; o pacote e
 if (!(await exists(workerPath))) fail(`${workerPath} não foi gerado.`);
 
 // Garante que o worker também exista como arquivo estático no bundle publicado.
-if (outputDirectory !== "dist/client" && !(await exists(join(outputDirectory, workerFilename)))) {
+if (outputDirectory !== "dist/client") {
   await copyFile(workerPath, join(outputDirectory, workerFilename));
 }
 
