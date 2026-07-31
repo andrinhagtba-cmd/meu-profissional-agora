@@ -42,6 +42,7 @@ import { MediaTypeBadge } from "./MediaTypeBadge";
 import { PortfolioLightbox } from "./PortfolioLightbox";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 type Tab = "image" | "instagram" | "youtube";
 
@@ -93,8 +94,8 @@ export function PortfolioManager({
 
   const handleImages = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
-    if (!professionalUserId) {
-      toast.error("Perfil sem usuário vinculado.");
+    if (!uploaderId) {
+      toast.error("Sessão expirada. Entre novamente para enviar imagens.");
       return;
     }
     setUploading(true);
@@ -107,7 +108,7 @@ export function PortfolioManager({
       }
       try {
         await addPortfolioItem(
-          professionalUserId,
+          uploaderId,
           professionalId,
           file.name.replace(/\.[^.]+$/, ""),
           file,
@@ -243,7 +244,7 @@ export function PortfolioManager({
               <Button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                disabled={uploading || !professionalUserId}
+                disabled={uploading || !uploaderId}
                 className="mt-2 rounded-xl"
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
