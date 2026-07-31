@@ -162,20 +162,79 @@ function NotificacoesPage() {
               <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle className="font-display">Novo disparo</DialogTitle>
-                  <DialogDescription>Envie uma notificação para toda a audiência selecionada.</DialogDescription>
+                  <DialogDescription>Envie para uma audiência inteira ou para um profissional específico.</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div>
-                    <Label>Audiência</Label>
-                    <Select value={form.audience} onValueChange={(v) => setForm((s) => ({ ...s, audience: v as BroadcastAudience }))}>
-                      <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {(Object.keys(AUDIENCE_LABELS) as BroadcastAudience[]).map((a) => (
-                          <SelectItem key={a} value={a}>{AUDIENCE_LABELS[a]}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="inline-flex w-full rounded-full border border-border bg-background p-1">
+                    {[
+                      { v: "audience", l: "Audiência" },
+                      { v: "professional", l: "Profissional específico" },
+                    ].map((m) => (
+                      <button
+                        key={m.v}
+                        type="button"
+                        onClick={() => setMode(m.v as "audience" | "professional")}
+                        className={`flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${mode === m.v ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                      >{m.l}</button>
+                    ))}
                   </div>
+                  {mode === "audience" ? (
+                    <div>
+                      <Label>Audiência</Label>
+                      <Select value={form.audience} onValueChange={(v) => setForm((s) => ({ ...s, audience: v as BroadcastAudience }))}>
+                        <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {(Object.keys(AUDIENCE_LABELS) as BroadcastAudience[]).map((a) => (
+                            <SelectItem key={a} value={a}>{AUDIENCE_LABELS[a]}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>Profissional</Label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
+                        <Input
+                          value={proSearch}
+                          onChange={(e) => { setProSearch(e.target.value); setProUserId(""); }}
+                          placeholder="Buscar por nome, empresa ou cidade…"
+                          className="rounded-xl pl-9"
+                        />
+                      </div>
+                      <div className="mt-2 max-h-52 overflow-y-auto rounded-xl border border-border">
+                        {prosLoading ? (
+                          <div className="p-3 space-y-2">
+                            {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-9 rounded-lg" />)}
+                          </div>
+                        ) : pros.length === 0 ? (
+                          <p className="p-4 text-center text-xs text-muted-foreground">Nenhum profissional encontrado.</p>
+                        ) : (
+                          <ul>
+                            {pros.map((p) => {
+                              const active = proUserId === p.user_id;
+                              return (
+                                <li key={p.user_id}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setProUserId(p.user_id)}
+                                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition ${active ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
+                                  >
+                                    <InitialsAvatar name={p.professional_name ?? p.business_name} className="h-7 w-7 text-[10px]" />
+                                    <span className="min-w-0 flex-1 truncate font-semibold">
+                                      {p.professional_name || p.business_name || "Profissional"}
+                                    </span>
+                                    <span className="shrink-0 text-xs text-muted-foreground">{p.city ?? ""}</span>
+                                  </button>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <Label>Título</Label>
                     <Input value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} maxLength={120} className="rounded-xl" />
