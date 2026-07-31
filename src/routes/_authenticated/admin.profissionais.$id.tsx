@@ -400,6 +400,7 @@ function AdminProDetailPage() {
               userId={pro.user_id ?? null}
               accountEmail={pro.profile_email}
               displayName={displayName}
+              whatsapp={pro.whatsapp ?? null}
             />
           </TabsContent>
           <TabsContent value="activity" className="mt-5"><AdminProActivityPanel professionalId={pro.id} /></TabsContent>
