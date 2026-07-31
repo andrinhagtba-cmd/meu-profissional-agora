@@ -2,7 +2,20 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import compiledServiceWorker from "../dist/client/gdf-push-sw.js?raw";
+// O worker compilado só existe depois do build (dist/client). Em dev o arquivo
+// não existe, então a importação precisa ser preguiçosa e tolerante a falhas.
+let compiledServiceWorkerPromise: Promise<string | undefined> | undefined;
+
+async function loadCompiledServiceWorker(): Promise<string | undefined> {
+  if (!compiledServiceWorkerPromise) {
+    compiledServiceWorkerPromise = import(
+      /* @vite-ignore */ "../dist/client/gdf-push-sw.js?raw"
+    )
+      .then((m) => (m.default ?? m) as string)
+      .catch(() => undefined);
+  }
+  return compiledServiceWorkerPromise;
+}
 
 const SERVICE_WORKER_PATH = "/gdf-push-sw.js";
 
