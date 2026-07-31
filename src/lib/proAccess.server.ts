@@ -85,6 +85,28 @@ export async function createProfessionalAccess(input: {
     throw new Error("Este profissional já está vinculado a outra conta de usuário.");
   }
   if (!pro.user_id) {
+    // O trigger de signup cria automaticamente um perfil profissional vazio.
+    // Removemos esse rascunho para poder vincular o perfil real (user_id é único).
+    const { data: autoRows, error: autoErr } = await supabaseAdmin
+      .from("professional_profiles")
+      .select("id, slug, profile_status, business_name, description, source")
+      .eq("user_id", userId)
+      .neq("id", input.professionalId);
+    if (autoErr) throw new Error(autoErr.message);
+
+    for (const row of autoRows ?? []) {
+      const isEmptyDraft =
+        row.profile_status === "draft" && !row.slug && !row.business_name && !row.description;
+      if (!isEmptyDraft) {
+        throw new Error("Esta conta já está vinculada a outro perfil profissional.");
+      }
+      const { error } = await supabaseAdmin
+        .from("professional_profiles")
+        .delete()
+        .eq("id", row.id);
+      if (error) throw new Error(error.message);
+    }
+
     const { error } = await supabaseAdmin
       .from("professional_profiles")
       .update({ user_id: userId })
