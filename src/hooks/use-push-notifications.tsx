@@ -163,6 +163,19 @@ function usePushNotificationsState() {
     }
   }, []);
 
+  const checkForUpdate = useCallback(async () => {
+    setWorking(true);
+    setError(null);
+    try {
+      await updateAppServiceWorker();
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }, [refresh]);
+
   const isFullyEnabled = permission === "granted" && Boolean(registration?.active) && Boolean(subscription) && registeredDevice?.status === "active" && registeredDevice.endpoint === subscription?.endpoint;
 
   return {
@@ -178,6 +191,7 @@ function usePushNotificationsState() {
     loading,
     working,
     error,
+    logs,
     needsInstall,
     lastAttemptAt,
     vapidLoaded: Boolean(VAPID_PUBLIC_KEY.trim() && /^[A-Za-z0-9_-]+$/.test(VAPID_PUBLIC_KEY.trim())),
@@ -185,9 +199,11 @@ function usePushNotificationsState() {
     disable,
     removeDevice,
     refresh,
+    checkForUpdate,
     sendTest: sendTestPush,
     repairPwa,
   };
+
 }
 
 export function PushNotificationsProvider({ children }: { children: ReactNode }) {
