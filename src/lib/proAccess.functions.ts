@@ -32,3 +32,25 @@ export const resetProPasswordFn = createServerFn({ method: "POST" })
     const { resetProfessionalPassword } = await import("./proAccess.server");
     return resetProfessionalPassword(data);
   });
+
+export const updateProEmailFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string; email: string }) => ({
+    userId: String(data.userId),
+    email: String(data.email ?? "").slice(0, 200),
+  }))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase as never, context.userId);
+    const { updateProfessionalEmail } = await import("./proAccess.server");
+    return updateProfessionalEmail(data);
+  });
+
+export const getProAccountDetailsFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { userId: string }) => ({ userId: String(data.userId) }))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase as never, context.userId);
+    const { getProfessionalAccountDetails } = await import("./proAccess.server");
+    return getProfessionalAccountDetails(data.userId);
+  });
+
