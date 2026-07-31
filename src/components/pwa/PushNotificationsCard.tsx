@@ -139,7 +139,7 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
       )}
       {push.error && (
         <Alert>
-          Não foi possível ativar as notificações neste dispositivo.
+          {push.error}
           <span className="mt-2 flex flex-wrap gap-2">
             <Button size="sm" variant="outline" onClick={() => void push.refresh()} disabled={push.working}>
               <RotateCcw size={13} /> Tentar novamente
@@ -147,6 +147,7 @@ export function PushNotificationsCard({ showPreferences = true }: { showPreferen
           </span>
         </Alert>
       )}
+
 
       <div className="mt-5">
         <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Aparelhos registrados</h3>
