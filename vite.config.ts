@@ -6,12 +6,50 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { VitePWA } from "vite-plugin-pwa";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import type { Plugin } from "vite";
 
 // Self-hosting (VPS / Docker / Nixpacks): set NITRO_PRESET=node-server before `vite build`.
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
 const pwaBuildDirectory = "dist/client";
 const serviceWorkerFilename = "sw.js";
+
+/**
+ * Embute o service worker compilado (dist/client/sw.js) dentro do bundle do
+ * servidor em tempo de build. O bundle cliente — e portanto o worker — é gerado
+ * antes do bundle do servidor, então o arquivo já existe quando este módulo é
+ * carregado. Isso garante que `/sw.js` sempre seja servido como JavaScript real
+ * pelo SSR, sem depender do indexador de assets estáticos do Nitro nem de
+ * leitura de disco em runtime na VPS.
+ */
+function embedServiceWorkerPlugin(): Plugin {
+  const virtualId = "virtual:app-service-worker";
+  const resolvedId = `\0${virtualId}`;
+
+  return {
+    name: "app-embed-service-worker",
+    enforce: "post",
+    resolveId(id) {
+      return id === virtualId ? resolvedId : null;
+    },
+    load(id) {
+      if (id !== resolvedId) return null;
+      try {
+        const source = readFileSync(
+          resolve(process.cwd(), pwaBuildDirectory, serviceWorkerFilename),
+          "utf8",
+        );
+        return `export default ${JSON.stringify(source)};`;
+      } catch {
+        // Dev (ou build do cliente): o worker ainda não existe em disco.
+        return `export default "";`;
+      }
+    },
+  };
+}
+
 
 export default defineConfig({
   tanstackStart: {
@@ -22,7 +60,9 @@ export default defineConfig({
   nitro: preset ? { preset } : true,
   vite: {
     plugins: [
+      embedServiceWorkerPlugin(),
       VitePWA({
+
         strategies: "injectManifest",
         // Generate the worker before the server bundle is finalized.
         integration: { closeBundleOrder: "pre" },

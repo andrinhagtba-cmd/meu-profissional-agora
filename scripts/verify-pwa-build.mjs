@@ -68,6 +68,33 @@ if (forbiddenArtifacts.length > 0) {
   fail(`artefatos concorrentes encontrados: ${forbiddenArtifacts.join(", ")}`);
 }
 
+// O SSR serve /sw.js a partir do worker embutido no bundle do servidor
+// (virtual:app-service-worker). Sem isso o domínio devolve HTML em /sw.js e o
+// navegador falha com "ServiceWorker script evaluation failed".
+const serverDirectory = serverEntry.replace(/\/index\.mjs$/, "");
+const serverFiles = (await readdir(serverDirectory, { recursive: true })).filter((file) =>
+  /\.(mjs|js|cjs)$/.test(file),
+);
+
+// Usa um trecho literal do worker compilado como sonda: só o módulo virtual
+// embute exatamente esse conteúdo dentro do bundle SSR.
+const workerProbe = worker.slice(200, 280);
+let workerIsEmbedded = false;
+for (const file of serverFiles) {
+  const contents = await readFile(join(serverDirectory, file), "utf8");
+  if (contents.includes(workerProbe)) {
+    workerIsEmbedded = true;
+    break;
+  }
+}
+
+
+if (!workerIsEmbedded) {
+  fail(
+    `o bundle do servidor (${serverDirectory}) não contém o service worker embutido; /sw.js responderia HTML em produção.`,
+  );
+}
+
 console.log(
-  `[PWA] OK: ${workerPath} (${workerStat.size} bytes), autossuficiente, com cache, push e notificationclick.`,
+  `[PWA] OK: ${workerPath} (${workerStat.size} bytes), autossuficiente, com cache, push e notificationclick; embutido no bundle SSR e copiado para ${outputDirectory}.`,
 );
