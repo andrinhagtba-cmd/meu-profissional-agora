@@ -64,7 +64,9 @@ export async function createProfessionalAccess(input: {
     if (error) throw new Error(error.message);
     userId = data.user.id;
     created = true;
-  } else if (input.password?.trim()) {
+  } else {
+    // Conta já existente: aplica a senha (informada ou gerada) para que o
+    // administrador sempre tenha credenciais válidas para entregar.
     const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, { password });
     if (error) throw new Error(error.message);
   }
@@ -90,12 +92,7 @@ export async function createProfessionalAccess(input: {
     if (error) throw new Error(error.message);
   }
 
-  return {
-    userId,
-    email,
-    created,
-    password: created || input.password?.trim() ? password : null,
-  };
+  return { userId, email, created, password };
 }
 
 export async function resetProfessionalPassword(input: { userId: string; password?: string | null }) {
@@ -103,4 +100,55 @@ export async function resetProfessionalPassword(input: { userId: string; passwor
   const { error } = await supabaseAdmin.auth.admin.updateUserById(input.userId, { password });
   if (error) throw new Error(error.message);
   return { password };
+}
+
+export async function updateProfessionalEmail(input: { userId: string; email: string }) {
+  const email = input.email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("E-mail inválido.");
+
+  const existing = await findUserIdByEmail(email);
+  if (existing && existing !== input.userId) {
+    throw new Error("Este e-mail já está em uso por outra conta.");
+  }
+
+  const { error } = await supabaseAdmin.auth.admin.updateUserById(input.userId, {
+    email,
+    email_confirm: true,
+  });
+  if (error) throw new Error(error.message);
+
+  await supabaseAdmin.from("profiles").update({ email }).eq("user_id", input.userId);
+
+  return { email };
+}
+
+export async function getProfessionalAccountDetails(userId: string) {
+  const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+  if (error) throw new Error(error.message);
+  const user = data.user;
+  if (!user) throw new Error("Conta não encontrada.");
+
+  const [{ data: profile }, { data: roles }] = await Promise.all([
+    supabaseAdmin
+      .from("profiles")
+      .select("full_name, phone, city, state, avatar_url, account_status, created_at")
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabaseAdmin.from("user_roles").select("role").eq("user_id", userId),
+  ]);
+
+  return {
+    userId,
+    email: user.email ?? null,
+    emailConfirmed: Boolean(user.email_confirmed_at),
+    createdAt: user.created_at ?? null,
+    lastSignInAt: user.last_sign_in_at ?? null,
+    provider: (user.app_metadata?.provider as string | undefined) ?? "email",
+    fullName: profile?.full_name ?? null,
+    phone: profile?.phone ?? null,
+    city: profile?.city ?? null,
+    state: profile?.state ?? null,
+    accountStatus: (profile?.account_status as string | null) ?? null,
+    roles: (roles ?? []).map((r) => r.role as string),
+  };
 }
