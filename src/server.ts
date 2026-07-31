@@ -2,7 +2,20 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import compiledServiceWorker from "../dist/client/gdf-push-sw.js?raw";
+// O worker compilado só existe depois do build (dist/client). Em dev o arquivo
+// não existe, então a importação precisa ser preguiçosa e tolerante a falhas.
+let compiledServiceWorkerPromise: Promise<string | undefined> | undefined;
+
+async function loadCompiledServiceWorker(): Promise<string | undefined> {
+  if (!compiledServiceWorkerPromise) {
+    compiledServiceWorkerPromise = import(
+      /* @vite-ignore */ "../dist/client/gdf-push-sw.js?raw"
+    )
+      .then((m) => (m.default ?? m) as string)
+      .catch(() => undefined);
+  }
+  return compiledServiceWorkerPromise;
+}
 
 const SERVICE_WORKER_PATH = "/gdf-push-sw.js";
 
@@ -38,7 +51,9 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
-function serviceWorkerResponse(): Response {
+async function serviceWorkerResponse(): Promise<Response | undefined> {
+  const compiledServiceWorker = await loadCompiledServiceWorker();
+  if (!compiledServiceWorker) return undefined;
   const headers = new Headers();
   // Service Workers devem sempre ser revalidados. Isso evita que a CDN mantenha
   // uma geração antiga depois do deploy e garante o controle do scope raiz.
@@ -60,7 +75,10 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      if (new URL(request.url).pathname === SERVICE_WORKER_PATH) return serviceWorkerResponse();
+      if (new URL(request.url).pathname === SERVICE_WORKER_PATH) {
+        const swResponse = await serviceWorkerResponse();
+        if (swResponse) return swResponse;
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return normalizeCatastrophicSsrResponse(response);
