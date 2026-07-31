@@ -12,15 +12,20 @@ export type SwState = {
   lastUpdatedAt: string | null;
 };
 
-const SW_PATH = "/sw.js";
+// URL exclusiva para romper definitivamente o cache CDN do antigo /sw.js AMD.
+// Não volte a registrar /sw.js: esse caminho pode permanecer contaminado em
+// proxies/CDNs mesmo depois de um deploy correto.
+const SW_PATH = "/gdf-push-sw.js";
+const LEGACY_SW_PATHS = new Set(["/sw.js", "/service-worker.js"]);
 let registrationPromise: Promise<ServiceWorkerRegistration> | null = null;
 
 function isAppWorkerUrl(scriptUrl: string | undefined) {
   if (!scriptUrl) return false;
   try {
-    return new URL(scriptUrl).pathname === SW_PATH;
+    const pathname = new URL(scriptUrl).pathname;
+    return pathname === SW_PATH || LEGACY_SW_PATHS.has(pathname);
   } catch {
-    return scriptUrl.includes(SW_PATH);
+    return scriptUrl.includes(SW_PATH) || [...LEGACY_SW_PATHS].some((path) => scriptUrl.includes(path));
   }
 }
 

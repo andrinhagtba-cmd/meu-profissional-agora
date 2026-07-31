@@ -11,6 +11,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
 const pwaBuildDirectory = "dist/client";
+const serviceWorkerFilename = "gdf-push-sw.js";
 
 export default defineConfig({
   tanstackStart: {
@@ -18,7 +19,20 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  nitro: preset ? { preset } : true,
+  nitro: preset
+    ? {
+        preset,
+        routeRules: {
+          [`/${serviceWorkerFilename}`]: {
+            headers: {
+              "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+              "service-worker-allowed": "/",
+              "content-type": "text/javascript; charset=utf-8",
+            },
+          },
+        },
+      }
+    : true,
   vite: {
     plugins: [
       VitePWA({
@@ -29,7 +43,7 @@ export default defineConfig({
         // Registration is centralized in src/lib/pwa/serviceWorker.ts.
         injectRegister: false,
         srcDir: "src",
-        filename: "sw.ts",
+        filename: serviceWorkerFilename,
         devOptions: { enabled: false },
         manifest: false, // manifest is served statically from public/manifest.webmanifest
         // O worker nasce no bundle cliente antes do Nitro. No preset Node, o
