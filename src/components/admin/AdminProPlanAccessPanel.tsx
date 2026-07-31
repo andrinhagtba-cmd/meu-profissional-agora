@@ -14,12 +14,14 @@ import {
 import {
   listPlansAdmin, getProSubscriptions, assignProSubscription, deleteProSubscription,
 } from "@/services/adminService";
-import { createProAccessFn, resetProPasswordFn } from "@/lib/proAccess.functions";
+import { createProAccessFn, resetProPasswordFn, updateProEmailFn, getProAccountDetailsFn } from "@/lib/proAccess.functions";
 import { addPlanPeriod, planPeriodLabel, planPeriodSuffix } from "@/lib/planPeriod";
 
 const brl = (n: number) => Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString("pt-BR") : "—");
+const dateTime = (d?: string | null) => (d ? new Date(d).toLocaleString("pt-BR") : "—");
 const todayISO = () => new Date().toISOString().slice(0, 10);
+
 
 const addPeriod = (start: string, billing: string) => addPlanPeriod(start, billing);
 
