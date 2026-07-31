@@ -11,7 +11,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // Without it the build keeps the default Lovable/Cloudflare target.
 const preset = process.env.NITRO_PRESET;
 const pwaBuildDirectory = "dist/client";
-const serviceWorkerFilename = "gdf-push-sw.js";
+const serviceWorkerFilename = "sw.js";
 
 export default defineConfig({
   tanstackStart: {

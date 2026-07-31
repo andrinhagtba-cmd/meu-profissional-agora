@@ -25,7 +25,7 @@ async function firstExisting(candidates) {
 
 // O plugin PWA sempre grava o worker em dist/client; o Nitro pode publicar o
 // bundle final em .output (preset node-server) ou em dist (preset padrão).
-const workerFilename = "gdf-push-sw.js";
+const workerFilename = "sw.js";
 const workerPath = join("dist/client", workerFilename);
 const outputDirectory = await firstExisting([".output/public", "dist/client"]);
 const serverEntry = await firstExisting([".output/server/index.mjs", "dist/server/index.mjs"]);
@@ -62,7 +62,7 @@ if (!worker.includes("NOTIFICATION_CLICK")) fail(`navegação após clique não 
 if (!worker.includes("SKIP_WAITING")) fail(`fluxo de atualização não está no ${workerFilename}.`);
 
 const forbiddenArtifacts = outputFiles.filter((file) =>
-  /(^|\/)(workbox-[^/]+\.js|push-handler\.js|service-worker\.js|sw\.js)$/i.test(file),
+  /(^|\/)(workbox-[^/]+\.js|push-handler\.js|service-worker\.js|gdf-push-sw\.js)$/i.test(file),
 );
 if (forbiddenArtifacts.length > 0) {
   fail(`artefatos concorrentes encontrados: ${forbiddenArtifacts.join(", ")}`);
