@@ -237,9 +237,44 @@ export function AdminProPlanAccessPanel({
         <CardContent className="space-y-4 p-5">
           <div className="rounded-2xl border bg-background p-4 text-sm">
             {userId ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusPill tone="success">Conta vinculada</StatusPill>
-                <span className="inline-flex items-center gap-1.5 text-muted-foreground"><Mail size={14} /> {accountEmail ?? "sem e-mail"}</span>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusPill tone="success">Conta vinculada</StatusPill>
+                  <span className="inline-flex items-center gap-1.5 text-muted-foreground"><Mail size={14} /> {accountEmail ?? "sem e-mail"}</span>
+                  <Button
+                    size="sm" variant="ghost" className="ml-auto rounded-full"
+                    onClick={() => setShowDetails((v) => !v)}
+                  >
+                    <Info size={14} /> {showDetails ? "Ocultar detalhes" : "Ver detalhes da conta"}
+                  </Button>
+                </div>
+
+                {showDetails && (
+                  <div className="rounded-xl border bg-card p-3">
+                    {details.isLoading ? (
+                      <p className="text-xs text-muted-foreground">Carregando detalhes…</p>
+                    ) : details.error ? (
+                      <p className="text-xs text-destructive">{(details.error as Error).message}</p>
+                    ) : details.data ? (
+                      <dl className="grid gap-x-6 gap-y-2 text-xs sm:grid-cols-2">
+                        <Detail label="ID do usuário" value={details.data.userId} mono />
+                        <Detail label="E-mail" value={details.data.email ?? "—"} />
+                        <Detail label="E-mail confirmado" value={details.data.emailConfirmed ? "Sim" : "Não"} />
+                        <Detail label="Provedor" value={details.data.provider} />
+                        <Detail label="Nome no perfil" value={details.data.fullName ?? "—"} />
+                        <Detail label="Telefone" value={details.data.phone ?? "—"} />
+                        <Detail
+                          label="Localização"
+                          value={details.data.city ? `${details.data.city}${details.data.state ? `/${details.data.state}` : ""}` : "—"}
+                        />
+                        <Detail label="Status da conta" value={details.data.accountStatus ?? "—"} />
+                        <Detail label="Papéis" value={details.data.roles.join(", ") || "—"} />
+                        <Detail label="Criada em" value={dateTime(details.data.createdAt)} />
+                        <Detail label="Último acesso" value={dateTime(details.data.lastSignInAt)} />
+                      </dl>
+                    ) : null}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex flex-wrap items-center gap-2">
@@ -253,9 +288,14 @@ export function AdminProPlanAccessPanel({
             <div className="space-y-1.5">
               <Label>E-mail de acesso</Label>
               <Input
-                type="email" value={email} disabled={!!userId}
+                type="email" value={email}
                 onChange={(e) => setEmail(e.target.value)} placeholder="profissional@email.com"
               />
+              {userId && (
+                <p className="text-xs text-muted-foreground">
+                  Alterar o e-mail atualiza o login da conta vinculada.
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label>Senha (opcional — gerada automaticamente)</Label>
@@ -269,9 +309,22 @@ export function AdminProPlanAccessPanel({
                 {createAccess.isPending && <Loader2 size={14} className="animate-spin" />} Criar acesso do profissional
               </Button>
             ) : (
-              <Button variant="outline" className="rounded-full" disabled={resetPass.isPending} onClick={() => resetPass.mutate()}>
-                {resetPass.isPending && <Loader2 size={14} className="animate-spin" />} Redefinir senha
-              </Button>
+              <>
+                <Button variant="outline" className="rounded-full" disabled={resetPass.isPending} onClick={() => resetPass.mutate()}>
+                  {resetPass.isPending && <Loader2 size={14} className="animate-spin" />} Redefinir senha
+                </Button>
+                <Button
+                  variant="outline" className="rounded-full"
+                  disabled={
+                    updateEmail.isPending ||
+                    !email ||
+                    email.trim().toLowerCase() === (accountEmail ?? "").toLowerCase()
+                  }
+                  onClick={() => updateEmail.mutate()}
+                >
+                  {updateEmail.isPending && <Loader2 size={14} className="animate-spin" />} Salvar novo e-mail
+                </Button>
+              </>
             )}
           </div>
 
@@ -294,3 +347,13 @@ export function AdminProPlanAccessPanel({
     </div>
   );
 }
+
+function Detail({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div>
+      <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className={`break-all font-medium text-foreground ${mono ? "font-mono text-[11px]" : ""}`}>{value}</dd>
+    </div>
+  );
+}
+
