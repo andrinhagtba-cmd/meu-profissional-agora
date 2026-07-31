@@ -60,7 +60,9 @@ export default defineConfig({
   nitro: preset ? { preset } : true,
   vite: {
     plugins: [
+      embedServiceWorkerPlugin(),
       VitePWA({
+
         strategies: "injectManifest",
         // Generate the worker before the server bundle is finalized.
         integration: { closeBundleOrder: "pre" },
