@@ -2803,6 +2803,16 @@ export type Database = {
         }
         Returns: number
       }
+      admin_notify_user: {
+        Args: {
+          _link?: string
+          _message: string
+          _title: string
+          _type?: string
+          _user_id: string
+        }
+        Returns: number
+      }
       admin_renew_subscription: {
         Args: {
           _amount?: number
