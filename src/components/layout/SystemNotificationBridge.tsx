@@ -47,15 +47,7 @@ export function SystemNotificationBridge() {
               : undefined,
           });
 
-          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-            const browserNotification = new Notification(notification.title, {
-              body: notification.message ?? undefined,
-            });
-            browserNotification.onclick = () => {
-              window.focus();
-              if (notification.link) window.location.assign(notification.link);
-            };
-          }
+          // A notificação do sistema é exibida exclusivamente pelo Service Worker.
         },
       )
       .subscribe();

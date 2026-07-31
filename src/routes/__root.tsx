@@ -19,6 +19,7 @@ import { PwaUpdatePrompt } from "@/components/pwa/PwaUpdatePrompt";
 import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
 import { PushEnablePrompt } from "@/components/pwa/PushEnablePrompt";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
+import { PushNotificationsProvider } from "@/hooks/use-push-notifications";
 
 
 function NotFoundComponent() {
@@ -165,14 +166,16 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <PwaProvider>
-        <BrandDocumentSync />
-        <SystemNotificationBridge />
-        <OfflineBanner />
-        <Outlet />
-        <PwaUpdatePrompt />
-        <PwaInstallPrompt />
-        <PushEnablePrompt />
-        <Toaster position="top-center" richColors />
+        <PushNotificationsProvider>
+          <BrandDocumentSync />
+          <SystemNotificationBridge />
+          <OfflineBanner />
+          <Outlet />
+          <PwaUpdatePrompt />
+          <PwaInstallPrompt />
+          <PushEnablePrompt />
+          <Toaster position="top-center" richColors />
+        </PushNotificationsProvider>
       </PwaProvider>
     </QueryClientProvider>
   );

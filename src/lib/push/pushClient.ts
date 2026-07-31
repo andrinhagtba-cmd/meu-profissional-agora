@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { ensureAppServiceWorker } from "@/lib/pwa/serviceWorker";
+import { ensureAppServiceWorker, repairPwaDevice } from "@/lib/pwa/serviceWorker";
 
 export const VAPID_PUBLIC_KEY =
   (import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined) ??
@@ -15,8 +15,12 @@ export function isPushSupported() {
 }
 
 function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const normalizedKey = base64String.trim();
+  if (!normalizedKey || !/^[A-Za-z0-9_-]+$/.test(normalizedKey)) {
+    throw new Error("A chave pública VAPID não está configurada.");
+  }
+  const padding = "=".repeat((4 - (normalizedKey.length % 4)) % 4);
+  const base64 = (normalizedKey + padding).replace(/-/g, "+").replace(/_/g, "/");
   const raw = window.atob(base64);
   const output = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i += 1) output[i] = raw.charCodeAt(i);
@@ -95,7 +99,9 @@ export async function subscribeCurrentDevice(userId: string) {
 
   // Confirma que o worker existe antes de pedir uma permissão persistente ao usuário.
   const registration = await ensurePushRegistration();
-  const permission = await withTimeout(Notification.requestPermission(), 60_000);
+  const permission = Notification.permission === "default"
+    ? await withTimeout(Notification.requestPermission(), 60_000)
+    : Notification.permission;
   if (permission !== "granted") {
     throw new Error(
       permission === null
@@ -158,8 +164,17 @@ export async function unsubscribeCurrentDevice() {
   const subscription = await getExistingSubscription();
   if (!subscription) return;
   const endpoint = subscription.endpoint;
-  await subscription.unsubscribe().catch(() => {});
-  await supabase.from("push_subscriptions").update({ status: "revoked" }).eq("endpoint", endpoint);
+  const { error } = await supabase.from("push_subscriptions").update({ status: "revoked" }).eq("endpoint", endpoint);
+  if (error) throw error;
+  await subscription.unsubscribe().catch(() => false);
+  window.dispatchEvent(new CustomEvent("gdf:push-subscription-changed"));
+}
+
+export async function repairCurrentPwaDevice() {
+  await repairPwaDevice(async (endpoint) => {
+    const { error } = await supabase.from("push_subscriptions").update({ status: "revoked" }).eq("endpoint", endpoint);
+    if (error) throw error;
+  });
   window.dispatchEvent(new CustomEvent("gdf:push-subscription-changed"));
 }
 
