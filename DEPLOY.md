@@ -53,9 +53,24 @@ O `SUPABASE_SERVICE_ROLE_KEY` é usado pelas server functions administrativas
 2. Supabase → Storage: os buckets públicos (`avatars`, `portfolio`, `category-icons`,
    `admin-media`) continuam servindo pelo domínio do Supabase — nada a mudar.
 3. Coolify → habilite HTTPS/Let's Encrypt e "Allow www & non-www".
-4. No Cloudflare, crie uma regra de cache para **ignorar cache** em
-   `/sw.js`. O aplicativo remove automaticamente registros antigos de
-   `/gdf-push-sw.js` e `/service-worker.js` para evitar workers concorrentes.
+4. No Cloudflare, crie uma **Cache Rule** com "Bypass cache" para `/sw.js` e,
+   **a cada deploy**, execute *Caching → Configuration → Purge Everything* (ou
+   purge por URL de `https://guiadfnamidia.com.br/sw.js`). Sem isso o CF pode
+   continuar entregando a resposta anterior (já foi observado `max-age=14400`
+   até em resposta 404). O aplicativo remove automaticamente registros antigos
+   de `/gdf-push-sw.js` e `/service-worker.js` para evitar workers concorrentes.
+
+## Como o `/sw.js` é servido
+
+O worker é gerado pelo `vite-plugin-pwa` (`strategies: "injectManifest"`,
+fonte única `src/sw.ts`, formato `iife`, sem chunks `workbox-*.js`) em
+`dist/client/sw.js`. Em seguida o plugin `app-embed-service-worker`
+(`vite.config.ts`) **embute esse arquivo dentro do bundle do servidor** via o
+módulo virtual `virtual:app-service-worker`, e `src/server.ts` responde `/sw.js`
+com esse conteúdo (`text/javascript`, `no-store`, `service-worker-allowed: /`).
+Se o worker não estiver embutido, a rota devolve **404 real em texto** — nunca
+o HTML da SPA. O `scripts/verify-pwa-build.mjs` falha o build quando o worker
+não está embutido no bundle SSR ou quando volta a depender de Workbox externo.
 
 ## Verificação local do build de produção
 
@@ -64,12 +79,14 @@ NITRO_PRESET=node-server bun run build   # ou: bun run build:node
 PORT=3026 node .output/server/index.mjs
 ```
 
-Depois do deploy, esta verificação precisa mostrar o worker novo, sem `HIT`,
-`define(` ou `importScripts(`:
+Depois do deploy, esta verificação precisa mostrar `HTTP/2 200`,
+`content-type: text/javascript`, `cache-control: no-store` e nenhum `define(`,
+`importScripts(` ou `workbox-*.js`:
 
 ```bash
 curl -i https://guiadfnamidia.com.br/sw.js
 ```
+
 
 ## Observações
 
