@@ -1,47 +1,49 @@
-# Plano — Web Push funcionando de ponta a ponta
+## Diagnóstico verificado agora (não é mais o Workbox)
 
-## Diagnóstico confirmado
-- Em 30/07/2026 o domínio publicou um `sw.js` antigo em formato AMD que depende de `workbox-f0bb1bde.js` e de `push-handler.js`.
-- `workbox-f0bb1bde.js` responde 404; por isso a avaliação do Service Worker falha antes da ativação.
-- A resposta antiga de `/sw.js` estava em cache na Cloudflare por 4 horas (`cf-cache-status: HIT`, `cache-control: max-age=14400`).
-- O código atual possui uma única fonte (`src/sw.ts`), um único registrador (`src/lib/pwa/serviceWorker.ts`) e banner/Central compartilham `subscribeCurrentDevice()`.
+Auditei o código e o domínio nesta sessão:
 
-## Implementação
+- `vite.config.ts` já usa **uma única estratégia**: `strategies: "injectManifest"`, `srcDir: "src"`, `filename: "sw.ts"`, `rollupFormat: "iife"`, `injectRegister: false`. Não existe `generateSW`, nem `public/sw.js`, nem `service-worker.js`, nem `push-handler.js`.
+- Existe **um único registro** no frontend: `src/lib/pwa/serviceWorker.ts`. Nenhum `virtual:pwa-register` / `registerSW`.
+- `scripts/verify-pwa-build.mjs` já bloqueia `define([`, `importScripts(`, chunks `workbox-*.js` e artefatos concorrentes.
+- **O `sw.js` com `define(["./workbox-f0bb1bde"])` não está mais no ar.** Hoje:
 
-### 1. Corrigir a geração e publicação do worker
-- Usar somente `injectManifest`, gerando um IIFE autossuficiente em `.output/public/sw.js` antes da coleta de assets do Nitro.
-- Manter cache + Web Push no mesmo worker, sem `push-handler.js`, `define()`, `importScripts()` ou `workbox-*.js` externo.
-- Servir `/sw.js` com `no-store` e `Service-Worker-Allowed: /`.
-- Fazer o build falhar automaticamente se o artefato ou seus handlers estiverem ausentes ou se uma dependência externa reaparecer.
-- Garantir que o worker não seja registrado em desenvolvimento, iframe ou preview da Lovable, preservando o funcionamento somente no app publicado.
-- Remover qualquer configuração duplicada ou incompatível que possa gerar o worker no diretório errado.
+```text
+GET https://guiadfnamidia.com.br/sw.js
+HTTP/2 404
+content-type: text/html; charset=utf-8   (6001 bytes de HTML)
+cf-cache-status: BYPASS, cache-control: max-age=14400
+```
 
-### 2. Unificar registro e assinatura
-- Fazer o banner e a Central usarem exatamente o mesmo registro fornecido pelo `PwaProvider`, evitando registros concorrentes ou estados diferentes.
-- Separar explicitamente as etapas: suporte → permissão → worker ativo → `PushSubscription` criada → registro salvo no Supabase.
-- Só retornar sucesso e fechar o banner após confirmar todas as etapas, incluindo uma leitura de verificação da assinatura local e do dispositivo persistido.
-- Recuperar automaticamente registros antigos travados/redundantes, mas sem loops de unregister/register.
+Já `/manifest.webmanifest`, `/icons/icon-192.png` e `/favicon.ico` retornam **200** com o content-type correto.
 
-### 3. Corrigir estados e mensagens da interface
-- Nunca mostrar sucesso apenas porque `Notification.permission === "granted"`.
-- Exibir erro específico conforme a etapa que falhou: worker ausente, ativação expirada, assinatura recusada, chave VAPID inválida ou gravação bloqueada pelo banco.
-- Sincronizar o banner e a Central imediatamente após ativar/desativar para não pedir novamente na mesma sessão.
-- Impedir múltiplos cliques e garantir que o estado “Ativando…” sempre termine por sucesso, erro ou timeout.
+**Causa comprovada atual:** o navegador recebe **HTML** em `/sw.js` e falha ao avaliá-lo — daí "ServiceWorker script evaluation failed". Duas falhas concretas no pipeline:
 
-### 4. Validar VAPID e persistência no Supabase
-- Somente depois de comprovar worker `activated`, confirmar a criação da `PushSubscription`, persistência do dispositivo e envio de teste, sem alterar VAPID, RLS ou Edge Functions previamente.
+1. `src/server.ts` tenta carregar o worker em runtime com `import("../dist/client/sw.js?raw")`. O sufixo `?raw` é uma transformação do Vite em tempo de build; no bundle Nitro publicado na VPS isso nunca resolve (e `dist/` sequer é enviado). O `catch` devolve `undefined`, a rota cai no SSR e o SSR responde 404 em HTML.
+2. `scripts/verify-pwa-build.mjs` copia `dist/client/sw.js` para `.output/public/` **depois** que o Nitro já indexou os assets públicos, então o servidor node não serve esse arquivo.
 
-### 5. Testes automatizados e de produção
-- Adicionar testes focados na máquina de estados da ativação e nas falhas de cada etapa.
-- Fazer build de produção e exigir que `.output/public/sw.js` seja autossuficiente e contenha os handlers `push` e `notificationclick`.
-- Após publicar, validar no domínio real:
-  - `/sw.js` retorna 200 e JavaScript;
-  - worker chega a `activated` e controla a página;
-  - permissão fica `granted`;
-  - `pushManager.getSubscription()` retorna uma assinatura;
-  - Supabase mostra um dispositivo `active`;
-  - “Enviar teste” entrega a notificação;
-  - ao recarregar e reabrir o PWA, banner e Central reconhecem o aparelho e não pedem nova ativação.
+## Correção
 
-## Critério de conclusão
-A correção só será considerada concluída quando o fluxo completo for comprovado no domínio publicado, do clique em “Ativar” até o recebimento de uma notificação de teste, incluindo reabertura do PWA sem novo pedido de permissão.
+**1. Embutir o worker no bundle do servidor em tempo de build**
+Adicionar em `vite.config.ts` um plugin Vite mínimo que expõe um módulo virtual (`virtual:app-service-worker`) resolvido apenas no build do servidor, lendo `dist/client/sw.js` do disco (o cliente é construído antes do servidor) e exportando o código como string. Em dev, exporta string vazia.
+
+**2. `src/server.ts` passa a importar esse módulo virtual** em vez do `import("../dist/client/sw.js?raw")`, mantendo os headers já corretos (`text/javascript`, `no-store`, `service-worker-allowed: /`) e devolvendo **404 real** (não HTML) se o worker não estiver embutido.
+
+**3. Reforçar o `verify-pwa-build.mjs`**
+Além das checagens atuais, falhar o build se o bundle do servidor não contiver o conteúdo do worker (busca por um marcador do arquivo, ex. `NOTIFICATION_CLICK`) — assim é impossível publicar sem o `/sw.js` funcional. Manter também a cópia para `.output/public` como redundância.
+
+**4. Deploy / Cloudflare**
+Documentar em `DEPLOY.md`: após o deploy, "Purge Everything" (ou purga de `/sw.js`) na Cloudflare e uma Cache Rule de bypass para `/sw.js`, já que o CF hoje devolve `max-age=14400` na resposta 404.
+
+## Fora de escopo desta correção
+
+Não vou tocar em VAPID, RLS, tabelas de `push_subscriptions` ou funções de envio nesta etapa: o hook unificado (`usePushNotifications` como provider), o estado `isFullyEnabled`, o painel de diagnóstico, o "Reparar PWA" e o botão de teste já estão implementados e só podem ser validados de verdade **depois** que o worker registrar. Assim que você publicar com esta correção e o `/sw.js` retornar 200 em JavaScript, seguimos para a validação ponta a ponta (subscription → dispositivo no Supabase → envio de teste com o site aberto e fechado → clique abrindo `/notificacoes`) e corrijo o que aparecer com evidência.
+
+## Verificação antes de encerrar
+
+- `npm run build:vps` local, confirmando: `dist/client/sw.js` existe, é IIFE autossuficiente, sem `define(`/`importScripts(`/`workbox-*.js`; `.output/server/index.mjs` contém o worker embutido.
+- Servir o build localmente e confirmar `GET /sw.js` → 200 + `text/javascript` + `no-store`.
+- Após seu deploy, revalidar o domínio com `curl` (status, content-type, ausência de referência a Workbox externo) antes de declarar concluído.
+
+## Detalhes técnicos
+
+Arquivos alterados: `vite.config.ts` (plugin do módulo virtual), `src/server.ts` (import estático do worker + 404 real), `scripts/verify-pwa-build.mjs` (checagem do bundle do servidor), `DEPLOY.md` (purga de cache). Nenhuma migração, política RLS ou função backend é alterada.
