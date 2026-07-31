@@ -76,14 +76,18 @@ const serverFiles = (await readdir(serverDirectory, { recursive: true })).filter
   /\.(mjs|js|cjs)$/.test(file),
 );
 
+// Usa um trecho literal do worker compilado como sonda: só o módulo virtual
+// embute exatamente esse conteúdo dentro do bundle SSR.
+const workerProbe = worker.slice(200, 280);
 let workerIsEmbedded = false;
 for (const file of serverFiles) {
   const contents = await readFile(join(serverDirectory, file), "utf8");
-  if (contents.includes("NOTIFICATION_CLICK") && contents.includes("notificationclick")) {
+  if (contents.includes(workerProbe)) {
     workerIsEmbedded = true;
     break;
   }
 }
+
 
 if (!workerIsEmbedded) {
   fail(
