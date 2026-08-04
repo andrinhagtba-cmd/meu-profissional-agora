@@ -184,50 +184,148 @@ export function Header() {
               <button
                 type="button"
                 aria-label="Abrir menu"
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary sm:h-11 sm:w-11 xl:hidden"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/70 bg-secondary/40 text-foreground transition-all hover:bg-secondary active:scale-95 sm:h-11 sm:w-11 xl:hidden"
               >
                 <Menu size={22} />
               </button>
 
             </SheetTrigger>
-            <SheetContent side="right" className="w-80">
-              <SheetHeader>
-                <SheetTitle className="text-left font-display">Menu</SheetTitle>
+            <SheetContent
+              side="right"
+              className="flex w-[88vw] max-w-sm flex-col gap-0 border-l border-border/60 bg-card p-0"
+            >
+              <SheetHeader className="border-b border-border/60 bg-gradient-to-br from-primary/10 via-card to-card px-5 pb-5 pt-6 text-left">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                {user ? (
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-primary text-base font-bold text-primary-foreground">
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        (user.email ?? "?").slice(0, 1).toUpperCase()
+                      )}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-display text-base font-extrabold text-foreground">
+                        Minha conta
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
+                    </span>
+                  </div>
+                ) : (
+                  <div className="min-w-0">
+                    <Logo />
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Encontre profissionais de confiança perto de você.
+                    </p>
+                  </div>
+                )}
               </SheetHeader>
-              <nav aria-label="Menu mobile" className="flex flex-col gap-1 px-4">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.label}
-                    to={item.to}
-                    onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary hover:text-primary"
+
+              <nav
+                aria-label="Menu mobile"
+                className="flex-1 overflow-y-auto overscroll-contain px-4 py-4"
+              >
+                <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Navegação
+                </p>
+                <div className="flex flex-col gap-0.5">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      onClick={() => setOpen(false)}
+                      className="group flex min-h-12 items-center justify-between gap-3 rounded-xl px-3 text-[15px] font-semibold text-foreground transition-colors hover:bg-secondary active:bg-secondary [&.active]:bg-primary/10 [&.active]:text-primary"
+                      activeOptions={{ exact: item.to === "/" }}
+                    >
+                      <span className="truncate">{item.label}</span>
+                      <ChevronRight
+                        size={16}
+                        className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                      />
+                    </Link>
+                  ))}
+                </div>
+
+                <p className="px-2 pb-2 pt-5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Atalhos
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      navigate({ to: "/buscar", search: {} as never });
+                    }}
+                    className="flex min-h-[76px] flex-col items-start justify-center gap-1.5 rounded-2xl border border-border/70 bg-secondary/40 px-3 text-left text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
                   >
-                    {item.label}
+                    <Search size={18} className="text-primary" />
+                    Buscar
+                  </button>
+                  <Link
+                    to="/favoritos"
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-[76px] flex-col items-start justify-center gap-1.5 rounded-2xl border border-border/70 bg-secondary/40 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+                  >
+                    <Heart size={18} className="text-accent" />
+                    Favoritos
                   </Link>
-                ))}
-                <div className="my-3 border-t border-border" />
-                <Link
-                  to="/favoritos"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary"
-                >
-                  Favoritos
-                </Link>
-                <Link
-                  to="/entrar"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary"
-                >
-                  Entrar
-                </Link>
-                <Button asChild className="mt-2 h-12 rounded-xl text-base font-semibold">
+                  {user ? (
+                    <>
+                      <Link
+                        to="/painel"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[76px] flex-col items-start justify-center gap-1.5 rounded-2xl border border-border/70 bg-secondary/40 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+                      >
+                        <User size={18} className="text-primary" />
+                        Meu painel
+                      </Link>
+                      <Link
+                        to="/painel/notificacoes"
+                        onClick={() => setOpen(false)}
+                        className="flex min-h-[76px] flex-col items-start justify-center gap-1.5 rounded-2xl border border-border/70 bg-secondary/40 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+                      >
+                        <Bell size={18} className="text-primary" />
+                        Notificações
+                      </Link>
+                    </>
+                  ) : null}
+                </div>
+              </nav>
+
+              <div className="border-t border-border/60 bg-card px-4 pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
+                <Button asChild className="h-12 w-full rounded-xl text-base font-semibold">
                   <Link to="/cadastro/profissional" onClick={() => setOpen(false)}>
+                    <Briefcase size={18} aria-hidden="true" />
                     Sou profissional
                   </Link>
                 </Button>
-              </nav>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      void handleSignOut();
+                    }}
+                    className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    <LogOut size={16} /> Sair da conta
+                  </button>
+                ) : (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="mt-2 h-11 w-full rounded-xl text-sm font-semibold"
+                  >
+                    <Link to="/entrar" onClick={() => setOpen(false)}>
+                      Entrar
+                    </Link>
+                  </Button>
+                )}
+              </div>
             </SheetContent>
           </Sheet>
+
         </div>
       </div>
     </header>
