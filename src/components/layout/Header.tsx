@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Briefcase, Heart, LogOut, Menu, Search, User } from "lucide-react";
+import { Bell, Briefcase, ChevronRight, Heart, LogOut, Menu, Search, User } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
