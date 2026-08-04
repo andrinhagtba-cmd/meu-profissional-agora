@@ -75,8 +75,8 @@ export function FeaturedPros() {
               id="profissionais-destaque"
               className="mt-3 font-display text-3xl font-extrabold leading-tight text-foreground sm:text-4xl"
             >
-              Os mais bem avaliados{" "}
-              <span className="italic text-primary">da semana</span>
+              Empresas{" "}
+              <span className="italic text-primary">Destaque</span>
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
               Profissionais verificados, avaliações reais e tempo de resposta comprovado.
