@@ -8,7 +8,6 @@ import { SearchPanel } from "./SearchPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { useResolvedMediaUrl } from "@/lib/mediaUrl";
 
-
 const avatars = [
   { initials: "MT", color: "bg-primary" },
   { initials: "RS", color: "bg-orange" },
@@ -62,57 +61,95 @@ async function fetchHeroBanners(): Promise<HeroBanner[]> {
   }) as HeroBanner[];
 }
 
+const CROSSFADE = "opacity 1500ms cubic-bezier(0.4,0,0.2,1)";
+const KENBURNS = "transform 6000ms cubic-bezier(0.22,1,0.36,1)";
+const TEXT_IN = "fade-in 900ms cubic-bezier(0.22,1,0.36,1) 0.15s both";
+
+function HeroMobileImage({ banner, active }: { banner: HeroBanner; active: boolean }) {
+  const mobile = useResolvedMediaUrl(banner.image_url_mobile);
+  const desktop = useResolvedMediaUrl(banner.image_url);
+  const src = mobile || desktop || images.heroMobile;
+  return (
+    <picture
+      className="absolute inset-0 will-change-transform"
+      style={{ opacity: active ? 1 : 0, transition: CROSSFADE }}
+      aria-hidden={!active}
+    >
+      <img
+        src={src}
+        alt=""
+        width={1024}
+        height={1536}
+        fetchPriority="high"
+        decoding="async"
+        className="h-full w-full object-cover object-[72%_62%] will-change-transform"
+        style={{ transform: active ? "scale(1.06)" : "scale(1)", transition: KENBURNS }}
+      />
+    </picture>
+  );
+}
+
+function HeroDesktopImage({ banner, active }: { banner: HeroBanner; active: boolean }) {
+  const desktop = useResolvedMediaUrl(banner.image_url);
+  const src = desktop || images.hero;
+  return (
+    <picture
+      className="absolute inset-0 will-change-transform"
+      style={{ opacity: active ? 1 : 0, transition: CROSSFADE }}
+      aria-hidden={!active}
+    >
+      <img
+        src={src}
+        alt=""
+        width={1920}
+        height={1088}
+        fetchPriority="high"
+        decoding="async"
+        className="h-full w-full object-cover object-[right_25%] will-change-transform"
+        style={{ transform: active ? "scale(1.06)" : "scale(1)", transition: KENBURNS }}
+      />
+    </picture>
+  );
+}
+
 export function Hero() {
   const { data } = useQuery({ queryKey: ["hero-banners"], queryFn: fetchHeroBanners });
   const banners = data && data.length > 0 ? data : [DEFAULT_HERO];
   const [index, setIndex] = useState(0);
   const total = banners.length;
-  const active = banners[Math.min(index, total - 1)];
-  const activeImage = useResolvedMediaUrl(active.image_url);
-  const activeImageMobile = useResolvedMediaUrl(active.image_url_mobile);
-  const mobileImage = activeImageMobile || activeImage;
+
+  useEffect(() => {
+    setIndex(0);
+  }, [banners]);
 
   useEffect(() => {
     if (total <= 1) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % total), 7000);
-    return () => clearInterval(t);
-  }, [total]);
+    const t = setTimeout(() => setIndex((i) => (i + 1) % total), 7000);
+    return () => clearTimeout(t);
+  }, [total, index]);
+
+  const active = banners[Math.min(index, total - 1)];
 
   return (
     <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
-        {/* Mobile: full-bleed image block with bottom fade — text flows below */}
-        <div className="relative overflow-hidden md:hidden">
-          <picture key={active.id}>
-            {!mobileImage && (
-              <source media="(max-width: 767px)" srcSet={images.heroMobile} />
-            )}
-            <img
-              src={mobileImage || images.heroMobile}
-              alt=""
-              width={1024}
-              height={1536}
-              className="h-[21rem] w-full scale-125 object-cover object-[72%_62%] transition-opacity duration-500"
-              fetchPriority="high"
-            />
-          </picture>
+        {/* Mobile: full-bleed image stack with bottom fade */}
+        <div className="relative h-[21rem] overflow-hidden md:hidden">
+          {banners.map((b, i) => (
+            <HeroMobileImage key={b.id} banner={b} active={i === index} />
+          ))}
           <div
             className="absolute inset-0 bg-linear-to-t from-secondary via-secondary/10 to-transparent"
             aria-hidden="true"
           />
         </div>
 
-        {/* Desktop: image as absolute background with left gradient */}
-        <picture key={active.id} className="hidden md:block">
-          <img
-            src={activeImage || images.hero}
-            alt=""
-            width={1920}
-            height={1088}
-            className="absolute inset-0 h-full w-full object-cover object-[right_25%] transition-opacity duration-500"
-            fetchPriority="high"
-          />
-        </picture>
+        {/* Desktop: image stack as absolute background with left gradient */}
+        <div className="absolute inset-0 hidden md:block">
+          {banners.map((b, i) => (
+            <HeroDesktopImage key={b.id} banner={b} active={i === index} />
+          ))}
+        </div>
         <div
           className="absolute inset-0 hidden bg-linear-to-r from-background via-background/85 to-transparent md:block"
           aria-hidden="true"
@@ -120,31 +157,34 @@ export function Hero() {
 
         <div className="container-page relative -mt-12 pb-24 pt-0 md:mt-0 md:pb-56 md:pt-20">
           <div className="max-w-xl">
-            <HeroTitle title={active.title} highlight={active.highlight_text} />
-            {active.subtitle && (
-              <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {active.subtitle}
-              </p>
-            )}
+            {/* Per-banner text crossfades via key remount + fade-in */}
+            <div key={index} style={{ animation: TEXT_IN }}>
+              <HeroTitle title={active.title} highlight={active.highlight_text} />
+              {active.subtitle && (
+                <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  {active.subtitle}
+                </p>
+              )}
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              {active.cta_primary_label && active.cta_primary_href && (
-                <Button asChild className="h-13 rounded-xl px-7 text-base font-semibold">
-                  <CtaLink href={active.cta_primary_href}>
-                    {active.cta_primary_label}
-                    <ArrowRight size={18} aria-hidden="true" />
-                  </CtaLink>
-                </Button>
-              )}
-              {active.cta_secondary_label && active.cta_secondary_href && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-13 rounded-xl border-border bg-card px-7 text-base font-semibold text-foreground hover:bg-secondary"
-                >
-                  <CtaLink href={active.cta_secondary_href}>{active.cta_secondary_label}</CtaLink>
-                </Button>
-              )}
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                {active.cta_primary_label && active.cta_primary_href && (
+                  <Button asChild className="h-13 rounded-xl px-7 text-base font-semibold">
+                    <CtaLink href={active.cta_primary_href}>
+                      {active.cta_primary_label}
+                      <ArrowRight size={18} aria-hidden="true" />
+                    </CtaLink>
+                  </Button>
+                )}
+                {active.cta_secondary_label && active.cta_secondary_href && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-13 rounded-xl border-border bg-card px-7 text-base font-semibold text-foreground hover:bg-secondary"
+                  >
+                    <CtaLink href={active.cta_secondary_href}>{active.cta_secondary_label}</CtaLink>
+                  </Button>
+                )}
+              </div>
             </div>
 
             <div className="mt-8 flex items-center gap-3">
@@ -253,7 +293,5 @@ function CtaLink({
     <Link {...(rest as Record<string, unknown>)} to={href} search={{} as never}>
       {children}
     </Link>
-
   );
 }
-
