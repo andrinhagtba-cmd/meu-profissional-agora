@@ -16,6 +16,13 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
+
+function MediaThumb({ url, className, alt = "" }: { url?: string | null; className?: string; alt?: string }) {
+  const resolved = useResolvedMediaUrl(url);
+  if (!resolved) return null;
+  return <img src={resolved} alt={alt} className={className} />;
+}
 
 
 
@@ -65,7 +72,7 @@ function Page() {
     { key: "img", header: "", cell: (r) => (
       <div className="h-12 w-20 overflow-hidden rounded-lg bg-secondary">
         {r.image_url
-          ? <img src={r.image_url} alt="" className="h-full w-full object-cover" />
+          ? <MediaThumb url={r.image_url} className="h-full w-full object-cover" />
           : <div className="grid h-full w-full place-items-center text-primary/40"><ImageIcon size={16} /></div>}
       </div>
     ), className: "w-24" },
@@ -284,7 +291,7 @@ function ImageUploadField({ value, onChange, label = "Imagem do banner", hint }:
       />
       {value ? (
         <div className="mt-1 flex items-center gap-3 rounded-lg border border-border p-2 w-full min-w-0 overflow-hidden">
-          <img src={value} alt="Prévia" className="h-20 w-32 shrink-0 rounded-md object-cover" />
+          <MediaThumb url={value} alt="Prévia" className="h-20 w-32 shrink-0 rounded-md object-cover" />
           <div className="flex min-w-0 flex-1 gap-2">
             <Button type="button" size="sm" variant="outline" disabled={uploading} onClick={() => inputRef.current?.click()}>
               {uploading ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Upload size={14} className="mr-1" />}
