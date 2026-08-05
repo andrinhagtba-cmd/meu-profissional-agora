@@ -180,6 +180,7 @@ export type Database = {
           is_active: boolean
           link_url: string | null
           position: string
+          rotation_seconds: number
           starts_at: string | null
           subtitle: string | null
           title: string
@@ -200,6 +201,7 @@ export type Database = {
           is_active?: boolean
           link_url?: string | null
           position?: string
+          rotation_seconds?: number
           starts_at?: string | null
           subtitle?: string | null
           title: string
@@ -220,6 +222,7 @@ export type Database = {
           is_active?: boolean
           link_url?: string | null
           position?: string
+          rotation_seconds?: number
           starts_at?: string | null
           subtitle?: string | null
           title?: string

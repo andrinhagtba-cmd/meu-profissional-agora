@@ -1,0 +1,1 @@
+ALTER TABLE public.banners ADD COLUMN IF NOT EXISTS rotation_seconds integer NOT NULL DEFAULT 15;
