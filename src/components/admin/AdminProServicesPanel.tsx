@@ -171,6 +171,7 @@ function AddServiceDialog({
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [active, setActive] = useState(true);
+  const [mobileStep, setMobileStep] = useState<"catalog" | "details">("catalog");
 
   const options = useMemo(
     () => (catalog.data ?? []).filter((s) => !existingIds.has(s.id)),
@@ -248,12 +249,12 @@ function AddServiceDialog({
           </p>
         </DialogHeader>
 
-        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto overscroll-contain md:h-[62vh] md:min-h-[420px] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
+        <div className="grid min-h-0 flex-1 gap-0 overflow-hidden md:h-[62vh] md:min-h-[420px] md:grid-cols-[1.15fr_1fr]">
           {/* Catálogo */}
-          <div className="flex min-h-0 flex-col border-b md:h-full md:overflow-hidden md:border-b-0 md:border-r">
+          <div className={`${mobileStep === "catalog" ? "flex" : "hidden"} h-full min-h-0 flex-col overflow-hidden md:flex md:border-r`}>
 
 
-            <div className="sticky top-0 z-30 space-y-2 border-b bg-background px-4 pb-3 pt-3 shadow-sm sm:px-5 sm:pt-4 md:static md:z-auto md:border-b-0 md:shadow-none">
+            <div className="z-20 shrink-0 space-y-2 border-b bg-background px-4 pb-3 pt-3 shadow-sm sm:px-5 sm:pt-4 md:border-b-0 md:shadow-none">
 
               <div className="relative">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -293,7 +294,7 @@ function AddServiceDialog({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-5 overscroll-contain px-4 pb-6 pt-3 sm:px-5 md:overflow-y-auto md:pb-10 md:pt-0 md:[scrollbar-gutter:stable]">
+            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 pb-8 pt-3 sm:px-5 md:pb-10 md:pt-0 md:[scrollbar-gutter:stable]">
 
               {catalog.isLoading && <><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></>}
               {!catalog.isLoading && groups.length === 0 && (
@@ -342,7 +343,11 @@ function AddServiceDialog({
           </div>
 
           {/* Configuração */}
-          <div className="min-h-0 space-y-4 overscroll-contain border-t px-4 py-4 sm:px-5 md:h-full md:overflow-y-auto md:border-t-0 md:pb-8">
+          <div className={`${mobileStep === "details" ? "block" : "hidden"} h-full min-h-0 space-y-4 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 md:block md:pb-8`}>
+            <div className="md:hidden">
+              <p className="text-sm font-semibold">Detalhes dos serviços</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Defina preço, descrição e disponibilidade.</p>
+            </div>
             <div className="rounded-xl border bg-muted/30 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground">Selecionados</span>
@@ -404,7 +409,23 @@ function AddServiceDialog({
           </div>
         </div>
 
-        <DialogFooter className="shrink-0 flex-col-reverse gap-2 border-t bg-muted/40 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <DialogFooter className="shrink-0 border-t bg-muted/40 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
+          <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 md:hidden">
+            <Button variant="ghost" onClick={mobileStep === "catalog" ? onClose : () => setMobileStep("catalog")}>
+              {mobileStep === "catalog" ? "Cancelar" : "Voltar"}
+            </Button>
+            {mobileStep === "catalog" ? (
+              <Button onClick={() => setMobileStep("details")} disabled={selected.size === 0}>
+                Continuar{selected.size > 0 ? ` (${selected.size})` : ""}
+              </Button>
+            ) : (
+              <Button onClick={() => create.mutate()} disabled={create.isPending || selected.size === 0}>
+                <Save size={14} className="mr-1.5" />
+                {create.isPending ? "Adicionando…" : `Adicionar (${selected.size})`}
+              </Button>
+            )}
+          </div>
+          <div className="hidden w-full items-center justify-between md:flex">
           <span className="hidden text-xs text-muted-foreground sm:block">
             {visibleIds.length} serviço(s) disponíveis no catálogo
           </span>
@@ -418,6 +439,7 @@ function AddServiceDialog({
               <Save size={14} className="mr-1.5" />
               {create.isPending ? "Adicionando…" : `Adicionar${selected.size ? ` (${selected.size})` : ""}`}
             </Button>
+          </div>
           </div>
         </DialogFooter>
 
