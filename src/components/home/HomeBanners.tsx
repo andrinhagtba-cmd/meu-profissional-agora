@@ -22,6 +22,7 @@ type Banner = {
   subtitle: string | null;
   image_url: string;
   link_url: string | null;
+  rotation_seconds?: number | null;
 };
 
 export function HomeBanners({ position = "home" }: { position?: string }) {
