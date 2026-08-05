@@ -78,7 +78,7 @@ function Page() {
     ), className: "w-24" },
     { key: "title", header: "Título", cell: (r) => (
       <div>
-        <div className="font-semibold text-foreground">{r.title}</div>
+        <div className="font-semibold text-foreground">{r.title?.trim() || "Sem título"}</div>
         <div className="line-clamp-1 text-xs text-muted-foreground">{r.subtitle ?? "—"}</div>
       </div>
     ) },
