@@ -151,15 +151,26 @@ export function Footer() {
             {cnpjNote ? ` · ${cnpjNote}` : ""}
           </p>
 
-          {contactEmail && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {contactEmail && (
+              <a
+                href={`mailto:${contactEmail}`}
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
+              >
+                <Mail size={13} aria-hidden="true" />
+                {contactEmail}
+              </a>
+            )}
+
             <a
-              href={`mailto:${contactEmail}`}
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
+              href="https://vtrvideo.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 transition-colors hover:text-primary"
             >
-              <Mail size={13} aria-hidden="true" />
-              {contactEmail}
+              Feito com carinho <span className="text-red-500" aria-label="coração vermelho">❤️</span> por VTR VÍDEO
             </a>
-          )}
+          </div>
         </div>
       </div>
     </footer>
