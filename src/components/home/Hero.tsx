@@ -78,7 +78,7 @@ export function Hero() {
     <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
         {/* Mobile: full-bleed image block with bottom fade — text flows below */}
-        <div className="relative md:hidden">
+        <div className="relative overflow-hidden md:hidden">
           <picture key={active.id}>
             {!activeImage && (
               <source media="(max-width: 767px)" srcSet={images.heroMobile} />
@@ -114,7 +114,7 @@ export function Hero() {
           aria-hidden="true"
         />
 
-        <div className="container-page relative pb-44 pt-1 md:pb-56 md:pt-32">
+        <div className="container-page relative pb-44 pt-6 md:pb-56 md:pt-32">
           <div className="max-w-xl">
             <HeroTitle title={active.title} highlight={active.highlight_text} />
             {active.subtitle && (
