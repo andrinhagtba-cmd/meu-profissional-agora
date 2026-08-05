@@ -317,7 +317,7 @@ function AddServiceDialog({
                         return (
                           <label
                             key={s.id}
-                            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm transition ${
+                            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition ${
                               checked ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted/60"
                             }`}
                           >
