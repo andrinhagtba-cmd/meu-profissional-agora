@@ -114,7 +114,7 @@ export function Hero() {
           aria-hidden="true"
         />
 
-        <div className="container-page relative pb-44 pt-1 md:pb-56 md:pt-32">
+        <div className="container-page relative pb-44 pt-6 md:pb-56 md:pt-32">
           <div className="max-w-xl">
             <HeroTitle title={active.title} highlight={active.highlight_text} />
             {active.subtitle && (
