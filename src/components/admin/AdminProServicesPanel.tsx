@@ -342,7 +342,7 @@ function AddServiceDialog({
           </div>
 
           {/* Configuração */}
-          <div className="min-h-0 space-y-4 overscroll-contain px-4 py-4 sm:px-5 md:h-full md:overflow-y-auto md:pb-8">
+          <div className="min-h-0 space-y-4 overscroll-contain border-t px-4 py-4 sm:px-5 md:h-full md:overflow-y-auto md:border-t-0 md:pb-8">
             <div className="rounded-xl border bg-muted/30 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground">Selecionados</span>
