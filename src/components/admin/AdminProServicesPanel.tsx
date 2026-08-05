@@ -343,7 +343,7 @@ function AddServiceDialog({
                 </span>
               </div>
               {selected.size > 0 ? (
-                <div className="mt-2 flex flex-wrap gap-1.5">
+                <div className="mt-2 flex max-h-24 flex-wrap gap-1.5 overflow-y-auto sm:max-h-40">
                   {[...selected].map((id) => {
                     const s = options.find((o) => o.id === id);
                     if (!s) return null;
@@ -352,17 +352,17 @@ function AddServiceDialog({
                         key={id}
                         type="button"
                         onClick={() => toggleId(id)}
-                        className="inline-flex items-center gap-1 rounded-full bg-background px-2.5 py-1 text-[11px] font-medium shadow-sm hover:bg-destructive/10"
+                        className="inline-flex max-w-full items-center gap-1 rounded-full bg-background px-2.5 py-1 text-[11px] font-medium shadow-sm hover:bg-destructive/10"
                       >
-                        {s.name}
-                        <X size={11} />
+                        <span className="truncate">{s.name}</span>
+                        <X size={11} className="shrink-0" />
                       </button>
                     );
                   })}
                 </div>
               ) : (
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                  Marque os serviços à esquerda para adicioná-los de uma só vez.
+                  Marque os serviços no catálogo para adicioná-los de uma só vez.
                 </p>
               )}
               {selected.size > 0 && (
@@ -389,25 +389,30 @@ function AddServiceDialog({
                 placeholder="Aplicada a todos os serviços selecionados."
               />
             </div>
-            <label className="flex items-center justify-between rounded-xl border bg-background px-3 py-2">
+            <label className="flex items-center justify-between rounded-xl border bg-background px-3 py-2.5">
               <span className="text-xs font-medium">Ativo na vitrine</span>
               <Switch checked={active} onCheckedChange={setActive} />
             </label>
           </div>
         </div>
 
-        <DialogFooter className="items-center gap-2 border-t bg-muted/40 px-6 py-3 sm:justify-between">
-          <span className="text-xs text-muted-foreground">
+        <DialogFooter className="shrink-0 flex-col-reverse gap-2 border-t bg-muted/40 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <span className="hidden text-xs text-muted-foreground sm:block">
             {visibleIds.length} serviço(s) disponíveis no catálogo
           </span>
-          <div className="flex gap-2">
-            <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            <Button onClick={() => create.mutate()} disabled={create.isPending || selected.size === 0}>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button variant="ghost" onClick={onClose} className="flex-1 sm:flex-none">Cancelar</Button>
+            <Button
+              onClick={() => create.mutate()}
+              disabled={create.isPending || selected.size === 0}
+              className="flex-1 sm:flex-none"
+            >
               <Save size={14} className="mr-1.5" />
               {create.isPending ? "Adicionando…" : `Adicionar${selected.size ? ` (${selected.size})` : ""}`}
             </Button>
           </div>
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   );
