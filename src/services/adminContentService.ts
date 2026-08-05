@@ -131,7 +131,7 @@ export type AdminBanner = {
   created_at: string;
   updated_at: string;
 };
-export type UpsertBanner = Partial<AdminBanner> & { title: string };
+export type UpsertBanner = Partial<AdminBanner>;
 
 export async function listBanners(search?: string, position?: string) {
   let q = supabase.from("banners").select("*").order("display_order").order("created_at", { ascending: false });
@@ -142,9 +142,10 @@ export async function listBanners(search?: string, position?: string) {
   return data as AdminBanner[];
 }
 export async function upsertBanner(input: UpsertBanner) {
+  const payload = { ...input, title: input.title ?? "" };
   const { error } = input.id
-    ? await supabase.from("banners").update(input).eq("id", input.id)
-    : await supabase.from("banners").insert(input);
+    ? await supabase.from("banners").update(payload).eq("id", input.id)
+    : await supabase.from("banners").insert(payload);
   if (error) throw error;
 }
 export async function deleteBanner(id: string) {

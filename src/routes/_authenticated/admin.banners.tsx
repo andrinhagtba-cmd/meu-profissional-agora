@@ -78,7 +78,7 @@ function Page() {
     ), className: "w-24" },
     { key: "title", header: "Título", cell: (r) => (
       <div>
-        <div className="font-semibold text-foreground">{r.title}</div>
+        <div className="font-semibold text-foreground">{r.title?.trim() || "Sem título"}</div>
         <div className="line-clamp-1 text-xs text-muted-foreground">{r.subtitle ?? "—"}</div>
       </div>
     ) },
@@ -174,7 +174,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         <DialogHeader><DialogTitle>{initial ? "Editar banner" : "Novo banner"}</DialogTitle></DialogHeader>
         <div className="grid gap-3">
           <div>
-            <Label>Título</Label>
+            <Label>Título <span className="text-xs font-normal text-muted-foreground">(opcional)</span></Label>
             <Textarea value={title} onChange={(e) => setTitle(e.target.value)} rows={2} placeholder="Ex: Encontre as {{highlight}} do DF em um só lugar." />
             {isHero && <p className="mt-1 text-xs text-muted-foreground">Use <code>{"{{highlight}}"}</code> onde o texto destacado (manuscrito laranja) deve aparecer.</p>}
           </div>
@@ -184,7 +184,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
               <Input value={highlight} onChange={(e) => setHighlight(e.target.value)} placeholder="melhores empresas" />
             </div>
           )}
-          <div><Label>{isHero ? "Descrição" : "Subtítulo"}</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
+          <div><Label>{isHero ? "Descrição" : "Subtítulo"} <span className="text-xs font-normal text-muted-foreground">(opcional)</span></Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
           <ImageUploadField
             label={isHero ? "Imagem desktop (1920x1088)" : "Imagem do banner"}
             value={image}
@@ -240,7 +240,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button disabled={submitting || !title}
+          <Button disabled={submitting || (!title.trim() && !image && !imageMobile)}
             onClick={() => onSubmit({
               id: initial?.id, title, subtitle, image_url: image, image_url_mobile: imageMobile || null, link_url: link, position,
               highlight_text: highlight || null,
