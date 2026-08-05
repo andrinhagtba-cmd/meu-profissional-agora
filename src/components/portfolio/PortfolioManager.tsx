@@ -308,11 +308,26 @@ export function PortfolioManager({
                 >
                   {thumb ? (
                     <img src={thumb} alt={item.alt_text ?? item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                  ) : item.media_type === "instagram_reel" && item.embed_url ? (
+                    <div className="pointer-events-none h-full w-full">
+                      <InstagramEmbed
+                        embedUrl={item.embed_url}
+                        title={item.title ?? "Reel do Instagram"}
+                        interactive={false}
+                        fit="cover"
+                      />
+                    </div>
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-neutral-900 text-white/70 text-xs">
-                      {item.media_type.toUpperCase()}
+                    <div className="flex h-full flex-col items-center justify-center gap-1 bg-neutral-900 px-2 text-center text-white/70">
+                      <span className="text-[10px] font-bold uppercase tracking-wide">
+                        {item.media_type.replace(/_/g, " ")}
+                      </span>
+                      {item.external_media_id && (
+                        <span className="truncate text-[10px] text-white/50">{item.external_media_id}</span>
+                      )}
                     </div>
                   )}
+
                 </button>
 
                 <div className="absolute left-2 top-2 flex flex-wrap gap-1">
