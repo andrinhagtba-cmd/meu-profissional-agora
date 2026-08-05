@@ -37,7 +37,9 @@ const navItems = [
 
 export function Logo({ className }: { className?: string }) {
   const { data } = useBrand();
-  const logoUrl = data?.logo_light_url;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const logoUrl = mounted ? data?.logo_light_url : undefined;
   const name = data?.brand_name?.trim() ?? "";
   const tagline = data?.tagline?.trim() ?? "";
   return (
