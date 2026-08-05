@@ -117,7 +117,7 @@ export function PortfolioLightbox({ items, startIndex, open, onClose }: Props) {
           </button>
         )}
 
-        <div className={cn("flex h-full w-full items-center justify-center", "max-h-[85vh]")}>
+        <div className="flex h-full max-h-[85vh] w-full items-center justify-center">
           {current.media_type === "image" ? (
             <img
               key={current.id}
@@ -129,20 +129,21 @@ export function PortfolioLightbox({ items, startIndex, open, onClose }: Props) {
               draggable={false}
             />
           ) : current.media_type === "instagram_reel" ? (
-            <div className="h-full max-h-[85vh] w-full max-w-md">
+            <div className="aspect-[9/16] h-full max-h-[80vh] w-auto max-w-[min(100%,26rem)] overflow-hidden rounded-2xl">
               <InstagramEmbed
                 embedUrl={current.embed_url ?? ""}
                 externalUrl={current.external_url ?? ""}
                 title={current.title}
+                fit="cover"
               />
             </div>
           ) : (
             <div
               className={cn(
-                "w-full",
+                "overflow-hidden rounded-2xl",
                 isVerticalMedia(current.media_type)
-                  ? "h-full max-h-[85vh] max-w-md"
-                  : "max-w-5xl",
+                  ? "aspect-[9/16] h-full max-h-[80vh] w-auto max-w-[min(100%,26rem)]"
+                  : "aspect-video h-auto max-h-[80vh] w-full max-w-5xl",
               )}
             >
               <YouTubeEmbed
@@ -155,6 +156,7 @@ export function PortfolioLightbox({ items, startIndex, open, onClose }: Props) {
             </div>
           )}
         </div>
+
 
         {canNav && (
           <button
