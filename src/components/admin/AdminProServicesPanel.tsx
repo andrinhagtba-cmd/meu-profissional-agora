@@ -248,9 +248,10 @@ function AddServiceDialog({
           </p>
         </DialogHeader>
 
-        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto md:max-h-[65vh] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
+        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto md:h-[62vh] md:min-h-[420px] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
           {/* Catálogo */}
-          <div className="flex min-h-0 flex-col border-b md:border-b-0 md:border-r">
+          <div className="flex min-h-0 flex-col overflow-hidden border-b md:h-full md:border-b-0 md:border-r">
+
 
             <div className="sticky top-0 z-10 space-y-2 border-b bg-background px-4 pb-3 pt-3 sm:px-5 sm:pt-4 md:static md:border-b-0">
               <div className="relative">
