@@ -293,7 +293,7 @@ function AddServiceDialog({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-5 overscroll-contain px-4 pb-6 sm:px-5 md:overflow-y-auto md:pb-10 md:[scrollbar-gutter:stable]">
+            <div className="min-h-0 flex-1 space-y-5 overscroll-contain px-4 pb-6 pt-3 sm:px-5 md:overflow-y-auto md:pb-10 md:pt-0 md:[scrollbar-gutter:stable]">
 
               {catalog.isLoading && <><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></>}
               {!catalog.isLoading && groups.length === 0 && (
