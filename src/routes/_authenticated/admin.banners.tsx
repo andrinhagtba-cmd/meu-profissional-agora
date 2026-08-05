@@ -16,6 +16,13 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { listBanners, upsertBanner, deleteBanner, toggleBannerActive, type AdminBanner, type UpsertBanner } from "@/services/adminContentService";
 import { uploadAdminMedia } from "@/services/adminMediaService";
+import { useResolvedMediaUrl } from "@/lib/mediaUrl";
+
+function MediaThumb({ url, className, alt = "" }: { url?: string | null; className?: string; alt?: string }) {
+  const resolved = useResolvedMediaUrl(url);
+  if (!resolved) return null;
+  return <img src={resolved} alt={alt} className={className} />;
+}
 
 
 
