@@ -240,7 +240,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button disabled={submitting || !title}
+          <Button disabled={submitting || (!title.trim() && !image && !imageMobile)}
             onClick={() => onSubmit({
               id: initial?.id, title, subtitle, image_url: image, image_url_mobile: imageMobile || null, link_url: link, position,
               highlight_text: highlight || null,
