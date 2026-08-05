@@ -130,6 +130,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
   const [highlight, setHighlight] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [image, setImage] = useState("");
+  const [imageMobile, setImageMobile] = useState("");
   const [link, setLink] = useState("");
   const [position, setPosition] = useState("hero");
   const [starts, setStarts] = useState("");
@@ -145,7 +146,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
     if (open) {
       setTitle(initial?.title ?? ""); setSubtitle(initial?.subtitle ?? "");
       setHighlight(initial?.highlight_text ?? "");
-      setImage(initial?.image_url ?? ""); setLink(initial?.link_url ?? "");
+      setImage(initial?.image_url ?? ""); setImageMobile(initial?.image_url_mobile ?? ""); setLink(initial?.link_url ?? "");
       setPosition(initial?.position ?? "hero");
       setStarts(initial?.starts_at?.slice(0, 10) ?? ""); setEnds(initial?.ends_at?.slice(0, 10) ?? "");
       setOrder(initial?.display_order ?? 0); setActive(initial?.is_active ?? true);
