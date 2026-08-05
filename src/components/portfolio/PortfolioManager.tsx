@@ -38,6 +38,7 @@ import {
   type PortfolioItemVM,
 } from "@/services/professionalMediaService";
 import { PortfolioExternalVideoForm } from "./PortfolioExternalVideoForm";
+import { InstagramEmbed } from "./InstagramEmbed";
 import { MediaTypeBadge } from "./MediaTypeBadge";
 import { PortfolioLightbox } from "./PortfolioLightbox";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
