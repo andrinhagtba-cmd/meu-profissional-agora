@@ -306,7 +306,7 @@ function AddServiceDialog({
                 const allChecked = ids.every((id) => selected.has(id));
                 return (
                   <div key={g.id} className="pt-1">
-                    <div className="sticky top-0 z-10 -mx-1 mb-1.5 flex items-center justify-between gap-2 bg-background/95 px-1 py-1.5 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                    <div className="z-10 -mx-1 mb-1.5 flex items-center justify-between gap-2 bg-background/95 px-1 py-1.5 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:sticky md:top-0">
                       <span className="truncate text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                         {g.name}
                       </span>
