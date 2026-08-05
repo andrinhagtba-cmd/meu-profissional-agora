@@ -196,7 +196,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="container-page relative z-10 -mt-32 min-w-0 sm:-mt-32">
+      <div className="container-page relative z-10 -mt-10 min-w-0 sm:-mt-32">
         <SearchPanel />
       </div>
     </section>
