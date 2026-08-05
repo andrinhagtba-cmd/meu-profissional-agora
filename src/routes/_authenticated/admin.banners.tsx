@@ -174,7 +174,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
         <DialogHeader><DialogTitle>{initial ? "Editar banner" : "Novo banner"}</DialogTitle></DialogHeader>
         <div className="grid gap-3">
           <div>
-            <Label>Título</Label>
+            <Label>Título <span className="text-xs font-normal text-muted-foreground">(opcional)</span></Label>
             <Textarea value={title} onChange={(e) => setTitle(e.target.value)} rows={2} placeholder="Ex: Encontre as {{highlight}} do DF em um só lugar." />
             {isHero && <p className="mt-1 text-xs text-muted-foreground">Use <code>{"{{highlight}}"}</code> onde o texto destacado (manuscrito laranja) deve aparecer.</p>}
           </div>
