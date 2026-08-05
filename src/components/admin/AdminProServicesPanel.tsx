@@ -248,12 +248,13 @@ function AddServiceDialog({
           </p>
         </DialogHeader>
 
-        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto md:h-[62vh] md:min-h-[420px] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
+        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto overscroll-contain md:h-[62vh] md:min-h-[420px] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
           {/* Catálogo */}
-          <div className="flex min-h-0 flex-col overflow-hidden border-b md:h-full md:border-b-0 md:border-r">
+          <div className="flex min-h-0 flex-col border-b md:h-full md:overflow-hidden md:border-b-0 md:border-r">
 
 
-            <div className="sticky top-0 z-10 space-y-2 border-b bg-background px-4 pb-3 pt-3 sm:px-5 sm:pt-4 md:static md:border-b-0">
+            <div className="sticky top-0 z-30 space-y-2 border-b bg-background px-4 pb-3 pt-3 shadow-sm sm:px-5 sm:pt-4 md:static md:z-auto md:border-b-0 md:shadow-none">
+
               <div className="relative">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -292,7 +293,7 @@ function AddServiceDialog({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-5 overscroll-contain px-4 pb-6 sm:px-5 md:overflow-y-auto md:pb-10 md:[scrollbar-gutter:stable]">
+            <div className="min-h-0 flex-1 space-y-5 overscroll-contain px-4 pb-6 pt-3 sm:px-5 md:overflow-y-auto md:pb-10 md:pt-0 md:[scrollbar-gutter:stable]">
 
               {catalog.isLoading && <><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></>}
               {!catalog.isLoading && groups.length === 0 && (
@@ -305,7 +306,7 @@ function AddServiceDialog({
                 const allChecked = ids.every((id) => selected.has(id));
                 return (
                   <div key={g.id} className="pt-1">
-                    <div className="sticky top-0 z-10 -mx-1 mb-1.5 flex items-center justify-between gap-2 bg-background/95 px-1 py-1.5 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                    <div className="z-10 -mx-1 mb-1.5 flex items-center justify-between gap-2 bg-background/95 px-1 py-1.5 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:sticky md:top-0">
                       <span className="truncate text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                         {g.name}
                       </span>
@@ -341,7 +342,7 @@ function AddServiceDialog({
           </div>
 
           {/* Configuração */}
-          <div className="min-h-0 space-y-4 overscroll-contain px-4 py-4 sm:px-5 md:h-full md:overflow-y-auto md:pb-8">
+          <div className="min-h-0 space-y-4 overscroll-contain border-t px-4 py-4 sm:px-5 md:h-full md:overflow-y-auto md:border-t-0 md:pb-8">
             <div className="rounded-xl border bg-muted/30 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground">Selecionados</span>
