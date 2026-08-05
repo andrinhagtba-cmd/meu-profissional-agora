@@ -46,12 +46,27 @@ export function InstagramEmbed({
         title={title ?? "Instagram Reel"}
         className={cn(
           "absolute border-0 transition-opacity duration-500",
-          fit === "cover"
-            ? "left-1/2 top-1/2 h-full w-full max-w-none -translate-x-1/2 -translate-y-1/2 scale-[1.72]"
-            : "inset-0 h-full w-full",
+          fit === "cover" ? "max-w-none" : "inset-0 h-full w-full",
           loaded ? "opacity-100" : "opacity-0",
           !interactive && "pointer-events-none",
         )}
+        /**
+         * Cover mode crops Instagram's chrome (header, actions, comment bar) so
+         * only the reel video fills the container. Measured on the official
+         * /embed markup: at iframe width W the video occupies 0.7025W wide,
+         * 1.2475W tall, starting 0.135W from the top and horizontally centered.
+         */
+        style={
+          fit === "cover"
+            ? {
+                width: "146.6%",
+                aspectRatio: "400 / 700",
+                left: "-23.3%",
+                top: 0,
+                transform: "translateY(-7.72%)",
+              }
+            : undefined
+        }
         allow="autoplay; encrypted-media; picture-in-picture; web-share"
         allowFullScreen
         loading="lazy"
@@ -59,6 +74,7 @@ export function InstagramEmbed({
         onLoad={() => setLoaded(true)}
         scrolling="no"
       />
+
     </div>
   );
 }
