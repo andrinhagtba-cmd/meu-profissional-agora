@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Briefcase, ChevronRight, Heart, LogOut, Menu, Search, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -37,7 +37,9 @@ const navItems = [
 
 export function Logo({ className }: { className?: string }) {
   const { data } = useBrand();
-  const logoUrl = data?.logo_light_url;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const logoUrl = mounted ? data?.logo_light_url : undefined;
   const name = data?.brand_name?.trim() ?? "";
   const tagline = data?.tagline?.trim() ?? "";
   return (
