@@ -175,7 +175,17 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
             </div>
           )}
           <div><Label>{isHero ? "Descrição" : "Subtítulo"}</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
-          <ImageUploadField value={image} onChange={setImage} />
+          <ImageUploadField
+            label={isHero ? "Imagem desktop (1920x1088)" : "Imagem do banner"}
+            value={image}
+            onChange={setImage}
+          />
+          <ImageUploadField
+            label="Imagem mobile (vertical, 1024x1536)"
+            hint="Opcional — se vazio, usamos a imagem desktop no celular."
+            value={imageMobile}
+            onChange={setImageMobile}
+          />
           {!isHero && (
             <div><Label>Link de destino</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="/ ou https://…" /></div>
           )}
@@ -218,7 +228,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
           <Button disabled={submitting || !title}
             onClick={() => onSubmit({
-              id: initial?.id, title, subtitle, image_url: image, link_url: link, position,
+              id: initial?.id, title, subtitle, image_url: image, image_url_mobile: imageMobile || null, link_url: link, position,
               highlight_text: highlight || null,
               cta_primary_label: ctaPLabel || null,
               cta_primary_href: ctaPHref || null,
@@ -235,7 +245,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
   );
 }
 
-function ImageUploadField({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+function ImageUploadField({ value, onChange, label = "Imagem do banner", hint }: { value: string; onChange: (url: string) => void; label?: string; hint?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -258,7 +268,8 @@ function ImageUploadField({ value, onChange }: { value: string; onChange: (url: 
 
   return (
     <div>
-      <Label>Imagem do banner</Label>
+      <Label>{label}</Label>
+      {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
       <input
         ref={inputRef}
         type="file"

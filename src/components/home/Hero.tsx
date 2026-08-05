@@ -21,6 +21,7 @@ type HeroBanner = {
   title: string;
   subtitle: string | null;
   image_url: string | null;
+  image_url_mobile: string | null;
   highlight_text: string | null;
   cta_primary_label: string | null;
   cta_primary_href: string | null;
@@ -34,6 +35,7 @@ const DEFAULT_HERO: HeroBanner = {
   subtitle:
     "Compare, consulte avaliações e solicite orçamentos de quem atende perto de você com segurança.",
   image_url: null,
+  image_url_mobile: null,
   highlight_text: "melhores empresas",
   cta_primary_label: "Encontrar profissional",
   cta_primary_href: "/buscar",
@@ -46,7 +48,7 @@ async function fetchHeroBanners(): Promise<HeroBanner[]> {
   const { data, error } = await supabase
     .from("banners")
     .select(
-      "id,title,subtitle,image_url,highlight_text,cta_primary_label,cta_primary_href,cta_secondary_label,cta_secondary_href,starts_at,ends_at,display_order,created_at,is_active,position",
+      "id,title,subtitle,image_url,image_url_mobile,highlight_text,cta_primary_label,cta_primary_href,cta_secondary_label,cta_secondary_href,starts_at,ends_at,display_order,created_at,is_active,position",
     )
     .eq("position", "hero")
     .eq("is_active", true)
@@ -67,6 +69,8 @@ export function Hero() {
   const total = banners.length;
   const active = banners[Math.min(index, total - 1)];
   const activeImage = useResolvedMediaUrl(active.image_url);
+  const activeImageMobile = useResolvedMediaUrl(active.image_url_mobile);
+  const mobileImage = activeImageMobile || activeImage;
 
   useEffect(() => {
     if (total <= 1) return;
@@ -80,11 +84,11 @@ export function Hero() {
         {/* Mobile: full-bleed image block with bottom fade — text flows below */}
         <div className="relative overflow-hidden md:hidden">
           <picture key={active.id}>
-            {!activeImage && (
+            {!mobileImage && (
               <source media="(max-width: 767px)" srcSet={images.heroMobile} />
             )}
             <img
-              src={activeImage || images.heroMobile}
+              src={mobileImage || images.heroMobile}
               alt=""
               width={1024}
               height={1536}
