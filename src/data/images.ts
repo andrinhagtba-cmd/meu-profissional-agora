@@ -1,4 +1,5 @@
 import heroImg from "@/assets/hero-guiadf.jpg";
+import heroMobileImg from "@/assets/hero-guiadf-mobile.jpg";
 import eletricista from "@/assets/cat-eletricista.jpg";
 import encanador from "@/assets/cat-encanador.jpg";
 import pintor from "@/assets/cat-pintor.jpg";
@@ -13,6 +14,7 @@ import promoTools from "@/assets/promo-tools.png";
 
 export const images: Record<string, string> = {
   hero: heroImg,
+  heroMobile: heroMobileImg,
   eletricista,
   encanador,
   pintor,
