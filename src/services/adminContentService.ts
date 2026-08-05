@@ -115,6 +115,7 @@ export type AdminBanner = {
   title: string;
   subtitle: string | null;
   image_url: string | null;
+  image_url_mobile: string | null;
   link_url: string | null;
   position: string;
   starts_at: string | null;

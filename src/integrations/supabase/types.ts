@@ -176,6 +176,7 @@ export type Database = {
           highlight_text: string | null
           id: string
           image_url: string | null
+          image_url_mobile: string | null
           is_active: boolean
           link_url: string | null
           position: string
@@ -195,6 +196,7 @@ export type Database = {
           highlight_text?: string | null
           id?: string
           image_url?: string | null
+          image_url_mobile?: string | null
           is_active?: boolean
           link_url?: string | null
           position?: string
@@ -214,6 +216,7 @@ export type Database = {
           highlight_text?: string | null
           id?: string
           image_url?: string | null
+          image_url_mobile?: string | null
           is_active?: boolean
           link_url?: string | null
           position?: string
