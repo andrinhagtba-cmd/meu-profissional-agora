@@ -235,17 +235,18 @@ function AddServiceDialog({
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-3xl gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b bg-muted/40 px-6 py-4">
-          <DialogTitle className="text-lg">Adicionar serviços</DialogTitle>
-          <p className="text-xs text-muted-foreground">
+      <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-screen max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[90vh] sm:w-full sm:max-w-3xl sm:rounded-2xl">
+        <DialogHeader className="shrink-0 border-b bg-muted/40 px-4 py-3 text-left sm:px-6 sm:py-4">
+          <DialogTitle className="text-base sm:text-lg">Adicionar serviços</DialogTitle>
+          <p className="hidden text-xs text-muted-foreground sm:block">
             Busque no catálogo, marque quantas subcategorias quiser e defina o preço padrão para todas.
           </p>
         </DialogHeader>
 
-        <div className="grid max-h-[65vh] gap-0 overflow-hidden md:grid-cols-[1.15fr_1fr]">
+        <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto md:max-h-[65vh] md:grid-cols-[1.15fr_1fr] md:overflow-hidden">
           {/* Catálogo */}
           <div className="flex min-h-0 flex-col border-b md:border-b-0 md:border-r">
+
             <div className="space-y-2 px-5 pb-3 pt-4">
               <div className="relative">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
