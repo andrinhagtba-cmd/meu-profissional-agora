@@ -88,7 +88,7 @@ export function Hero() {
               alt=""
               width={1024}
               height={1536}
-              className="h-[32rem] w-full scale-150 object-cover object-[72%_92%] transition-opacity duration-500"
+              className="h-[21rem] w-full scale-150 object-cover object-[72%_92%] transition-opacity duration-500"
               fetchPriority="high"
             />
           </picture>
@@ -114,7 +114,7 @@ export function Hero() {
           aria-hidden="true"
         />
 
-        <div className="container-page relative -mt-16 pb-40 pt-0 md:mt-0 md:pb-56 md:pt-20">
+        <div className="container-page relative -mt-12 pb-24 pt-0 md:mt-0 md:pb-56 md:pt-20">
           <div className="max-w-xl">
             <HeroTitle title={active.title} highlight={active.highlight_text} />
             {active.subtitle && (
