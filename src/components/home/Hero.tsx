@@ -88,16 +88,12 @@ export function Hero() {
               alt=""
               width={1024}
               height={1536}
-              className="h-[26rem] w-full object-cover object-[70%_35%] transition-opacity duration-500"
+              className="h-[34rem] w-full scale-110 object-cover object-[72%_38%] transition-opacity duration-500"
               fetchPriority="high"
             />
           </picture>
           <div
-            className="absolute inset-0 bg-linear-to-t from-secondary via-secondary/15 to-secondary/30"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-secondary to-transparent"
+            className="absolute inset-0 bg-linear-to-t from-secondary via-secondary/10 to-transparent"
             aria-hidden="true"
           />
         </div>
