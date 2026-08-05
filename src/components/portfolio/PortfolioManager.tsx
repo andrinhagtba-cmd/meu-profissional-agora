@@ -38,6 +38,7 @@ import {
   type PortfolioItemVM,
 } from "@/services/professionalMediaService";
 import { PortfolioExternalVideoForm } from "./PortfolioExternalVideoForm";
+import { InstagramEmbed } from "./InstagramEmbed";
 import { MediaTypeBadge } from "./MediaTypeBadge";
 import { PortfolioLightbox } from "./PortfolioLightbox";
 import { isVerticalMedia } from "@/lib/portfolioUrls";
@@ -308,11 +309,26 @@ export function PortfolioManager({
                 >
                   {thumb ? (
                     <img src={thumb} alt={item.alt_text ?? item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                  ) : item.media_type === "instagram_reel" && item.embed_url ? (
+                    <div className="pointer-events-none h-full w-full">
+                      <InstagramEmbed
+                        embedUrl={item.embed_url}
+                        title={item.title ?? "Reel do Instagram"}
+                        interactive={false}
+                        fit="cover"
+                      />
+                    </div>
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-neutral-900 text-white/70 text-xs">
-                      {item.media_type.toUpperCase()}
+                    <div className="flex h-full flex-col items-center justify-center gap-1 bg-neutral-900 px-2 text-center text-white/70">
+                      <span className="text-[10px] font-bold uppercase tracking-wide">
+                        {item.media_type.replace(/_/g, " ")}
+                      </span>
+                      {item.external_media_id && (
+                        <span className="truncate text-[10px] text-white/50">{item.external_media_id}</span>
+                      )}
                     </div>
                   )}
+
                 </button>
 
                 <div className="absolute left-2 top-2 flex flex-wrap gap-1">
@@ -336,12 +352,15 @@ export function PortfolioManager({
                 </div>
 
                 <div className="p-2">
-                  <p className="truncate text-xs font-semibold">{item.title || "Sem título"}</p>
-                  {(item.caption || item.description) && (
+                  <p className="truncate text-xs font-semibold">
+                    {item.title || (item.external_media_id ? `Reel ${item.external_media_id}` : "Sem título")}
+                  </p>
+                  {(item.caption || item.description || item.external_url) && (
                     <p className="line-clamp-1 text-[11px] text-muted-foreground">
-                      {item.caption || item.description}
+                      {item.caption || item.description || item.external_url}
                     </p>
                   )}
+
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1 border-t bg-secondary/30 p-1.5">
