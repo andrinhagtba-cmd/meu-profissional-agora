@@ -143,6 +143,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
   const [starts, setStarts] = useState("");
   const [ends, setEnds] = useState("");
   const [order, setOrder] = useState<number>(0);
+  const [rotation, setRotation] = useState<number>(15);
   const [active, setActive] = useState(true);
   const [ctaPLabel, setCtaPLabel] = useState("");
   const [ctaPHref, setCtaPHref] = useState("");
@@ -227,8 +228,12 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
             <div><Label>Início</Label><Input type="date" value={starts} onChange={(e) => setStarts(e.target.value)} /></div>
             <div><Label>Fim</Label><Input type="date" value={ends} onChange={(e) => setEnds(e.target.value)} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3 items-end">
+          <div className="grid grid-cols-3 gap-3 items-end">
             <div><Label>Ordem {isHero && <span className="text-xs text-muted-foreground">(2+ vira slider)</span>}</Label><Input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} /></div>
+            <div>
+              <Label>Tempo no slider (segundos)</Label>
+              <Input type="number" min={1} value={rotation} onChange={(e) => setRotation(Number(e.target.value))} />
+            </div>
             <div className="flex items-center gap-2"><Switch checked={active} onCheckedChange={setActive} /><Label>Ativo</Label></div>
           </div>
         </div>
