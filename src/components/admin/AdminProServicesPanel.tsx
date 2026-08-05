@@ -304,19 +304,20 @@ function AddServiceDialog({
                 const ids = g.items.map((i) => i.id);
                 const allChecked = ids.every((id) => selected.has(id));
                 return (
-                  <div key={g.id}>
-                    <div className="mb-1.5 flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                  <div key={g.id} className="pt-1">
+                    <div className="sticky top-0 z-10 -mx-1 mb-1.5 flex items-center justify-between gap-2 bg-background/95 px-1 py-1.5 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                      <span className="truncate text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                         {g.name}
                       </span>
                       <button
                         type="button"
                         onClick={() => toggleGroup(ids, !allChecked)}
-                        className="text-[11px] font-semibold text-primary hover:underline"
+                        className="shrink-0 text-[11px] font-semibold text-primary hover:underline"
                       >
                         {allChecked ? "Limpar" : "Marcar todos"}
                       </button>
                     </div>
+
                     <div className="space-y-1">
                       {g.items.map((s) => {
                         const checked = selected.has(s.id);
