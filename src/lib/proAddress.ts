@@ -112,8 +112,7 @@ export function professionalPublicLocationLabel(pro: ProfessionalLocationInput):
   const a = pro.address;
   if (!a) return [pro.city, pro.state].filter(Boolean).join(", ") || null;
   if (a.visibility === "hidden") return null;
-  const customLabel = a.locationLabel?.trim();
-  if (customLabel) return customLabel;
+  const customLabel = a.locationLabel?.trim() || null;
 
   const input: PublicAddressInput = {
     visibility: a.visibility,
@@ -129,7 +128,16 @@ export function professionalPublicLocationLabel(pro: ProfessionalLocationInput):
   };
 
   const cityState = [pro.city, pro.state].filter(Boolean).join(", ");
-  return fullAddressLine({ ...input, visibility: "full_address" }) ?? input.formatted_address ?? publicAddressLabel(input) ?? (cityState || null);
+  const address =
+    fullAddressLine({ ...input, visibility: "full_address" }) ??
+    input.formatted_address ??
+    publicAddressLabel(input) ??
+    (cityState || null);
+
+  // O rótulo personalizado complementa o endereço — nunca o substitui.
+  if (customLabel && address && !address.includes(customLabel)) return `${customLabel} · ${address}`;
+  return customLabel ?? address;
+
 }
 
 
