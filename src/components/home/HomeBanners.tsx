@@ -3,18 +3,22 @@ import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useResolvedMediaUrl } from "@/lib/mediaUrl";
 
-function BannerImage({ src, alt }: { src: string; alt: string }) {
+function BannerImage({ src, alt, active }: { src: string; alt: string; active: boolean }) {
   const resolved = useResolvedMediaUrl(src);
   return (
     <img
       src={resolved}
       alt={alt}
-      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      loading="lazy"
+      className="h-full w-full object-cover will-change-transform"
+      style={{
+        transform: active ? "scale(1.06)" : "scale(1)",
+        transition: "transform 6000ms cubic-bezier(0.22,1,0.36,1)",
+      }}
+      loading="eager"
+      decoding="async"
     />
   );
 }
-
 
 type Banner = {
   id: string;
@@ -52,7 +56,7 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
 function BannerSlider({ banners }: { banners: Banner[] }) {
   const [index, setIndex] = useState(0);
 
-  const currentDelay = Math.max(1, Number(banners[index]?.rotation_seconds) || 15) * 1000;
+  const currentDelay = Math.max(2, Number(banners[index]?.rotation_seconds) || 15) * 1000;
 
   useEffect(() => {
     if (banners.length < 2) return;
@@ -71,16 +75,24 @@ function BannerSlider({ banners }: { banners: Banner[] }) {
   return (
     <section className="container-page py-8">
       <div className="relative">
-        <div className="relative aspect-[32/9] w-full overflow-hidden rounded-2xl shadow-md">
+        <div className="relative aspect-[32/9] w-full overflow-hidden rounded-2xl shadow-lg">
           {banners.map((b, i) => {
             const active = i === index;
             const to = b.link_url || "#";
             const isExternal = /^https?:\/\//.test(to);
             const overlay = (
               <>
-                <BannerImage src={b.image_url} alt={b.title ?? "Banner"} />
+                <BannerImage src={b.image_url} alt={b.title ?? "Banner"} active={active} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 {(b.title || b.subtitle) && (
-                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 text-white">
+                  <div
+                    className="absolute inset-0 flex flex-col justify-end p-6 text-white"
+                    style={{
+                      opacity: active ? 1 : 0,
+                      transform: active ? "translateY(0)" : "translateY(12px)",
+                      transition: "opacity 1200ms ease-out 200ms, transform 1200ms ease-out 200ms",
+                    }}
+                  >
                     {b.title && <h3 className="text-xl font-bold md:text-2xl">{b.title}</h3>}
                     {b.subtitle && <p className="mt-1 line-clamp-2 max-w-2xl text-sm opacity-90">{b.subtitle}</p>}
                   </div>
@@ -90,9 +102,13 @@ function BannerSlider({ banners }: { banners: Banner[] }) {
             return (
               <div
                 key={b.id}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                  active ? "opacity-100" : "opacity-0"
+                className={`absolute inset-0 ${
+                  active ? "pointer-events-auto" : "pointer-events-none"
                 }`}
+                style={{
+                  opacity: active ? 1 : 0,
+                  transition: "opacity 1500ms cubic-bezier(0.4,0,0.2,1)",
+                }}
                 aria-hidden={!active}
               >
                 {!b.link_url ? (
@@ -115,7 +131,7 @@ function BannerSlider({ banners }: { banners: Banner[] }) {
                 type="button"
                 aria-label={`Ir para banner ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-2 rounded-full transition-all duration-500 ${
                   i === index ? "w-6 bg-primary" : "w-2 bg-muted-foreground/30"
                 }`}
               />
@@ -126,4 +142,3 @@ function BannerSlider({ banners }: { banners: Banner[] }) {
     </section>
   );
 }
-
