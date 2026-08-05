@@ -1,4 +1,4 @@
-import heroImg from "@/assets/hero.jpg";
+import heroImg from "@/assets/hero-guiadf.jpg";
 import eletricista from "@/assets/cat-eletricista.jpg";
 import encanador from "@/assets/cat-encanador.jpg";
 import pintor from "@/assets/cat-pintor.jpg";
