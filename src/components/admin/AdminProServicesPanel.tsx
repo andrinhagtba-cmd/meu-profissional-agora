@@ -144,6 +144,10 @@ export function AdminProServicesPanel({ professionalId }: { professionalId: stri
   );
 }
 
+function normalize(s: string) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 function AddServiceDialog({
   professionalId, existingIds, onClose, onSaved,
 }: {
@@ -153,7 +157,9 @@ function AddServiceDialog({
   onSaved: () => void;
 }) {
   const catalog = useQuery({ queryKey: ["service-catalog"], queryFn: listServiceCatalog });
-  const [serviceId, setServiceId] = useState<string>("");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [priceType, setPriceType] = useState<ProPriceType>("to_quote");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
@@ -164,66 +170,246 @@ function AddServiceDialog({
     [catalog.data, existingIds],
   );
 
+  const categories = useMemo(() => {
+    const map = new Map<string, string>();
+    options.forEach((s) => { if (s.category) map.set(s.category.id, s.category.name); });
+    return [...map.entries()].sort((a, b) => a[1].localeCompare(b[1], "pt-BR"));
+  }, [options]);
+
+  const groups = useMemo(() => {
+    const term = normalize(search.trim());
+    const filtered = options.filter((s) => {
+      if (categoryFilter !== "all" && s.category?.id !== categoryFilter) return false;
+      if (!term) return true;
+      return normalize(`${s.name} ${s.category?.name ?? ""}`).includes(term);
+    });
+    const map = new Map<string, { id: string; name: string; items: typeof filtered }>();
+    filtered.forEach((s) => {
+      const id = s.category?.id ?? "none";
+      const name = s.category?.name ?? "Sem categoria";
+      if (!map.has(id)) map.set(id, { id, name, items: [] });
+      map.get(id)!.items.push(s);
+    });
+    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  }, [options, search, categoryFilter]);
+
+  const visibleIds = useMemo(() => groups.flatMap((g) => g.items.map((i) => i.id)), [groups]);
+
+  const toggleId = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleGroup = (ids: string[], checked: boolean) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      ids.forEach((id) => (checked ? next.add(id) : next.delete(id)));
+      return next;
+    });
+  };
+
   const create = useMutation({
     mutationFn: async () => {
-      if (!serviceId) throw new Error("Selecione um serviço.");
-      const numericPrice = price.trim() === "" ? null : Number(price);
+      const ids = [...selected];
+      if (ids.length === 0) throw new Error("Selecione ao menos um serviço.");
+      const numericPrice = price.trim() === "" ? null : Number(price.replace(",", "."));
       if (numericPrice !== null && !Number.isFinite(numericPrice)) throw new Error("Preço inválido.");
-      await createProService(professionalId, serviceId, {
-        description: description.trim() || null,
-        starting_price: numericPrice,
-        price_type: priceType,
-        active,
-      });
+      for (const id of ids) {
+        await createProService(professionalId, id, {
+          description: description.trim() || null,
+          starting_price: priceType === "to_quote" ? null : numericPrice,
+          price_type: priceType,
+          active,
+        });
+      }
+      return ids.length;
     },
-    onSuccess: () => { toast.success("Serviço adicionado"); onSaved(); },
+    onSuccess: (n) => { toast.success(n === 1 ? "Serviço adicionado" : `${n} serviços adicionados`); onSaved(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader><DialogTitle>Adicionar serviço</DialogTitle></DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-muted-foreground">Serviço do catálogo</Label>
-            <Select value={serviceId} onValueChange={setServiceId}>
-              <SelectTrigger><SelectValue placeholder={catalog.isLoading ? "Carregando…" : "Selecione"} /></SelectTrigger>
-              <SelectContent className="max-h-72">
-                {options.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.name}{s.category ? ` — ${s.category.name}` : ""}
-                  </SelectItem>
+      <DialogContent className="max-w-3xl gap-0 overflow-hidden p-0">
+        <DialogHeader className="border-b bg-muted/40 px-6 py-4">
+          <DialogTitle className="text-lg">Adicionar serviços</DialogTitle>
+          <p className="text-xs text-muted-foreground">
+            Busque no catálogo, marque quantas subcategorias quiser e defina o preço padrão para todas.
+          </p>
+        </DialogHeader>
+
+        <div className="grid max-h-[65vh] gap-0 overflow-hidden md:grid-cols-[1.15fr_1fr]">
+          {/* Catálogo */}
+          <div className="flex min-h-0 flex-col border-b md:border-b-0 md:border-r">
+            <div className="space-y-2 px-5 pb-3 pt-4">
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  autoFocus
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar serviço ou categoria…"
+                  className="h-10 rounded-xl pl-9"
+                />
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCategoryFilter("all")}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    categoryFilter === "all"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-muted/70"
+                  }`}
+                >
+                  Todas
+                </button>
+                {categories.map(([id, name]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setCategoryFilter(id)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                      categoryFilter === id
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/70"
+                    }`}
+                  >
+                    {name}
+                  </button>
                 ))}
-                {options.length === 0 && !catalog.isLoading && (
-                  <div className="px-3 py-2 text-xs text-muted-foreground">Todos os serviços já foram adicionados.</div>
-                )}
-              </SelectContent>
-            </Select>
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 pb-4">
+              {catalog.isLoading && <><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></>}
+              {!catalog.isLoading && groups.length === 0 && (
+                <div className="rounded-xl border border-dashed p-8 text-center text-xs text-muted-foreground">
+                  Nenhum serviço encontrado.
+                </div>
+              )}
+              {groups.map((g) => {
+                const ids = g.items.map((i) => i.id);
+                const allChecked = ids.every((id) => selected.has(id));
+                return (
+                  <div key={g.id}>
+                    <div className="mb-1.5 flex items-center justify-between gap-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                        {g.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => toggleGroup(ids, !allChecked)}
+                        className="text-[11px] font-semibold text-primary hover:underline"
+                      >
+                        {allChecked ? "Limpar" : "Marcar todos"}
+                      </button>
+                    </div>
+                    <div className="space-y-1">
+                      {g.items.map((s) => {
+                        const checked = selected.has(s.id);
+                        return (
+                          <label
+                            key={s.id}
+                            className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm transition ${
+                              checked ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted/60"
+                            }`}
+                          >
+                            <Checkbox checked={checked} onCheckedChange={() => toggleId(s.id)} />
+                            <span className="min-w-0 flex-1 truncate font-medium">{s.name}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <PricingFields
-            priceType={priceType} setPriceType={setPriceType}
-            price={price} setPrice={setPrice}
-          />
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-muted-foreground">Descrição (opcional)</Label>
-            <Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+
+          {/* Configuração */}
+          <div className="min-h-0 space-y-4 overflow-y-auto px-5 py-4">
+            <div className="rounded-xl border bg-muted/30 p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground">Selecionados</span>
+                <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground">
+                  {selected.size}
+                </span>
+              </div>
+              {selected.size > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {[...selected].map((id) => {
+                    const s = options.find((o) => o.id === id);
+                    if (!s) return null;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => toggleId(id)}
+                        className="inline-flex items-center gap-1 rounded-full bg-background px-2.5 py-1 text-[11px] font-medium shadow-sm hover:bg-destructive/10"
+                      >
+                        {s.name}
+                        <X size={11} />
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Marque os serviços à esquerda para adicioná-los de uma só vez.
+                </p>
+              )}
+              {selected.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setSelected(new Set())}
+                  className="mt-2 text-[11px] font-semibold text-muted-foreground hover:text-destructive"
+                >
+                  Limpar seleção
+                </button>
+              )}
+            </div>
+
+            <PricingFields
+              priceType={priceType} setPriceType={setPriceType}
+              price={price} setPrice={setPrice}
+            />
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Descrição (opcional)</Label>
+              <Textarea
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Aplicada a todos os serviços selecionados."
+              />
+            </div>
+            <label className="flex items-center justify-between rounded-xl border bg-background px-3 py-2">
+              <span className="text-xs font-medium">Ativo na vitrine</span>
+              <Switch checked={active} onCheckedChange={setActive} />
+            </label>
           </div>
-          <label className="flex items-center justify-between rounded-md border bg-background px-3 py-2">
-            <span className="text-xs font-medium">Ativo na vitrine</span>
-            <Switch checked={active} onCheckedChange={setActive} />
-          </label>
         </div>
-        <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button onClick={() => create.mutate()} disabled={create.isPending || !serviceId}>
-            <Save size={14} className="mr-1.5" /> Adicionar
-          </Button>
+
+        <DialogFooter className="items-center gap-2 border-t bg-muted/40 px-6 py-3 sm:justify-between">
+          <span className="text-xs text-muted-foreground">
+            {visibleIds.length} serviço(s) disponíveis no catálogo
+          </span>
+          <div className="flex gap-2">
+            <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+            <Button onClick={() => create.mutate()} disabled={create.isPending || selected.size === 0}>
+              <Save size={14} className="mr-1.5" />
+              {create.isPending ? "Adicionando…" : `Adicionar${selected.size ? ` (${selected.size})` : ""}`}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
 
 function EditServiceDialog({
   row, onClose, onSaved,
