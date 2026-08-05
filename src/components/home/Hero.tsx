@@ -88,7 +88,7 @@ export function Hero() {
               alt=""
               width={1024}
               height={1536}
-              className="h-[21rem] w-full scale-150 object-cover object-[72%_92%] transition-opacity duration-500"
+              className="h-[21rem] w-full scale-125 object-cover object-[72%_62%] transition-opacity duration-500"
               fetchPriority="high"
             />
           </picture>
