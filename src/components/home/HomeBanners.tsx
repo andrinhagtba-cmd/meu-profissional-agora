@@ -33,7 +33,7 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
       const nowIso = new Date().toISOString();
       const { data } = await supabase
         .from("banners")
-        .select("id,title,subtitle,image_url,link_url,starts_at,ends_at,is_active,position,display_order")
+        .select("id,title,subtitle,image_url,link_url,starts_at,ends_at,is_active,position,display_order,rotation_seconds")
         .eq("is_active", true)
         .eq("position", position)
         .order("display_order", { ascending: true });
@@ -52,13 +52,15 @@ export function HomeBanners({ position = "home" }: { position?: string }) {
 function BannerSlider({ banners }: { banners: Banner[] }) {
   const [index, setIndex] = useState(0);
 
+  const currentDelay = Math.max(1, Number(banners[index]?.rotation_seconds) || 15) * 1000;
+
   useEffect(() => {
     if (banners.length < 2) return;
-    const t = setInterval(() => {
+    const t = setTimeout(() => {
       setIndex((i) => (i + 1) % banners.length);
-    }, 15000);
-    return () => clearInterval(t);
-  }, [banners.length]);
+    }, currentDelay);
+    return () => clearTimeout(t);
+  }, [banners.length, index, currentDelay]);
 
   useEffect(() => {
     setIndex(0);
