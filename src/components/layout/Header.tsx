@@ -40,8 +40,8 @@ export function Logo({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const logoUrl = mounted ? data?.logo_light_url : undefined;
-  const name = data?.brand_name?.trim() ?? "";
-  const tagline = data?.tagline?.trim() ?? "";
+  const name = mounted ? (data?.brand_name?.trim() ?? "") : "";
+  const tagline = mounted ? (data?.tagline?.trim() ?? "") : "";
   return (
     <Link
       to="/"
