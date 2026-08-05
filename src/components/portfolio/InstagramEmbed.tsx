@@ -59,9 +59,9 @@ export function InstagramEmbed({
         style={
           fit === "cover"
             ? {
-                width: "142.35%",
+                width: "146.6%",
                 aspectRatio: "400 / 700",
-                left: "-21.18%",
+                left: "-23.3%",
                 top: 0,
                 transform: "translateY(-7.72%)",
               }
