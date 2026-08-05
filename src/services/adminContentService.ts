@@ -131,7 +131,7 @@ export type AdminBanner = {
   created_at: string;
   updated_at: string;
 };
-export type UpsertBanner = Partial<AdminBanner> & { title: string };
+export type UpsertBanner = Partial<AdminBanner>;
 
 export async function listBanners(search?: string, position?: string) {
   let q = supabase.from("banners").select("*").order("display_order").order("created_at", { ascending: false });
