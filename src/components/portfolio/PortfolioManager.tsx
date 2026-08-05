@@ -352,12 +352,15 @@ export function PortfolioManager({
                 </div>
 
                 <div className="p-2">
-                  <p className="truncate text-xs font-semibold">{item.title || "Sem título"}</p>
-                  {(item.caption || item.description) && (
+                  <p className="truncate text-xs font-semibold">
+                    {item.title || (item.external_media_id ? `Reel ${item.external_media_id}` : "Sem título")}
+                  </p>
+                  {(item.caption || item.description || item.external_url) && (
                     <p className="line-clamp-1 text-[11px] text-muted-foreground">
-                      {item.caption || item.description}
+                      {item.caption || item.description || item.external_url}
                     </p>
                   )}
+
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1 border-t bg-secondary/30 p-1.5">
