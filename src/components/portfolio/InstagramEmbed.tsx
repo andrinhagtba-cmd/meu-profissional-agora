@@ -62,9 +62,8 @@ export function InstagramEmbed({
                 width: "142.35%",
                 aspectRatio: "400 / 700",
                 left: "-21.18%",
-                top: "-19.22cqw",
-                marginTop: "0",
-                transform: "translateY(0)",
+                top: 0,
+                transform: "translateY(-7.72%)",
               }
             : undefined
         }
