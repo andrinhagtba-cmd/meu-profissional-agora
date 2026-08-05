@@ -127,6 +127,7 @@ export type AdminBanner = {
   cta_primary_href: string | null;
   cta_secondary_label: string | null;
   cta_secondary_href: string | null;
+  rotation_seconds: number;
   created_at: string;
   updated_at: string;
 };
