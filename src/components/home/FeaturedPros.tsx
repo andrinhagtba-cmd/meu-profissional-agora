@@ -103,19 +103,30 @@ export function FeaturedPros() {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div
-            className={`grid gap-6 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-4 ${
-              fading ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
-            }`}
-          >
-            {isLoading
-              ? Array.from({ length: VISIBLE }).map((_, i) => (
-                  <Skeleton key={i} className="h-[420px] rounded-3xl" />
-                ))
-              : visible.map(({ pro, rank }) => (
-                  <PremiumProCard key={pro.slug} pro={pro} rank={rank} />
-                ))}
-          </div>
+          {isError && !isLoading && pool.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-border bg-card/60 p-10 text-center">
+              <p className="text-sm text-muted-foreground">
+                Não foi possível carregar as empresas em destaque agora.
+              </p>
+              <Button className="mt-4 rounded-xl" onClick={() => refetch()}>
+                Tentar novamente
+              </Button>
+            </div>
+          ) : (
+            <div
+              className={`grid gap-6 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-4 ${
+                fading ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
+              }`}
+            >
+              {isLoading
+                ? Array.from({ length: VISIBLE }).map((_, i) => (
+                    <Skeleton key={i} className="h-[420px] rounded-3xl" />
+                  ))
+                : visible.map(({ pro, rank }) => (
+                    <PremiumProCard key={pro.slug} pro={pro} rank={rank} />
+                  ))}
+            </div>
+          )}
 
           {canRotate && (
             <div className="mt-8 flex items-center justify-center gap-2">
