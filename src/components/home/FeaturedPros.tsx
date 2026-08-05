@@ -16,9 +16,13 @@ const VISIBLE = 4;
 const ROTATE_MS = 15000;
 
 export function FeaturedPros() {
-  const { data: pros, isLoading } = useQuery({
+  const { data: pros, isLoading, isError, refetch } = useQuery({
     queryKey: ["featured-pros", "pool"],
     queryFn: () => getFeaturedProfessionals(24),
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   const pool = useMemo(() => pros ?? [], [pros]);
