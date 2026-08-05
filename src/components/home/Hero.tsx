@@ -77,16 +77,20 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
-        <img
-          key={active.id}
-          src={activeImage || images.hero}
+        <picture key={active.id}>
+          {!activeImage && (
+            <source media="(max-width: 767px)" srcSet={images.heroMobile} />
+          )}
+          <img
+            src={activeImage || images.hero}
+            alt=""
+            width={1920}
+            height={1088}
+            className="absolute inset-0 h-full w-full object-cover object-[75%_center] transition-opacity duration-500 md:object-right"
+            fetchPriority="high"
+          />
+        </picture>
 
-          alt=""
-          width={1920}
-          height={1088}
-          className="absolute inset-0 h-full w-full object-cover object-right transition-opacity duration-500"
-          fetchPriority="high"
-        />
         <div
           className="absolute inset-0 bg-linear-to-r from-background via-background/85 to-transparent"
           aria-hidden="true"
