@@ -77,26 +77,48 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
-        <picture key={active.id}>
-          {!activeImage && (
-            <source media="(max-width: 767px)" srcSet={images.heroMobile} />
-          )}
+        {/* Mobile: full-bleed image block with bottom fade — text flows below */}
+        <div className="relative md:hidden">
+          <picture key={active.id}>
+            {!activeImage && (
+              <source media="(max-width: 767px)" srcSet={images.heroMobile} />
+            )}
+            <img
+              src={activeImage || images.heroMobile}
+              alt=""
+              width={1024}
+              height={1536}
+              className="h-[26rem] w-full object-cover object-[70%_35%] transition-opacity duration-500"
+              fetchPriority="high"
+            />
+          </picture>
+          <div
+            className="absolute inset-0 bg-linear-to-t from-secondary via-secondary/15 to-secondary/30"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-secondary to-transparent"
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Desktop: image as absolute background with left gradient */}
+        <picture key={active.id} className="hidden md:block">
           <img
             src={activeImage || images.hero}
             alt=""
             width={1920}
             height={1088}
-            className="absolute inset-0 h-full w-full object-cover object-[75%_30%] transition-opacity duration-500 md:object-[right_25%]"
+            className="absolute inset-0 h-full w-full object-cover object-[right_25%] transition-opacity duration-500"
             fetchPriority="high"
           />
         </picture>
-
         <div
-          className="absolute inset-0 bg-linear-to-r from-background via-background/85 to-transparent"
+          className="absolute inset-0 hidden bg-linear-to-r from-background via-background/85 to-transparent md:block"
           aria-hidden="true"
         />
 
-        <div className="container-page relative pb-44 pt-24 sm:pb-48 lg:pb-56 lg:pt-32">
+        <div className="container-page relative pb-44 pt-6 md:pb-56 md:pt-32">
           <div className="max-w-xl">
             <HeroTitle title={active.title} highlight={active.highlight_text} />
             {active.subtitle && (
