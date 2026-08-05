@@ -296,40 +296,44 @@ export function PortfolioManager({
                   ? "bg-red-100 text-red-700"
                   : "bg-emerald-100 text-emerald-700";
 
+            const playsInline = item.media_type === "instagram_reel" && !!item.embed_url;
+            const frameCls = cn(
+              "block w-full overflow-hidden bg-muted",
+              isVerticalMedia(item.media_type) ? "aspect-[9/16]" : "aspect-square",
+            );
+
             return (
               <div key={item.id} className="group relative overflow-hidden rounded-xl border bg-card">
-                <button
-                  type="button"
-                  onClick={() => setLightboxIndex(previewItems.findIndex((p) => p.id === item.id))}
-                  className={cn(
-                    "block w-full overflow-hidden bg-muted",
-                    isVerticalMedia(item.media_type) ? "aspect-[9/16]" : "aspect-square",
-                  )}
-                  aria-label={`Ver ${item.title ?? "item"}`}
-                >
-                  {thumb ? (
-                    <img src={thumb} alt={item.alt_text ?? item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
-                  ) : item.media_type === "instagram_reel" && item.embed_url ? (
-                    <div className="pointer-events-none h-full w-full">
-                      <InstagramEmbed
-                        embedUrl={item.embed_url}
-                        title={item.title ?? "Reel do Instagram"}
-                        interactive={false}
-                        fit="cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-full flex-col items-center justify-center gap-1 bg-neutral-900 px-2 text-center text-white/70">
-                      <span className="text-[10px] font-bold uppercase tracking-wide">
-                        {item.media_type.replace(/_/g, " ")}
-                      </span>
-                      {item.external_media_id && (
-                        <span className="truncate text-[10px] text-white/50">{item.external_media_id}</span>
-                      )}
-                    </div>
-                  )}
+                {playsInline ? (
+                  <div className={frameCls}>
+                    <InstagramEmbed
+                      embedUrl={item.embed_url!}
+                      title={item.title ?? "Reel do Instagram"}
+                      fit="cover"
+                    />
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setLightboxIndex(previewItems.findIndex((p) => p.id === item.id))}
+                    className={frameCls}
+                    aria-label={`Ver ${item.title ?? "item"}`}
+                  >
+                    {thumb ? (
+                      <img src={thumb} alt={item.alt_text ?? item.title ?? ""} className="h-full w-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="flex h-full flex-col items-center justify-center gap-1 bg-neutral-900 px-2 text-center text-white/70">
+                        <span className="text-[10px] font-bold uppercase tracking-wide">
+                          {item.media_type.replace(/_/g, " ")}
+                        </span>
+                        {item.external_media_id && (
+                          <span className="truncate text-[10px] text-white/50">{item.external_media_id}</span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                )}
 
-                </button>
 
                 <div className="absolute left-2 top-2 flex flex-wrap gap-1">
                   <MediaTypeBadge type={item.media_type} />
