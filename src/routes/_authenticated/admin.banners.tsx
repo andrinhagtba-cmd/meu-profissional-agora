@@ -184,7 +184,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
               <Input value={highlight} onChange={(e) => setHighlight(e.target.value)} placeholder="melhores empresas" />
             </div>
           )}
-          <div><Label>{isHero ? "Descrição" : "Subtítulo"}</Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
+          <div><Label>{isHero ? "Descrição" : "Subtítulo"} <span className="text-xs font-normal text-muted-foreground">(opcional)</span></Label><Textarea value={subtitle} onChange={(e) => setSubtitle(e.target.value)} rows={2} /></div>
           <ImageUploadField
             label={isHero ? "Imagem desktop (1920x1088)" : "Imagem do banner"}
             value={image}
