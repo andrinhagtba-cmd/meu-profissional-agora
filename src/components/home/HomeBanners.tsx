@@ -68,32 +68,44 @@ function BannerSlider({ banners }: { banners: Banner[] }) {
 
   if (!banners.length) return null;
 
-  const b = banners[Math.min(index, banners.length - 1)];
-  const to = b.link_url || "#";
-  const isExternal = /^https?:\/\//.test(to);
-
-  const content = (
-    <div className="group relative aspect-[32/9] w-full overflow-hidden rounded-2xl shadow-md">
-      <BannerImage key={b.id} src={b.image_url} alt={b.title ?? "Banner"} />
-      {(b.title || b.subtitle) && (
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 text-white">
-          {b.title && <h3 className="text-xl font-bold md:text-2xl">{b.title}</h3>}
-          {b.subtitle && <p className="mt-1 line-clamp-2 max-w-2xl text-sm opacity-90">{b.subtitle}</p>}
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <section className="container-page py-8">
       <div className="relative">
-        {!b.link_url ? (
-          <div>{content}</div>
-        ) : isExternal ? (
-          <a href={to} target="_blank" rel="noopener noreferrer" className="block">{content}</a>
-        ) : (
-          <Link to={to.startsWith("/") ? to : `/${to}`} className="block">{content}</Link>
-        )}
+        <div className="relative aspect-[32/9] w-full overflow-hidden rounded-2xl shadow-md">
+          {banners.map((b, i) => {
+            const active = i === index;
+            const to = b.link_url || "#";
+            const isExternal = /^https?:\/\//.test(to);
+            const overlay = (
+              <>
+                <BannerImage src={b.image_url} alt={b.title ?? "Banner"} />
+                {(b.title || b.subtitle) && (
+                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 text-white">
+                    {b.title && <h3 className="text-xl font-bold md:text-2xl">{b.title}</h3>}
+                    {b.subtitle && <p className="mt-1 line-clamp-2 max-w-2xl text-sm opacity-90">{b.subtitle}</p>}
+                  </div>
+                )}
+              </>
+            );
+            return (
+              <div
+                key={b.id}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  active ? "opacity-100" : "opacity-0"
+                }`}
+                aria-hidden={!active}
+              >
+                {!b.link_url ? (
+                  <div className="group h-full w-full">{overlay}</div>
+                ) : isExternal ? (
+                  <a href={to} target="_blank" rel="noopener noreferrer" className="group block h-full w-full">{overlay}</a>
+                ) : (
+                  <Link to={to.startsWith("/") ? to : `/${to}`} className="group block h-full w-full">{overlay}</Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
         {banners.length > 1 && (
           <div className="mt-3 flex justify-center gap-2">
