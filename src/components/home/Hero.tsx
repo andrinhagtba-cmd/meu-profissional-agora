@@ -78,7 +78,7 @@ export function Hero() {
     <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
         {/* Mobile: full-bleed image block with bottom fade — text flows below */}
-        <div className="relative md:hidden">
+        <div className="relative overflow-hidden md:hidden">
           <picture key={active.id}>
             {!activeImage && (
               <source media="(max-width: 767px)" srcSet={images.heroMobile} />
