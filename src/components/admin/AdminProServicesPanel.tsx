@@ -66,13 +66,15 @@ export function AdminProServicesPanel({ professionalId }: { professionalId: stri
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between gap-2 pb-3">
-        <div>
+      <CardHeader className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 pb-3 sm:flex sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <CardTitle className="text-base">Serviços oferecidos</CardTitle>
           <p className="text-xs text-muted-foreground">Serviços associados a este profissional, com preços e disponibilidade.</p>
         </div>
-        <Button size="sm" onClick={() => setAddOpen(true)}>
-          <Plus size={14} className="mr-1.5" /> Adicionar serviço
+        <Button size="sm" className="shrink-0" onClick={() => setAddOpen(true)}>
+          <Plus size={14} className="sm:mr-1.5" />
+          <span className="hidden sm:inline">Adicionar serviço</span>
+          <span className="sr-only sm:hidden">Adicionar serviço</span>
         </Button>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -83,10 +85,10 @@ export function AdminProServicesPanel({ professionalId }: { professionalId: stri
           </div>
         )}
         {q.data?.map((row) => (
-          <div key={row.id} className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3">
+          <div key={row.id} className="rounded-xl border bg-card p-3 sm:flex sm:items-center sm:gap-3">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="truncate font-medium">{row.service?.name ?? "—"}</span>
+                <span className="min-w-0 truncate font-medium">{row.service?.name ?? "—"}</span>
                 {row.service?.category && (
                   <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
                     {row.service.category.name}
@@ -98,19 +100,22 @@ export function AdminProServicesPanel({ professionalId }: { professionalId: stri
                 <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{row.description}</div>
               )}
             </div>
-            <div className="text-right">
-              <div className="text-xs text-muted-foreground">{PRICE_LABEL[row.price_type]}</div>
-              <div className="font-semibold">
-                {row.starting_price != null ? `R$ ${Number(row.starting_price).toFixed(2)}` : "—"}
+            <div className="mt-3 flex items-center justify-between gap-3 border-t pt-3 sm:mt-0 sm:border-0 sm:pt-0">
+              <div className="min-w-0 sm:text-right">
+                <div className="text-[11px] text-muted-foreground">{PRICE_LABEL[row.price_type]}</div>
+                <div className="text-sm font-semibold">
+                  {row.starting_price != null ? `R$ ${Number(row.starting_price).toFixed(2)}` : "—"}
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Switch checked={row.active} onCheckedChange={() => toggle.mutate(row)} />
-              <Button variant="ghost" size="icon" onClick={() => setEditing(row)}><Pencil size={14} /></Button>
-              <Button variant="ghost" size="icon" onClick={() => setDeleting(row)}><Trash2 size={14} className="text-destructive" /></Button>
+              <div className="flex shrink-0 items-center gap-1">
+                <Switch checked={row.active} onCheckedChange={() => toggle.mutate(row)} />
+                <Button variant="ghost" size="icon" onClick={() => setEditing(row)}><Pencil size={14} /></Button>
+                <Button variant="ghost" size="icon" onClick={() => setDeleting(row)}><Trash2 size={14} className="text-destructive" /></Button>
+              </div>
             </div>
           </div>
         ))}
+
       </CardContent>
 
       {addOpen && (
