@@ -158,6 +158,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
       setPosition(initial?.position ?? "hero");
       setStarts(initial?.starts_at?.slice(0, 10) ?? ""); setEnds(initial?.ends_at?.slice(0, 10) ?? "");
       setOrder(initial?.display_order ?? 0); setActive(initial?.is_active ?? true);
+      setRotation(initial?.rotation_seconds ?? 15);
       setCtaPLabel(initial?.cta_primary_label ?? "");
       setCtaPHref(initial?.cta_primary_href ?? "");
       setCtaSLabel(initial?.cta_secondary_label ?? "");
@@ -250,6 +251,7 @@ function BannerDialog({ open, initial, onClose, onSubmit, submitting }: {
               starts_at: starts ? new Date(starts).toISOString() : null,
               ends_at: ends ? new Date(ends).toISOString() : null,
               display_order: order, is_active: active,
+              rotation_seconds: Math.max(1, Number(rotation) || 15),
             })}
           >Salvar</Button>
         </DialogFooter>
