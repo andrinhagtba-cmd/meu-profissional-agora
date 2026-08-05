@@ -63,7 +63,7 @@ async function fetchHeroBanners(): Promise<HeroBanner[]> {
 
 const CROSSFADE = "opacity 1500ms cubic-bezier(0.4,0,0.2,1)";
 const KENBURNS = "transform 6000ms cubic-bezier(0.22,1,0.36,1)";
-const TEXT_IN = "fade-in 900ms cubic-bezier(0.22,1,0.36,1) 0.15s both";
+const TEXT_IN = "hero-slide-in 900ms cubic-bezier(0.22,1,0.36,1) 0.15s both";
 
 function HeroMobileImage({ banner, active }: { banner: HeroBanner; active: boolean }) {
   const mobile = useResolvedMediaUrl(banner.image_url_mobile);
