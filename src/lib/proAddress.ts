@@ -135,7 +135,16 @@ export function professionalPublicLocationLabel(pro: ProfessionalLocationInput):
     (cityState || null);
 
   // O rótulo personalizado complementa o endereço — nunca o substitui.
-  if (customLabel && address && !address.includes(customLabel)) return `${customLabel} · ${address}`;
+  if (customLabel && address) {
+    const norm = (v: string) =>
+      v
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+    return norm(address).includes(norm(customLabel)) ? address : `${customLabel} · ${address}`;
+  }
   return customLabel ?? address;
 
 }
