@@ -247,22 +247,21 @@ function AddServiceDialog({
           {/* Catálogo */}
           <div className="flex min-h-0 flex-col border-b md:border-b-0 md:border-r">
 
-            <div className="space-y-2 px-5 pb-3 pt-4">
+            <div className="sticky top-0 z-10 space-y-2 border-b bg-background px-4 pb-3 pt-3 sm:px-5 sm:pt-4 md:static md:border-b-0">
               <div className="relative">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  autoFocus
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar serviço ou categoria…"
-                  className="h-10 rounded-xl pl-9"
+                  className="h-11 rounded-xl pl-9"
                 />
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
                 <button
                   type="button"
                   onClick={() => setCategoryFilter("all")}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
                     categoryFilter === "all"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:bg-muted/70"
@@ -275,7 +274,7 @@ function AddServiceDialog({
                     key={id}
                     type="button"
                     onClick={() => setCategoryFilter(id)}
-                    className={`rounded-full px-3 py-1 text-[11px] font-semibold transition ${
+                    className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
                       categoryFilter === id
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted text-muted-foreground hover:bg-muted/70"
@@ -287,7 +286,8 @@ function AddServiceDialog({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 pb-4">
+            <div className="min-h-0 flex-1 space-y-4 px-4 pb-4 sm:px-5 md:overflow-y-auto">
+
               {catalog.isLoading && <><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /><Skeleton className="h-9 w-full" /></>}
               {!catalog.isLoading && groups.length === 0 && (
                 <div className="rounded-xl border border-dashed p-8 text-center text-xs text-muted-foreground">
