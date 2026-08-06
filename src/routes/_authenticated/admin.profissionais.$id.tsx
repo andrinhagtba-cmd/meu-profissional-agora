@@ -27,6 +27,7 @@ import {
   Sparkles,
   Star,
   Timer,
+  QrCode,
   WalletCards,
   X,
 } from "lucide-react";
@@ -39,6 +40,7 @@ import { AdminProDocumentsPanel } from "@/components/admin/AdminProDocumentsPane
 import { AdminProReviewsPanel } from "@/components/admin/AdminProReviewsPanel";
 import { AdminProActivityPanel } from "@/components/admin/AdminProActivityPanel";
 import { AdminProPlanAccessPanel } from "@/components/admin/AdminProPlanAccessPanel";
+import { AdminProQrCodePanel } from "@/components/admin/AdminProQrCodePanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,6 +83,7 @@ const TAB_ITEMS: { value: string; label: string; icon: ReactNode }[] = [
   { value: "documents", label: "Documentos", icon: <FileCheck2 size={15} /> },
   { value: "reviews", label: "Avaliações", icon: <Star size={15} /> },
   { value: "plan", label: "Plano e acesso", icon: <WalletCards size={15} /> },
+  { value: "qrcode", label: "QR Code", icon: <QrCode size={15} /> },
   { value: "activity", label: "Histórico", icon: <Timer size={15} /> },
 ];
 
@@ -402,6 +405,9 @@ function AdminProDetailPage() {
               displayName={displayName}
               whatsapp={pro.whatsapp ?? null}
             />
+          </TabsContent>
+          <TabsContent value="qrcode" className="mt-5">
+            <AdminProQrCodePanel slug={pro.slug} displayName={displayName} logoUrl={pro.avatar_url ?? pro.profile_avatar_url ?? null} />
           </TabsContent>
           <TabsContent value="activity" className="mt-5"><AdminProActivityPanel professionalId={pro.id} /></TabsContent>
         </Tabs>
