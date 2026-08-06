@@ -44,7 +44,7 @@ export function SearchPanel() {
 
   const handleSearch = () => {
     if (tab === "orcamento") {
-      navigate({ to: "/pedir-orcamento" });
+      navigate({ to: "/pedir-orcamento", search: { profissional: undefined, categoria: undefined, servico: undefined } });
       return;
     }
     navigate({

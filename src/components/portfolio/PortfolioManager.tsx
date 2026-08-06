@@ -120,7 +120,7 @@ export function PortfolioManager({
       }
     }
     setUploading(false);
-    if (ok) toast.success(`${ok} imagem(ns) enviada(s)${!isAdmin ? " — aguardando aprovação" : ""}`);
+    if (ok) toast.success(`${ok} imagem(ns) publicada(s)`);
     invalidate();
     if (fileRef.current) fileRef.current.value = "";
   };
