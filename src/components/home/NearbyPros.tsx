@@ -70,7 +70,7 @@ export function NearbyPros() {
           variant="outline"
           className="h-12 rounded-xl border-border bg-card px-5 font-semibold shadow-card hover:bg-secondary"
         >
-          <Link to="/profissionais">
+          <Link to="/profissionais" search={{}}>
             Ver todos
             <ArrowRight size={16} aria-hidden="true" />
           </Link>

@@ -138,7 +138,7 @@ function CategoriaPage() {
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild className="h-12 rounded-xl bg-orange px-6 font-semibold text-orange-foreground hover:bg-orange/90">
-              <Link to="/pedir-orcamento">Pedir orçamento</Link>
+              <Link to="/pedir-orcamento" search={{}}>Pedir orçamento</Link>
             </Button>
             <Button
               asChild
@@ -188,7 +188,7 @@ function CategoriaPage() {
               <p className="font-medium text-foreground">Ainda não há profissionais nesta categoria por aqui.</p>
               <p className="mt-1 text-sm text-muted-foreground">Publique um pedido e seja avisado quando houver.</p>
               <Button asChild className="mt-5 h-11 rounded-xl font-semibold">
-                <Link to="/pedir-orcamento">Pedir orçamento</Link>
+                <Link to="/pedir-orcamento" search={{}}>Pedir orçamento</Link>
               </Button>
             </div>
           )}

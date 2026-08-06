@@ -44,7 +44,7 @@ export function SearchPanel() {
 
   const handleSearch = () => {
     if (tab === "orcamento") {
-      navigate({ to: "/pedir-orcamento" });
+      navigate({ to: "/pedir-orcamento", search: {} });
       return;
     }
     navigate({
