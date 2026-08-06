@@ -242,7 +242,7 @@ function AdminOverview() {
                 <li key={p.id}>
                   <Link
                     to="/admin/profissionais/$id"
-                    search={{}}
+                    search={{ tab: "overview" }}
                     params={{ id: p.id }}
                     className="flex items-center gap-3 rounded-xl p-1.5 transition hover:bg-secondary"
                   >
