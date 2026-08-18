@@ -146,7 +146,7 @@ export function SearchPanel() {
   };
 
   return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
+    <div className="w-full min-w-0 max-w-full overflow-visible rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
       <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:gap-1" role="tablist" aria-label="Tipo de busca">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
