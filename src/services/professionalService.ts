@@ -373,21 +373,15 @@ export async function searchProfessionals(
   }
   if (filters.cidade) {
     const cityTokens = tokenize(filters.cidade);
-    result = result.filter((p) => {
-      const local = norm(
-        [
-          p.city,
-          p.state,
-          p.address?.neighborhood ?? "",
-          p.address?.locationLabel ?? "",
-          p.address?.postalCode ?? "",
-          p.address?.formatted ?? "",
-          ...(p.regions ?? []),
-        ].join(" "),
-      );
-      return cityTokens.every((t) => local.includes(t));
-    });
+    if (cityTokens.length) {
+      result = result.filter((p) => {
+        // apenas o endereço real cadastrado — áreas de atendimento não valem como localização
+        const local = locationHaystack(p);
+        return cityTokens.every((t) => local.includes(t));
+      });
+    }
   }
+
   if (filters.categoria && filters.categoria !== "todas") {
     result = result.filter(
       (p) =>
