@@ -23,7 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  findNearestLocation,
+  listLocationSuggestions,
   listSearchSuggestions,
+  type LocationSuggestion,
   type SearchSuggestion,
 } from "@/services/professionalService";
 
