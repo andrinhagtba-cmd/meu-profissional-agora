@@ -131,7 +131,7 @@ export function Hero() {
   const active = banners[Math.min(index, total - 1)];
 
   return (
-    <section className="relative overflow-hidden" aria-label="Encontre o profissional certo">
+    <section className="relative overflow-visible" aria-label="Encontre o profissional certo">
       <div className="relative overflow-hidden bg-secondary">
         {/* Mobile: full-bleed image stack with bottom fade */}
         <div className="relative h-[21rem] overflow-hidden md:hidden">
