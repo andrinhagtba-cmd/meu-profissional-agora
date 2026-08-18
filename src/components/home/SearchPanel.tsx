@@ -128,7 +128,14 @@ export function SearchPanel() {
                 setShowSuggestions(true);
               }}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              placeholder="Ex: Ótica, Guincho, Loja de Celular"
+              onFocus={() => setShowSuggestions(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setShowSuggestions(false);
+                  handleSearch();
+                }
+              }}
+              placeholder="Ex: Ótica, #celular, nome da loja"
               autoComplete="off"
               className="h-12 w-full rounded-xl border border-input bg-background pl-10 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
