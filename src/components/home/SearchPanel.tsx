@@ -45,13 +45,21 @@ export function SearchPanel() {
   const [prazo, setPrazo] = useState("sem-urgencia");
   const [atendimento, setAtendimento] = useState("todos");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showCities, setShowCities] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const [debounced, setDebounced] = useState("");
+  const [debouncedCidade, setDebouncedCidade] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(servico.trim()), 220);
     return () => clearTimeout(t);
   }, [servico]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedCidade(cidade.trim()), 220);
+    return () => clearTimeout(t);
+  }, [cidade]);
 
   const { data: suggestions = [] } = useQuery<SearchSuggestion[]>({
     queryKey: ["search-suggestions", debounced],
@@ -59,6 +67,47 @@ export function SearchPanel() {
     enabled: debounced.length >= 2,
     staleTime: 60_000,
   });
+
+  const { data: cityOptions = [] } = useQuery<LocationSuggestion[]>({
+    queryKey: ["location-suggestions", debouncedCidade],
+    queryFn: () => listLocationSuggestions(debouncedCidade),
+    enabled: showCities,
+    staleTime: 60_000,
+  });
+
+  const handleUseLocation = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      toast.error("Seu navegador não suporta geolocalização.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const label = await findNearestLocation(
+            pos.coords.latitude,
+            pos.coords.longitude,
+          );
+          if (label) {
+            setCidade(label);
+            toast.success(`Localização definida: ${label}`);
+          } else {
+            toast.error("Nenhuma loja cadastrada perto de você.");
+          }
+        } catch {
+          toast.error("Não foi possível identificar sua localização.");
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        setLocating(false);
+        toast.error("Permissão de localização negada.");
+      },
+      { enableHighAccuracy: true, timeout: 10_000 },
+    );
+  };
+
 
   const goToSearch = (term: string) => {
     navigate({
