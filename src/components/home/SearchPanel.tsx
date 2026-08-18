@@ -1,15 +1,17 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
   Briefcase,
   Building2,
   Calendar,
   ClipboardList,
+  Hash,
   LocateFixed,
   MapPin,
   Search,
   Wrench,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -20,7 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "@/data/categories";
+import {
+  listSearchSuggestions,
+  type SearchSuggestion,
+} from "@/services/professionalService";
 
 const tabs = [
   { id: "servicos", label: "Serviços", icon: Wrench },
@@ -38,9 +43,40 @@ export function SearchPanel() {
   const [atendimento, setAtendimento] = useState("todos");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const suggestions = servico.length > 0
-    ? categories.filter((c) => c.name.toLowerCase().includes(servico.toLowerCase())).slice(0, 5)
-    : [];
+  const [debounced, setDebounced] = useState("");
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(servico.trim()), 220);
+    return () => clearTimeout(t);
+  }, [servico]);
+
+  const { data: suggestions = [] } = useQuery<SearchSuggestion[]>({
+    queryKey: ["search-suggestions", debounced],
+    queryFn: () => listSearchSuggestions(debounced),
+    enabled: debounced.length >= 2,
+    staleTime: 60_000,
+  });
+
+  const goToSearch = (term: string) => {
+    navigate({
+      to: "/buscar",
+      search: {
+        servico: term || undefined,
+        cidade: cidade || undefined,
+        atendimento: atendimento !== "todos" ? atendimento : undefined,
+      } as never,
+    });
+  };
+
+  const pickSuggestion = (s: SearchSuggestion) => {
+    setShowSuggestions(false);
+    setServico(s.term);
+    if (s.kind === "profissional" && s.slug) {
+      navigate({ to: "/profissional/$slug", params: { slug: s.slug } });
+      return;
+    }
+    goToSearch(s.term);
+  };
 
   const handleSearch = () => {
     if (tab === "orcamento") {
@@ -93,24 +129,40 @@ export function SearchPanel() {
                 setShowSuggestions(true);
               }}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              placeholder="Ex: Ótica, Guincho, Loja de Celular"
+              onFocus={() => setShowSuggestions(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setShowSuggestions(false);
+                  handleSearch();
+                }
+              }}
+              placeholder="Ex: Ótica, #celular, nome da loja"
               autoComplete="off"
               className="h-12 w-full rounded-xl border border-input bg-background pl-10 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </div>
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
-              {suggestions.map((c) => (
-                <li key={c.slug}>
+              {suggestions.map((s, i) => (
+                <li key={`${s.kind}-${s.slug ?? s.term}-${i}`}>
                   <button
                     type="button"
-                    className="w-full px-4 py-2.5 text-left text-sm hover:bg-secondary"
-                    onMouseDown={() => {
-                      setServico(c.name);
-                      setShowSuggestions(false);
-                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-secondary"
+                    onMouseDown={() => pickSuggestion(s)}
                   >
-                    {c.name}
+                    {s.kind === "profissional" ? (
+                      <Building2 size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    ) : s.kind === "tag" ? (
+                      <Hash size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    ) : (
+                      <Wrench size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate font-medium">{s.label}</span>
+                    {s.sublabel && (
+                      <span className="shrink-0 truncate text-xs text-muted-foreground">
+                        {s.sublabel}
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}

@@ -274,30 +274,102 @@ export async function listRelatedProfessionals(slug: string): Promise<Profession
 }
 
 const norm = (s: string) =>
-  s
+  (s ?? "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s#]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const STOPWORDS = new Set([
+  "de", "da", "do", "das", "dos", "e", "em", "a", "o", "as", "os", "para", "por",
+  "com", "um", "uma", "no", "na", "perto", "mim", "aqui",
+]);
+
+function tokenize(q: string): string[] {
+  return norm(q)
+    .split(" ")
+    .map((t) => t.replace(/^#/, ""))
+    .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+}
+
+/** Texto pesquisável agregado de um profissional (nome, loja, tags, serviços, local). */
+function haystack(p: Professional): string {
+  return norm(
+    [
+      p.name,
+      p.company ?? "",
+      p.specialty,
+      p.categorySlug,
+      p.description ?? "",
+      p.city,
+      p.state,
+      p.address?.neighborhood ?? "",
+      p.address?.locationLabel ?? "",
+      ...(p.searchTags ?? []),
+      ...(p.regions ?? []),
+      ...(p.services ?? []).map((s) => `${s.name} ${s.categoryName ?? ""} ${s.categorySlug ?? ""}`),
+    ].join(" "),
+  );
+}
+
+/** Pontuação de relevância — quanto maior, melhor o match. */
+function scoreProfessional(p: Professional, tokens: string[]): number {
+  if (!tokens.length) return 0;
+  const hay = haystack(p);
+  const name = norm(`${p.name} ${p.company ?? ""}`);
+  const tags = (p.searchTags ?? []).map(norm);
+  const services = (p.services ?? []).map((s) => norm(s.name));
+
+  let score = 0;
+  for (const t of tokens) {
+    let tokenScore = 0;
+    if (name.startsWith(t)) tokenScore = 100;
+    else if (name.includes(t)) tokenScore = 70;
+    if (tags.some((tag) => tag === t)) tokenScore = Math.max(tokenScore, 90);
+    else if (tags.some((tag) => tag.includes(t))) tokenScore = Math.max(tokenScore, 55);
+    if (services.some((s) => s.includes(t))) tokenScore = Math.max(tokenScore, 50);
+    if (!tokenScore && hay.includes(t)) tokenScore = 25;
+    if (!tokenScore) return 0; // todos os termos precisam existir em algum campo
+    score += tokenScore;
+  }
+  // pequenos desempates
+  score += Math.min(p.rating ?? 0, 5) * 2 + (p.verified ? 3 : 0) + (p.featured ? 2 : 0);
+  return score;
+}
 
 export async function searchProfessionals(
   filters: SearchFilters,
 ): Promise<Professional[]> {
   let result = await fetchAll();
 
-  if (filters.servico) {
-    const q = norm(filters.servico);
-    result = result.filter(
-      (p) =>
-        norm(p.specialty).includes(q) ||
-        norm(p.name).includes(q) ||
-        norm(p.categorySlug).includes(q) ||
-        p.services.some((s) => norm(s.name).includes(q)) ||
-        p.searchTags?.some((tag) => norm(tag).includes(q)),
-    );
+  const tokens = filters.servico ? tokenize(filters.servico) : [];
+  let scores: Map<string, number> | null = null;
+  if (tokens.length) {
+    scores = new Map();
+    result = result.filter((p) => {
+      const s = scoreProfessional(p, tokens);
+      if (s > 0) scores!.set(p.id, s);
+      return s > 0;
+    });
   }
   if (filters.cidade) {
-    const q = norm(filters.cidade);
-    result = result.filter((p) => norm(p.city).includes(q) || norm(p.state).includes(q));
+    const cityTokens = tokenize(filters.cidade);
+    result = result.filter((p) => {
+      const local = norm(
+        [
+          p.city,
+          p.state,
+          p.address?.neighborhood ?? "",
+          p.address?.locationLabel ?? "",
+          p.address?.postalCode ?? "",
+          p.address?.formatted ?? "",
+          ...(p.regions ?? []),
+        ].join(" "),
+      );
+      return cityTokens.every((t) => local.includes(t));
+    });
   }
   if (filters.categoria && filters.categoria !== "todas") {
     result = result.filter(
@@ -346,6 +418,7 @@ export async function searchProfessionals(
     default:
       result.sort(
         (a, b) =>
+          (scores ? (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0) : 0) ||
           Number(b.sponsored ?? false) - Number(a.sponsored ?? false) ||
           b.rating - a.rating,
       );
@@ -395,4 +468,87 @@ export async function listApprovedReviewsByPro(
     reply: (r.professional_reply as string | null) ?? null,
     createdAt: r.created_at as string,
   }));
+}
+
+// ---------------------------------------------------------------------------
+// Sugestões inteligentes de busca (lojas, hashtags, serviços e categorias)
+// ---------------------------------------------------------------------------
+
+export type SearchSuggestion = {
+  kind: "profissional" | "tag" | "servico" | "categoria";
+  label: string;
+  sublabel?: string;
+  /** termo aplicado na busca */
+  term: string;
+  /** quando existir, permite ir direto à ficha da loja */
+  slug?: string;
+  categorySlug?: string;
+};
+
+export async function listSearchSuggestions(
+  query: string,
+  limit = 8,
+): Promise<SearchSuggestion[]> {
+  const tokens = tokenize(query);
+  if (!tokens.length) return [];
+
+  const pros = await fetchAll();
+
+  const scored = pros
+    .map((p) => ({ p, score: scoreProfessional(p, tokens) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  const out: SearchSuggestion[] = scored.slice(0, 5).map(({ p }) => ({
+    kind: "profissional" as const,
+    label: p.company || p.name,
+    sublabel: [p.specialty, [p.city, p.state].filter(Boolean).join("/")]
+      .filter(Boolean)
+      .join(" · "),
+    term: p.company || p.name,
+    slug: p.slug,
+  }));
+
+  const seen = new Set(out.map((s) => norm(s.label)));
+
+  // hashtags cadastradas pelo admin
+  const tagCount = new Map<string, number>();
+  for (const p of pros) {
+    for (const tag of p.searchTags ?? []) {
+      const n = norm(tag);
+      if (!n || !tokens.some((t) => n.includes(t))) continue;
+      tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
+    }
+  }
+  for (const [tag, count] of [...tagCount.entries()].sort((a, b) => b[1] - a[1])) {
+    if (out.length >= limit) break;
+    if (seen.has(norm(tag))) continue;
+    seen.add(norm(tag));
+    out.push({
+      kind: "tag",
+      label: `#${tag.replace(/^#/, "")}`,
+      sublabel: `${count} ${count === 1 ? "loja" : "lojas"}`,
+      term: tag.replace(/^#/, ""),
+    });
+  }
+
+  // serviços e categorias cadastrados
+  for (const p of pros) {
+    if (out.length >= limit) break;
+    for (const s of p.services ?? []) {
+      if (out.length >= limit) break;
+      const n = norm(s.name);
+      if (!n || seen.has(n) || !tokens.some((t) => n.includes(t))) continue;
+      seen.add(n);
+      out.push({
+        kind: "servico",
+        label: s.name,
+        sublabel: s.categoryName ?? "Serviço",
+        term: s.name,
+        categorySlug: s.categorySlug,
+      });
+    }
+  }
+
+  return out.slice(0, limit);
 }
