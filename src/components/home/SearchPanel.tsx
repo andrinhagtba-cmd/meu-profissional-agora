@@ -23,7 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  findNearestLocation,
+  listLocationSuggestions,
   listSearchSuggestions,
+  type LocationSuggestion,
   type SearchSuggestion,
 } from "@/services/professionalService";
 
@@ -42,13 +45,21 @@ export function SearchPanel() {
   const [prazo, setPrazo] = useState("sem-urgencia");
   const [atendimento, setAtendimento] = useState("todos");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showCities, setShowCities] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const [debounced, setDebounced] = useState("");
+  const [debouncedCidade, setDebouncedCidade] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(servico.trim()), 220);
     return () => clearTimeout(t);
   }, [servico]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedCidade(cidade.trim()), 220);
+    return () => clearTimeout(t);
+  }, [cidade]);
 
   const { data: suggestions = [] } = useQuery<SearchSuggestion[]>({
     queryKey: ["search-suggestions", debounced],
@@ -56,6 +67,47 @@ export function SearchPanel() {
     enabled: debounced.length >= 2,
     staleTime: 60_000,
   });
+
+  const { data: cityOptions = [] } = useQuery<LocationSuggestion[]>({
+    queryKey: ["location-suggestions", debouncedCidade],
+    queryFn: () => listLocationSuggestions(debouncedCidade),
+    enabled: showCities,
+    staleTime: 60_000,
+  });
+
+  const handleUseLocation = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      toast.error("Seu navegador não suporta geolocalização.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const label = await findNearestLocation(
+            pos.coords.latitude,
+            pos.coords.longitude,
+          );
+          if (label) {
+            setCidade(label);
+            toast.success(`Localização definida: ${label}`);
+          } else {
+            toast.error("Nenhuma loja cadastrada perto de você.");
+          }
+        } catch {
+          toast.error("Não foi possível identificar sua localização.");
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        setLocating(false);
+        toast.error("Permissão de localização negada.");
+      },
+      { enableHighAccuracy: true, timeout: 10_000 },
+    );
+  };
+
 
   const goToSearch = (term: string) => {
     navigate({
@@ -170,7 +222,7 @@ export function SearchPanel() {
           )}
         </div>
 
-        <div className="min-w-0">
+        <div className="relative min-w-0">
           <Label htmlFor="hero-cidade" className="mb-1.5 block text-xs font-semibold text-muted-foreground">
             Onde?
           </Label>
@@ -179,22 +231,54 @@ export function SearchPanel() {
             <input
               id="hero-cidade"
               value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-              placeholder="Cidade, bairro ou CEP"
+              autoComplete="off"
+              onChange={(e) => {
+                setCidade(e.target.value);
+                setShowCities(true);
+              }}
+              onFocus={() => setShowCities(true)}
+              onBlur={() => setTimeout(() => setShowCities(false), 150)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setShowCities(false);
+                  handleSearch();
+                }
+              }}
+              placeholder="Cidade, região ou bairro"
               className="h-12 w-full rounded-xl border border-input bg-background pl-10 pr-10 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <button
               type="button"
               aria-label="Usar minha localização atual"
-              onClick={() => {
-                setCidade("Curitiba");
-                toast.success("Localização definida: Curitiba (simulada)");
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-primary transition-colors hover:bg-secondary"
+              disabled={locating}
+              onClick={handleUseLocation}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-primary transition-colors hover:bg-secondary disabled:opacity-50"
             >
-              <LocateFixed size={16} />
+              <LocateFixed size={16} className={locating ? "animate-pulse" : undefined} />
             </button>
           </div>
+          {showCities && cityOptions.length > 0 && (
+            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
+              {cityOptions.map((c) => (
+                <li key={`${c.kind}-${c.label}`}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-secondary"
+                    onMouseDown={() => {
+                      setCidade(c.term);
+                      setShowCities(false);
+                    }}
+                  >
+                    <MapPin size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    <span className="min-w-0 flex-1 truncate font-medium">{c.label}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {c.count} {c.count === 1 ? "loja" : "lojas"}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="min-w-0">

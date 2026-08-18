@@ -552,3 +552,87 @@ export async function listSearchSuggestions(
 
   return out.slice(0, limit);
 }
+
+// ---------------------------------------------------------------------------
+// Localizações reais cadastradas (cidades, regiões e bairros)
+// ---------------------------------------------------------------------------
+
+export type LocationSuggestion = {
+  kind: "cidade" | "regiao" | "bairro";
+  label: string;
+  term: string;
+  count: number;
+};
+
+/**
+ * Lista cidades/regiões/bairros existentes nos cadastros publicados.
+ * Sem query, devolve os locais com mais lojas.
+ */
+export async function listLocationSuggestions(
+  query = "",
+  limit = 8,
+): Promise<LocationSuggestion[]> {
+  const pros = await fetchAll();
+  const tokens = tokenize(query);
+
+  type Bucket = { kind: LocationSuggestion["kind"]; label: string; count: number };
+  const buckets = new Map<string, Bucket>();
+
+  const add = (kind: Bucket["kind"], raw?: string | null) => {
+    const label = (raw ?? "").trim();
+    if (!label) return;
+    const key = `${kind}:${norm(label)}`;
+    const current = buckets.get(key);
+    if (current) current.count += 1;
+    else buckets.set(key, { kind, label, count: 1 });
+  };
+
+  for (const p of pros) {
+    const city = p.city?.trim();
+    if (city) add("cidade", p.state ? `${city}/${p.state}` : city);
+    for (const region of p.regions ?? []) add("regiao", region);
+    add("bairro", p.address?.neighborhood ?? null);
+  }
+
+  let list = [...buckets.values()];
+  if (tokens.length) {
+    list = list.filter((b) => {
+      const n = norm(b.label);
+      return tokens.every((t) => n.includes(t));
+    });
+  }
+
+  return list
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "pt-BR"))
+    .slice(0, limit)
+    .map((b) => ({ kind: b.kind, label: b.label, term: b.label, count: b.count }));
+}
+
+/** Encontra a cidade/região cadastrada mais próxima de uma coordenada. */
+export async function findNearestLocation(
+  latitude: number,
+  longitude: number,
+): Promise<string | null> {
+  const pros = await fetchAll();
+  const toRad = (v: number) => (v * Math.PI) / 180;
+  let best: { label: string; dist: number } | null = null;
+
+  for (const p of pros) {
+    const lat = p.address?.latitude;
+    const lng = p.address?.longitude;
+    if (typeof lat !== "number" || typeof lng !== "number") continue;
+    const dLat = toRad(lat - latitude);
+    const dLng = toRad(lng - longitude);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(latitude)) * Math.cos(toRad(lat)) * Math.sin(dLng / 2) ** 2;
+    const dist = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const label =
+      p.address?.neighborhood?.trim() ||
+      (p.city ? (p.state ? `${p.city}/${p.state}` : p.city) : "");
+    if (!label) continue;
+    if (!best || dist < best.dist) best = { label, dist };
+  }
+
+  return best?.label ?? null;
+}
