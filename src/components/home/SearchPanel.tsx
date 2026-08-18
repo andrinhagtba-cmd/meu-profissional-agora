@@ -194,7 +194,7 @@ export function SearchPanel() {
             />
           </div>
           {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
+            <ul className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
               {suggestions.map((s, i) => (
                 <li key={`${s.kind}-${s.slug ?? s.term}-${i}`}>
                   <button
