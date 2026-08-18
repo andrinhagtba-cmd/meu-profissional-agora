@@ -258,7 +258,7 @@ export function SearchPanel() {
             </button>
           </div>
           {showCities && cityOptions.length > 0 && (
-            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
+            <ul className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
               {cityOptions.map((c) => (
                 <li key={`${c.kind}-${c.label}`}>
                   <button
