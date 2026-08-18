@@ -274,30 +274,102 @@ export async function listRelatedProfessionals(slug: string): Promise<Profession
 }
 
 const norm = (s: string) =>
-  s
+  (s ?? "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s#]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const STOPWORDS = new Set([
+  "de", "da", "do", "das", "dos", "e", "em", "a", "o", "as", "os", "para", "por",
+  "com", "um", "uma", "no", "na", "perto", "mim", "aqui",
+]);
+
+function tokenize(q: string): string[] {
+  return norm(q)
+    .split(" ")
+    .map((t) => t.replace(/^#/, ""))
+    .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+}
+
+/** Texto pesquisável agregado de um profissional (nome, loja, tags, serviços, local). */
+function haystack(p: Professional): string {
+  return norm(
+    [
+      p.name,
+      p.company ?? "",
+      p.specialty,
+      p.categorySlug,
+      p.description ?? "",
+      p.city,
+      p.state,
+      p.address?.neighborhood ?? "",
+      p.address?.locationLabel ?? "",
+      ...(p.searchTags ?? []),
+      ...(p.regions ?? []),
+      ...(p.services ?? []).map((s) => `${s.name} ${s.categoryName ?? ""} ${s.categorySlug ?? ""}`),
+    ].join(" "),
+  );
+}
+
+/** Pontuação de relevância — quanto maior, melhor o match. */
+function scoreProfessional(p: Professional, tokens: string[]): number {
+  if (!tokens.length) return 0;
+  const hay = haystack(p);
+  const name = norm(`${p.name} ${p.company ?? ""}`);
+  const tags = (p.searchTags ?? []).map(norm);
+  const services = (p.services ?? []).map((s) => norm(s.name));
+
+  let score = 0;
+  for (const t of tokens) {
+    let tokenScore = 0;
+    if (name.startsWith(t)) tokenScore = 100;
+    else if (name.includes(t)) tokenScore = 70;
+    if (tags.some((tag) => tag === t)) tokenScore = Math.max(tokenScore, 90);
+    else if (tags.some((tag) => tag.includes(t))) tokenScore = Math.max(tokenScore, 55);
+    if (services.some((s) => s.includes(t))) tokenScore = Math.max(tokenScore, 50);
+    if (!tokenScore && hay.includes(t)) tokenScore = 25;
+    if (!tokenScore) return 0; // todos os termos precisam existir em algum campo
+    score += tokenScore;
+  }
+  // pequenos desempates
+  score += Math.min(p.rating ?? 0, 5) * 2 + (p.verified ? 3 : 0) + (p.featured ? 2 : 0);
+  return score;
+}
 
 export async function searchProfessionals(
   filters: SearchFilters,
 ): Promise<Professional[]> {
   let result = await fetchAll();
 
-  if (filters.servico) {
-    const q = norm(filters.servico);
-    result = result.filter(
-      (p) =>
-        norm(p.specialty).includes(q) ||
-        norm(p.name).includes(q) ||
-        norm(p.categorySlug).includes(q) ||
-        p.services.some((s) => norm(s.name).includes(q)) ||
-        p.searchTags?.some((tag) => norm(tag).includes(q)),
-    );
+  const tokens = filters.servico ? tokenize(filters.servico) : [];
+  let scores: Map<string, number> | null = null;
+  if (tokens.length) {
+    scores = new Map();
+    result = result.filter((p) => {
+      const s = scoreProfessional(p, tokens);
+      if (s > 0) scores!.set(p.id, s);
+      return s > 0;
+    });
   }
   if (filters.cidade) {
-    const q = norm(filters.cidade);
-    result = result.filter((p) => norm(p.city).includes(q) || norm(p.state).includes(q));
+    const cityTokens = tokenize(filters.cidade);
+    result = result.filter((p) => {
+      const local = norm(
+        [
+          p.city,
+          p.state,
+          p.address?.neighborhood ?? "",
+          p.address?.locationLabel ?? "",
+          p.address?.postalCode ?? "",
+          p.address?.formatted ?? "",
+          ...(p.regions ?? []),
+        ].join(" "),
+      );
+      return cityTokens.every((t) => local.includes(t));
+    });
   }
   if (filters.categoria && filters.categoria !== "todas") {
     result = result.filter(
