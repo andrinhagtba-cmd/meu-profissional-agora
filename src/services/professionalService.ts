@@ -469,3 +469,86 @@ export async function listApprovedReviewsByPro(
     createdAt: r.created_at as string,
   }));
 }
+
+// ---------------------------------------------------------------------------
+// Sugestões inteligentes de busca (lojas, hashtags, serviços e categorias)
+// ---------------------------------------------------------------------------
+
+export type SearchSuggestion = {
+  kind: "profissional" | "tag" | "servico" | "categoria";
+  label: string;
+  sublabel?: string;
+  /** termo aplicado na busca */
+  term: string;
+  /** quando existir, permite ir direto à ficha da loja */
+  slug?: string;
+  categorySlug?: string;
+};
+
+export async function listSearchSuggestions(
+  query: string,
+  limit = 8,
+): Promise<SearchSuggestion[]> {
+  const tokens = tokenize(query);
+  if (!tokens.length) return [];
+
+  const pros = await fetchAll();
+
+  const scored = pros
+    .map((p) => ({ p, score: scoreProfessional(p, tokens) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  const out: SearchSuggestion[] = scored.slice(0, 5).map(({ p }) => ({
+    kind: "profissional" as const,
+    label: p.company || p.name,
+    sublabel: [p.specialty, [p.city, p.state].filter(Boolean).join("/")]
+      .filter(Boolean)
+      .join(" · "),
+    term: p.company || p.name,
+    slug: p.slug,
+  }));
+
+  const seen = new Set(out.map((s) => norm(s.label)));
+
+  // hashtags cadastradas pelo admin
+  const tagCount = new Map<string, number>();
+  for (const p of pros) {
+    for (const tag of p.searchTags ?? []) {
+      const n = norm(tag);
+      if (!n || !tokens.some((t) => n.includes(t))) continue;
+      tagCount.set(tag, (tagCount.get(tag) ?? 0) + 1);
+    }
+  }
+  for (const [tag, count] of [...tagCount.entries()].sort((a, b) => b[1] - a[1])) {
+    if (out.length >= limit) break;
+    if (seen.has(norm(tag))) continue;
+    seen.add(norm(tag));
+    out.push({
+      kind: "tag",
+      label: `#${tag.replace(/^#/, "")}`,
+      sublabel: `${count} ${count === 1 ? "loja" : "lojas"}`,
+      term: tag.replace(/^#/, ""),
+    });
+  }
+
+  // serviços e categorias cadastrados
+  for (const p of pros) {
+    if (out.length >= limit) break;
+    for (const s of p.services ?? []) {
+      if (out.length >= limit) break;
+      const n = norm(s.name);
+      if (!n || seen.has(n) || !tokens.some((t) => n.includes(t))) continue;
+      seen.add(n);
+      out.push({
+        kind: "servico",
+        label: s.name,
+        sublabel: s.categoryName ?? "Serviço",
+        term: s.name,
+        categorySlug: s.categorySlug,
+      });
+    }
+  }
+
+  return out.slice(0, limit);
+}
