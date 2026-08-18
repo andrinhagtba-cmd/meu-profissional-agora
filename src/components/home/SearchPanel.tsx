@@ -142,17 +142,26 @@ export function SearchPanel() {
           </div>
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
-              {suggestions.map((c) => (
-                <li key={c.slug}>
+              {suggestions.map((s, i) => (
+                <li key={`${s.kind}-${s.slug ?? s.term}-${i}`}>
                   <button
                     type="button"
-                    className="w-full px-4 py-2.5 text-left text-sm hover:bg-secondary"
-                    onMouseDown={() => {
-                      setServico(c.name);
-                      setShowSuggestions(false);
-                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-secondary"
+                    onMouseDown={() => pickSuggestion(s)}
                   >
-                    {c.name}
+                    {s.kind === "profissional" ? (
+                      <Building2 size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    ) : s.kind === "tag" ? (
+                      <Hash size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    ) : (
+                      <Wrench size={15} className="shrink-0 text-primary" aria-hidden="true" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate font-medium">{s.label}</span>
+                    {s.sublabel && (
+                      <span className="shrink-0 truncate text-xs text-muted-foreground">
+                        {s.sublabel}
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}
