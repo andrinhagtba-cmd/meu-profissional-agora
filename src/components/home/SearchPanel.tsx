@@ -21,7 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "@/data/categories";
+import {
+  listSearchSuggestions,
+  type SearchSuggestion,
+} from "@/services/professionalService";
 
 const tabs = [
   { id: "servicos", label: "Serviços", icon: Wrench },
