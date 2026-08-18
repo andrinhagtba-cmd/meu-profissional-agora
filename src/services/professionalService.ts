@@ -418,6 +418,7 @@ export async function searchProfessionals(
     default:
       result.sort(
         (a, b) =>
+          (scores ? (scores.get(b.id) ?? 0) - (scores.get(a.id) ?? 0) : 0) ||
           Number(b.sponsored ?? false) - Number(a.sponsored ?? false) ||
           b.rating - a.rating,
       );
