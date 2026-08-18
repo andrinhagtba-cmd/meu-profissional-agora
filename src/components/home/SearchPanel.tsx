@@ -42,9 +42,40 @@ export function SearchPanel() {
   const [atendimento, setAtendimento] = useState("todos");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const suggestions = servico.length > 0
-    ? categories.filter((c) => c.name.toLowerCase().includes(servico.toLowerCase())).slice(0, 5)
-    : [];
+  const [debounced, setDebounced] = useState("");
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(servico.trim()), 220);
+    return () => clearTimeout(t);
+  }, [servico]);
+
+  const { data: suggestions = [] } = useQuery<SearchSuggestion[]>({
+    queryKey: ["search-suggestions", debounced],
+    queryFn: () => listSearchSuggestions(debounced),
+    enabled: debounced.length >= 2,
+    staleTime: 60_000,
+  });
+
+  const goToSearch = (term: string) => {
+    navigate({
+      to: "/buscar",
+      search: {
+        servico: term || undefined,
+        cidade: cidade || undefined,
+        atendimento: atendimento !== "todos" ? atendimento : undefined,
+      } as never,
+    });
+  };
+
+  const pickSuggestion = (s: SearchSuggestion) => {
+    setShowSuggestions(false);
+    setServico(s.term);
+    if (s.kind === "profissional" && s.slug) {
+      navigate({ to: "/profissional/$slug", params: { slug: s.slug } });
+      return;
+    }
+    goToSearch(s.term);
+  };
 
   const handleSearch = () => {
     if (tab === "orcamento") {
