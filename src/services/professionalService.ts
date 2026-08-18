@@ -294,7 +294,7 @@ function tokenize(q: string): string[] {
     .filter((t) => t.length > 1 && !STOPWORDS.has(t));
 }
 
-/** Texto pesquisável agregado de um profissional (nome, loja, tags, serviços, local). */
+/** Texto pesquisável do que o profissional FAZ (sem localização, para não poluir o match). */
 function haystack(p: Professional): string {
   return norm(
     [
@@ -303,34 +303,50 @@ function haystack(p: Professional): string {
       p.specialty,
       p.categorySlug,
       p.description ?? "",
+      ...(p.searchTags ?? []),
+      ...(p.services ?? []).map((s) => `${s.name} ${s.categoryName ?? ""} ${s.categorySlug ?? ""}`),
+    ].join(" "),
+  );
+}
+
+/** Texto de localização real do profissional (endereço cadastrado). */
+function locationHaystack(p: Professional): string {
+  return norm(
+    [
       p.city,
       p.state,
       p.address?.neighborhood ?? "",
       p.address?.locationLabel ?? "",
-      ...(p.searchTags ?? []),
-      ...(p.regions ?? []),
-      ...(p.services ?? []).map((s) => `${s.name} ${s.categoryName ?? ""} ${s.categorySlug ?? ""}`),
+      p.address?.postalCode ?? "",
+      p.address?.formatted ?? "",
     ].join(" "),
   );
+}
+
+/** Verifica se um termo aparece como palavra (e não apenas como pedaço de outra). */
+function hasWord(text: string, token: string): boolean {
+  return new RegExp(`(^| )${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`).test(text);
 }
 
 /** Pontuação de relevância — quanto maior, melhor o match. */
 function scoreProfessional(p: Professional, tokens: string[]): number {
   if (!tokens.length) return 0;
   const hay = haystack(p);
-  const name = norm(`${p.name} ${p.company ?? ""}`);
+  const name = norm(`${p.name} ${p.company ?? ""} ${p.specialty ?? ""}`);
   const tags = (p.searchTags ?? []).map(norm);
-  const services = (p.services ?? []).map((s) => norm(s.name));
+  const services = (p.services ?? []).map((s) => norm(`${s.name} ${s.categoryName ?? ""}`));
+  const category = norm(p.categorySlug ?? "");
 
   let score = 0;
   for (const t of tokens) {
     let tokenScore = 0;
     if (name.startsWith(t)) tokenScore = 100;
-    else if (name.includes(t)) tokenScore = 70;
+    else if (hasWord(name, t)) tokenScore = 70;
     if (tags.some((tag) => tag === t)) tokenScore = Math.max(tokenScore, 90);
-    else if (tags.some((tag) => tag.includes(t))) tokenScore = Math.max(tokenScore, 55);
-    if (services.some((s) => s.includes(t))) tokenScore = Math.max(tokenScore, 50);
-    if (!tokenScore && hay.includes(t)) tokenScore = 25;
+    else if (tags.some((tag) => hasWord(tag, t))) tokenScore = Math.max(tokenScore, 60);
+    if (services.some((s) => hasWord(s, t))) tokenScore = Math.max(tokenScore, 50);
+    if (hasWord(category, t)) tokenScore = Math.max(tokenScore, 45);
+    if (!tokenScore && hasWord(hay, t)) tokenScore = 20; // descrição
     if (!tokenScore) return 0; // todos os termos precisam existir em algum campo
     score += tokenScore;
   }
@@ -338,6 +354,7 @@ function scoreProfessional(p: Professional, tokens: string[]): number {
   score += Math.min(p.rating ?? 0, 5) * 2 + (p.verified ? 3 : 0) + (p.featured ? 2 : 0);
   return score;
 }
+
 
 export async function searchProfessionals(
   filters: SearchFilters,
