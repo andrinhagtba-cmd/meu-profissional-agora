@@ -5,6 +5,7 @@ import {
   Building2,
   Calendar,
   ClipboardList,
+  Hash,
   LocateFixed,
   MapPin,
   Search,
