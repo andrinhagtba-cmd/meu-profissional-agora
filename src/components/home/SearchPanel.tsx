@@ -146,7 +146,7 @@ export function SearchPanel() {
   };
 
   return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
+    <div className="w-full min-w-0 max-w-full overflow-visible rounded-3xl bg-card p-4 shadow-float sm:p-6" role="search">
       <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:gap-1" role="tablist" aria-label="Tipo de busca">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
@@ -194,7 +194,7 @@ export function SearchPanel() {
             />
           </div>
           {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
+            <ul className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
               {suggestions.map((s, i) => (
                 <li key={`${s.kind}-${s.slug ?? s.term}-${i}`}>
                   <button
@@ -258,7 +258,7 @@ export function SearchPanel() {
             </button>
           </div>
           {showCities && cityOptions.length > 0 && (
-            <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
+            <ul className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-float">
               {cityOptions.map((c) => (
                 <li key={`${c.kind}-${c.label}`}>
                   <button
