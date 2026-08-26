@@ -21,7 +21,7 @@ import { LocationMap } from "@/components/address/LocationMap";
 import { BusinessHoursSection } from "@/components/professional/BusinessHoursSection";
 import { ADDRESS_VISIBILITY_LABEL, type AddressVisibility, normalizeInstagramHandle, normalizeUrl } from "@/lib/proAddress";
 import { geocodeAddressFn } from "@/lib/geocode.functions";
-import { ALL_REGIONS as DF_REGIONS } from "@/data/dfRegions";
+import { ServiceRegionsPicker } from "@/components/shared/ServiceRegionsPicker";
 
 
 type Availability = "available" | "busy" | "unavailable";
@@ -580,38 +580,13 @@ export function AdminProProfileEditor({ pro }: { pro: AdminProDetail }) {
 
             <div className="mt-4">
               <Field label="Regiões atendidas (exibidas no perfil público)">
-                <div className="flex flex-wrap gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
-                  {DF_REGIONS.map((r) => {
-                    const active = form.service_regions.includes(r.name);
-                    return (
-                      <button
-                        key={r.slug}
-                        type="button"
-                        onClick={() =>
-                          set(
-                            "service_regions",
-                            active
-                              ? form.service_regions.filter((x) => x !== r.name)
-                              : [...form.service_regions, r.name],
-                          )
-                        }
-                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                          active
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-card text-muted-foreground hover:border-primary/50"
-                        }`}
-                      >
-                        {r.name}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-2 flex gap-3 text-[11px] text-muted-foreground">
-                  <button type="button" className="font-semibold text-primary" onClick={() => set("service_regions", DF_REGIONS.map((r) => r.name))}>Selecionar todas</button>
-                  <button type="button" className="font-semibold text-primary" onClick={() => set("service_regions", [])}>Limpar</button>
-                </div>
+                <ServiceRegionsPicker
+                  value={form.service_regions}
+                  onChange={(next) => set("service_regions", next)}
+                />
               </Field>
             </div>
+
           </div>
 
           <Separator />

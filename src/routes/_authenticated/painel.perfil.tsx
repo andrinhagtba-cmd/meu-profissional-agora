@@ -94,9 +94,15 @@ function MeuPerfil() {
               Esses dados são usados nos seus pedidos e para o profissional entrar em contato.
             </p>
           </div>
-          <Button asChild variant="outline" className="h-11 rounded-xl border-border font-semibold">
-            <Link to="/painel/notificacoes">Ver notificações</Link>
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild className="h-11 rounded-xl font-semibold">
+              <Link to="/painel/loja">Editar minha loja</Link>
+            </Button>
+            <Button asChild variant="outline" className="h-11 rounded-xl border-border font-semibold">
+              <Link to="/painel/notificacoes">Ver notificações</Link>
+            </Button>
+          </div>
+
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[360px_1fr]">

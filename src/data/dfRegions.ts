@@ -99,8 +99,39 @@ export const ENTORNO_REGIONS: DfRegion[] = [
   .map((r) => ({ ...r, group: "Entorno" as const }))
   .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 
+/** Bairros/setores conhecidos (usados apenas como áreas de atendimento, não como cidade). */
+export const SUB_REGIONS: DfRegion[] = [
+  { slug: "asa-sul", name: "Asa Sul", raNumber: "Plano Piloto", aliases: ["asa sul"] },
+  { slug: "asa-norte", name: "Asa Norte", raNumber: "Plano Piloto", aliases: ["asa norte"] },
+  { slug: "noroeste", name: "Noroeste", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "sudoeste", name: "Sudoeste", raNumber: "Sudoeste/Octogonal", aliases: [] },
+  { slug: "octogonal", name: "Octogonal", raNumber: "Sudoeste/Octogonal", aliases: [] },
+  { slug: "setor-militar-urbano", name: "Setor Militar Urbano", raNumber: "Plano Piloto", aliases: ["smu"] },
+  { slug: "vila-planalto", name: "Vila Planalto", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "vila-telebrasilia", name: "Vila Telebrasília", raNumber: "Plano Piloto", aliases: ["telebrasilia"] },
+  { slug: "esplanada-dos-ministerios", name: "Esplanada dos Ministérios", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "setor-comercial-sul", name: "Setor Comercial Sul", raNumber: "Plano Piloto", aliases: ["scs"] },
+  { slug: "setor-comercial-norte", name: "Setor Comercial Norte", raNumber: "Plano Piloto", aliases: ["scn"] },
+  { slug: "setor-bancario-sul", name: "Setor Bancário Sul", raNumber: "Plano Piloto", aliases: ["sbs"] },
+  { slug: "setor-bancario-norte", name: "Setor Bancário Norte", raNumber: "Plano Piloto", aliases: ["sbn"] },
+  { slug: "setor-hoteleiro-sul", name: "Setor Hoteleiro Sul", raNumber: "Plano Piloto", aliases: ["shs"] },
+  { slug: "setor-hoteleiro-norte", name: "Setor Hoteleiro Norte", raNumber: "Plano Piloto", aliases: ["shn"] },
+  { slug: "setor-de-embaixadas", name: "Setor de Embaixadas", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "setor-de-clubes-sul", name: "Setor de Clubes Sul", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "setor-de-clubes-norte", name: "Setor de Clubes Norte", raNumber: "Plano Piloto", aliases: [] },
+  { slug: "granja-do-torto", name: "Granja do Torto", raNumber: "Plano Piloto", aliases: [] },
+].map((r) => ({ ...r, group: "DF" as const }));
+
+/** Grupos usados no seletor de áreas de atendimento. */
+export const SERVICE_REGION_GROUPS: { label: string; regions: DfRegion[] }[] = [
+  { label: "Regiões Administrativas do DF", regions: DF_REGIONS },
+  { label: "Bairros e setores de Brasília", regions: SUB_REGIONS },
+  { label: "Entorno do DF (RIDE)", regions: ENTORNO_REGIONS },
+];
+
 /** DF + Entorno — usada em selects, busca e validação. */
 export const ALL_REGIONS: DfRegion[] = [...DF_REGIONS, ...ENTORNO_REGIONS];
+
 
 const norm = (s: string) =>
   s
