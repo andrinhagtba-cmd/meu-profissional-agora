@@ -20,6 +20,8 @@ import {
   MessageSquare,
   Plus,
   ShieldCheck,
+  Store,
+
   Sparkles,
   Star,
   User as UserIcon,
