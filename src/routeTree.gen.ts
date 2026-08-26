@@ -43,6 +43,7 @@ import { Route as AuthenticatedPainelOrcamentosRouteImport } from './routes/_aut
 import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
 import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
 import { Route as AuthenticatedPainelMensagensRouteImport } from './routes/_authenticated/painel.mensagens'
+import { Route as AuthenticatedPainelLojaRouteImport } from './routes/_authenticated/painel.loja'
 import { Route as AuthenticatedPainelLeadsRouteImport } from './routes/_authenticated/painel.leads'
 import { Route as AuthenticatedAdminVerificacoesRouteImport } from './routes/_authenticated/admin.verificacoes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
@@ -274,6 +275,11 @@ const AuthenticatedPainelMensagensRoute =
     path: '/mensagens',
     getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelLojaRoute = AuthenticatedPainelLojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => AuthenticatedPainelRoute,
+} as any)
 const AuthenticatedPainelLeadsRoute =
   AuthenticatedPainelLeadsRouteImport.update({
     id: '/leads',
@@ -640,6 +646,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/verificacoes': typeof AuthenticatedAdminVerificacoesRoute
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
+  '/painel/loja': typeof AuthenticatedPainelLojaRoute
   '/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
@@ -723,6 +730,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/verificacoes': typeof AuthenticatedAdminVerificacoesRoute
   '/painel/leads': typeof AuthenticatedPainelLeadsRoute
+  '/painel/loja': typeof AuthenticatedPainelLojaRoute
   '/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
   '/painel/perfil': typeof AuthenticatedPainelPerfilRoute
@@ -808,6 +816,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/verificacoes': typeof AuthenticatedAdminVerificacoesRoute
   '/_authenticated/painel/leads': typeof AuthenticatedPainelLeadsRoute
+  '/_authenticated/painel/loja': typeof AuthenticatedPainelLojaRoute
   '/_authenticated/painel/mensagens': typeof AuthenticatedPainelMensagensRouteWithChildren
   '/_authenticated/painel/midia': typeof AuthenticatedPainelMidiaRoute
   '/_authenticated/painel/notificacoes': typeof AuthenticatedPainelNotificacoesRoute
@@ -896,6 +905,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/admin/verificacoes'
     | '/painel/leads'
+    | '/painel/loja'
     | '/painel/mensagens'
     | '/painel/midia'
     | '/painel/notificacoes'
@@ -979,6 +989,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/admin/verificacoes'
     | '/painel/leads'
+    | '/painel/loja'
     | '/painel/midia'
     | '/painel/notificacoes'
     | '/painel/perfil'
@@ -1063,6 +1074,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/verificacoes'
     | '/_authenticated/painel/leads'
+    | '/_authenticated/painel/loja'
     | '/_authenticated/painel/mensagens'
     | '/_authenticated/painel/midia'
     | '/_authenticated/painel/notificacoes'
@@ -1348,6 +1360,13 @@ declare module '@tanstack/react-router' {
       path: '/mensagens'
       fullPath: '/painel/mensagens'
       preLoaderRoute: typeof AuthenticatedPainelMensagensRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/loja': {
+      id: '/_authenticated/painel/loja'
+      path: '/loja'
+      fullPath: '/painel/loja'
+      preLoaderRoute: typeof AuthenticatedPainelLojaRouteImport
       parentRoute: typeof AuthenticatedPainelRoute
     }
     '/_authenticated/painel/leads': {
@@ -1879,6 +1898,7 @@ const AuthenticatedPainelPedidosRouteWithChildren =
 
 interface AuthenticatedPainelRouteChildren {
   AuthenticatedPainelLeadsRoute: typeof AuthenticatedPainelLeadsRoute
+  AuthenticatedPainelLojaRoute: typeof AuthenticatedPainelLojaRoute
   AuthenticatedPainelMensagensRoute: typeof AuthenticatedPainelMensagensRouteWithChildren
   AuthenticatedPainelMidiaRoute: typeof AuthenticatedPainelMidiaRoute
   AuthenticatedPainelNotificacoesRoute: typeof AuthenticatedPainelNotificacoesRoute
@@ -1893,6 +1913,7 @@ interface AuthenticatedPainelRouteChildren {
 
 const AuthenticatedPainelRouteChildren: AuthenticatedPainelRouteChildren = {
   AuthenticatedPainelLeadsRoute: AuthenticatedPainelLeadsRoute,
+  AuthenticatedPainelLojaRoute: AuthenticatedPainelLojaRoute,
   AuthenticatedPainelMensagensRoute:
     AuthenticatedPainelMensagensRouteWithChildren,
   AuthenticatedPainelMidiaRoute: AuthenticatedPainelMidiaRoute,
