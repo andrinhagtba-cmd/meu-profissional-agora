@@ -12,7 +12,7 @@ import type { Professional } from "@/types";
 
 export function ProfessionalCard({ pro }: { pro: Professional }) {
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float">
+    <article className="group relative flex min-w-0 w-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float">
       <ZoomableImageArea
         src={pro.coverUrl}
         alt={pro.name}
@@ -22,7 +22,7 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
       <div className="absolute right-4 top-4 z-10">
         <FavoriteButton slug={pro.slug} name={pro.name} />
       </div>
-      <div className="relative flex flex-1 flex-col p-5 pt-0">
+      <div className="relative flex min-w-0 flex-1 flex-col p-5 pt-0">
         <div className="-mt-9 flex items-end justify-between gap-3">
           <ZoomableThumb src={pro.avatarUrl} alt={pro.name}>
             <ProAvatar
@@ -88,14 +88,14 @@ export function ProfessionalCard({ pro }: { pro: Professional }) {
         )}
       </div>
 
-      <div className="mt-4 flex items-end justify-between gap-3 border-t border-border pt-4">
-        <div>
+       <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-border pt-4">
+         <div className="min-w-0 break-words">
           <p className="text-xs text-muted-foreground">{pro.priceLabel?.trim() || "a partir de"}</p>
           <p className="font-display text-lg font-extrabold text-foreground">
             R$ {pro.priceFrom.toLocaleString("pt-BR")}
           </p>
         </div>
-        <Button asChild className="h-11 rounded-xl px-5 font-semibold">
+         <Button asChild className="h-11 shrink-0 rounded-xl px-4 font-semibold sm:px-5">
           <Link to="/profissional/$slug" params={{ slug: pro.slug }}>
             Ver perfil
           </Link>

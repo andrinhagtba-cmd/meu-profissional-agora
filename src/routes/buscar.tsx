@@ -27,6 +27,16 @@ interface BuscarSearch {
 }
 
 export const Route = createFileRoute("/buscar")({
+  head: () => ({
+    meta: [
+      { title: "Buscar empresas e profissionais | Guia DF na Mídia" },
+      { name: "description", content: "Encontre empresas e profissionais no Distrito Federal e Entorno por serviço e localização." },
+      { property: "og:title", content: "Buscar empresas e profissionais | Guia DF na Mídia" },
+      { property: "og:description", content: "Compare empresas e profissionais por serviço e localização no DF e Entorno." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   validateSearch: (search: Record<string, unknown>): BuscarSearch => ({
     servico: typeof search.servico === "string" ? search.servico : undefined,
     cidade: typeof search.cidade === "string" ? search.cidade : undefined,
@@ -247,7 +257,7 @@ function BuscarPage() {
         </div>
       </div>
 
-      <div className="container-page grid gap-8 py-8 lg:grid-cols-[280px_1fr]">
+      <div className="container-page grid grid-cols-[minmax(0,1fr)] gap-8 py-8 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="hidden lg:block" aria-label="Filtros">
           <div className="sticky top-24 rounded-3xl border border-border bg-card p-6 shadow-card">
             <h2 className="mb-5 font-display text-lg font-bold text-foreground">Filtros</h2>
@@ -255,15 +265,15 @@ function BuscarPage() {
           </div>
         </aside>
 
-        <div>
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground" aria-live="polite">
+        <div className="min-w-0">
+          <div className="mb-5 grid min-w-0 gap-3 sm:flex sm:items-center sm:justify-between">
+            <p className="min-w-0 text-sm text-muted-foreground" aria-live="polite">
               {isLoading ? "Buscando..." : `${total} profissiona${total === 1 ? "l" : "is"} encontrado${total === 1 ? "" : "s"}`}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 sm:flex">
               <Button
                 variant="outline"
-                className="h-11 rounded-xl border-border font-semibold lg:hidden"
+                className="h-11 shrink-0 rounded-xl border-border font-semibold lg:hidden"
                 onClick={() => setFiltersOpen(!filtersOpen)}
                 aria-expanded={filtersOpen}
               >
@@ -272,7 +282,7 @@ function BuscarPage() {
               </Button>
               <label htmlFor="ordenar" className="sr-only">Ordenar por</label>
               <Select value={ordenar} onValueChange={(v) => { setOrdenar(v); setPagina(1); }}>
-                <SelectTrigger id="ordenar" className="h-11! w-48 rounded-xl">
+                <SelectTrigger id="ordenar" className="h-11! min-w-0 w-full rounded-xl sm:w-48">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -293,7 +303,7 @@ function BuscarPage() {
           )}
 
           {isLoading ? (
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 sm:grid-cols-2">
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton key={i} className="h-72 rounded-3xl" />
               ))}
@@ -313,7 +323,7 @@ function BuscarPage() {
             </div>
           ) : (
             <>
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 sm:grid-cols-2">
                 {pageItems.map((pro) => (
                   <ProfessionalCard key={pro.slug} pro={pro} />
                 ))}
