@@ -4,8 +4,9 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { FloatingWhatsApp } from "./FloatingWhatsApp";
 import { MobileTabBar } from "@/components/mobile/MobileTabBar";
+import type { WhatsAppProfile } from "@/lib/floatingWhatsApp";
 
-export function SiteLayout({ children }: { children: ReactNode }) {
+export function SiteLayout({ children, whatsappProfile }: { children: ReactNode; whatsappProfile?: WhatsAppProfile }) {
   return (
     <div className="flex min-h-dvh w-full max-w-full flex-col overflow-x-hidden">
       <TopBar />
@@ -14,7 +15,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <Footer />
       <div className="h-16 md:hidden" aria-hidden="true" />
       <MobileTabBar />
-      <FloatingWhatsApp />
+      <FloatingWhatsApp profile={whatsappProfile} />
     </div>
   );
 }

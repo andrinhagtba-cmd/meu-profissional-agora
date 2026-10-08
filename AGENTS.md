@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Public profile pages pass their contact context through SiteLayout to FloatingWhatsApp; profile contacts never fall back to the platform number, preventing misdirected enquiries.
