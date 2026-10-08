@@ -66,6 +66,10 @@ export const Route = createFileRoute("/profissional/$slug")({
       ? [
           { title: `${loaderData.pro.name} — ${loaderData.pro.specialty}` },
           { name: "description", content: loaderData.pro.description.slice(0, 155) },
+          { property: "og:title", content: `${loaderData.pro.name} — Guia DF na Mídia` },
+          { property: "og:description", content: loaderData.pro.description.slice(0, 155) },
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
         ]
       : [],
   }),
@@ -246,7 +250,7 @@ function ProfilePage() {
   );
 
   return (
-    <SiteLayout>
+    <SiteLayout whatsappProfile={pro}>
       {/* ============== HERO PREMIUM ============== */}
       <section className="relative w-full bg-gradient-to-b from-muted/40 to-background">
         <div className="container-page pt-4 sm:pt-6">

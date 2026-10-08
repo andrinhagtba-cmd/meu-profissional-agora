@@ -12,6 +12,14 @@ import { Testimonials } from "@/components/home/Testimonials";
 import { ProCTA } from "@/components/home/ProCTA";
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "Guia DF na Mídia — Empresas e profissionais no Distrito Federal" },
+    { name: "description", content: "Encontre empresas, serviços e profissionais no Distrito Federal e entre em contato pelo Guia DF na Mídia." },
+    { property: "og:title", content: "Guia DF na Mídia — Empresas e profissionais" },
+    { property: "og:description", content: "Encontre empresas, serviços e profissionais no Distrito Federal." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: Index,
 });
 
