@@ -9,151 +9,100 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SobreRouteImport } from './routes/sobre'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
-import { Route as ProfissionaisRouteImport } from './routes/profissionais'
-import { Route as PlanosRouteImport } from './routes/planos'
-import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
-import { Route as OrcamentosRouteImport } from './routes/orcamentos'
-import { Route as EntrarRouteImport } from './routes/entrar'
-import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as CategoriasRouteImport } from './routes/categorias'
-import { Route as BuscarRouteImport } from './routes/buscar'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfissionalSlugRouteImport } from './routes/profissional.$slug'
-import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
-import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
-import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
-import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as BuscarRouteImport } from './routes/buscar'
+import { Route as CategoriasRouteImport } from './routes/categorias'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as PedirOrcamentoRouteImport } from './routes/pedir-orcamento'
+import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as ProfissionaisRouteImport } from './routes/profissionais'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
+import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as CadastroProfissionalRouteImport } from './routes/cadastro.profissional'
+import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as ProfissionalSlugRouteImport } from './routes/profissional.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as ApiPublicPwaIconRouteImport } from './routes/api/public/pwa-icon'
-import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
-import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
-import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
-import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
-import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
-import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
-import { Route as AuthenticatedPainelOrcamentosRouteImport } from './routes/_authenticated/painel.orcamentos'
-import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
-import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
-import { Route as AuthenticatedPainelMensagensRouteImport } from './routes/_authenticated/painel.mensagens'
-import { Route as AuthenticatedPainelLojaRouteImport } from './routes/_authenticated/painel.loja'
-import { Route as AuthenticatedPainelLeadsRouteImport } from './routes/_authenticated/painel.leads'
-import { Route as AuthenticatedAdminVerificacoesRouteImport } from './routes/_authenticated/admin.verificacoes'
-import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
-import { Route as AuthenticatedAdminTemplatesRouteImport } from './routes/_authenticated/admin.templates'
-import { Route as AuthenticatedAdminStatusRouteImport } from './routes/_authenticated/admin.status'
-import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin.solicitacoes'
-import { Route as AuthenticatedAdminServicosRouteImport } from './routes/_authenticated/admin.servicos'
-import { Route as AuthenticatedAdminSegurancaRouteImport } from './routes/_authenticated/admin.seguranca'
-import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
-import { Route as AuthenticatedAdminRegioesRouteImport } from './routes/_authenticated/admin.regioes'
-import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authenticated/admin.propostas'
-import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
-import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
-import { Route as AuthenticatedAdminPermissoesRouteImport } from './routes/_authenticated/admin.permissoes'
-import { Route as AuthenticatedAdminPedidosRecentesRouteImport } from './routes/_authenticated/admin.pedidos-recentes'
-import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
-import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
-import { Route as AuthenticatedAdminNotificacoesRouteImport } from './routes/_authenticated/admin.notificacoes'
-import { Route as AuthenticatedAdminMidiasRouteImport } from './routes/_authenticated/admin.midias'
-import { Route as AuthenticatedAdminMetricasRouteImport } from './routes/_authenticated/admin.metricas'
-import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
-import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
-import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated/admin.integracoes'
-import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
-import { Route as AuthenticatedAdminFaturamentoRouteImport } from './routes/_authenticated/admin.faturamento'
-import { Route as AuthenticatedAdminFaqsRouteImport } from './routes/_authenticated/admin.faqs'
-import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin.empresas'
-import { Route as AuthenticatedAdminDestaquesRouteImport } from './routes/_authenticated/admin.destaques'
-import { Route as AuthenticatedAdminDepoimentosRouteImport } from './routes/_authenticated/admin.depoimentos'
-import { Route as AuthenticatedAdminDenunciasRouteImport } from './routes/_authenticated/admin.denuncias'
-import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenticated/admin.cupons'
-import { Route as AuthenticatedAdminContatosRouteImport } from './routes/_authenticated/admin.contatos'
-import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
-import { Route as AuthenticatedAdminClientesRouteImport } from './routes/_authenticated/admin.clientes'
-import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
-import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
-import { Route as AuthenticatedAdminBeneficiosRouteImport } from './routes/_authenticated/admin.beneficios'
-import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
-import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
-import { Route as AuthenticatedAdminAtividadeRouteImport } from './routes/_authenticated/admin.atividade'
-import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_authenticated/admin.assinaturas'
 import { Route as AuthenticatedAdminAdministradoresRouteImport } from './routes/_authenticated/admin.administradores'
-import { Route as AuthenticatedPainelPedidosIndexRouteImport } from './routes/_authenticated/painel.pedidos.index'
-import { Route as AuthenticatedPainelOrcamentosIndexRouteImport } from './routes/_authenticated/painel.orcamentos.index'
-import { Route as AuthenticatedPainelMensagensIndexRouteImport } from './routes/_authenticated/painel.mensagens.index'
+import { Route as AuthenticatedAdminAssinaturasRouteImport } from './routes/_authenticated/admin.assinaturas'
+import { Route as AuthenticatedAdminAtividadeRouteImport } from './routes/_authenticated/admin.atividade'
+import { Route as AuthenticatedAdminAvaliacoesRouteImport } from './routes/_authenticated/admin.avaliacoes'
+import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
+import { Route as AuthenticatedAdminBeneficiosRouteImport } from './routes/_authenticated/admin.beneficios'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
+import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
+import { Route as AuthenticatedAdminClientesRouteImport } from './routes/_authenticated/admin.clientes'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
+import { Route as AuthenticatedAdminContatosRouteImport } from './routes/_authenticated/admin.contatos'
+import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenticated/admin.cupons'
+import { Route as AuthenticatedAdminDenunciasRouteImport } from './routes/_authenticated/admin.denuncias'
+import { Route as AuthenticatedAdminDepoimentosRouteImport } from './routes/_authenticated/admin.depoimentos'
+import { Route as AuthenticatedAdminDestaquesRouteImport } from './routes/_authenticated/admin.destaques'
+import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin.empresas'
+import { Route as AuthenticatedAdminFaqsRouteImport } from './routes/_authenticated/admin.faqs'
+import { Route as AuthenticatedAdminFaturamentoRouteImport } from './routes/_authenticated/admin.faturamento'
+import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
+import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated/admin.integracoes'
+import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
+import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
+import { Route as AuthenticatedAdminMetricasRouteImport } from './routes/_authenticated/admin.metricas'
+import { Route as AuthenticatedAdminMidiasRouteImport } from './routes/_authenticated/admin.midias'
+import { Route as AuthenticatedAdminNotificacoesRouteImport } from './routes/_authenticated/admin.notificacoes'
+import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
+import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
+import { Route as AuthenticatedAdminPedidosRecentesRouteImport } from './routes/_authenticated/admin.pedidos-recentes'
+import { Route as AuthenticatedAdminPermissoesRouteImport } from './routes/_authenticated/admin.permissoes'
+import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
+import { Route as AuthenticatedAdminProfissionaisRouteImport } from './routes/_authenticated/admin.profissionais'
+import { Route as AuthenticatedAdminPropostasRouteImport } from './routes/_authenticated/admin.propostas'
+import { Route as AuthenticatedAdminRegioesRouteImport } from './routes/_authenticated/admin.regioes'
+import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
+import { Route as AuthenticatedAdminSegurancaRouteImport } from './routes/_authenticated/admin.seguranca'
+import { Route as AuthenticatedAdminServicosRouteImport } from './routes/_authenticated/admin.servicos'
+import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin.solicitacoes'
+import { Route as AuthenticatedAdminStatusRouteImport } from './routes/_authenticated/admin.status'
+import { Route as AuthenticatedAdminTemplatesRouteImport } from './routes/_authenticated/admin.templates'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
+import { Route as AuthenticatedAdminVerificacoesRouteImport } from './routes/_authenticated/admin.verificacoes'
+import { Route as AuthenticatedPainelIndexRouteImport } from './routes/_authenticated/painel.index'
+import { Route as AuthenticatedPainelLeadsRouteImport } from './routes/_authenticated/painel.leads'
+import { Route as AuthenticatedPainelLojaRouteImport } from './routes/_authenticated/painel.loja'
+import { Route as AuthenticatedPainelMensagensRouteImport } from './routes/_authenticated/painel.mensagens'
+import { Route as AuthenticatedPainelMidiaRouteImport } from './routes/_authenticated/painel.midia'
+import { Route as AuthenticatedPainelNotificacoesRouteImport } from './routes/_authenticated/painel.notificacoes'
+import { Route as AuthenticatedPainelOrcamentosRouteImport } from './routes/_authenticated/painel.orcamentos'
+import { Route as AuthenticatedPainelPedidosRouteImport } from './routes/_authenticated/painel.pedidos'
+import { Route as AuthenticatedPainelPerfilRouteImport } from './routes/_authenticated/painel.perfil'
+import { Route as AuthenticatedPainelPropostasRouteImport } from './routes/_authenticated/painel.propostas'
+import { Route as AuthenticatedPainelServicosRouteImport } from './routes/_authenticated/painel.servicos'
+import { Route as AuthenticatedPainelTrabalhosRouteImport } from './routes/_authenticated/painel.trabalhos'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as ApiPublicPwaIconRouteImport } from './routes/api/public/pwa-icon'
 import { Route as AuthenticatedAdminProfissionaisIndexRouteImport } from './routes/_authenticated/admin.profissionais.index'
-import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
-import { Route as AuthenticatedPainelOrcamentosIdRouteImport } from './routes/_authenticated/painel.orcamentos.$id'
-import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
-import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
 import { Route as AuthenticatedAdminProfissionaisIdRouteImport } from './routes/_authenticated/admin.profissionais.$id'
+import { Route as AuthenticatedAdminProfissionaisNovoRouteImport } from './routes/_authenticated/admin.profissionais.novo'
+import { Route as AuthenticatedPainelMensagensIndexRouteImport } from './routes/_authenticated/painel.mensagens.index'
+import { Route as AuthenticatedPainelMensagensIdRouteImport } from './routes/_authenticated/painel.mensagens.$id'
+import { Route as AuthenticatedPainelOrcamentosIndexRouteImport } from './routes/_authenticated/painel.orcamentos.index'
+import { Route as AuthenticatedPainelOrcamentosIdRouteImport } from './routes/_authenticated/painel.orcamentos.$id'
+import { Route as AuthenticatedPainelPedidosIndexRouteImport } from './routes/_authenticated/painel.pedidos.index'
+import { Route as AuthenticatedPainelPedidosIdRouteImport } from './routes/_authenticated/painel.pedidos.$id'
 
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
-  id: '/recuperar-senha',
-  path: '/recuperar-senha',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfissionaisRoute = ProfissionaisRouteImport.update({
-  id: '/profissionais',
-  path: '/profissionais',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlanosRoute = PlanosRouteImport.update({
-  id: '/planos',
-  path: '/planos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
-  id: '/pedir-orcamento',
-  path: '/pedir-orcamento',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrcamentosRoute = OrcamentosRouteImport.update({
-  id: '/orcamentos',
-  path: '/orcamentos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EntrarRoute = EntrarRouteImport.update({
-  id: '/entrar',
-  path: '/entrar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContatoRoute = ContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriasRoute = CategoriasRouteImport.update({
-  id: '/categorias',
-  path: '/categorias',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuscarRoute = BuscarRouteImport.update({
-  id: '/buscar',
-  path: '/buscar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -161,33 +110,69 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BuscarRoute = BuscarRouteImport.update({
+  id: '/buscar',
+  path: '/buscar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfissionalSlugRoute = ProfissionalSlugRouteImport.update({
-  id: '/profissional/$slug',
-  path: '/profissional/$slug',
+const CategoriasRoute = CategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
-  id: '/categoria/$slug',
-  path: '/categoria/$slug',
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CadastroProfissionalRoute = CadastroProfissionalRouteImport.update({
-  id: '/cadastro/profissional',
-  path: '/cadastro/profissional',
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
-  id: '/painel',
-  path: '/painel',
+const OrcamentosRoute = OrcamentosRouteImport.update({
+  id: '/orcamentos',
+  path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedirOrcamentoRoute = PedirOrcamentoRouteImport.update({
+  id: '/pedir-orcamento',
+  path: '/pedir-orcamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfissionaisRoute = ProfissionaisRouteImport.update({
+  id: '/profissionais',
+  path: '/profissionais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
@@ -195,325 +180,35 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPainelIndexRoute =
-  AuthenticatedPainelIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
+const CadastroProfissionalRoute = CadastroProfissionalRouteImport.update({
+  id: '/cadastro/profissional',
+  path: '/cadastro/profissional',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
+  id: '/categoria/$slug',
+  path: '/categoria/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfissionalSlugRoute = ProfissionalSlugRouteImport.update({
+  id: '/profissional/$slug',
+  path: '/profissional/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const ApiPublicPwaIconRoute = ApiPublicPwaIconRouteImport.update({
-  id: '/api/public/pwa-icon',
-  path: '/api/public/pwa-icon',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
-  id: '/api/public/manifest',
-  path: '/api/public/manifest',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedPainelTrabalhosRoute =
-  AuthenticatedPainelTrabalhosRouteImport.update({
-    id: '/trabalhos',
-    path: '/trabalhos',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelServicosRoute =
-  AuthenticatedPainelServicosRouteImport.update({
-    id: '/servicos',
-    path: '/servicos',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelPropostasRoute =
-  AuthenticatedPainelPropostasRouteImport.update({
-    id: '/propostas',
-    path: '/propostas',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelPerfilRoute =
-  AuthenticatedPainelPerfilRouteImport.update({
-    id: '/perfil',
-    path: '/perfil',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelPedidosRoute =
-  AuthenticatedPainelPedidosRouteImport.update({
-    id: '/pedidos',
-    path: '/pedidos',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelOrcamentosRoute =
-  AuthenticatedPainelOrcamentosRouteImport.update({
-    id: '/orcamentos',
-    path: '/orcamentos',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelNotificacoesRoute =
-  AuthenticatedPainelNotificacoesRouteImport.update({
-    id: '/notificacoes',
-    path: '/notificacoes',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelMidiaRoute =
-  AuthenticatedPainelMidiaRouteImport.update({
-    id: '/midia',
-    path: '/midia',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelMensagensRoute =
-  AuthenticatedPainelMensagensRouteImport.update({
-    id: '/mensagens',
-    path: '/mensagens',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedPainelLojaRoute = AuthenticatedPainelLojaRouteImport.update({
-  id: '/loja',
-  path: '/loja',
-  getParentRoute: () => AuthenticatedPainelRoute,
-} as any)
-const AuthenticatedPainelLeadsRoute =
-  AuthenticatedPainelLeadsRouteImport.update({
-    id: '/leads',
-    path: '/leads',
-    getParentRoute: () => AuthenticatedPainelRoute,
-  } as any)
-const AuthenticatedAdminVerificacoesRoute =
-  AuthenticatedAdminVerificacoesRouteImport.update({
-    id: '/verificacoes',
-    path: '/verificacoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminUsuariosRoute =
-  AuthenticatedAdminUsuariosRouteImport.update({
-    id: '/usuarios',
-    path: '/usuarios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminTemplatesRoute =
-  AuthenticatedAdminTemplatesRouteImport.update({
-    id: '/templates',
-    path: '/templates',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminStatusRoute =
-  AuthenticatedAdminStatusRouteImport.update({
-    id: '/status',
-    path: '/status',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSolicitacoesRoute =
-  AuthenticatedAdminSolicitacoesRouteImport.update({
-    id: '/solicitacoes',
-    path: '/solicitacoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminServicosRoute =
-  AuthenticatedAdminServicosRouteImport.update({
-    id: '/servicos',
-    path: '/servicos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSegurancaRoute =
-  AuthenticatedAdminSegurancaRouteImport.update({
-    id: '/seguranca',
-    path: '/seguranca',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminRelatoriosRoute =
-  AuthenticatedAdminRelatoriosRouteImport.update({
-    id: '/relatorios',
-    path: '/relatorios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminRegioesRoute =
-  AuthenticatedAdminRegioesRouteImport.update({
-    id: '/regioes',
-    path: '/regioes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPropostasRoute =
-  AuthenticatedAdminPropostasRouteImport.update({
-    id: '/propostas',
-    path: '/propostas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminProfissionaisRoute =
-  AuthenticatedAdminProfissionaisRouteImport.update({
-    id: '/profissionais',
-    path: '/profissionais',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPlanosRoute =
-  AuthenticatedAdminPlanosRouteImport.update({
-    id: '/planos',
-    path: '/planos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPermissoesRoute =
-  AuthenticatedAdminPermissoesRouteImport.update({
-    id: '/permissoes',
-    path: '/permissoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPedidosRecentesRoute =
-  AuthenticatedAdminPedidosRecentesRouteImport.update({
-    id: '/pedidos-recentes',
-    path: '/pedidos-recentes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPedidosRoute =
-  AuthenticatedAdminPedidosRouteImport.update({
-    id: '/pedidos',
-    path: '/pedidos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPaginasRoute =
-  AuthenticatedAdminPaginasRouteImport.update({
-    id: '/paginas',
-    path: '/paginas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminNotificacoesRoute =
-  AuthenticatedAdminNotificacoesRouteImport.update({
-    id: '/notificacoes',
-    path: '/notificacoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminMidiasRoute =
-  AuthenticatedAdminMidiasRouteImport.update({
-    id: '/midias',
-    path: '/midias',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminMetricasRoute =
-  AuthenticatedAdminMetricasRouteImport.update({
-    id: '/metricas',
-    path: '/metricas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminIntegracoesRoute =
-  AuthenticatedAdminIntegracoesRouteImport.update({
-    id: '/integracoes',
-    path: '/integracoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminHomepageRoute =
-  AuthenticatedAdminHomepageRouteImport.update({
-    id: '/homepage',
-    path: '/homepage',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminFaturamentoRoute =
-  AuthenticatedAdminFaturamentoRouteImport.update({
-    id: '/faturamento',
-    path: '/faturamento',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminFaqsRoute = AuthenticatedAdminFaqsRouteImport.update({
-  id: '/faqs',
-  path: '/faqs',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminEmpresasRoute =
-  AuthenticatedAdminEmpresasRouteImport.update({
-    id: '/empresas',
-    path: '/empresas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminDestaquesRoute =
-  AuthenticatedAdminDestaquesRouteImport.update({
-    id: '/destaques',
-    path: '/destaques',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminDepoimentosRoute =
-  AuthenticatedAdminDepoimentosRouteImport.update({
-    id: '/depoimentos',
-    path: '/depoimentos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminDenunciasRoute =
-  AuthenticatedAdminDenunciasRouteImport.update({
-    id: '/denuncias',
-    path: '/denuncias',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCuponsRoute =
-  AuthenticatedAdminCuponsRouteImport.update({
-    id: '/cupons',
-    path: '/cupons',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminContatosRoute =
-  AuthenticatedAdminContatosRouteImport.update({
-    id: '/contatos',
-    path: '/contatos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminConfiguracoesRoute =
-  AuthenticatedAdminConfiguracoesRouteImport.update({
-    id: '/configuracoes',
-    path: '/configuracoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminClientesRoute =
-  AuthenticatedAdminClientesRouteImport.update({
-    id: '/clientes',
-    path: '/clientes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCategoriasRoute =
-  AuthenticatedAdminCategoriasRouteImport.update({
-    id: '/categorias',
-    path: '/categorias',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminBeneficiosRoute =
-  AuthenticatedAdminBeneficiosRouteImport.update({
-    id: '/beneficios',
-    path: '/beneficios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBannersRoute =
-  AuthenticatedAdminBannersRouteImport.update({
-    id: '/banners',
-    path: '/banners',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminAvaliacoesRoute =
-  AuthenticatedAdminAvaliacoesRouteImport.update({
-    id: '/avaliacoes',
-    path: '/avaliacoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminAtividadeRoute =
-  AuthenticatedAdminAtividadeRouteImport.update({
-    id: '/atividade',
-    path: '/atividade',
+const AuthenticatedAdminAdministradoresRoute =
+  AuthenticatedAdminAdministradoresRouteImport.update({
+    id: '/administradores',
+    path: '/administradores',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAssinaturasRoute =
@@ -522,58 +217,321 @@ const AuthenticatedAdminAssinaturasRoute =
     path: '/assinaturas',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminAdministradoresRoute =
-  AuthenticatedAdminAdministradoresRouteImport.update({
-    id: '/administradores',
-    path: '/administradores',
+const AuthenticatedAdminAtividadeRoute =
+  AuthenticatedAdminAtividadeRouteImport.update({
+    id: '/atividade',
+    path: '/atividade',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedPainelPedidosIndexRoute =
-  AuthenticatedPainelPedidosIndexRouteImport.update({
+const AuthenticatedAdminAvaliacoesRoute =
+  AuthenticatedAdminAvaliacoesRouteImport.update({
+    id: '/avaliacoes',
+    path: '/avaliacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBannersRoute =
+  AuthenticatedAdminBannersRouteImport.update({
+    id: '/banners',
+    path: '/banners',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBeneficiosRoute =
+  AuthenticatedAdminBeneficiosRouteImport.update({
+    id: '/beneficios',
+    path: '/beneficios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminCategoriasRoute =
+  AuthenticatedAdminCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminClientesRoute =
+  AuthenticatedAdminClientesRouteImport.update({
+    id: '/clientes',
+    path: '/clientes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminContatosRoute =
+  AuthenticatedAdminContatosRouteImport.update({
+    id: '/contatos',
+    path: '/contatos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCuponsRoute =
+  AuthenticatedAdminCuponsRouteImport.update({
+    id: '/cupons',
+    path: '/cupons',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDenunciasRoute =
+  AuthenticatedAdminDenunciasRouteImport.update({
+    id: '/denuncias',
+    path: '/denuncias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDepoimentosRoute =
+  AuthenticatedAdminDepoimentosRouteImport.update({
+    id: '/depoimentos',
+    path: '/depoimentos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDestaquesRoute =
+  AuthenticatedAdminDestaquesRouteImport.update({
+    id: '/destaques',
+    path: '/destaques',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEmpresasRoute =
+  AuthenticatedAdminEmpresasRouteImport.update({
+    id: '/empresas',
+    path: '/empresas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminFaqsRoute = AuthenticatedAdminFaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminFaturamentoRoute =
+  AuthenticatedAdminFaturamentoRouteImport.update({
+    id: '/faturamento',
+    path: '/faturamento',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminHomepageRoute =
+  AuthenticatedAdminHomepageRouteImport.update({
+    id: '/homepage',
+    path: '/homepage',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIntegracoesRoute =
+  AuthenticatedAdminIntegracoesRouteImport.update({
+    id: '/integracoes',
+    path: '/integracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminMetricasRoute =
+  AuthenticatedAdminMetricasRouteImport.update({
+    id: '/metricas',
+    path: '/metricas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMidiasRoute =
+  AuthenticatedAdminMidiasRouteImport.update({
+    id: '/midias',
+    path: '/midias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminNotificacoesRoute =
+  AuthenticatedAdminNotificacoesRouteImport.update({
+    id: '/notificacoes',
+    path: '/notificacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPaginasRoute =
+  AuthenticatedAdminPaginasRouteImport.update({
+    id: '/paginas',
+    path: '/paginas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPedidosRoute =
+  AuthenticatedAdminPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPedidosRecentesRoute =
+  AuthenticatedAdminPedidosRecentesRouteImport.update({
+    id: '/pedidos-recentes',
+    path: '/pedidos-recentes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPermissoesRoute =
+  AuthenticatedAdminPermissoesRouteImport.update({
+    id: '/permissoes',
+    path: '/permissoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPlanosRoute =
+  AuthenticatedAdminPlanosRouteImport.update({
+    id: '/planos',
+    path: '/planos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProfissionaisRoute =
+  AuthenticatedAdminProfissionaisRouteImport.update({
+    id: '/profissionais',
+    path: '/profissionais',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPropostasRoute =
+  AuthenticatedAdminPropostasRouteImport.update({
+    id: '/propostas',
+    path: '/propostas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRegioesRoute =
+  AuthenticatedAdminRegioesRouteImport.update({
+    id: '/regioes',
+    path: '/regioes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRelatoriosRoute =
+  AuthenticatedAdminRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSegurancaRoute =
+  AuthenticatedAdminSegurancaRouteImport.update({
+    id: '/seguranca',
+    path: '/seguranca',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminServicosRoute =
+  AuthenticatedAdminServicosRouteImport.update({
+    id: '/servicos',
+    path: '/servicos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSolicitacoesRoute =
+  AuthenticatedAdminSolicitacoesRouteImport.update({
+    id: '/solicitacoes',
+    path: '/solicitacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminStatusRoute =
+  AuthenticatedAdminStatusRouteImport.update({
+    id: '/status',
+    path: '/status',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTemplatesRoute =
+  AuthenticatedAdminTemplatesRouteImport.update({
+    id: '/templates',
+    path: '/templates',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminVerificacoesRoute =
+  AuthenticatedAdminVerificacoesRouteImport.update({
+    id: '/verificacoes',
+    path: '/verificacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedPainelIndexRoute =
+  AuthenticatedPainelIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedPainelPedidosRoute,
+    getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
-const AuthenticatedPainelOrcamentosIndexRoute =
-  AuthenticatedPainelOrcamentosIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
+const AuthenticatedPainelLeadsRoute =
+  AuthenticatedPainelLeadsRouteImport.update({
+    id: '/leads',
+    path: '/leads',
+    getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
-const AuthenticatedPainelMensagensIndexRoute =
-  AuthenticatedPainelMensagensIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedPainelMensagensRoute,
+const AuthenticatedPainelLojaRoute = AuthenticatedPainelLojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => AuthenticatedPainelRoute,
+} as any)
+const AuthenticatedPainelMensagensRoute =
+  AuthenticatedPainelMensagensRouteImport.update({
+    id: '/mensagens',
+    path: '/mensagens',
+    getParentRoute: () => AuthenticatedPainelRoute,
   } as any)
+const AuthenticatedPainelMidiaRoute =
+  AuthenticatedPainelMidiaRouteImport.update({
+    id: '/midia',
+    path: '/midia',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelNotificacoesRoute =
+  AuthenticatedPainelNotificacoesRouteImport.update({
+    id: '/notificacoes',
+    path: '/notificacoes',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelOrcamentosRoute =
+  AuthenticatedPainelOrcamentosRouteImport.update({
+    id: '/orcamentos',
+    path: '/orcamentos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPedidosRoute =
+  AuthenticatedPainelPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPerfilRoute =
+  AuthenticatedPainelPerfilRouteImport.update({
+    id: '/perfil',
+    path: '/perfil',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelPropostasRoute =
+  AuthenticatedPainelPropostasRouteImport.update({
+    id: '/propostas',
+    path: '/propostas',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelServicosRoute =
+  AuthenticatedPainelServicosRouteImport.update({
+    id: '/servicos',
+    path: '/servicos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const AuthenticatedPainelTrabalhosRoute =
+  AuthenticatedPainelTrabalhosRouteImport.update({
+    id: '/trabalhos',
+    path: '/trabalhos',
+    getParentRoute: () => AuthenticatedPainelRoute,
+  } as any)
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPwaIconRoute = ApiPublicPwaIconRouteImport.update({
+  id: '/api/public/pwa-icon',
+  path: '/api/public/pwa-icon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminProfissionaisIndexRoute =
   AuthenticatedAdminProfissionaisIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
-  } as any)
-const AuthenticatedPainelPedidosIdRoute =
-  AuthenticatedPainelPedidosIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedPainelPedidosRoute,
-  } as any)
-const AuthenticatedPainelOrcamentosIdRoute =
-  AuthenticatedPainelOrcamentosIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
-  } as any)
-const AuthenticatedPainelMensagensIdRoute =
-  AuthenticatedPainelMensagensIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedPainelMensagensRoute,
-  } as any)
-const AuthenticatedAdminProfissionaisNovoRoute =
-  AuthenticatedAdminProfissionaisNovoRouteImport.update({
-    id: '/novo',
-    path: '/novo',
     getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
   } as any)
 const AuthenticatedAdminProfissionaisIdRoute =
@@ -581,6 +539,48 @@ const AuthenticatedAdminProfissionaisIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
+  } as any)
+const AuthenticatedAdminProfissionaisNovoRoute =
+  AuthenticatedAdminProfissionaisNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedAdminProfissionaisRoute,
+  } as any)
+const AuthenticatedPainelMensagensIndexRoute =
+  AuthenticatedPainelMensagensIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelMensagensRoute,
+  } as any)
+const AuthenticatedPainelMensagensIdRoute =
+  AuthenticatedPainelMensagensIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelMensagensRoute,
+  } as any)
+const AuthenticatedPainelOrcamentosIndexRoute =
+  AuthenticatedPainelOrcamentosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
+  } as any)
+const AuthenticatedPainelOrcamentosIdRoute =
+  AuthenticatedPainelOrcamentosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelOrcamentosRoute,
+  } as any)
+const AuthenticatedPainelPedidosIndexRoute =
+  AuthenticatedPainelPedidosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
+  } as any)
+const AuthenticatedPainelPedidosIdRoute =
+  AuthenticatedPainelPedidosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPainelPedidosRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -1124,95 +1124,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recuperar-senha': {
-      id: '/recuperar-senha'
-      path: '/recuperar-senha'
-      fullPath: '/recuperar-senha'
-      preLoaderRoute: typeof RecuperarSenhaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profissionais': {
-      id: '/profissionais'
-      path: '/profissionais'
-      fullPath: '/profissionais'
-      preLoaderRoute: typeof ProfissionaisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/planos': {
-      id: '/planos'
-      path: '/planos'
-      fullPath: '/planos'
-      preLoaderRoute: typeof PlanosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pedir-orcamento': {
-      id: '/pedir-orcamento'
-      path: '/pedir-orcamento'
-      fullPath: '/pedir-orcamento'
-      preLoaderRoute: typeof PedirOrcamentoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orcamentos': {
-      id: '/orcamentos'
-      path: '/orcamentos'
-      fullPath: '/orcamentos'
-      preLoaderRoute: typeof OrcamentosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/entrar': {
-      id: '/entrar'
-      path: '/entrar'
-      fullPath: '/entrar'
-      preLoaderRoute: typeof EntrarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contato': {
-      id: '/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof ContatoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categorias': {
-      id: '/categorias'
-      path: '/categorias'
-      fullPath: '/categorias'
-      preLoaderRoute: typeof CategoriasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/buscar': {
-      id: '/buscar'
-      path: '/buscar'
-      fullPath: '/buscar'
-      preLoaderRoute: typeof BuscarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1222,39 +1138,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profissional/$slug': {
-      id: '/profissional/$slug'
-      path: '/profissional/$slug'
-      fullPath: '/profissional/$slug'
-      preLoaderRoute: typeof ProfissionalSlugRouteImport
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categoria/$slug': {
-      id: '/categoria/$slug'
-      path: '/categoria/$slug'
-      fullPath: '/categoria/$slug'
-      preLoaderRoute: typeof CategoriaSlugRouteImport
+    '/buscar': {
+      id: '/buscar'
+      path: '/buscar'
+      fullPath: '/buscar'
+      preLoaderRoute: typeof BuscarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cadastro/profissional': {
-      id: '/cadastro/profissional'
-      path: '/cadastro/profissional'
-      fullPath: '/cadastro/profissional'
-      preLoaderRoute: typeof CadastroProfissionalRouteImport
+    '/categorias': {
+      id: '/categorias'
+      path: '/categorias'
+      fullPath: '/categorias'
+      preLoaderRoute: typeof CategoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/painel': {
-      id: '/_authenticated/painel'
-      path: '/painel'
-      fullPath: '/painel'
-      preLoaderRoute: typeof AuthenticatedPainelRouteImport
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamentos': {
+      id: '/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/orcamentos'
+      preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedir-orcamento': {
+      id: '/pedir-orcamento'
+      path: '/pedir-orcamento'
+      fullPath: '/pedir-orcamento'
+      preLoaderRoute: typeof PedirOrcamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profissionais': {
+      id: '/profissionais'
+      path: '/profissionais'
+      fullPath: '/profissionais'
+      preLoaderRoute: typeof ProfissionaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/favoritos': {
@@ -1264,396 +1243,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+    '/_authenticated/painel': {
+      id: '/_authenticated/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/painel/': {
-      id: '/_authenticated/painel/'
-      path: '/'
-      fullPath: '/painel/'
-      preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
+    '/cadastro/profissional': {
+      id: '/cadastro/profissional'
+      path: '/cadastro/profissional'
+      fullPath: '/cadastro/profissional'
+      preLoaderRoute: typeof CadastroProfissionalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categoria/$slug': {
+      id: '/categoria/$slug'
+      path: '/categoria/$slug'
+      fullPath: '/categoria/$slug'
+      preLoaderRoute: typeof CategoriaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profissional/$slug': {
+      id: '/profissional/$slug'
+      path: '/profissional/$slug'
+      fullPath: '/profissional/$slug'
+      preLoaderRoute: typeof ProfissionalSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/api/public/pwa-icon': {
-      id: '/api/public/pwa-icon'
-      path: '/api/public/pwa-icon'
-      fullPath: '/api/public/pwa-icon'
-      preLoaderRoute: typeof ApiPublicPwaIconRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/manifest': {
-      id: '/api/public/manifest'
-      path: '/api/public/manifest'
-      fullPath: '/api/public/manifest'
-      preLoaderRoute: typeof ApiPublicManifestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/painel/trabalhos': {
-      id: '/_authenticated/painel/trabalhos'
-      path: '/trabalhos'
-      fullPath: '/painel/trabalhos'
-      preLoaderRoute: typeof AuthenticatedPainelTrabalhosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/servicos': {
-      id: '/_authenticated/painel/servicos'
-      path: '/servicos'
-      fullPath: '/painel/servicos'
-      preLoaderRoute: typeof AuthenticatedPainelServicosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/propostas': {
-      id: '/_authenticated/painel/propostas'
-      path: '/propostas'
-      fullPath: '/painel/propostas'
-      preLoaderRoute: typeof AuthenticatedPainelPropostasRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/perfil': {
-      id: '/_authenticated/painel/perfil'
-      path: '/perfil'
-      fullPath: '/painel/perfil'
-      preLoaderRoute: typeof AuthenticatedPainelPerfilRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/pedidos': {
-      id: '/_authenticated/painel/pedidos'
-      path: '/pedidos'
-      fullPath: '/painel/pedidos'
-      preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/orcamentos': {
-      id: '/_authenticated/painel/orcamentos'
-      path: '/orcamentos'
-      fullPath: '/painel/orcamentos'
-      preLoaderRoute: typeof AuthenticatedPainelOrcamentosRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/notificacoes': {
-      id: '/_authenticated/painel/notificacoes'
-      path: '/notificacoes'
-      fullPath: '/painel/notificacoes'
-      preLoaderRoute: typeof AuthenticatedPainelNotificacoesRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/midia': {
-      id: '/_authenticated/painel/midia'
-      path: '/midia'
-      fullPath: '/painel/midia'
-      preLoaderRoute: typeof AuthenticatedPainelMidiaRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/mensagens': {
-      id: '/_authenticated/painel/mensagens'
-      path: '/mensagens'
-      fullPath: '/painel/mensagens'
-      preLoaderRoute: typeof AuthenticatedPainelMensagensRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/loja': {
-      id: '/_authenticated/painel/loja'
-      path: '/loja'
-      fullPath: '/painel/loja'
-      preLoaderRoute: typeof AuthenticatedPainelLojaRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/painel/leads': {
-      id: '/_authenticated/painel/leads'
-      path: '/leads'
-      fullPath: '/painel/leads'
-      preLoaderRoute: typeof AuthenticatedPainelLeadsRouteImport
-      parentRoute: typeof AuthenticatedPainelRoute
-    }
-    '/_authenticated/admin/verificacoes': {
-      id: '/_authenticated/admin/verificacoes'
-      path: '/verificacoes'
-      fullPath: '/admin/verificacoes'
-      preLoaderRoute: typeof AuthenticatedAdminVerificacoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/usuarios': {
-      id: '/_authenticated/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/templates': {
-      id: '/_authenticated/admin/templates'
-      path: '/templates'
-      fullPath: '/admin/templates'
-      preLoaderRoute: typeof AuthenticatedAdminTemplatesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/status': {
-      id: '/_authenticated/admin/status'
-      path: '/status'
-      fullPath: '/admin/status'
-      preLoaderRoute: typeof AuthenticatedAdminStatusRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/solicitacoes': {
-      id: '/_authenticated/admin/solicitacoes'
-      path: '/solicitacoes'
-      fullPath: '/admin/solicitacoes'
-      preLoaderRoute: typeof AuthenticatedAdminSolicitacoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/servicos': {
-      id: '/_authenticated/admin/servicos'
-      path: '/servicos'
-      fullPath: '/admin/servicos'
-      preLoaderRoute: typeof AuthenticatedAdminServicosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/seguranca': {
-      id: '/_authenticated/admin/seguranca'
-      path: '/seguranca'
-      fullPath: '/admin/seguranca'
-      preLoaderRoute: typeof AuthenticatedAdminSegurancaRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/relatorios': {
-      id: '/_authenticated/admin/relatorios'
-      path: '/relatorios'
-      fullPath: '/admin/relatorios'
-      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/regioes': {
-      id: '/_authenticated/admin/regioes'
-      path: '/regioes'
-      fullPath: '/admin/regioes'
-      preLoaderRoute: typeof AuthenticatedAdminRegioesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/propostas': {
-      id: '/_authenticated/admin/propostas'
-      path: '/propostas'
-      fullPath: '/admin/propostas'
-      preLoaderRoute: typeof AuthenticatedAdminPropostasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/profissionais': {
-      id: '/_authenticated/admin/profissionais'
-      path: '/profissionais'
-      fullPath: '/admin/profissionais'
-      preLoaderRoute: typeof AuthenticatedAdminProfissionaisRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/planos': {
-      id: '/_authenticated/admin/planos'
-      path: '/planos'
-      fullPath: '/admin/planos'
-      preLoaderRoute: typeof AuthenticatedAdminPlanosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/permissoes': {
-      id: '/_authenticated/admin/permissoes'
-      path: '/permissoes'
-      fullPath: '/admin/permissoes'
-      preLoaderRoute: typeof AuthenticatedAdminPermissoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/pedidos-recentes': {
-      id: '/_authenticated/admin/pedidos-recentes'
-      path: '/pedidos-recentes'
-      fullPath: '/admin/pedidos-recentes'
-      preLoaderRoute: typeof AuthenticatedAdminPedidosRecentesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/pedidos': {
-      id: '/_authenticated/admin/pedidos'
-      path: '/pedidos'
-      fullPath: '/admin/pedidos'
-      preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/paginas': {
-      id: '/_authenticated/admin/paginas'
-      path: '/paginas'
-      fullPath: '/admin/paginas'
-      preLoaderRoute: typeof AuthenticatedAdminPaginasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/notificacoes': {
-      id: '/_authenticated/admin/notificacoes'
-      path: '/notificacoes'
-      fullPath: '/admin/notificacoes'
-      preLoaderRoute: typeof AuthenticatedAdminNotificacoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/midias': {
-      id: '/_authenticated/admin/midias'
-      path: '/midias'
-      fullPath: '/admin/midias'
-      preLoaderRoute: typeof AuthenticatedAdminMidiasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/metricas': {
-      id: '/_authenticated/admin/metricas'
-      path: '/metricas'
-      fullPath: '/admin/metricas'
-      preLoaderRoute: typeof AuthenticatedAdminMetricasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/logs': {
-      id: '/_authenticated/admin/logs'
-      path: '/logs'
-      fullPath: '/admin/logs'
-      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/leads': {
-      id: '/_authenticated/admin/leads'
-      path: '/leads'
-      fullPath: '/admin/leads'
-      preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/integracoes': {
-      id: '/_authenticated/admin/integracoes'
-      path: '/integracoes'
-      fullPath: '/admin/integracoes'
-      preLoaderRoute: typeof AuthenticatedAdminIntegracoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/homepage': {
-      id: '/_authenticated/admin/homepage'
-      path: '/homepage'
-      fullPath: '/admin/homepage'
-      preLoaderRoute: typeof AuthenticatedAdminHomepageRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/faturamento': {
-      id: '/_authenticated/admin/faturamento'
-      path: '/faturamento'
-      fullPath: '/admin/faturamento'
-      preLoaderRoute: typeof AuthenticatedAdminFaturamentoRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/faqs': {
-      id: '/_authenticated/admin/faqs'
-      path: '/faqs'
-      fullPath: '/admin/faqs'
-      preLoaderRoute: typeof AuthenticatedAdminFaqsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/empresas': {
-      id: '/_authenticated/admin/empresas'
-      path: '/empresas'
-      fullPath: '/admin/empresas'
-      preLoaderRoute: typeof AuthenticatedAdminEmpresasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/destaques': {
-      id: '/_authenticated/admin/destaques'
-      path: '/destaques'
-      fullPath: '/admin/destaques'
-      preLoaderRoute: typeof AuthenticatedAdminDestaquesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/depoimentos': {
-      id: '/_authenticated/admin/depoimentos'
-      path: '/depoimentos'
-      fullPath: '/admin/depoimentos'
-      preLoaderRoute: typeof AuthenticatedAdminDepoimentosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/denuncias': {
-      id: '/_authenticated/admin/denuncias'
-      path: '/denuncias'
-      fullPath: '/admin/denuncias'
-      preLoaderRoute: typeof AuthenticatedAdminDenunciasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/cupons': {
-      id: '/_authenticated/admin/cupons'
-      path: '/cupons'
-      fullPath: '/admin/cupons'
-      preLoaderRoute: typeof AuthenticatedAdminCuponsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/contatos': {
-      id: '/_authenticated/admin/contatos'
-      path: '/contatos'
-      fullPath: '/admin/contatos'
-      preLoaderRoute: typeof AuthenticatedAdminContatosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/configuracoes': {
-      id: '/_authenticated/admin/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/admin/configuracoes'
-      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/clientes': {
-      id: '/_authenticated/admin/clientes'
-      path: '/clientes'
-      fullPath: '/admin/clientes'
-      preLoaderRoute: typeof AuthenticatedAdminClientesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/categorias': {
-      id: '/_authenticated/admin/categorias'
-      path: '/categorias'
-      fullPath: '/admin/categorias'
-      preLoaderRoute: typeof AuthenticatedAdminCategoriasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/blog': {
-      id: '/_authenticated/admin/blog'
-      path: '/blog'
-      fullPath: '/admin/blog'
-      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/beneficios': {
-      id: '/_authenticated/admin/beneficios'
-      path: '/beneficios'
-      fullPath: '/admin/beneficios'
-      preLoaderRoute: typeof AuthenticatedAdminBeneficiosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/banners': {
-      id: '/_authenticated/admin/banners'
-      path: '/banners'
-      fullPath: '/admin/banners'
-      preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/avaliacoes': {
-      id: '/_authenticated/admin/avaliacoes'
-      path: '/avaliacoes'
-      fullPath: '/admin/avaliacoes'
-      preLoaderRoute: typeof AuthenticatedAdminAvaliacoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/atividade': {
-      id: '/_authenticated/admin/atividade'
-      path: '/atividade'
-      fullPath: '/admin/atividade'
-      preLoaderRoute: typeof AuthenticatedAdminAtividadeRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/assinaturas': {
-      id: '/_authenticated/admin/assinaturas'
-      path: '/assinaturas'
-      fullPath: '/admin/assinaturas'
-      preLoaderRoute: typeof AuthenticatedAdminAssinaturasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/administradores': {
@@ -1663,26 +1285,383 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAdministradoresRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/painel/pedidos/': {
-      id: '/_authenticated/painel/pedidos/'
-      path: '/'
-      fullPath: '/painel/pedidos/'
-      preLoaderRoute: typeof AuthenticatedPainelPedidosIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelPedidosRoute
+    '/_authenticated/admin/assinaturas': {
+      id: '/_authenticated/admin/assinaturas'
+      path: '/assinaturas'
+      fullPath: '/admin/assinaturas'
+      preLoaderRoute: typeof AuthenticatedAdminAssinaturasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/painel/orcamentos/': {
-      id: '/_authenticated/painel/orcamentos/'
-      path: '/'
-      fullPath: '/painel/orcamentos/'
-      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
+    '/_authenticated/admin/atividade': {
+      id: '/_authenticated/admin/atividade'
+      path: '/atividade'
+      fullPath: '/admin/atividade'
+      preLoaderRoute: typeof AuthenticatedAdminAtividadeRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/painel/mensagens/': {
-      id: '/_authenticated/painel/mensagens/'
+    '/_authenticated/admin/avaliacoes': {
+      id: '/_authenticated/admin/avaliacoes'
+      path: '/avaliacoes'
+      fullPath: '/admin/avaliacoes'
+      preLoaderRoute: typeof AuthenticatedAdminAvaliacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/banners': {
+      id: '/_authenticated/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/beneficios': {
+      id: '/_authenticated/admin/beneficios'
+      path: '/beneficios'
+      fullPath: '/admin/beneficios'
+      preLoaderRoute: typeof AuthenticatedAdminBeneficiosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categorias': {
+      id: '/_authenticated/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/clientes': {
+      id: '/_authenticated/admin/clientes'
+      path: '/clientes'
+      fullPath: '/admin/clientes'
+      preLoaderRoute: typeof AuthenticatedAdminClientesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/contatos': {
+      id: '/_authenticated/admin/contatos'
+      path: '/contatos'
+      fullPath: '/admin/contatos'
+      preLoaderRoute: typeof AuthenticatedAdminContatosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/cupons': {
+      id: '/_authenticated/admin/cupons'
+      path: '/cupons'
+      fullPath: '/admin/cupons'
+      preLoaderRoute: typeof AuthenticatedAdminCuponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/denuncias': {
+      id: '/_authenticated/admin/denuncias'
+      path: '/denuncias'
+      fullPath: '/admin/denuncias'
+      preLoaderRoute: typeof AuthenticatedAdminDenunciasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/depoimentos': {
+      id: '/_authenticated/admin/depoimentos'
+      path: '/depoimentos'
+      fullPath: '/admin/depoimentos'
+      preLoaderRoute: typeof AuthenticatedAdminDepoimentosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/destaques': {
+      id: '/_authenticated/admin/destaques'
+      path: '/destaques'
+      fullPath: '/admin/destaques'
+      preLoaderRoute: typeof AuthenticatedAdminDestaquesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/empresas': {
+      id: '/_authenticated/admin/empresas'
+      path: '/empresas'
+      fullPath: '/admin/empresas'
+      preLoaderRoute: typeof AuthenticatedAdminEmpresasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/faqs': {
+      id: '/_authenticated/admin/faqs'
+      path: '/faqs'
+      fullPath: '/admin/faqs'
+      preLoaderRoute: typeof AuthenticatedAdminFaqsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/faturamento': {
+      id: '/_authenticated/admin/faturamento'
+      path: '/faturamento'
+      fullPath: '/admin/faturamento'
+      preLoaderRoute: typeof AuthenticatedAdminFaturamentoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/homepage': {
+      id: '/_authenticated/admin/homepage'
+      path: '/homepage'
+      fullPath: '/admin/homepage'
+      preLoaderRoute: typeof AuthenticatedAdminHomepageRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/integracoes': {
+      id: '/_authenticated/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AuthenticatedAdminIntegracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/leads': {
+      id: '/_authenticated/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/logs': {
+      id: '/_authenticated/admin/logs'
+      path: '/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/metricas': {
+      id: '/_authenticated/admin/metricas'
+      path: '/metricas'
+      fullPath: '/admin/metricas'
+      preLoaderRoute: typeof AuthenticatedAdminMetricasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/midias': {
+      id: '/_authenticated/admin/midias'
+      path: '/midias'
+      fullPath: '/admin/midias'
+      preLoaderRoute: typeof AuthenticatedAdminMidiasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/notificacoes': {
+      id: '/_authenticated/admin/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/admin/notificacoes'
+      preLoaderRoute: typeof AuthenticatedAdminNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/paginas': {
+      id: '/_authenticated/admin/paginas'
+      path: '/paginas'
+      fullPath: '/admin/paginas'
+      preLoaderRoute: typeof AuthenticatedAdminPaginasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pedidos': {
+      id: '/_authenticated/admin/pedidos'
+      path: '/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pedidos-recentes': {
+      id: '/_authenticated/admin/pedidos-recentes'
+      path: '/pedidos-recentes'
+      fullPath: '/admin/pedidos-recentes'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRecentesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/permissoes': {
+      id: '/_authenticated/admin/permissoes'
+      path: '/permissoes'
+      fullPath: '/admin/permissoes'
+      preLoaderRoute: typeof AuthenticatedAdminPermissoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/planos': {
+      id: '/_authenticated/admin/planos'
+      path: '/planos'
+      fullPath: '/admin/planos'
+      preLoaderRoute: typeof AuthenticatedAdminPlanosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/profissionais': {
+      id: '/_authenticated/admin/profissionais'
+      path: '/profissionais'
+      fullPath: '/admin/profissionais'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/propostas': {
+      id: '/_authenticated/admin/propostas'
+      path: '/propostas'
+      fullPath: '/admin/propostas'
+      preLoaderRoute: typeof AuthenticatedAdminPropostasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/regioes': {
+      id: '/_authenticated/admin/regioes'
+      path: '/regioes'
+      fullPath: '/admin/regioes'
+      preLoaderRoute: typeof AuthenticatedAdminRegioesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/relatorios': {
+      id: '/_authenticated/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/seguranca': {
+      id: '/_authenticated/admin/seguranca'
+      path: '/seguranca'
+      fullPath: '/admin/seguranca'
+      preLoaderRoute: typeof AuthenticatedAdminSegurancaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/servicos': {
+      id: '/_authenticated/admin/servicos'
+      path: '/servicos'
+      fullPath: '/admin/servicos'
+      preLoaderRoute: typeof AuthenticatedAdminServicosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/solicitacoes': {
+      id: '/_authenticated/admin/solicitacoes'
+      path: '/solicitacoes'
+      fullPath: '/admin/solicitacoes'
+      preLoaderRoute: typeof AuthenticatedAdminSolicitacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/status': {
+      id: '/_authenticated/admin/status'
+      path: '/status'
+      fullPath: '/admin/status'
+      preLoaderRoute: typeof AuthenticatedAdminStatusRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/templates': {
+      id: '/_authenticated/admin/templates'
+      path: '/templates'
+      fullPath: '/admin/templates'
+      preLoaderRoute: typeof AuthenticatedAdminTemplatesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/verificacoes': {
+      id: '/_authenticated/admin/verificacoes'
+      path: '/verificacoes'
+      fullPath: '/admin/verificacoes'
+      preLoaderRoute: typeof AuthenticatedAdminVerificacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/painel/': {
+      id: '/_authenticated/painel/'
       path: '/'
-      fullPath: '/painel/mensagens/'
-      preLoaderRoute: typeof AuthenticatedPainelMensagensIndexRouteImport
-      parentRoute: typeof AuthenticatedPainelMensagensRoute
+      fullPath: '/painel/'
+      preLoaderRoute: typeof AuthenticatedPainelIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/leads': {
+      id: '/_authenticated/painel/leads'
+      path: '/leads'
+      fullPath: '/painel/leads'
+      preLoaderRoute: typeof AuthenticatedPainelLeadsRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/loja': {
+      id: '/_authenticated/painel/loja'
+      path: '/loja'
+      fullPath: '/painel/loja'
+      preLoaderRoute: typeof AuthenticatedPainelLojaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/mensagens': {
+      id: '/_authenticated/painel/mensagens'
+      path: '/mensagens'
+      fullPath: '/painel/mensagens'
+      preLoaderRoute: typeof AuthenticatedPainelMensagensRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/midia': {
+      id: '/_authenticated/painel/midia'
+      path: '/midia'
+      fullPath: '/painel/midia'
+      preLoaderRoute: typeof AuthenticatedPainelMidiaRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/notificacoes': {
+      id: '/_authenticated/painel/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/painel/notificacoes'
+      preLoaderRoute: typeof AuthenticatedPainelNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/orcamentos': {
+      id: '/_authenticated/painel/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/painel/orcamentos'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/pedidos': {
+      id: '/_authenticated/painel/pedidos'
+      path: '/pedidos'
+      fullPath: '/painel/pedidos'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/perfil': {
+      id: '/_authenticated/painel/perfil'
+      path: '/perfil'
+      fullPath: '/painel/perfil'
+      preLoaderRoute: typeof AuthenticatedPainelPerfilRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/propostas': {
+      id: '/_authenticated/painel/propostas'
+      path: '/propostas'
+      fullPath: '/painel/propostas'
+      preLoaderRoute: typeof AuthenticatedPainelPropostasRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/servicos': {
+      id: '/_authenticated/painel/servicos'
+      path: '/servicos'
+      fullPath: '/painel/servicos'
+      preLoaderRoute: typeof AuthenticatedPainelServicosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/_authenticated/painel/trabalhos': {
+      id: '/_authenticated/painel/trabalhos'
+      path: '/trabalhos'
+      fullPath: '/painel/trabalhos'
+      preLoaderRoute: typeof AuthenticatedPainelTrabalhosRouteImport
+      parentRoute: typeof AuthenticatedPainelRoute
+    }
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pwa-icon': {
+      id: '/api/public/pwa-icon'
+      path: '/api/public/pwa-icon'
+      fullPath: '/api/public/pwa-icon'
+      preLoaderRoute: typeof ApiPublicPwaIconRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/profissionais/': {
       id: '/_authenticated/admin/profissionais/'
@@ -1691,26 +1670,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProfissionaisIndexRouteImport
       parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
-    '/_authenticated/painel/pedidos/$id': {
-      id: '/_authenticated/painel/pedidos/$id'
+    '/_authenticated/admin/profissionais/$id': {
+      id: '/_authenticated/admin/profissionais/$id'
       path: '/$id'
-      fullPath: '/painel/pedidos/$id'
-      preLoaderRoute: typeof AuthenticatedPainelPedidosIdRouteImport
-      parentRoute: typeof AuthenticatedPainelPedidosRoute
-    }
-    '/_authenticated/painel/orcamentos/$id': {
-      id: '/_authenticated/painel/orcamentos/$id'
-      path: '/$id'
-      fullPath: '/painel/orcamentos/$id'
-      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIdRouteImport
-      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
-    }
-    '/_authenticated/painel/mensagens/$id': {
-      id: '/_authenticated/painel/mensagens/$id'
-      path: '/$id'
-      fullPath: '/painel/mensagens/$id'
-      preLoaderRoute: typeof AuthenticatedPainelMensagensIdRouteImport
-      parentRoute: typeof AuthenticatedPainelMensagensRoute
+      fullPath: '/admin/profissionais/$id'
+      preLoaderRoute: typeof AuthenticatedAdminProfissionaisIdRouteImport
+      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
     '/_authenticated/admin/profissionais/novo': {
       id: '/_authenticated/admin/profissionais/novo'
@@ -1719,12 +1684,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProfissionaisNovoRouteImport
       parentRoute: typeof AuthenticatedAdminProfissionaisRoute
     }
-    '/_authenticated/admin/profissionais/$id': {
-      id: '/_authenticated/admin/profissionais/$id'
+    '/_authenticated/painel/mensagens/': {
+      id: '/_authenticated/painel/mensagens/'
+      path: '/'
+      fullPath: '/painel/mensagens/'
+      preLoaderRoute: typeof AuthenticatedPainelMensagensIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelMensagensRoute
+    }
+    '/_authenticated/painel/mensagens/$id': {
+      id: '/_authenticated/painel/mensagens/$id'
       path: '/$id'
-      fullPath: '/admin/profissionais/$id'
-      preLoaderRoute: typeof AuthenticatedAdminProfissionaisIdRouteImport
-      parentRoute: typeof AuthenticatedAdminProfissionaisRoute
+      fullPath: '/painel/mensagens/$id'
+      preLoaderRoute: typeof AuthenticatedPainelMensagensIdRouteImport
+      parentRoute: typeof AuthenticatedPainelMensagensRoute
+    }
+    '/_authenticated/painel/orcamentos/': {
+      id: '/_authenticated/painel/orcamentos/'
+      path: '/'
+      fullPath: '/painel/orcamentos/'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
+    }
+    '/_authenticated/painel/orcamentos/$id': {
+      id: '/_authenticated/painel/orcamentos/$id'
+      path: '/$id'
+      fullPath: '/painel/orcamentos/$id'
+      preLoaderRoute: typeof AuthenticatedPainelOrcamentosIdRouteImport
+      parentRoute: typeof AuthenticatedPainelOrcamentosRoute
+    }
+    '/_authenticated/painel/pedidos/': {
+      id: '/_authenticated/painel/pedidos/'
+      path: '/'
+      fullPath: '/painel/pedidos/'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosIndexRouteImport
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
+    }
+    '/_authenticated/painel/pedidos/$id': {
+      id: '/_authenticated/painel/pedidos/$id'
+      path: '/$id'
+      fullPath: '/painel/pedidos/$id'
+      preLoaderRoute: typeof AuthenticatedPainelPedidosIdRouteImport
+      parentRoute: typeof AuthenticatedPainelPedidosRoute
     }
   }
 }
